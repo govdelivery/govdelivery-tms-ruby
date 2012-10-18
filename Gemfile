@@ -28,3 +28,9 @@ gem 'json'
 
 gem 'sidekiq'
 gem 'twilio-ruby'
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'guard-rspec'
+end
