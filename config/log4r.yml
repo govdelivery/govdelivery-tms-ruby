@@ -1,0 +1,24 @@
+log4r_config:
+  loggers:
+    - name      : default
+      level     : DEBUG
+      additive  : 'false'
+      trace     : 'true'
+      outputters:
+        - datefilelog
+
+  outputters:
+    - type        : DateFileOutputter
+      name        : datefilelog
+      date_pattern: '%Y-%m-%d'
+      filename    : "#{FILE_NAME}"   # the date will get inserted into this filename. note that it must end in ".log"
+      trunc       : 'false'
+      dirname     : "#{LOG_DIR}"
+      formatter   :
+        date_pattern: '%X'
+        pattern     : "%l %d pid=#{Process.pid} :: %m"
+        type        : PatternFormatter
+
+  
+
+        

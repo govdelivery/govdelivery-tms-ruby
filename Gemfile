@@ -37,3 +37,4 @@ end
 
 gem 'ruby-oci8'
 gem 'activerecord-oracle_enhanced-adapter'
+gem 'log4r'
