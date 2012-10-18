@@ -7,7 +7,6 @@ gem 'rails', '3.2.8'
 
 gem 'rails-api'
 
-gem 'sqlite3'
 
 gem 'json'
 
@@ -33,4 +32,8 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
+  gem 'sqlite3'
 end
+
+gem 'ruby-oci8'
+gem 'activerecord-oracle_enhanced-adapter'

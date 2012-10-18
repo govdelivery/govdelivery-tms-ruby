@@ -22,6 +22,7 @@ GEM
       activesupport (= 3.2.8)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
+    activerecord-oracle_enhanced-adapter (1.4.1)
     activeresource (3.2.8)
       activemodel (= 3.2.8)
       activesupport (= 3.2.8)
@@ -103,6 +104,7 @@ GEM
       activesupport (>= 3.0)
       railties (>= 3.0)
       rspec (~> 2.11.0)
+    ruby-oci8 (2.1.2)
     sidekiq (2.3.3)
       celluloid (~> 0.12.0)
       connection_pool (~> 0.9.2)
@@ -130,12 +132,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-oracle_enhanced-adapter
   guard-rspec
   json
   rails (= 3.2.8)
   rails-api
   rb-fsevent
   rspec-rails
+  ruby-oci8
   sidekiq
   sqlite3
   twilio-ruby
