@@ -140,6 +140,7 @@ DEPENDENCIES
   guard-rspec
   json
   log4r
+  mocha
   rails (= 3.2.8)
   rails-api
   rb-fsevent
