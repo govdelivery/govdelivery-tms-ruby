@@ -1,7 +1,11 @@
-class MessagesController < ApplicationController  
+class MessagesController < ApplicationController
+  
   def show
-    @message = Message.find(params[:id])
-    render json: @message
+    if @message = Message.find(params[:id])
+      render :json => @message, :status => :success
+    else
+      render :nothing, :status => :not_found
+    end
   end
 
   def create
@@ -9,9 +13,9 @@ class MessagesController < ApplicationController
 
     if @message.save
       MessageWorker.perform_async(@message.id)
-      render :json => @message, :status => :accepted, :location => @message
+      render :json => @message, :status => :accepted
     else
-      render json: @message.errors, status: :unprocessable_entity
+      render json: @message.errors, :status => :unprocessable_entity
     end
   end
 end

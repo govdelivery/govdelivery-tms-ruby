@@ -15,8 +15,11 @@ class MessageWorker
     
       message.recipients.incomplete.each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
-        twilio_response = @account.sms.messages.create({:from => '468311', :to => "+1#{recipient.phone}", :body => message.short_body})
-        recipient.update_attributes(:ack => twilio_response.sid, :completed => Time.now)
+        twilio_response = @account.sms.messages.create({:from => '(651) 433-6311', :to => "+#{recipient.country_code}#{recipient.phone}", :body => message.short_body})
+        logger.info("Response from Twilio was #{twilio_response.inspect}")
+        recipient.ack = twilio_response.sid
+        recipient.completed = Time.now
+        recipient.save
       end
 
       message.update_attributes(:completed => Time.now)

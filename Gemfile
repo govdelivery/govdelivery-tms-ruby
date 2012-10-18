@@ -28,6 +28,10 @@ gem 'json'
 gem 'sidekiq'
 gem 'twilio-ruby'
 
+group :test do
+  gem 'mocha'
+end
+
 group :development, :test do
   gem 'rspec-rails'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
