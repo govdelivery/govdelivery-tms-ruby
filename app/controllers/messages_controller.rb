@@ -1,10 +1,10 @@
 class MessagesController < ApplicationController
   
   def show
-    if @message = Message.find(params[:id])
+    if @message = Message.find_by_id(params[:id])
       render :json => @message, :status => :success
     else
-      render :nothing, :status => :not_found
+      render :status => :not_found
     end
   end
 
@@ -15,7 +15,7 @@ class MessagesController < ApplicationController
       MessageWorker.perform_async(@message.id)
       render :json => @message, :status => :accepted
     else
-      render json: @message.errors, :status => :unprocessable_entity
+      render :json => @message.errors, :status => :unprocessable_entity
     end
   end
 end

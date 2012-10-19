@@ -1,42 +1,67 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe MessagesController, "new with a valid message" do
-  before { MessageWorker.stubs(:perform_async).returns(true) }
-  
+describe MessagesController, "#create with a valid message" do
+  before { Message.any_instance.expects(:save).returns(true) }
+
   def do_create
-    post :create, message: { :short_body => 'A short body', 
-      :recipients_attributes => [
-        {:country_code => '1', :phone => '6515551000'},
-        {:country_code => '44', :phone => '6515551001'}
-      ]},
-      :format => :json 
-  end
-
-  describe "POST create" do
-    describe "with valid params" do
-      it "creates a new Message" do
-        expect {
-          do_create
-        }.to change(Message, :count).by(1)
-      end
-
-      it "creates two recipients" do
-        expect {
-          do_create
-        }.to change(Recipient, :count).by(2)
-      end
-      
-      it "assigns a newly created message as @message" do
-        do_create
-        assigns(:message).should be_a(Message)
-        assigns(:message).should be_persisted
-      end
-
-      it "should be accepted" do
-        do_create
-        response.should be_success
-      end
-    end
+    post :create, message: { :short_body => 'A short body'}, :format => :json
   end
   
+  it "should be accepted" do
+    do_create
+    response.response_code.should == 202
+  end
+
+  it "should populate new Message" do
+    do_create
+    assigns(:message).short_body.should == 'A short body'
+  end
 end
+
+describe MessagesController, "#create with an invalid message" do
+  before { Message.any_instance.expects(:save).returns(false) }
+
+  def do_create
+    post :create, message: { :short_body => 'A short body'}, :format => :json
+  end
+  
+  it "should be unprocessable_entity" do
+    do_create
+    response.response_code.should == 422
+  end
+
+  it "should populate new Message" do
+    do_create
+    assigns(:message).short_body.should == 'A short body'
+  end
+end
+# describe MessagesController, "#show with a message" do
+#   before do
+#     @message = mock('message', :as_json => "Hey Kool Aid!")
+#     Message.expects(:find_by_id).with('12').returns(@message)
+#   end
+# 
+#   def do_create
+#     get :show, :id=>'12', :format => :json
+#   end
+#   
+#   it "should be success" do
+#     do_create
+#     response.response_code.should == 200
+#   end
+# end
+# 
+# describe MessagesController, "#show with message not found" do
+#   before do
+#     Message.expects(:find_by_id).with('12').returns(nil)
+#   end
+# 
+#   def do_create
+#     get :show, :id=>'12', :format => :json
+#   end
+#   
+#   it "should be success" do
+#     do_create
+#     response.response_code.should == 200
+#   end
+# end
