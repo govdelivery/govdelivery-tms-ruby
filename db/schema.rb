@@ -41,12 +41,16 @@ ActiveRecord::Schema.define(:version => 20121018213317) do
     t.datetime "updated_at",                   :null => false
   end
 
+  add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id"
+
   create_table "users", :force => true do |t|
     t.integer  "account_id"
     t.string   "username"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 
   create_table "vendors", :force => true do |t|
     t.string   "name"

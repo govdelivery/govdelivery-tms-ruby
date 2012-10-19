@@ -11,5 +11,7 @@ class CreateRecipients < ActiveRecord::Migration
       t.time  :completed_at
       t.timestamps
     end
+
+    add_index(:recipients, :message_id)
   end
 end

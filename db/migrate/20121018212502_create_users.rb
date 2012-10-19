@@ -5,5 +5,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :username, :null => :false
       t.timestamps
     end
+
+    add_index(:users, :username, :unique => true)    
   end
 end
