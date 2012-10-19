@@ -1,10 +1,22 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe MessagesController, "#create with a valid message" do
-  before { Message.any_instance.expects(:save).returns(true) }
+  before do
+    @username = 'username'
+    @password = 'password'
 
+    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from')
+    @account = @vendor.accounts.create(:name => 'name')
+    @user = @account.users.create(:username => 'username')
+    Message.any_instance.expects(:save).returns(true)
+  end
+
+  def encoded_credentials
+    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@username, @password)    
+  end
+  
   def do_create
-    post :create, message: { :short_body => 'A short body'}, :format => :json
+    post :create, :message => { :short_body => 'A short body'}, :format => :json, :authorization => encoded_credentials
   end
   
   it "should be accepted" do
@@ -19,10 +31,22 @@ describe MessagesController, "#create with a valid message" do
 end
 
 describe MessagesController, "#create with an invalid message" do
-  before { Message.any_instance.expects(:save).returns(false) }
+  before do
+    @username = 'username'
+    @password = 'password'
 
+    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from')
+    @account = @vendor.accounts.create(:name => 'name')
+    @user = @account.users.create(:username => 'username')
+    Message.any_instance.expects(:save).returns(false)
+  end
+
+  def encoded_credentials
+    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@username, @password)    
+  end
+  
   def do_create
-    post :create, message: { :short_body => 'A short body'}, :format => :json
+    post :create, :message => { :short_body => 'A short body'}, :format => :json, :authorization => encoded_credentials
   end
   
   it "should be unprocessable_entity" do
@@ -35,33 +59,3 @@ describe MessagesController, "#create with an invalid message" do
     assigns(:message).short_body.should == 'A short body'
   end
 end
-# describe MessagesController, "#show with a message" do
-#   before do
-#     @message = mock('message', :as_json => "Hey Kool Aid!")
-#     Message.expects(:find_by_id).with('12').returns(@message)
-#   end
-# 
-#   def do_create
-#     get :show, :id=>'12', :format => :json
-#   end
-#   
-#   it "should be success" do
-#     do_create
-#     response.response_code.should == 200
-#   end
-# end
-# 
-# describe MessagesController, "#show with message not found" do
-#   before do
-#     Message.expects(:find_by_id).with('12').returns(nil)
-#   end
-# 
-#   def do_create
-#     get :show, :id=>'12', :format => :json
-#   end
-#   
-#   it "should be success" do
-#     do_create
-#     response.response_code.should == 200
-#   end
-# end

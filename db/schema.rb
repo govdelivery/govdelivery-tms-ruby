@@ -11,13 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121017193952) do
+ActiveRecord::Schema.define(:version => 20121018213317) do
 
-  create_table "messages", :force => true do |t|
-    t.string   "short_body"
-    t.time     "completed"
+  create_table "accounts", :force => true do |t|
+    t.string   "name"
+    t.integer  "vendor_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "messages", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "short_body"
+    t.time     "completed_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "recipients", :force => true do |t|
@@ -25,9 +33,28 @@ ActiveRecord::Schema.define(:version => 20121017193952) do
     t.string   "phone"
     t.string   "country_code"
     t.string   "ack"
-    t.time     "completed"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.string   "status"
+    t.string   "error_message", :limit => 512
+    t.time     "sent_at"
+    t.time     "completed_at"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  create_table "users", :force => true do |t|
+    t.integer  "account_id"
+    t.string   "username"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "vendors", :force => true do |t|
+    t.string   "name"
+    t.string   "username"
+    t.string   "password"
+    t.string   "from"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
 end

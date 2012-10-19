@@ -1,8 +1,18 @@
 require 'spec_helper'
 
 describe Message do
-  before { @message = Message.new }
+  before do
+    vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from')
+    account = vendor.accounts.create!(:name => 'name')
+    @user = account.users.create!(:username => 'username')
+    @message = @user.messages.build(:short_body => 'short body')
+  end
+  
   subject { @message }
+
+  context "when valid" do
+    specify { @message.valid?.should == true }
+  end
   
   context "when short body is empty" do
     before { @message.short_body = nil }
@@ -18,16 +28,15 @@ describe Message do
     before { @message.short_body = "A"*161 }
     specify { @message.valid?.should == false }
   end
-  
+
   context "accepts nested attributes for recipients" do
-    before { @message = Message.new(:short_body => "A"*160, :recipients_attributes => {1 => {:phone => "6515551212"}}) }
+    before { @message = @user.messages.build(:short_body => "A"*160, :recipients_attributes => [{:phone => "6515551212"}]) }
     specify { @message.valid?.should == true }
     it { should have(1).recipients }
   end
   
   context "validates recipients before save" do
-    before { @message = Message.new(:short_body => "A"*160, :recipients_attributes => {1 => {:phone => "invalid"}}) }
+    before { @message = @user.messages.build(:short_body => "A"*160, :recipients_attributes => [{:phone => "invalid"}]) }
     specify { @message.valid?.should == false }
-    it { should have(1).recipients }
   end
 end
