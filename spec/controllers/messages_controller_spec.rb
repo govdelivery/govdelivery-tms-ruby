@@ -9,6 +9,7 @@ describe MessagesController, "#create with a valid message" do
     @account = @vendor.accounts.create(:name => 'name')
     @user = @account.users.create(:username => 'username')
     Message.any_instance.expects(:save).returns(true)
+    MessageWorker.expects(:perform_async).with(anything).returns(true)
   end
 
   def encoded_credentials
