@@ -2,18 +2,18 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe MessagesController, "#create with a valid message" do
   before do
-    @username = 'username'
+    @email = 'foo@evotest.govdelivery.com'
     @password = 'password'
 
     @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     @account = @vendor.accounts.create(:name => 'name')
-    @user = @account.users.create(:username => 'username')
+    @user = @account.users.create(:email => @email)
     Message.any_instance.expects(:save).returns(true)
     LoopbackMessageWorker.expects(:perform_async).with(anything).returns(true)
   end
 
   def encoded_credentials
-    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@username, @password)    
+    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@email, @password)    
   end
   
   def do_create
@@ -33,17 +33,17 @@ end
 
 describe MessagesController, "#create with an invalid message" do
   before do
-    @username = 'username'
+    @email = 'foo@evotest.govdelivery.com'
     @password = 'password'
 
     @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     @account = @vendor.accounts.create(:name => 'name')
-    @user = @account.users.create(:username => 'username')
+    @user = @account.users.create(:email => @email)
     Message.any_instance.expects(:save).returns(false)
   end
 
   def encoded_credentials
-    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@username, @password)    
+    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@email, @password)    
   end
   
   def do_create
