@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
-  attr_accessible :email
+  devise :database_authenticatable, :validatable
+
+  attr_accessible :email, :password
   
   belongs_to  :account
   validates_presence_of :account

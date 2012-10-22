@@ -59,6 +59,10 @@ module Tsms
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
+    # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+    
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq = {
       default: { 

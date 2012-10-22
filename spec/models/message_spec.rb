@@ -4,7 +4,7 @@ describe Message do
   before do
     vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     account = vendor.accounts.create!(:name => 'name')
-    @user = account.users.create!(:email => 'foo@evotest.govdelivery.com')
+    @user = account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop")
     @message = @user.messages.build(:short_body => 'short body')
   end
   
