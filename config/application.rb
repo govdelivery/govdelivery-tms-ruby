@@ -58,5 +58,15 @@ module Tsms
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
+    config.sidekiq = {
+      default: { 
+        url: 'redis://localhost:6379/1', 
+        namespace: 'tsms'
+      },
+      client: { size: 1 },
+      server: { }
+    }
   end
 end
