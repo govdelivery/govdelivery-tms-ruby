@@ -10,8 +10,10 @@ class MessagesController < ApplicationController
   end
 
   def create
+    recipients = params[:message].delete(:recipients) if params[:message]
     @message = current_user.messages.new(params[:message])
     if @message.save
+      recipients.each {|recipient| @message.recipients.create(recipient)} if recipients
       current_user.vendor.worker.constantize.send(:perform_async, @message.id)
     end
     render
