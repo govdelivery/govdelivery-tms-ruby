@@ -17,8 +17,16 @@ describe Recipient do
   context "when phone contains formatting" do
     before { @recipient.phone = '(651) 555-1212 ' }
     specify { @recipient.valid?.should == true }
+    context "will strip formatting from phone" do
+      before { @recipient.valid? }
+      specify { @recipient.phone.should == '6515551212' }
+    end
+    context "will not strip formatting from provided phone" do
+      before { @recipient.valid? }
+      specify { @recipient.provided_phone.should == '(651) 555-1212 ' }
+    end
   end
-
+  
   context "when phone is too long" do
     before { @recipient.phone = '5'*25 }
     specify { @recipient.valid?.should == false }

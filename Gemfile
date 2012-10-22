@@ -27,6 +27,7 @@ gem 'json'
 
 gem 'sidekiq'
 gem 'twilio-ruby'
+gem 'rabl'
 
 group :test do
   gem 'mocha'

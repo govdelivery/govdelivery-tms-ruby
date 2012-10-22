@@ -4,6 +4,8 @@ class CreateRecipients < ActiveRecord::Migration
       t.references :message, :null => :false
       t.string  :phone, :null => :false
       t.string  :country_code, :null => :false
+      t.string  :provided_phone, :null => :false
+      t.string  :provided_country_code, :null => :false
       t.string  :ack
       t.string  :status
       t.string  :error_message, :limit => 512

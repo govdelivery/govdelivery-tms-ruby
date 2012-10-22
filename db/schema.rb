@@ -32,13 +32,15 @@ ActiveRecord::Schema.define(:version => 20121018213317) do
     t.integer  "message_id"
     t.string   "phone"
     t.string   "country_code"
+    t.string   "provided_phone"
+    t.string   "provided_country_code"
     t.string   "ack"
     t.string   "status"
-    t.string   "error_message", :limit => 512
+    t.string   "error_message",         :limit => 512
     t.time     "sent_at"
     t.time     "completed_at"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
   end
 
   add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id"
@@ -57,6 +59,7 @@ ActiveRecord::Schema.define(:version => 20121018213317) do
     t.string   "username"
     t.string   "password"
     t.string   "from"
+    t.string   "worker",     :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

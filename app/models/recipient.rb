@@ -9,6 +9,8 @@ class Recipient < ActiveRecord::Base
   before_validation :truncate_error_message
   
   validates_length_of :ack, :maximum => 256
+  validates_length_of :provided_phone, :maximum => 256
+  validates_length_of :provided_country_code, :maximum => 256
   validates_numericality_of :country_code, :only_integer => true
   validates_length_of :country_code, :maximum => 4
   validates_numericality_of :phone, :only_integer => true
@@ -18,7 +20,9 @@ class Recipient < ActiveRecord::Base
 
   private  
   def format_phone
+    self.provided_phone = "#{self.phone}"
     self.phone.gsub!(/\D/,'') if self.phone
+    self.provided_country_code = "#{self.country_code}" if self.country_code
     self.country_code.gsub!(/\D/,'') if self.country_code
     self.country_code = '1' if self.country_code.blank?
   end

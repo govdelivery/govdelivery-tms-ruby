@@ -1,23 +1,20 @@
 class MessagesController < ApplicationController
   before_filter :find_user
-  
+
   def show
-    if @message = Message.find_by_id(params[:id])
-      render :json => @message, :status => :success
+    if @message = @user.messages.find_by_id(params[:id])
+      render
     else
-      render :status => :not_found
+      render :json => {:error => "Not Found"}.to_json, :status => :not_found
     end
   end
 
-  def create    
+  def create
     @message = @user.messages.new(params[:message])
-
     if @message.save
-      MessageWorker.perform_async(@message.id)
-      render :json => @message, :status => :accepted
-    else
-      render :json => @message.errors, :status => :unprocessable_entity
+      @user.vendor.worker.constantize.send(:perform_async, @message.id)
     end
+    render
   end
 
   private

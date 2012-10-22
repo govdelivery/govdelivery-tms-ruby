@@ -1,4 +1,4 @@
-class MessageWorker
+class TwilioMessageWorker
   include Sidekiq::Worker
   sidekiq_options retry: false
   

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Vendor do
-  before { @vendor = Vendor.new(:name => 'name', :username => 'username', :password => 'secret', :from => 'from') }
+  before { @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
   subject { @vendor }
 
   context "when valid" do

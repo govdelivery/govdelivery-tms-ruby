@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Message do
   before do
-    vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from')
+    vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     account = vendor.accounts.create!(:name => 'name')
     @user = account.users.create!(:username => 'username')
     @message = @user.messages.build(:short_body => 'short body')

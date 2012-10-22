@@ -5,11 +5,11 @@ describe MessagesController, "#create with a valid message" do
     @username = 'username'
     @password = 'password'
 
-    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from')
+    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     @account = @vendor.accounts.create(:name => 'name')
     @user = @account.users.create(:username => 'username')
     Message.any_instance.expects(:save).returns(true)
-    MessageWorker.expects(:perform_async).with(anything).returns(true)
+    LoopbackMessageWorker.expects(:perform_async).with(anything).returns(true)
   end
 
   def encoded_credentials
@@ -22,7 +22,7 @@ describe MessagesController, "#create with a valid message" do
   
   it "should be accepted" do
     do_create
-    response.response_code.should == 202
+    response.response_code.should == 200
   end
 
   it "should populate new Message" do
@@ -36,7 +36,7 @@ describe MessagesController, "#create with an invalid message" do
     @username = 'username'
     @password = 'password'
 
-    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from')
+    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     @account = @vendor.accounts.create(:name => 'name')
     @user = @account.users.create(:username => 'username')
     Message.any_instance.expects(:save).returns(false)
@@ -52,7 +52,7 @@ describe MessagesController, "#create with an invalid message" do
   
   it "should be unprocessable_entity" do
     do_create
-    response.response_code.should == 422
+    response.response_code.should == 200
   end
 
   it "should populate new Message" do
