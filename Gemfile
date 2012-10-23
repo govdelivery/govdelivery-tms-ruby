@@ -30,7 +30,7 @@ gem 'twilio-ruby'
 gem 'rabl'
 
 group :test do
-  gem 'mocha'
+  gem 'mocha', :require=>false
 end
 
 group :development, :test do
