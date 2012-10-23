@@ -1,56 +1,47 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe MessagesController, "#create with a valid message" do
-  before do
-    @email = 'foo@evotest.govdelivery.com'
-    @password = 'password'
-
-    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
-    @account = @vendor.accounts.create(:name => 'name')
-    @user = @account.users.create(:email => @email, :password => "schwoop")
-    sign_in @user
-    Message.any_instance.expects(:save).returns(true)
-    LoopbackMessageWorker.expects(:perform_async).with(anything).returns(true)
-  end
-
-  def do_create
-    post :create, :message => { :short_body => 'A short body'}, :format => :json
-  end
-  
-  it "should be accepted" do
-    do_create
-    response.response_code.should == 200
-  end
-
-  it "should populate new Message" do
-    do_create
-    assigns(:message).short_body.should == 'A short body'
-  end
+def do_create
+  post :create, :message => {:short_body => 'A short body'}, :format => :json
 end
 
-describe MessagesController, "#create with an invalid message" do
+describe MessagesController do
+  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
+  let(:account) { vendor.accounts.create(:name => 'name') }
+  let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   before do
-    @email = 'foo@evotest.govdelivery.com'
-    @password = 'password'
-
-    @vendor = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
-    @account = @vendor.accounts.create(:name => 'name')
-    @user = @account.users.create(:email => @email, :password => "schwoop")
-    sign_in @user
-    Message.any_instance.expects(:save).returns(false)
+    sign_in user
   end
 
-  def do_create
-    post :create, :message => { :short_body => 'A short body'}, :format => :json
-  end
-  
-  it "should be unprocessable_entity" do
-    do_create
-    response.response_code.should == 200
+  context "#create with a valid message" do
+    before do
+      Message.any_instance.expects(:save).returns(true)
+      Message.any_instance.stubs(:new_record?).returns(false)
+
+      LoopbackMessageWorker.expects(:perform_async).with(anything).returns(true)
+      do_create
+    end
+    it "should be accepted" do
+      response.response_code.should == 201
+    end
+
+    it "should populate new Message" do
+      assigns(:message).short_body.should == 'A short body'
+    end
   end
 
-  it "should populate new Message" do
-    do_create
-    assigns(:message).short_body.should == 'A short body'
+  context "#create with an invalid message" do
+    before do
+      Message.any_instance.expects(:save).returns(false)
+      Message.any_instance.stubs(:new_record?).returns(true)
+      do_create
+    end
+    it "should be unprocessable_entity" do
+      response.response_code.should == 422
+    end
+
+    it "should populate new Message" do
+      assigns(:message).short_body.should == 'A short body'
+    end
+
   end
 end
