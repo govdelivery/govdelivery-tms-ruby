@@ -5,3 +5,14 @@
 #
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Emanuel', :city => cities.first)
+
+Vendor.create(:name => 'Twilio Sender',
+  :worker => 'TwilioMessageWorker',
+  :username => Rails.configuration.twilio_username,
+  :password => Rails.configuration.twilio_password,
+  :from => Rails.configuration.twilio_number)
+Vendor.create(:name => 'Loopback Sender',
+  :worker => 'LoopbackMessageWorker',
+  :username => 'dont care',
+  :password => 'dont care',
+  :from => 'dont care')
