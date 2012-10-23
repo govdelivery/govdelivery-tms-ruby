@@ -28,6 +28,7 @@ gem 'json'
 gem 'sidekiq'
 gem 'twilio-ruby'
 gem 'rabl'
+gem 'kaminari'
 
 group :test do
   gem 'mocha', :require=>false

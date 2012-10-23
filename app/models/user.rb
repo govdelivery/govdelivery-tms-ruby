@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   validates_length_of :email, :maximum => 256
   validates_uniqueness_of :email
       
-  has_many :messages
+  has_many :messages, :order => 'messages.created_at DESC'
   
   before_validation :downcase_email
   

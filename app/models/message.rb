@@ -1,4 +1,6 @@
 class Message < ActiveRecord::Base
+  paginates_per 50
+
   attr_accessible :short_body, :recipients_attributes
   
   has_many :recipients, :dependent => :destroy

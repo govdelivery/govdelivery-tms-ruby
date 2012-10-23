@@ -42,6 +42,49 @@ describe MessagesController do
     it "should populate new Message" do
       assigns(:message).short_body.should == 'A short body'
     end
+  end
 
+  context "index" do
+    let(:messages) do
+      msgs = 3.times.collect do |i|
+        m = Message.new(:short_body => "#{"A"*40} #{i}",
+                        :recipients_attributes => [{:phone => "800BUNNIES"}])
+        m.created_at = i.days.ago
+        m.user = user
+      end
+    end
+    before do
+      messages.stubs(:total_pages).returns(5)
+      User.any_instance.expects(:messages).returns(stub(:page => messages))
+    end
+    it "should work on the first page" do
+      messages.stubs(:current_page).returns(1)
+      messages.stubs(:first_page?).returns(true)
+      messages.stubs(:last_page?).returns(false)
+      get :index, :format=>:json
+      response.response_code.should == 200
+    end
+
+    it "should have all links" do
+      messages.stubs(:current_page).returns(2)
+      messages.stubs(:first_page?).returns(false)
+      messages.stubs(:last_page?).returns(false)
+      get :index, :page => 2
+      response.headers['Link'].should =~ /first/
+      response.headers['Link'].should =~ /prev/
+      response.headers['Link'].should =~ /next/
+      response.headers['Link'].should =~ /last/
+    end
+
+    it "should have prev and first links" do
+      messages.stubs(:current_page).returns(5)
+      messages.stubs(:first_page?).returns(false)
+      messages.stubs(:last_page?).returns(true)
+      get :index, :page => 5
+      response.headers['Link'].should =~ /first/
+      response.headers['Link'].should =~ /prev/
+      response.headers['Link'].should_not =~ /next/
+      response.headers['Link'].should_not =~ /last/
+    end
   end
 end
