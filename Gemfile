@@ -40,10 +40,8 @@ group :development, :test do
   gem 'sqlite3'
 end
 
-group :oracle do
-  gem 'ruby-oci8'
-  gem 'activerecord-oracle_enhanced-adapter'
-end
+gem 'ruby-oci8'
+gem 'activerecord-oracle_enhanced-adapter'
 
 gem 'log4r'
 gem 'devise'
