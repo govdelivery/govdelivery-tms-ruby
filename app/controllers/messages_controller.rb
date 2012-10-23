@@ -16,7 +16,7 @@ class MessagesController < ApplicationController
       recipients.each {|recipient| @message.recipients.create(recipient)} if recipients
       current_user.vendor.worker.constantize.send(:perform_async, @message.id)
     end
-    render
+    respond_with(@message)
   end
 
   private
