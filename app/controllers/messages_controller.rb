@@ -51,11 +51,4 @@ class MessagesController < ApplicationController
     @page = params[:page] || 1
   end
 
-
-  def find_user
-    if user_signed_in?
-      @account = current_user.account
-      @vendor = @account.vendor
-    end
-  end
 end
