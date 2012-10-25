@@ -3,10 +3,9 @@ class Recipient < ActiveRecord::Base
 
   unless defined? STATUS_NEW
     STATUS_NEW = 1
-    STATUS_QUEUED = 2
-    STATUS_SENDING = 3
-    STATUS_SENT = 4
-    STATUS_FAILED = 5
+    STATUS_SENDING = 2
+    STATUS_SENT = 3
+    STATUS_FAILED = 4
   end
   
   belongs_to  :message

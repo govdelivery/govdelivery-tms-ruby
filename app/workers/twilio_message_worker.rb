@@ -19,9 +19,7 @@ class TwilioMessageWorker
           logger.info("Response from Twilio was #{twilio_response.inspect}")
           recipient.ack = twilio_response.sid
           recipient.status = case twilio_response.status
-          when 'queued'
-            Recipient::STATUS_QUEUED
-          when 'sending'
+          when 'queued','sending'
             Recipient::STATUS_SENDING
           when 'sent'
             Recipient::STATUS_SENT
