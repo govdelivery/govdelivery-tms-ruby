@@ -6,6 +6,7 @@ class Recipient < ActiveRecord::Base
     STATUS_QUEUED = 2
     STATUS_SENDING = 3
     STATUS_SENT = 4
+    STATUS_FAILED = 5
   end
   
   belongs_to  :message
