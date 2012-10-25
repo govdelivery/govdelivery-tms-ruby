@@ -58,10 +58,5 @@ describe Recipient do
       before { @recipient.error_message = 'A'*513 }
       specify { @recipient.valid?.should == true }
     end
-
-    context "and status is too long" do
-      before { @recipient.status = 'A'*257 }
-      specify { @recipient.valid?.should == false }
-    end
   end
 end

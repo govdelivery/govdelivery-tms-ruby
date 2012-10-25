@@ -18,10 +18,19 @@ class TwilioMessageWorker
           twilio_response = account.sms.messages.create({:from => message.vendor.from, :to => "+#{recipient.country_code}#{recipient.phone}", :body => message.short_body})
           logger.info("Response from Twilio was #{twilio_response.inspect}")
           recipient.ack = twilio_response.sid
-          recipient.status = twilio_response.status
+          recipient.status = case twilio_response.status
+          when 'queued'
+            Recipient::STATUS_QUEUED
+          when 'sending'
+            Recipient::STATUS_SENDING
+          when 'sent'
+            Recipient::STATUS_SENT
+          else
+            Recipient::STATUS_NEW
+          end
         rescue Twilio::REST::RequestError => e
           logger.warn("Failed to send SMS to #{recipient.phone} for message #{message.id}: #{e.inspect}")
-          recipient.status = 'failed'
+          recipient.status = Recipient::STATUS_FAILED
           recipient.error_message = e.to_s
           recipient.completed_at = Time.now
         end

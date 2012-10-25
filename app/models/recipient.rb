@@ -1,6 +1,13 @@
 class Recipient < ActiveRecord::Base  
   attr_accessible :phone, :country_code
 
+  unless defined? STATUS_NEW
+    STATUS_NEW = 1
+    STATUS_QUEUED = 2
+    STATUS_SENDING = 3
+    STATUS_SENT = 4
+  end
+  
   belongs_to  :message
   
   scope :incomplete,  lambda { where(:sent_at => nil) }
@@ -15,7 +22,6 @@ class Recipient < ActiveRecord::Base
   validates_length_of :country_code, :maximum => 4
   validates_numericality_of :phone, :only_integer => true
   validates_length_of :phone, :maximum => 11
-  validates_length_of :status, :maximum => 256
   validates_uniqueness_of :phone, :scope => "message_id", :message => "has already been associated with this message" 
 
   private  
