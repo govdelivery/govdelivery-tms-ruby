@@ -4,6 +4,12 @@ class ApplicationController < ActionController::API
   self.responder = RablResponder
 
   before_filter :authenticate_user!
+  before_filter :set_default_format
+
+
+  def set_default_format
+    request.format = :json unless params[:format]
+  end
 
   def find_user
     if user_signed_in?
