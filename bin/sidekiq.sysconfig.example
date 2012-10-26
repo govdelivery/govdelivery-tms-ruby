@@ -1,0 +1,10 @@
+export ORACLE_HOME=/opt/oracle/instantclient/
+export LD_LIBRARY_PATH=$ORACLE_HOME
+export NLS_LANG='american_america.AL32UTF8'
+
+app_path="/opt/tsms/current"
+pid_file="/var/run/sidekiq/sidekiq.pid"
+deadline_timeout=60
+environment="yourenvironment"
+user="tsms"
+
