@@ -3,60 +3,65 @@
 # description: Sidekiq Ruby Background Job Proccessing
 
 # Source function library.
-. /etc/rc.d/init.d/functions
+. /etc/rc.d/init.d/functions || exit 5
 
 # Source sidekiq settings
-. /etc/sysconfig/sidekiq
+. /etc/sysconfig/sidekiq || exit 5
+
+if [[ -z "$environment" ]]; then
+    echo "no environment set!"
+    exit 5
+fi
 
 export RAILS_ENV=$environment
 
 
 status () {
-  RETVAL=0
-  
-  pid=""
-  if [[ -f "$pid_file" ]]; then
-    pid=$(cat "$pid_file")
-  fi
-
-  if [[ -z $pid ]]; then
-
-    UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep sidekiq)
-    if [[ $? -eq 0 ]]; then
-      echo "Found Unmanaged Processes!"
-      echo "$UNMANAGED"
-      return 10
-    else
-      echo "Sidekiq not running"
-      return 1
-    fi;
-
-  else
-
-    MANAGED=$(ps -f --pid $pid --ppid $pid)
-    if [[ $? -eq 0 ]]; then
-      echo "Sidekiq Process:"
-      echo "$MANAGED"
-    else
-      echo "PID file exists, but no managed sidekiq process found. Removing pid file"
-      rm $pid_file
-      let RETVAL++
+    RETVAL=0
+    
+    pid=""
+    if [[ -f "$pid_file" ]]; then
+	pid=$(cat "$pid_file")
     fi
-
-    CHILDREN=$(ps -f --ppid $pid)
-    if [[ $? -eq 0 ]]; then
-      echo "Sidekiq Children:"
-      echo "$CHILDREN"
+    
+    if [[ -z $pid ]]; then  ## no known pid
+	
+	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep sidekiq)
+	if [[ $? -eq 0 ]]; then
+	    echo "Found Unmanaged Processes!"
+	    echo "$UNMANAGED"
+	    return 10
+	else
+	    echo "Sidekiq not running"
+	    return 1
+	fi;
+	
+    else  ## have an expected pid
+	
+	MANAGED=$(ps -f --pid $pid --ppid $pid)
+	if [[ $? -eq 0 ]]; then
+	    echo "Sidekiq Process:"
+	    echo "$MANAGED"
+	else
+	    echo "PID file exists, but no managed sidekiq process found. Removing pid file"
+	    rm $pid_file
+	    let RETVAL++
+	fi
+	
+	CHILDREN=$(ps -f --ppid $pid)
+	if [[ $? -eq 0 ]]; then
+	    echo "Sidekiq Children:"
+	    echo "$CHILDREN"
+	fi
+	
+	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep -v $pid | grep sidekiq)
+	if [[ $? -eq 0 ]]; then
+	    echo "Found Unmanaged Processes!"
+	    echo "$UNMANAGED"
+	    let RETVAL+=10
+	fi;
     fi
-
-    UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep -v $pid | grep sidekiq)
-    if [[ $? -eq 0 ]]; then
-      echo "Found Unmanaged Processes!"
-      echo "$UNMANAGED"
-      let RETVAL+=10
-    fi;
-  fi
-  return $RETVAL
+    return $RETVAL
 }
 
 ### Start
