@@ -1,3 +1,23 @@
+class CustomFailure < Devise::FailureApp
+  protected
+  def http_auth_body
+    return i18n_message unless request_format
+    method = "to_#{request_format}"
+    if method == "to_xml"
+      {:errors => {:error => i18n_message}}.to_xml(:root => Rails.application.class.parent_name)
+    elsif {}.respond_to?(method)
+      {:error => i18n_message}.send(method)
+    else
+      i18n_message
+    end
+  end
+
+  def request_format
+    :json
+  end
+end
+
+
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
@@ -35,12 +55,12 @@ Devise.setup do |config|
   # Configure which authentication keys should be case-insensitive.
   # These keys will be downcased upon creating or modifying a user and when used
   # to authenticate or find a user. Default is :email.
-  config.case_insensitive_keys = [ :email ]
+  config.case_insensitive_keys = [:email]
 
   # Configure which authentication keys should have whitespace stripped.
   # These keys will have whitespace before and after removed upon creating or
   # modifying a user and when used to authenticate or find a user. Default is :email.
-  config.strip_whitespace_keys = [ :email ]
+  config.strip_whitespace_keys = [:email]
 
   # Tell if authentication through request.params is enabled. True by default.
   # It can be set to an array that will enable params authentication only for the
@@ -125,7 +145,7 @@ Devise.setup do |config|
   # The time you want to timeout the user session without activity. After this
   # time the user will be asked for credentials again. Default is 30 minutes.
   # config.timeout_in = 30.minutes
-  
+
   # If true, expires auth token on session timeout.
   # config.expire_auth_token_on_timeout = false
 
@@ -213,6 +233,7 @@ Devise.setup do |config|
   #
   config.warden do |manager|
     manager.default_strategies.unshift :http_auth_api
+    manager.failure_app = CustomFailure
   end
 
   # ==> Mountable engine configurations

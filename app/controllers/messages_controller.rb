@@ -8,6 +8,11 @@ class MessagesController < ApplicationController
     respond_with(@message)
   end
 
+  def new
+    @message = current_user.messages.build
+    render :show
+  end
+
   def show
     @message = current_user.messages.find_by_id(params[:id])
     respond_with(@message)
