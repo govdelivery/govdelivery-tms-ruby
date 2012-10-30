@@ -33,7 +33,7 @@ usage () {
     echo "  checkout         checkout the code"
     echo "  extract          extract the code"
     echo "  deploy           deploy the code"
-#    echo "  migrate-db-pre   perform the pre-release database migrations (migrate)"
+    echo "  migrate-db-pre   perform the pre-release database migrations (migrate)"
 #    echo "  migrate-db-post  perform the post-release database migrations (data_migrate)"
     echo "  purge-checkouts  purge old copies of checked out code"
     echo "  purge-extracts   purge old copies of extracted code"
@@ -58,9 +58,10 @@ while [ $# -gt 0 ]; do
 	    shift;
 	    ;;
 #	migrate-db-pre|migrate-db-post)
-#	    actions[${#actions[@]}]="$1"         ## push on end of actions
-#	    shift;
-#	    ;;
+	migrate-db-pre)
+	    actions[${#actions[@]}]="$1"         ## push on end of actions
+	    shift;
+	    ;;
 	purge-checkouts|purge-extracts)
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
