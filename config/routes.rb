@@ -9,4 +9,5 @@ Tsms::Application.routes.draw do
 
   root :to => 'services#index'
   get 'load_balancer' => 'load_balancer#show'
+  post 'twilio_requests' => 'twilio_requests#create'
 end

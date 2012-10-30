@@ -1,5 +1,5 @@
 class Vendor < ActiveRecord::Base
-  attr_accessible :name, :username, :password, :from, :worker
+  attr_accessible :name, :username, :password, :from, :worker, :help_text
 
   has_many :accounts
 
