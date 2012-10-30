@@ -8,7 +8,7 @@ CTRL_SERVER="prod-deploy1.visi.gdi"
 CTRL_SCRIPT="/var/repo/scripts/release/deployer.rb"
 CTRL_ARGS=""
 
-DEFAULT_ACTIONS="checkout extract deploy status purge-checkouts purge-extracts"
+DEFAULT_ACTIONS="checkout extract stop-sidekiq deploy start-sidekiq status purge-checkouts purge-extracts"
 
 usage () {
     echo "USAGE: $0 [options] [actions]"
@@ -53,8 +53,14 @@ while [ $# -gt 0 ]; do
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift
 	    ;;
-	checkout|extract|deploy)
+	checkout|extract)
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
+	    shift;
+	    ;;
+	deploy)
+	    actions[${#actions[@]}]="stop-sidekiq"   ## push on end of actions
+	    actions[${#actions[@]}]="$1"             ## push on end of actions
+	    actions[${#actions[@]}]="start-sidekiq"  ## push on end of actions
 	    shift;
 	    ;;
 #	migrate-db-pre|migrate-db-post)
