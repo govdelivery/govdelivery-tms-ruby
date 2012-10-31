@@ -11,8 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121030202046) do
 
+ActiveRecord::Schema.define(:version => 20121030202046) do
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.integer  "vendor_id"
@@ -44,6 +44,16 @@ ActiveRecord::Schema.define(:version => 20121030202046) do
   end
 
   add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id"
+
+  create_table "stop_requests", :force => true do |t|
+    t.integer  "vendor_id",    :null => false
+    t.string   "phone"
+    t.string   "country_code"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "stop_requests", ["vendor_id", "phone", "country_code"], :name => "index_stop_requests_on_vendor_id_and_phone_and_country_code"
 
   create_table "users", :force => true do |t|
     t.integer  "account_id"
