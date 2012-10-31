@@ -4,10 +4,11 @@ class TwilioRequestsController < ApplicationController
   respond_to :xml
 
   def create
+    @vendor.inbound_messages.create!(:from => params['From'], :body => params['Body'])
     @vendor.stop_requests.create!(:from => params['From']) if @twilio_request_response.stop?
     respond_with(@twilio_request_response)
   end
-  
+
   protected
   def find_vendor
     @vendor=Vendor.find_by_username!(params['AccountSid'])

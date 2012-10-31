@@ -11,17 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20121031152152) do
-=======
 ActiveRecord::Schema.define(:version => 20121031185404) do
->>>>>>> GOVD-3503 inbound messages
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
-    t.integer  "vendor_id",  :precision => 38, :scale => 0
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.integer  "vendor_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "inbound_messages", :force => true do |t|
@@ -33,28 +29,16 @@ ActiveRecord::Schema.define(:version => 20121031185404) do
   end
 
   create_table "messages", :force => true do |t|
-    t.integer  "user_id",      :precision => 38, :scale => 0
+    t.integer  "user_id"
     t.string   "short_body"
-    t.datetime "completed_at"
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
+    t.time     "completed_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "recipients", :force => true do |t|
-    t.integer  "message_id",                           :precision => 38, :scale => 0
+    t.integer  "message_id"
     t.string   "phone"
-<<<<<<< HEAD
-    t.string   "country_code",                                                        :default => "1"
-    t.string   "provided_phone"
-    t.string   "provided_country_code"
-    t.string   "ack"
-    t.integer  "status",                               :precision => 38, :scale => 0, :default => 1
-    t.string   "error_message",         :limit => 512
-    t.datetime "sent_at"
-    t.datetime "completed_at"
-    t.datetime "created_at",                                                                           :null => false
-    t.datetime "updated_at",                                                                           :null => false
-=======
     t.string   "country_code"
     t.string   "provided_phone"
     t.string   "provided_country_code"
@@ -65,26 +49,25 @@ ActiveRecord::Schema.define(:version => 20121031185404) do
     t.time     "completed_at"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
->>>>>>> GOVD-3503 inbound messages
   end
 
   add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id"
 
   create_table "stop_requests", :force => true do |t|
-    t.integer  "vendor_id",  :precision => 38, :scale => 0, :null => false
+    t.integer  "vendor_id",  :null => false
     t.string   "from"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
-  add_index "stop_requests", ["vendor_id", "from"], :name => "i_stop_requests_vendor_id_from"
+  add_index "stop_requests", ["vendor_id", "from"], :name => "index_stop_requests_on_vendor_id_and_from"
 
   create_table "users", :force => true do |t|
-    t.integer  "account_id",         :precision => 38, :scale => 0
+    t.integer  "account_id"
     t.string   "email"
     t.string   "encrypted_password"
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
@@ -97,7 +80,7 @@ ActiveRecord::Schema.define(:version => 20121031185404) do
     t.string   "worker",                                                             :null => false
     t.datetime "created_at",                                                         :null => false
     t.datetime "updated_at",                                                         :null => false
-    t.string   "help_text",  :default => "Go to http://bit.ly/govdhelp for help",    :null => false
+    t.string   "help_text",  :default => "Go to http://bit.ly/govdhelp for help"
     t.string   "stop_text",  :default => "You will no longer receive SMS messages.", :null => false
   end
 

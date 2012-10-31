@@ -16,6 +16,7 @@ describe TwilioRequestsController do
   
   context "#create with garbage" do
     before do
+      Vendor.any_instance.expects(:inbound_messages).returns(mock('inbound_messages', :'create!' => true))
       post :create, twilio_request_params('come to pazzaluna after work')
     end
     it "should respond with accepted" do
