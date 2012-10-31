@@ -1,10 +1,14 @@
 class Vendor < ActiveRecord::Base
-  attr_accessible :name, :username, :password, :from, :worker, :help_text
+  attr_accessible :name, :username, :password, :from, :worker, :help_text, :stop_text
+  
+  DEFAULT_HELP_TEXT = "Go to http://bit.ly/govdhelp for help"
+  DEFAULT_STOP_TEXT = "You will no longer receive SMS messages."
 
   has_many :accounts
-
-  validates_presence_of [:name, :username, :password, :from, :worker, :help_text]
+  has_many :stop_requests
+  
+  validates_presence_of [:name, :username, :password, :from, :worker, :help_text, :stop_text]
   validates_uniqueness_of :name
   validates_length_of [:name, :username, :password, :from, :worker], :maximum => 256
-  validates_length_of [:help_text], :maximum => 160
+  validates_length_of [:help_text, :stop_text], :maximum => 160
 end

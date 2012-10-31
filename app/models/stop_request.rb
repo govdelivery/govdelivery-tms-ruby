@@ -1,9 +1,7 @@
 class StopRequest < ActiveRecord::Base
-  attr_accessible :phone, :country_code, :vendor
+  attr_accessible :from, :vendor
   belongs_to :vendor
-  validates_presence_of :phone, :country_code, :vendor
-  validates_length_of :phone, :maximum => 255
-  validates_length_of :country_code, :maximum => 4
-  validates_numericality_of :phone, :country_code, :only_integer => true
+  validates_presence_of :from, :vendor
+  validates_length_of :from, :maximum => 255
 
 end

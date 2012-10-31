@@ -8,7 +8,7 @@ describe Vendor do
     specify { @vendor.valid?.should == true }
   end
   
-  [:name, :username, :password, :from, :help_text].each do |field|
+  [:name, :username, :password, :from, :help_text, :stop_text].each do |field|
     context "when #{field} is empty" do
       before { @vendor.send("#{field}=", nil) }
       specify { @vendor.valid?.should == false }
@@ -22,7 +22,7 @@ describe Vendor do
     end
   end
 
-  [:help_text].each do |field|
+  [:help_text, :stop_text].each do |field|
     context "when #{field} is too long" do
       before { @vendor.send("#{field}=", "W"*161) }
       specify { @vendor.valid?.should == false }

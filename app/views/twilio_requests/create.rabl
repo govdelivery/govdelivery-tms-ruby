@@ -1,2 +1,2 @@
-object @vendor => :response
-attribute :help_text => :sms
+object @twilio_request_response => :response
+attribute :response_text => :sms

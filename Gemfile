@@ -30,18 +30,20 @@ gem 'twilio-ruby'
 gem 'rabl'
 gem 'kaminari'
 
-group :test do
-  gem 'mocha', :require=>false
-end
-
-group :development, :test do
-  gem 'rspec-rails'
-  gem 'guard-rspec'
-  gem 'sqlite3'
-end
-
 gem 'ruby-oci8'
 gem 'activerecord-oracle_enhanced-adapter'
 
 gem 'log4r'
 gem 'devise'
+
+group :test do
+  gem 'mocha', :require=>false
+end
+
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'guard-rspec'
+  gem 'sqlite3'
+  gem 'pry'
+end
