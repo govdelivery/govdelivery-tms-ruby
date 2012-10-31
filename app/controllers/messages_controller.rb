@@ -29,20 +29,6 @@ class MessagesController < ApplicationController
   end
 
   private
-  def set_link_header(scope)
-    links = {}
-    unless scope.first_page?
-      links[:first] =  page_link(1)
-      links[:prev] =  page_link(scope.current_page-1)
-    end
-    unless scope.last_page?
-      links[:next] = page_link(scope.current_page + 1)
-      links[:last] = page_link(scope.total_pages)
-    end
-
-    # set first, prev, next, last
-    response.headers['Link'] = links.collect{|k,v| %Q|<#{v}>; rel="#{k}",|}.join("")
-  end
 
   def page_link(page)
     if page==1
@@ -50,10 +36,6 @@ class MessagesController < ApplicationController
     else
       paged_messages_path(page)
     end
-  end
-
-  def set_page
-    @page = params[:page] || 1
   end
 
 end

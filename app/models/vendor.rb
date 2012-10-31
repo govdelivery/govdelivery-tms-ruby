@@ -6,8 +6,10 @@ class Vendor < ActiveRecord::Base
 
   has_many :accounts
   has_many :stop_requests
+  has_many :inbound_messages, :include => :vendor
   
   validates_presence_of [:name, :username, :password, :from, :worker, :help_text, :stop_text]
+
   validates_uniqueness_of :name
   validates_length_of [:name, :username, :password, :from, :worker], :maximum => 256
   validates_length_of [:help_text, :stop_text], :maximum => 160
