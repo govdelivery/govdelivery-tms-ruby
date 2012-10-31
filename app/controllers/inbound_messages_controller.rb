@@ -10,7 +10,7 @@ class InboundMessagesController < ApplicationController
 
   # GET /inbound_messages/1
   def show
-    @messages = current_user.account.vendor.inbound_messages.find(params[:id])
+    @message = current_user.account.vendor.inbound_messages.find(params[:id])
   end
 
   protected
