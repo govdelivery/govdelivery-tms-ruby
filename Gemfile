@@ -30,8 +30,11 @@ gem 'twilio-ruby'
 gem 'rabl'
 gem 'kaminari'
 
-gem 'ruby-oci8'
-gem 'activerecord-oracle_enhanced-adapter'
+group 'oracle' do
+  gem 'ruby-oci8'
+  gem 'activerecord-oracle_enhanced-adapter'
+end
+
 
 gem 'log4r'
 gem 'devise'
