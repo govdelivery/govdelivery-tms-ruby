@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(:version => 20121030202046) do
   create_table "recipients", :force => true do |t|
     t.integer  "message_id"
     t.string   "phone"
-    t.string   "country_code"
+    t.string   "country_code",                         :default => "1"
     t.string   "provided_phone"
     t.string   "provided_country_code"
     t.string   "ack"
@@ -39,8 +39,8 @@ ActiveRecord::Schema.define(:version => 20121030202046) do
     t.string   "error_message",         :limit => 512
     t.time     "sent_at"
     t.time     "completed_at"
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
   end
 
   add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id"
