@@ -35,6 +35,7 @@ describe MessagesController do
       Message.any_instance.stubs(:new_record?).returns(true)
       do_create
     end
+    
     it "should be unprocessable_entity" do
       response.response_code.should == 422
     end

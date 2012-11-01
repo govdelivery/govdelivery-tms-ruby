@@ -29,20 +29,15 @@ gem 'sidekiq'
 gem 'twilio-ruby'
 gem 'rabl'
 gem 'kaminari'
-
-group 'oracle' do
-  gem 'ruby-oci8'
-  gem 'activerecord-oracle_enhanced-adapter'
-end
-
-
 gem 'log4r'
 gem 'devise'
+gem 'phony'
+gem 'phony_rails' 
+
 
 group :test do
   gem 'mocha', :require=>false
 end
-
 
 group :development, :test do
   gem 'rspec-rails'
@@ -50,3 +45,6 @@ group :development, :test do
   gem 'sqlite3'
   gem 'pry'
 end
+
+gem 'ruby-oci8'
+gem 'activerecord-oracle_enhanced-adapter'

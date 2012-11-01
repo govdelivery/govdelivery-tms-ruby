@@ -35,6 +35,9 @@ describe TwilioRequestsController do
   
   context "#create with STOP" do
     before do
+      srs = mock()
+      srs.expects(:create!).with(:from => '+15551112222')
+      Vendor.any_instance.expects(:stop_requests).returns(srs)
       post :create, twilio_request_params(' sToP')
     end
     it "should respond with accepted" do

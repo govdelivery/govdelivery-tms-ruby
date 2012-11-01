@@ -7,7 +7,8 @@ class Vendor < ActiveRecord::Base
   has_many :accounts
   has_many :stop_requests
   has_many :inbound_messages, :include => :vendor
-  
+  has_many :recipients
+    
   validates_presence_of [:name, :username, :password, :from, :worker, :help_text, :stop_text]
 
   validates_uniqueness_of :name
