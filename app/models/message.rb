@@ -13,4 +13,10 @@ class Message < ActiveRecord::Base
   validates_length_of :short_body, :maximum => 160
 
   delegate :vendor, :to => :user
+
+  def create_recipients(recipient_params=[])
+    recipients << recipient_params.map do |r| 
+      recipient = recipients.create(r.merge(:vendor => self.vendor))
+    end
+  end
 end

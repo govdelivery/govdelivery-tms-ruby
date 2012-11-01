@@ -22,14 +22,14 @@ class MessagesController < ApplicationController
     recipients = params[:message].delete(:recipients) if params[:message]
     @message = current_user.messages.new(params[:message])
     if @message.save
-      recipients.each { |recipient| @message.recipients.create(recipient) } if recipients
+      @message.create_recipients(recipients) unless recipients.nil?
       current_user.vendor.worker.constantize.send(:perform_async, @message.id)
     end
     respond_with(@message)
   end
 
   private
-
+ 
   def page_link(page)
     if page==1
       messages_path

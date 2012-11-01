@@ -40,4 +40,18 @@ describe Message do
     before { @message = @user.messages.build(:short_body => "A"*160, :recipients_attributes => [{:phone => nil, :vendor => vendor}]) }
     it { should_not be_valid }
   end
+
+  context "create_recipients" do
+    before { @message.save }
+      
+    context "with invalid recipient" do
+      before {@message.create_recipients([{:phone => nil}])}
+      specify { @message.recipients.first.should_not be_valid }
+    end
+
+    context "with valid recipient" do
+      before { @message.create_recipients([{:phone => "6093433422"}])}
+      specify { @message.recipients.first.should be_valid }
+    end
+  end
 end
