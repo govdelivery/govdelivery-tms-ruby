@@ -13,12 +13,15 @@ class Recipient < ActiveRecord::Base
     STATUS_SENDING = 2
     STATUS_SENT = 3
     STATUS_FAILED = 4
+    STATUS_BLACKLISTED = 5
   end
   
   belongs_to :message
   belongs_to :vendor
   
   scope :incomplete,  lambda { where(:sent_at => nil) }
+  scope :not_blacklisted, lambda{ joins("left outer join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone").where("stop_requests.phone is null").readonly(false) }
+  scope :blacklisted, lambda { joins("inner join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone").readonly(false) }
 
   # If the number is plausible, format it and copy it into the phone field. 
   phony_normalize :phone, :as => :formatted_phone, :default_country_code => 'US' 

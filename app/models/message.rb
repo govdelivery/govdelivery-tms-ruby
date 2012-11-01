@@ -19,4 +19,14 @@ class Message < ActiveRecord::Base
       recipient = recipients.create(r.merge(:vendor => self.vendor))
     end
   end
+
+  def process_blacklist!
+    recipients.incomplete.blacklisted.find_each do |recipient|
+      logger.debug("Marking recipient as BLACKLISTED")
+      recipient.status = Recipient::STATUS_BLACKLISTED
+      recipient.completed_at = Time.now
+      recipient.sent_at = Time.now
+      recipient.save!
+    end
+  end
 end

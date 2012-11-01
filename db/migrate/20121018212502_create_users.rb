@@ -4,6 +4,7 @@ class CreateUsers < ActiveRecord::Migration
       t.references :account, :null => :false
       t.string :email, :null => :false
       t.string :encrypted_password, :null => :false
+      t.boolean :admin, :default => false
       t.timestamps
     end
 

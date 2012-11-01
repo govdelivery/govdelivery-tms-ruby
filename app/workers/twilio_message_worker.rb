@@ -12,7 +12,8 @@ class TwilioMessageWorker
 
       account = client.account
     
-      message.recipients.incomplete.each do |recipient|
+      message.process_blacklist!
+      message.recipients.incomplete.not_blacklisted.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         begin
           twilio_response = account.sms.messages.create({:from => message.vendor.from, :to => "+#{recipient.country_code}#{recipient.phone}", :body => message.short_body})

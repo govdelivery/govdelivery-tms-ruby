@@ -33,7 +33,8 @@ gem 'log4r'
 gem 'devise'
 gem 'phony'
 gem 'phony_rails' 
-
+gem 'slim'
+gem 'sinatra', :require => nil
 
 group :test do
   gem 'mocha', :require=>false

@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(:version => 20121031185404) do
 
   create_table "inbound_messages", :force => true do |t|
     t.integer  "vendor_id",                 :precision => 38, :scale => 0
-    t.string   "from",       :limit => 75
+    t.string   "from_phone"
     t.string   "body",       :limit => 300
     t.datetime "created_at",                                               :null => false
     t.datetime "updated_at",                                               :null => false
@@ -54,19 +54,20 @@ ActiveRecord::Schema.define(:version => 20121031185404) do
 
   create_table "stop_requests", :force => true do |t|
     t.integer  "vendor_id",  :precision => 38, :scale => 0, :null => false
-    t.string   "from"
+    t.string   "phone"
     t.datetime "created_at",                                :null => false
     t.datetime "updated_at",                                :null => false
   end
 
-  add_index "stop_requests", ["vendor_id", "from"], :name => "i_stop_requests_vendor_id_from", :tablespace => "tsms_indx01"
+  add_index "stop_requests", ["vendor_id", "phone"], :name => "i_sto_req_ven_id_pho", :tablespace => "tsms_indx01"
 
   create_table "users", :force => true do |t|
     t.integer  "account_id",         :precision => 38, :scale => 0
     t.string   "email"
     t.string   "encrypted_password"
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.boolean  "admin",              :precision => 1,  :scale => 0, :default => false
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true, :tablespace => "tsms_indx01"

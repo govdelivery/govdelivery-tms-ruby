@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe StopRequest do
   let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
-  let(:stop_request) { StopRequest.new(:from => "+16666666666", :vendor => vendor) }
+  let(:stop_request) { StopRequest.new(:phone => "+16666666666", :vendor => vendor) }
   
-  [[:from, 255]].each do |field, length|
+  [[:phone, 255]].each do |field, length|
     context "when #{field} is empty" do
       before { stop_request.send("#{field}=", nil) }
       specify { stop_request.valid?.should == false }

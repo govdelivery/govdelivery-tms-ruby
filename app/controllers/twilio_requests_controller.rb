@@ -5,7 +5,7 @@ class TwilioRequestsController < ApplicationController
 
   def create
     @vendor.inbound_messages.create!(:from => params['From'], :body => params['Body'])
-    @vendor.stop_requests.create!(:from => params['From']) if @twilio_request_response.stop?
+    @vendor.stop_requests.create!(:phone => params['From']) if @twilio_request_response.stop?
     respond_with(@twilio_request_response)
   end
 
