@@ -2,11 +2,6 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe TwilioRequestsController do
   let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :help_text => 'Help me!') }
-  let(:account) { vendor.accounts.create(:name => 'name') }
-  let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  before do
-    sign_in user
-  end
 
   it "should error when calling #create with an incorrect AccountSid" do
     lambda {

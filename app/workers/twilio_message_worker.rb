@@ -11,12 +11,16 @@ class TwilioMessageWorker
       client = Twilio::REST::Client.new(message.vendor.username, message.vendor.password)
 
       account = client.account
-    
+
       message.process_blacklist!
       message.recipients.incomplete.not_blacklisted.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         begin
-          twilio_response = account.sms.messages.create({:from => message.vendor.from, :to => "+#{recipient.country_code}#{recipient.phone}", :body => message.short_body})
+          twilio_response = account.sms.messages.create({
+              :from => message.vendor.from,
+              :to => "#{recipient.formatted_phone}",
+              :body => message.short_body
+            })
           logger.info("Response from Twilio was #{twilio_response.inspect}")
           recipient.ack = twilio_response.sid
           recipient.status = case twilio_response.status

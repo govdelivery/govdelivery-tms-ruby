@@ -15,62 +15,62 @@ ActiveRecord::Schema.define(:version => 20121031185404) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
-    t.integer  "vendor_id",  :precision => 38, :scale => 0
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.integer  "vendor_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "inbound_messages", :force => true do |t|
-    t.integer  "vendor_id",                 :precision => 38, :scale => 0
+    t.integer  "vendor_id"
     t.string   "from_phone"
     t.string   "body",       :limit => 300
-    t.datetime "created_at",                                               :null => false
-    t.datetime "updated_at",                                               :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
   end
 
   create_table "messages", :force => true do |t|
-    t.integer  "user_id",      :precision => 38, :scale => 0
+    t.integer  "user_id"
     t.string   "short_body"
-    t.datetime "completed_at"
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
+    t.time     "completed_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "recipients", :force => true do |t|
-    t.integer  "message_id",                     :precision => 38, :scale => 0
-    t.integer  "vendor_id",                      :precision => 38, :scale => 0
+    t.integer  "message_id"
+    t.integer  "vendor_id"
     t.string   "phone"
     t.string   "formatted_phone"
     t.string   "ack"
-    t.integer  "status",                         :precision => 38, :scale => 0, :default => 1
+    t.integer  "status",                         :default => 1
     t.string   "error_message",   :limit => 512
-    t.datetime "sent_at"
-    t.datetime "completed_at"
-    t.datetime "created_at",                                                                   :null => false
-    t.datetime "updated_at",                                                                   :null => false
+    t.time     "sent_at"
+    t.time     "completed_at"
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
   end
 
-  add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id", :tablespace => "tsms_indx01"
+  add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id"
 
   create_table "stop_requests", :force => true do |t|
-    t.integer  "vendor_id",  :precision => 38, :scale => 0, :null => false
+    t.integer  "vendor_id",  :null => false
     t.string   "phone"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
-  add_index "stop_requests", ["vendor_id", "phone"], :name => "i_sto_req_ven_id_pho", :tablespace => "tsms_indx01"
+  add_index "stop_requests", ["vendor_id", "phone"], :name => "index_stop_requests_on_vendor_id_and_phone"
 
   create_table "users", :force => true do |t|
-    t.integer  "account_id",         :precision => 38, :scale => 0
+    t.integer  "account_id"
     t.string   "email"
     t.string   "encrypted_password"
-    t.boolean  "admin",              :precision => 1,  :scale => 0, :default => false
-    t.datetime "created_at",                                                           :null => false
-    t.datetime "updated_at",                                                           :null => false
+    t.boolean  "admin",              :default => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
   end
 
-  add_index "users", ["email"], :name => "index_users_on_email", :unique => true, :tablespace => "tsms_indx01"
+  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
 
   create_table "vendors", :force => true do |t|
     t.string   "name"
