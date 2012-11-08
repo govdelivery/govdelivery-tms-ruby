@@ -23,7 +23,7 @@ class MessagesController < ApplicationController
     @message = current_user.messages.new(params[:message])
     if @message.save
       @message.create_recipients(recipients) unless recipients.nil?
-      current_user.vendor.worker.constantize.send(:perform_async, @message.id)
+      current_user.vendor.worker.constantize.send(:perform_async, {:message_id => @message.id, :callback_url => twilio_status_callbacks_url(:format => :xml)})
     end
     respond_with(@message)
   end

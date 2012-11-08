@@ -2,8 +2,9 @@ class LoopbackMessageWorker
   include Sidekiq::Worker
   sidekiq_options retry: false
   
-  def perform(message_id)
-    logger.info("Send initiated for message=#{message_id}")
+  def perform(options)
+    message_id = options['message_id']
+    logger.info("Send initiated for message_id=#{message_id}")
 
     if message = Message.find_by_id(message_id)
       message.process_blacklist!
