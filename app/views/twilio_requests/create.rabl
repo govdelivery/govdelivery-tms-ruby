@@ -1,2 +1,2 @@
-object @twilio_request_response => :response
-attribute :response_text => :sms
+object @twilio_request_response => 'Response'
+attribute :response_text => 'Sms'
