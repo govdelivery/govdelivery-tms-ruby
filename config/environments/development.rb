@@ -38,4 +38,9 @@ Tsms::Application.configure do
   config.twilio_username = 'ACcc41a7e742457806f26d91a1ea19de9f'
   config.twilio_password = '331b3a44b5067a3c02013a6cfaa18b1c'
   config.twilio_number = '(651) 433-6311'
+  
+  # Used to determine whether to send the callback_url parameter when sending
+  # a SMS Message.  We don't want to send a callback_url parameter when the application
+  # is not accessible from the internet.
+  config.public_callback = false
 end
