@@ -1,3 +1,6 @@
+# Set this before connecting to the database
+ENV['NLS_LANG'] = 'american_america.AL32UTF8'
+
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
