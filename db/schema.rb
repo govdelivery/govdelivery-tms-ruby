@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121031185404) do
+ActiveRecord::Schema.define(:version => 20121108193922) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(:version => 20121031185404) do
     t.datetime "updated_at",                                    :null => false
   end
 
+  add_index "recipients", ["ack"], :name => "index_recipients_on_ack"
   add_index "recipients", ["message_id"], :name => "index_recipients_on_message_id"
 
   create_table "stop_requests", :force => true do |t|
