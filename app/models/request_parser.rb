@@ -9,7 +9,11 @@ class RequestParser
 
   def parse!
     @vendor.inbound_messages.create!(:from => from, :body => request_text)
-    @vendor.stop_requests.create!(:phone => from) if stop?
+    
+    if(stop?)
+      @vendor.stop!(from)
+    end
+
     self
   end
 

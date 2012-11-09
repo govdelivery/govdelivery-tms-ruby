@@ -20,4 +20,9 @@ describe Account do
     before { @account.name = "W"*257 }
     specify { @account.valid?.should == false }
   end
+
+  context "when created" do
+    before { @account.save! }
+    specify { @account.stop_keyword.should_not be_nil }
+  end
 end

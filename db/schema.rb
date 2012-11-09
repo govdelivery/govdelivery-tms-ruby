@@ -11,13 +11,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121108193922) do
+ActiveRecord::Schema.define(:version => 20121109203030) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.integer  "vendor_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "actions", :force => true do |t|
+    t.integer  "account_id",                  :null => false
+    t.integer  "keyword_id",                  :null => false
+    t.integer  "action_type",                 :null => false
+    t.string   "name"
+    t.string   "params",      :limit => 4000
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
   end
 
   create_table "inbound_messages", :force => true do |t|
@@ -27,6 +37,16 @@ ActiveRecord::Schema.define(:version => 20121108193922) do
     t.datetime "created_at",                :null => false
     t.datetime "updated_at",                :null => false
   end
+
+  create_table "keywords", :force => true do |t|
+    t.integer  "account_id"
+    t.boolean  "stop",                      :default => false
+    t.string   "name",       :limit => 160,                    :null => false
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+  end
+
+  add_index "keywords", ["account_id", "name"], :name => "index_keywords_on_account_id_and_name", :unique => true
 
   create_table "messages", :force => true do |t|
     t.integer  "user_id"
