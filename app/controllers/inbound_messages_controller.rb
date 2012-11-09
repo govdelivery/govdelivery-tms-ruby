@@ -17,9 +17,9 @@ class InboundMessagesController < ApplicationController
 
   def page_link(page)
     if page==1
-      messages_path
+      inbound_messages_path
     else
-      paged_messages_path(page)
+      paged_inbound_messages_path(page)
     end
   end
 end
