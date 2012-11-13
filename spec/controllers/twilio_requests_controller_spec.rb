@@ -30,10 +30,13 @@ describe TwilioRequestsController do
   
   context "#create with STOP" do
     before do
-      srs = mock()
-      srs.expects(:create!).with(:phone => '+15551112222')
-      Vendor.any_instance.expects(:stop_requests).returns(srs)
-      post :create, twilio_request_params(' sToP')
+      body = ' sToP'
+      Vendor.expects(:find_by_username!).with(vendor.username).returns(vendor)
+      mock_parser = mock(:parse! => true)
+      RequestParser.expects(:new).with(vendor, body, '+15551112222').returns(mock_parser)
+      mock_response = mock(:new_record? => false)
+      View::TwilioRequestResponse.expects(:new).returns(mock_response)
+      post :create, twilio_request_params(body)
     end
     it "should respond with accepted" do
       response.response_code.should == 201

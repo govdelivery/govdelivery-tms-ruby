@@ -22,6 +22,7 @@ loopback = Vendor.create(:name => 'Loopback Sender',
 #
 if Rails.env == 'development'
   acme = Account.create!(:vendor => loopback, :name => "ACME")
+  acme.stop_keyword.actions.create!(:params => "ACME", :action_type => 1, :account => acme)
   user = User.new(:email => "product@govdelivery.com", :password => "retek01!")
   user.account = acme
   user.admin = true

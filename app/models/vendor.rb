@@ -17,7 +17,8 @@ class Vendor < ActiveRecord::Base
   validates_length_of [:help_text, :stop_text], :maximum => 160
 
   def stop!(from)
-    stop_requests.create!(:phone => from) # we need to maintain a blacklist at the vendor (i.e. short-code) level
+    stop_request = stop_requests.find_or_create_by_phone(from) # we need to maintain a blacklist at the vendor (i.e. short-code) level
+    stop_request.save!
     accounts.each {|a| a.stop(from)}      # ...and we need to execute account-specific stop actions
   end
 end

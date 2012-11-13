@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Action do
   let(:vendor) { Vendor.new }
-  let(:account) { Account.create!(:name => 'name', :vendor => vendor) }
+  let(:account) { create_account(vendor: vendor) }
   let(:keyword) { account.stop_keyword }
   let(:action) { Action.new(:keyword => keyword, :account => account, :name => "FOO", :action_type => 1, :params => "PARAMETER OMG") }
 
@@ -31,5 +31,13 @@ describe Action do
 
   context "action_type" do
     specify { subject.action_type_instance.should be_a(Action::ACTION_TYPES[1]) }
+  end
+
+  context "execute" do
+    before do
+      expected = {:params => "PARAMETER OMG", :from => "+122222"}
+      Action::ACTION_TYPES[1].any_instance.expects(:execute).with(expected)
+    end
+    specify { subject.execute(:from => "+122222") }
   end
 end

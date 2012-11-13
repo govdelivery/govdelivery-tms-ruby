@@ -1,6 +1,6 @@
 class Action < ActiveRecord::Base
   ACTION_TYPES = {
-    1 => ActionType::DCMUnsubscribe
+    1 => ActionType::DcmUnsubscribe
   }
 
   belongs_to :account

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121109203030) do
+ActiveRecord::Schema.define(:version => 20121112161915) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -80,7 +80,7 @@ ActiveRecord::Schema.define(:version => 20121109203030) do
     t.datetime "updated_at", :null => false
   end
 
-  add_index "stop_requests", ["vendor_id", "phone"], :name => "index_stop_requests_on_vendor_id_and_phone"
+  add_index "stop_requests", ["vendor_id", "phone"], :name => "index_stop_requests_on_vendor_id_and_phone", :unique => true
 
   create_table "users", :force => true do |t|
     t.integer  "account_id"

@@ -25,4 +25,14 @@ describe Account do
     before { @account.save! }
     specify { @account.stop_keyword.should_not be_nil }
   end
+
+  context "calling stop" do
+    before do
+      @account.save! # a callback will generate the stop keyword
+      @from = "123123123"
+      Keyword.any_instance.expects(:execute_actions).with(:from => @from)
+      @account.stop(@from)
+    end
+    specify { true }
+  end
 end
