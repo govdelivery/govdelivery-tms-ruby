@@ -22,12 +22,8 @@ class Recipient < ActiveRecord::Base
   scope :incomplete,  lambda { where(:sent_at => nil) }
   scope :not_blacklisted, lambda{ joins("left outer join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone").where("stop_requests.phone is null").readonly(false) }
   scope :blacklisted, lambda { joins("inner join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone").readonly(false) }
-
-  # If the number is plausible, format it and copy it into the phone field. 
-  phony_normalize :phone, :as => :formatted_phone, :default_country_code => 'US' 
  
   before_validation :truncate_error_message
-  before_save :format_phone
 
   validates_length_of :ack, :maximum => 256
   validates_length_of :phone, :maximum => 256
@@ -35,12 +31,12 @@ class Recipient < ActiveRecord::Base
   validates_presence_of :phone, :vendor
   validates_uniqueness_of :phone, :scope => "message_id", :message => "has already been associated with this message" 
 
-  private  
-  
-  # Essentially, this adds a "+" in front of the number to force it into E.164 format
-  def format_phone
-    self.formatted_phone = Phony.formatted(self.formatted_phone, :spaces => '') unless self.formatted_phone.nil? 
+  def phone=(str)
+    super
+    self.formatted_phone = PhoneNumber.new(str).e164 unless str.nil?
   end
+
+  private  
 
   def truncate_error_message
     self.error_message.truncate(512) if self.error_message
