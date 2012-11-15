@@ -14,8 +14,8 @@
 ActiveRecord::Schema.define(:version => 20121112161915) do
 
   create_table "accounts", :force => true do |t|
-    t.string   "name"
-    t.integer  "vendor_id"
+    t.string   "name",       :null => false
+    t.integer  "vendor_id",  :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
@@ -49,20 +49,20 @@ ActiveRecord::Schema.define(:version => 20121112161915) do
   add_index "keywords", ["account_id", "name"], :name => "index_keywords_on_account_id_and_name", :unique => true
 
   create_table "messages", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "short_body"
+    t.integer  "user_id",      :null => false
+    t.string   "short_body",   :null => false
     t.time     "completed_at"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
 
   create_table "recipients", :force => true do |t|
-    t.integer  "message_id"
-    t.integer  "vendor_id"
+    t.integer  "message_id",                                    :null => false
+    t.integer  "vendor_id",                                     :null => false
     t.string   "phone"
     t.string   "formatted_phone"
     t.string   "ack"
-    t.integer  "status",                         :default => 1
+    t.integer  "status",                         :default => 1, :null => false
     t.string   "error_message",   :limit => 512
     t.time     "sent_at"
     t.time     "completed_at"
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(:version => 20121112161915) do
 
   create_table "stop_requests", :force => true do |t|
     t.integer  "vendor_id",  :null => false
-    t.string   "phone"
+    t.string   "phone",      :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
@@ -83,9 +83,9 @@ ActiveRecord::Schema.define(:version => 20121112161915) do
   add_index "stop_requests", ["vendor_id", "phone"], :name => "index_stop_requests_on_vendor_id_and_phone", :unique => true
 
   create_table "users", :force => true do |t|
-    t.integer  "account_id"
-    t.string   "email"
-    t.string   "encrypted_password"
+    t.integer  "account_id",                            :null => false
+    t.string   "email",                                 :null => false
+    t.string   "encrypted_password",                    :null => false
     t.boolean  "admin",              :default => false
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
@@ -94,10 +94,10 @@ ActiveRecord::Schema.define(:version => 20121112161915) do
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
 
   create_table "vendors", :force => true do |t|
-    t.string   "name"
-    t.string   "username"
-    t.string   "password"
-    t.string   "from"
+    t.string   "name",                                                               :null => false
+    t.string   "username",                                                           :null => false
+    t.string   "password",                                                           :null => false
+    t.string   "from",                                                               :null => false
     t.string   "worker",                                                             :null => false
     t.datetime "created_at",                                                         :null => false
     t.datetime "updated_at",                                                         :null => false
