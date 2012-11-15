@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Keyword do
-  let(:vendor) { Vendor.new }
+  let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
   let(:account) { Account.create!(:name => 'name', :vendor => vendor) }
   let(:keyword) { Keyword.new(:name => "HELPME", :account => account) }
   

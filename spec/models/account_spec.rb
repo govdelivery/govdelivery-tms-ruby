@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Account do
   before do
-    vendor = Vendor.new
+    vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     @account = Account.new(:name => 'name', :vendor => vendor)
   end
   subject { @account }

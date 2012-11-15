@@ -1,53 +1,50 @@
 require 'spec_helper'
 
 describe Recipient do
-  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
+  subject {
+    v = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
+    m = Message.new(:short_body => 'short body')
+    a = Account.create(:name => 'account', :vendor => v)
+    u = User.create(:email => 'admin@get-endorsed-by-bens-mom.com', :password => 'retek01!')
+    u.account = a
+    m.user = u
+    r = Recipient.new
+    r.message = m
+    r.vendor = v
+    r
+  }
 
-  before { @recipient = Recipient.new ; @recipient.message = Message.new; @recipient.vendor = vendor }
-  subject { @recipient }
+  its(:phone) { should be_nil }
+  it { should_not be_valid } # validates_presence_of :phone
 
-  context "when phone is empty" do
-    before { @recipient.phone = nil }
-    specify { @recipient.valid?.should == false }
-  end
-
-  context "when phone is not a number" do
-    before { @recipient.phone = 'invalid'; @recipient.save! }
-    specify { @recipient.valid?.should == true }
-    specify { @recipient.formatted_phone.should == nil }
+  describe "when phone is not a number" do
+    before do
+      subject.phone = 'invalid'
+      subject.save!
+    end
+    it { should be_valid }
+    its(:formatted_phone) { should be_nil }
   end
   
-  context "when phone contains local formatting" do
-    before { @recipient.phone = '(651) 555-1212 ' }
-    specify { @recipient.valid?.should == true }
 
-    context "and a country code" do
-      before { @recipient.phone = "1 " + @recipient.phone ; @recipient.save! }
-      specify { @recipient.formatted_phone.should == '+16515551212' }
+  describe "when phone is valid" do
+    before do
+      subject.phone = '6515551212'
     end
-
-    context "will format phone to E.264" do
-      before { @recipient.save! }
-      specify { @recipient.formatted_phone.should == '+16515551212' }
-    end
-
-    context "will not strip local formatting from provided phone" do
-      before { @recipient.save! }
-      specify { @recipient.phone.should == '(651) 555-1212 ' }
-    end
-  end
-
-  context "when phone is valid" do
-    before { @recipient.phone = '6515551212' }
     
-    context "and ack is too long" do
-      before { @recipient.ack = 'A'*257 }
-      specify { @recipient.valid?.should == false }
+    it 'should persist formatted_phone if phone number is valid' do
+      subject.save!
+      subject.formatted_phone.should_not be_nil
     end
 
-    context "and error message is too long" do
-      before { @recipient.error_message = 'A'*513 }
-      specify { @recipient.valid?.should == true }
+    describe "and ack is too long" do
+      before { subject.ack = 'A'*257 }
+      it { should_not be_valid }
+    end
+
+    describe "and error message is too long" do
+      before { subject.error_message = 'A'*513 }
+      it { should be_valid }
     end
   end
 end

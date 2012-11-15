@@ -1,24 +1,23 @@
-class PhoneNumber
-  attr_accessor :number
+require 'active_record' # required by phony_rails
+require 'phony_rails'
 
-  def initialize(str)
-    self.number = str
-  end
-
-  def number=(str)
-    @number = PhonyRails.normalize_number(str, :default_country_code => 'US')
-  end
-
+PhoneNumber = Struct.new(:number) do
   # 1 (444) 333-2222 => +14443332222
   def e164
-    number && Phony.formatted(number, :spaces => '')
+    formatted && Phony.formatted(formatted, :spaces => '')
   end
 
   # 1 (444) 333-2222 => 1+4443332222
   def dcm
-    if number
-      country_code, *rest = Phony.split(self.number)
+    if formatted
+      country_code, *rest = Phony.split(formatted)
       "#{country_code}+#{rest.join}"
     end
+  end
+
+  private
+
+  def formatted
+    PhonyRails.normalize_number(number, :default_country_code => 'US')
   end
 end

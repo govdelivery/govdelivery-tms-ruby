@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Action do
-  let(:vendor) { Vendor.new }
+  let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
   let(:account) { create_account(vendor: vendor) }
   let(:keyword) { account.stop_keyword }
   let(:action) { Action.new(:keyword => keyword, :account => account, :name => "FOO", :action_type => 1, :params => "PARAMETER OMG") }
