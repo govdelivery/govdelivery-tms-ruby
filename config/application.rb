@@ -75,5 +75,11 @@ module Tsms
       client: { size: 1 },
       server: { }
     }
+
+    config.dcm = {
+        username: 'product@govdelivery.com',
+        password: 'retek01!',
+        host: 'http://localhost:3000'
+    }
   end
 end

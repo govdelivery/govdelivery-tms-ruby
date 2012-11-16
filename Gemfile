@@ -1,3 +1,4 @@
+source "http://buildbox.office.gdi:6789"
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.8'
@@ -35,6 +36,7 @@ gem 'phony'
 gem 'phony_rails' 
 gem 'slim'
 gem 'sinatra', :require => nil
+gem 'dcm_client'
 
 group :test do
   gem 'mocha', :require=>false
