@@ -1,5 +1,6 @@
+require 'base'
 class LoopbackMessageWorker
-  include Sidekiq::Worker
+  include Workers::Base
   sidekiq_options retry: false
   
   def perform(options)

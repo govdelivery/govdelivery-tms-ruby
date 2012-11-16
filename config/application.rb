@@ -79,7 +79,7 @@ module Tsms
     config.dcm = {
         username: 'product@govdelivery.com',
         password: 'retek01!',
-        host: 'http://localhost:3000'
+        api_root: 'http://localhost:3000'
     }
   end
 end

@@ -68,6 +68,12 @@ Tsms::Application.configure do
   config.sidekiq[:server][:url] = "redis://stg-redis1.visi.gdi:6379/1"
   config.sidekiq[:client][:url] = "redis://stg-redis1.visi.gdi:6379/1"
 
+  config.dcm = {
+    username: 'tsms-api@govdelivery.com',
+    password: "let's do Ortega Bombs",
+    api_root: 'https://stage-api.govdelivery.com' 
+  }
+
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.

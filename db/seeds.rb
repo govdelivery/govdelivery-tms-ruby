@@ -21,10 +21,11 @@ loopback = Vendor.create(:name => 'Loopback Sender',
 # This is just stuff for DEVELOPMENT purposes
 #
 if Rails.env == 'development'
-  acme = Account.create!(:vendor => loopback, :name => "ACME")
-  acme.stop_keyword.actions.create!(:params => "ACME", :action_type => 1, :account => acme)
+  omg = Account.create!(:vendor => loopback, :name => "OMG")
+  # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
+  omg.stop_keyword.actions.create!(:params => "ACME,VANDELAY", :action_type => 1, :account => omg)
   user = User.new(:email => "product@govdelivery.com", :password => "retek01!")
-  user.account = acme
+  user.account = omg
   user.admin = true
   user.save!
   message = user.messages.create!(:short_body => "HELLO")
