@@ -25,26 +25,25 @@ describe Recipient do
     it { should be_valid }
     its(:formatted_phone) { should be_nil }
   end
-  
 
   describe "when phone is valid" do
     before do
       subject.phone = '6515551212'
     end
-    
+
     it 'should persist formatted_phone if phone number is valid' do
       subject.save!
       subject.formatted_phone.should_not be_nil
     end
 
-    describe "and ack is too long" do
-      before { subject.ack = 'A'*257 }
-      it { should_not be_valid }
+    it 'has an ack that is too long' do
+      subject.ack = 'A'*257
+      subject.should_not be_valid
     end
 
-    describe "and error message is too long" do
-      before { subject.error_message = 'A'*513 }
-      it { should be_valid }
+    it 'has an error message that is too long' do
+      subject.error_message = 'A'*513
+      subject.should be_valid
     end
   end
 end

@@ -9,7 +9,7 @@ class LoopbackMessageWorker
 
     if message = Message.find_by_id(message_id)
       message.process_blacklist!
-      message.recipients.incomplete.not_blacklisted.find_each do |recipient|
+      message.recipients.to_send.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         recipient.ack = "#{(Time.now.to_i + Random.rand(100000)).to_s(16)}"
         recipient.status = Recipient::STATUS_SENT

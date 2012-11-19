@@ -19,9 +19,11 @@ class Recipient < ActiveRecord::Base
   belongs_to :message
   belongs_to :vendor
   
-  scope :incomplete,  lambda { where(:sent_at => nil) }
-  scope :not_blacklisted, lambda{ joins("left outer join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone").where("stop_requests.phone is null").readonly(false) }
-  scope :blacklisted, lambda { joins("inner join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone").readonly(false) }
+  scope :incomplete, where(:sent_at => nil)
+  scope :blacklisted, joins('inner join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone')
+                      .readonly(false)
+
+  scope :to_send, ->{ incomplete.not_blacklisted.with_valid_phone_number }
  
   before_validation :truncate_error_message
 
@@ -29,16 +31,26 @@ class Recipient < ActiveRecord::Base
   validates_length_of :phone, :maximum => 256
   validates_length_of :formatted_phone, :maximum => 256
   validates_presence_of :phone, :vendor
-  validates_uniqueness_of :phone, :scope => "message_id", :message => "has already been associated with this message" 
+  validates_uniqueness_of :phone, :scope => 'message_id', :message => 'has already been associated with this message' 
 
   def phone=(str)
     super
-    self.formatted_phone = PhoneNumber.new(str).e164 unless str.nil?
+    self.formatted_phone = PhoneNumber.new(str).e164
   end
 
   private  
 
   def truncate_error_message
     self.error_message.truncate(512) if self.error_message
+  end
+
+  def self.not_blacklisted
+    joins('left outer join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone')
+    .where('stop_requests.phone is null')
+    .readonly(false)
+  end
+
+  def self.with_valid_phone_number
+    where('recipients.formatted_phone is not null')
   end
 end

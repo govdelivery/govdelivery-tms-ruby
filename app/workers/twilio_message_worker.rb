@@ -17,7 +17,7 @@ class TwilioMessageWorker
       account = client.account
 
       message.process_blacklist!
-      message.recipients.incomplete.not_blacklisted.find_each do |recipient|
+      message.recipients.to_send.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         begin
           create_options = {
