@@ -24,8 +24,16 @@ class DcmUnsubscribeWorker
     options["params"].split(",").each do |account_code|
       begin
         client.delete_wireless_subscriber(number, account_code)
-      rescue DCMClient::Error::NotFound => e
+      
       # we don't care if the DCM subscriber doesn't exist
+      rescue DCMClient::Error::NotFound => e
+      
+      # we DO care about other client errors, but let's log them first. 
+      rescue DCMClient::Error => e
+        logger.error e.message
+        logger.error e.response.inspect
+        # backtrace will go to STDOUT, we don't need it in the log
+        raise e
       end
     end
   end
