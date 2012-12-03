@@ -15,8 +15,12 @@ describe DcmUnsubscribeWorker do
   describe 'perform with two accounts and one 404' do
     before do
       Tsms::Application.config.expects(:dcm).returns(config)
-      client.expects(:delete_wireless_subscriber).with("1+2222222222", "ACME").raises(DCMClient::Error::NotFound.new("foo"))
-      client.expects(:delete_wireless_subscriber).with("1+2222222222", "VANDELAY").raises(DCMClient::Error::NotFound.new("foo"))
+      client.expects(:delete_wireless_subscriber)
+        .with("1+2222222222", "ACME")
+        .raises(DCMClient::Error::NotFound.new("foo"))
+      client.expects(:delete_wireless_subscriber)
+        .with("1+2222222222", "VANDELAY")
+        .raises(DCMClient::Error::NotFound.new("foo"))
 
       DCMClient::Client.expects(:new).with(config).returns(client)
     end

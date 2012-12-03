@@ -23,7 +23,7 @@ loopback = Vendor.create(:name => 'Loopback Sender',
 if Rails.env == 'development'
   omg = Account.create!(:vendor => loopback, :name => "OMG")
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
-  omg.stop_keyword.actions.create!(:params => "ACME,VANDELAY", :action_type => 1, :account => omg)
+  omg.add_action!(:params => "ACME,VANDELAY", :action_type => Action::DCM_UNSUBSCRIBE)
   user = User.new(:email => "product@govdelivery.com", :password => "retek01!")
   user.account = omg
   user.admin = true

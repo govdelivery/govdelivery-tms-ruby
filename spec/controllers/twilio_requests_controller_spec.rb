@@ -1,57 +1,38 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 
-describe TwilioRequestsController do
-  let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :help_text => 'Help me!') }
+describe TwilioRequestsController, '#create' do
+  let(:vendor) { mock('vendor', :stop_text => nil, :help_text => nil, :keywords => nil, :new_record? => false) }
+  let(:username) { 'username' }
+  let(:response_text) { 'a response!' }
 
-  it "should error when calling #create with an incorrect AccountSid" do
-    lambda {
-      post :create, twilio_request_params('HELP ', "NO THIS IS WRONG")
-    }.should raise_error(ActiveRecord::RecordNotFound)
+  it 'should error on an incorrect AccountSid' do
+    Vendor.expects(:find_by_username!).raises(ActiveRecord::RecordNotFound)
+    ->{ post :create, twilio_request_params('HELP ') }.should raise_error(ActiveRecord::RecordNotFound)
   end
   
-  context "#create with garbage" do
-    before do
-      Vendor.any_instance.expects(:inbound_messages).returns(mock('inbound_messages', :'create!' => true))
-      post :create, twilio_request_params('come to pazzaluna after work')
-    end
-    it "should respond with accepted" do
-      response.response_code.should == 201
-    end
+  it 'uses an SmsReceiver to get the response text' do
+    sms_receiver = mock('sms me!', :respond_to_sms! => response_text, :keywords= => nil)
+    SmsReceiver.expects(:new).returns(sms_receiver)
+    Vendor.expects(:find_by_username!).with(username).returns(vendor)
+
+    response = View::TwilioRequestResponse.new(vendor, response_text)
+
+    View::TwilioRequestResponse.expects(:new).with(vendor, response_text).returns(response)
+
+    post :create, twilio_request_params('STOP')
+
+    assigns(:response).response_text.should == response_text
   end
 
-  context "#create with HELP" do
-    before do
-      post :create, twilio_request_params(' HELP')
-    end
-    it "should respond with accepted" do
-      response.response_code.should == 201
-    end
-  end
-  
-  context "#create with STOP" do
-    before do
-      body = ' sToP'
-      Vendor.expects(:find_by_username!).with(vendor.username).returns(vendor)
-      mock_parser = mock(:parse! => true)
-      RequestParser.expects(:new).with(vendor, body, '+15551112222').returns(mock_parser)
-      mock_response = mock(:new_record? => false)
-      View::TwilioRequestResponse.expects(:new).returns(mock_response)
-      post :create, twilio_request_params(body)
-    end
-    it "should respond with accepted" do
-      response.response_code.should == 201
-    end
-  end
-
-  def twilio_request_params(body, account_id=vendor.username)
+  def twilio_request_params(body)
+    account_id = username
     @sid ||= ('0'*34)
     @sid.succ!
-    {:format =>"xml" ,
+    {:format =>"xml",
      'SmsSid'=>@sid,
      'AccountSid'=>account_id,
      'From'=>'+15551112222',
      'To'=>'',
-     'Body'=>body
-    }
+     'Body'=>body}
   end
 end

@@ -5,7 +5,7 @@ require 'base'
 class DcmUnsubscribeWorker
   include Workers::Base
   
-  # Retry for up to ~ 4 days (see https://github.com/mperham/sidekiq/wiki/Error-Handling)
+  # Retry for up to ~ 20 days (see https://github.com/mperham/sidekiq/wiki/Error-Handling)
   # That should get us through a long DCM outage (let's hope that never happens).
   # 25 is the default, but I want to be explicit so that it its understood that the 
   # number is intentional.
@@ -15,7 +15,7 @@ class DcmUnsubscribeWorker
   # options: {"from"=>"+14445556666", "params"=>"ACME,VANDELAY"}
   #
   def perform(options)
-    options = options.stringify_keys
+    options = HashWithIndifferentAccess.new(options)
     logger.info("Performing DCM unsubscribe for #{options.inspect}")
 
     client = DCMClient::Client.new(Tsms::Application.config.dcm)

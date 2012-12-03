@@ -6,37 +6,61 @@ describe Vendor do
   let(:from) { '+12223334444' }
   subject { vendor }
 
-  context "when valid" do
-    specify { vendor.valid?.should == true }
+  describe "when valid" do
+    it { vendor.valid?.should == true }
   end
   
   [:name, :username, :password, :from, :help_text, :stop_text].each do |field|
-    context "when #{field} is empty" do
+    describe "when #{field} is empty" do
       before { vendor.send("#{field}=", nil) }
-      specify { vendor.valid?.should == false }
+      it { vendor.valid?.should == false }
     end
   end
 
   [:name, :username, :password, :from].each do |field|  
-    context "when #{field} is too long" do
+    describe "when #{field} is too long" do
       before { vendor.send("#{field}=", "W"*257) }
-      specify { vendor.valid?.should == false }
+      it { vendor.valid?.should == false }
     end
   end
 
   [:help_text, :stop_text].each do |field|
-    context "when #{field} is too long" do
+    describe "when #{field} is too long" do
       before { vendor.send("#{field}=", "W"*161) }
-      specify { vendor.valid?.should == false }
+      it { vendor.valid?.should == false }
     end
   end
 
-  context "calling stop!" do
-    before do
-      vendor.expects(:accounts).returns([account])
-      account.expects(:stop).with(from)
-      vendor.stop!(from)
+  describe '#create_keyword!' do
+    it 'creates a keyword' do
+      expect{vendor.create_keyword!(:account => account, :name => 'foobar')}
+        .to change{vendor.keywords.count}.by 1
     end
-    specify { vendor.stop_requests.where(:phone => from).count.should be(1) }
+
+    it "sets the keyword's vendor to itself" do
+      kw = vendor.create_keyword!(:account => account, :name => 'foobar')
+      kw.vendor.should == vendor
+    end
+  end
+
+  describe '#receive_message!' do
+    it 'creates an inbound message' do
+      vendor.stubs(:accounts).returns([])
+      expect{vendor.receive_message!(:from => from, :body => 'msg')}
+        .to change{vendor.inbound_messages.count}.by 1
+    end
+
+    it 'calls stop on accounts when :stop? => true' do
+      vendor.expects(:accounts).returns([account])
+      account.expects(:stop).with(:from => from)
+      vendor.receive_message!(:from => from, :body => 'msg', :stop? => true)
+    end
+
+    it 'blacklists number when :stop? => true' do
+      vendor.stubs(:accounts).returns([])
+      expect{
+        vendor.receive_message!(:from => from, :body => 'msg', :stop? => true)
+      }.to change{vendor.stop_requests.count}.by 1
+    end
   end
 end

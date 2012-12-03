@@ -4,21 +4,22 @@ class Account < ActiveRecord::Base
   has_many :users
   belongs_to :vendor
 
-  has_one :stop_keyword, :class_name => "Keyword", :conditions => {:stop => true}
-  validates_presence_of :vendor
+  belongs_to :stop_handler, :class_name => 'EventHandler'
+  validates_presence_of :vendor, :name
   
-  validates_presence_of :name
   validates_length_of :name, :maximum => 256
 
-  before_create :create_stop_keyword
+  before_create :create_stop_handler!
 
-  def stop(from)
-    stop_keyword.execute_actions(:from => from)
+  def add_action!(params)
+    unless stop_handler
+      self.create_stop_handler!
+      self.save!
+    end
+    stop_handler.actions.create!({:account => self}.merge(params))
   end
 
-  protected
-  
-  def create_stop_keyword(*args)
-    self.stop_keyword = build_stop_keyword(:name => "STOP")
+  def stop(params={})
+    stop_handler.actions.each{|a| a.call(params)} if stop_handler
   end
 end

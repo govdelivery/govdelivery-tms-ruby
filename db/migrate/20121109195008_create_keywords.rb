@@ -1,4 +1,7 @@
 class CreateKeywords < ActiveRecord::Migration
+  class Account < ActiveRecord::Base
+    has_one :keyword, :conditions => {:stop => true}
+  end
   def change
     create_table :keywords do |t|
       t.references :account
@@ -9,7 +12,7 @@ class CreateKeywords < ActiveRecord::Migration
     add_index :keywords, [:account_id, :name], :unique => true
     Account.reset_column_information
     Account.all.each do |a|
-      a.create_stop_keyword!(:name => "STOP")
+      a.create_keyword!(:name => 'STOP')
     end
   end
 end

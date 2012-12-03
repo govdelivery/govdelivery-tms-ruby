@@ -2,7 +2,9 @@ require 'spec_helper'
 
 describe InboundMessage do
   let(:vendor) { create_vendor }
-  let(:inbound_message) { InboundMessage.create(:vendor => vendor, :body => 'this is my body', :from => '5551112222') }
+  let(:inbound_message) { InboundMessage.create(:vendor => vendor,
+                                                :body => 'this is my body',
+                                                :from => '5551112222') }
   subject { inbound_message }
 
   context "when valid" do

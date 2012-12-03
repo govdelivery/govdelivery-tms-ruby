@@ -1,19 +1,22 @@
 class TwilioRequestsController < ApplicationController
   skip_before_filter :authenticate_user!
-  before_filter :find_vendor, :build_response
   respond_to :xml
 
   def create
-    respond_with(@twilio_request_response)
+    respond_with(twilio_request_response)
   end
 
-  protected
+  private
+
+  def twilio_request_response
+    vendor = find_vendor
+    sms_receiver = SmsReceiver.new(vendor, vendor.stop_text, vendor.help_text)
+    sms_receiver.keywords = vendor.keywords
+    response_text = sms_receiver.respond_to_sms!(params['From'], params['Body'])
+    @response = View::TwilioRequestResponse.new(vendor, response_text)
+  end
+
   def find_vendor
-    @vendor=Vendor.find_by_username!(params['AccountSid'])
-  end
-
-  def build_response
-    @request_parser          = RequestParser.new(@vendor, params['Body'], params['From']).parse!
-    @twilio_request_response = View::TwilioRequestResponse.new(@vendor, @request_parser)
+    Vendor.find_by_username!(params['AccountSid'])
   end
 end
