@@ -3,11 +3,11 @@ require_relative '../little_spec_helper'
 
 describe DcmSubscribeAction do
   let(:client) { mock('dcm_client') }
-  let(:fake_phone_number_constructor) { lambda {|pn| stub(:country_code => '1', :without_country_code => '4443332222') } }
+  let(:fake_phone_number_constructor) { lambda {|pn| stub(:dcm => '1+4443332222') } }
   subject { DcmSubscribeAction.new(client) }
 
   it 'should call wireless_subscribe on the DCM Client' do
-    client.expects(:wireless_subscribe).with('1', '4443332222', 'ACCOUNT_CODE', ['TOPIC_CODE', 'TOPIC_2'])
+    client.expects(:wireless_subscribe).with('1+4443332222', 'ACCOUNT_CODE', ['TOPIC_CODE', 'TOPIC_2'])
 
     subject.call('+14443332222', 'ACCOUNT_CODE:TOPIC_CODE,TOPIC_2', fake_phone_number_constructor)
   end
