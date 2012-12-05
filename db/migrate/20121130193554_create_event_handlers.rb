@@ -7,6 +7,7 @@ class CreateEventHandlers < ActiveRecord::Migration
   end
   class Keyword < ActiveRecord::Base
     has_many :actions
+    belongs_to :event_handler
   end
   def up
     create_table :event_handlers do |t|
