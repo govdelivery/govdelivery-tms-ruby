@@ -3,6 +3,7 @@ class CreateEventHandlers < ActiveRecord::Migration
     has_many :actions
   end
   class Account < ActiveRecord::Base
+    belongs_to :stop_handler, :class_name => 'EventHandler'
     has_one :stop_keyword, :class_name => 'Keyword', :conditions => {:stop => true}
   end
   class Action < ActiveRecord::Base
@@ -13,6 +14,7 @@ class CreateEventHandlers < ActiveRecord::Migration
     belongs_to :event_handler
   end
   def up
+    safely { drop_table :event_handlers }
     safely do
       create_table :event_handlers do |t|
         t.timestamps
