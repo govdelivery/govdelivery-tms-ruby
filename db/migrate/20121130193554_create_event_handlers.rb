@@ -1,4 +1,7 @@
 class CreateEventHandlers < ActiveRecord::Migration
+  class EventHandler < ActiveRecord::Base
+    has_many :actions
+  end
   class Account < ActiveRecord::Base
     has_one :stop_keyword, :class_name => 'Keyword', :conditions => {:stop => true}
   end
