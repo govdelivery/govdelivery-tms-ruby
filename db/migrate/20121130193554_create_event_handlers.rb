@@ -10,12 +10,14 @@ class CreateEventHandlers < ActiveRecord::Migration
     belongs_to :event_handler
   end
   def up
-    create_table :event_handlers do |t|
-      t.timestamps
+    safely do
+      create_table :event_handlers do |t|
+        t.timestamps
+      end
     end
-    add_column :accounts, :stop_handler_id, :integer
-    add_column :actions, :event_handler_id, :integer
-    add_column :keywords, :event_handler_id, :integer
+    safely { add_column :accounts, :stop_handler_id, :integer }
+    safely { add_column :actions, :event_handler_id, :integer }
+    safely { add_column :keywords, :event_handler_id, :integer }
 
     Keyword.all.each do |kw|
       handler = kw.build_event_handler
@@ -29,11 +31,17 @@ class CreateEventHandlers < ActiveRecord::Migration
       a.stop_keyword.destroy
     end
 
-    remove_column :actions, :keyword_id
-    remove_column :keywords, :stop
+    safely { remove_column :actions, :keyword_id }
+    safely { remove_column :keywords, :stop }
   end
 
   def down
     raise ActiveRecord::IrreversibleMigration
+  end
+
+  def safely
+    yield
+  rescue Exception => e
+    say "exception ignored: #{e}"
   end
 end
