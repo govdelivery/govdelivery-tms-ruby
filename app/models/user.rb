@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   
   before_validation :downcase_email
   
-  delegate :vendor, :to => :account
+  delegate :vendors, :to => :account
   
   def self.authenticate(email, password)
     User.find_by_email(email.downcase) if email

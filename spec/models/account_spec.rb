@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Account do
   subject {
     vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
-    Account.new(:name => 'name', :vendor => vendor)
+    Account.new(:name => 'name', :vendors => [vendor])
   }
 
   it { should be_valid }
@@ -27,4 +27,19 @@ describe Account do
       subject.stop(:from => from)
     end
   end
+  
+  context 'with multiple vendors' do
+    before do
+    subject.vendors << Vendor.create!(:name => 'new name', :username => 'username2', :password => 'secret2', :from => 'from', :worker => 'TwilioMessageWorker', :voice => true) 
+    end
+    it{should be_valid}
+    it 'should not be able to have two same-type vendors' do
+      subject.vendors << Vendor.create!(:name => 'extra voice vendor', :username => 'username2', :password => 'secret2', :from => 'from', :worker => 'TwilioMessageWorker', :voice => false) 
+      subject.should_not be_valid
+    end
+    
+    
+  end
+  
+  
 end

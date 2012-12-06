@@ -1,16 +1,19 @@
 class Vendor < ActiveRecord::Base
-  attr_accessible :name, :username, :password, :from, :worker, :help_text, :stop_text
+  attr_accessible :name, :username, :password, :from, :worker, :help_text, :stop_text, :voice
   
   DEFAULT_HELP_TEXT = "Go to http://bit.ly/govdhelp for help"
   DEFAULT_STOP_TEXT = "You will no longer receive SMS messages."
   RESERVED_KEYWORDS = %w(stop quit help)
 
   has_many :keywords
-  has_many :accounts
+  has_many :account_vendors
+  has_many :accounts, :through=> :account_vendors
   has_many :stop_requests
   has_many :inbound_messages, :include => :vendor
   has_many :recipients
   
+  scope :sms, where(:voice=>false)
+  scope :voice, where(:voice=>true)
 
   validates_presence_of [:name, :username, :password, :from, :worker, :help_text, :stop_text]
 

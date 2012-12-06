@@ -1,13 +1,15 @@
 require 'base'
-class TwilioMessageWorker
+class TwilioVoiceWorker
   include Workers::Base
   sidekiq_options retry: false
   
   def perform(options)
     options.symbolize_keys!    
     message_id = options[:message_id]
+    message_url = options[:message_url]
     callback_url = options[:callback_url]
     logger.info("Send initiated for message_id=#{message_id} and callback_url=#{callback_url}")
+    logger.info("******************************* #{Message.find_by_id(message_id).to_yaml}")
 
     if message = Message.find_by_id(message_id)
 
@@ -18,15 +20,15 @@ class TwilioMessageWorker
 
       message.process_blacklist!
       message.recipients.to_send.find_each do |recipient|
-        logger.debug("Sending SMS to #{recipient.phone}")
+        logger.debug("Sending voice msg to #{recipient.phone}")
         begin
           create_options = {
               :from => message.vendor.from,
               :to => "#{recipient.formatted_phone}",
-              :body => message.body
+              :url => message_url
             }
-          create_options[:StatusCallback] = callback_url if callback_url
-          twilio_response = account.sms.messages.create(create_options)
+          #create_options[:StatusCallback] = callback_url if callback_url
+          twilio_response = account.calls.create(create_options)
           logger.info("Response from Twilio was #{twilio_response.inspect}")
           recipient.ack = twilio_response.sid
           recipient.status = case twilio_response.status
@@ -38,7 +40,7 @@ class TwilioMessageWorker
             Recipient::STATUS_NEW
           end
         rescue Twilio::REST::RequestError => e
-          logger.warn("Failed to send SMS to #{recipient.phone} for message #{message.id}: #{e.inspect}")
+          logger.warn("Failed to send voice msg to #{recipient.phone} for message #{message.id}: #{e.inspect}")
           recipient.status = Recipient::STATUS_FAILED
           recipient.error_message = e.to_s
           recipient.completed_at = Time.now

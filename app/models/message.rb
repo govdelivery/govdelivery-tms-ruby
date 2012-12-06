@@ -1,7 +1,7 @@
 class Message < ActiveRecord::Base
   paginates_per 50
 
-  attr_accessible :short_body, :recipients_attributes
+  attr_accessible :short_body, :url, :recipients_attributes
   
   has_many :recipients, :dependent => :destroy
   accepts_nested_attributes_for :recipients
@@ -9,10 +9,10 @@ class Message < ActiveRecord::Base
   belongs_to :user
   validates_presence_of :user
   
-  validates_presence_of :short_body
   validates_length_of :short_body, :maximum => 160
 
-  delegate :vendor, :to => :user
+  delegate :vendors, :to => :user
+  before_validation :verify_sms_or_voice
 
   def create_recipients(recipient_params=[])
     recipients << recipient_params.map do |r| 
@@ -27,6 +27,24 @@ class Message < ActiveRecord::Base
       recipient.completed_at = Time.now
       recipient.sent_at = Time.now
       recipient.save!
+    end
+  end
+  
+  def worker
+    vendor.worker.constantize
+  end
+  
+  def verify_sms_or_voice
+    errors[:base] << "cannot determine message type" if short_body.blank? == url.blank?
+  end
+  
+  def vendor
+    if short_body
+      vendors.sms.first
+    elsif url
+      vendors.voice.first
+    else
+      nil
     end
   end
 end
