@@ -54,14 +54,14 @@ describe SmsReceiver, '#respond_to_sms!' do
     it "calls keyword's #execute_actions method" do
       kw = stub('keyword')
       kw.stubs(:name).returns('kwname')
-      kw.expects(:execute_actions)
+      kw.expects(:execute_actions).with(:from => from, :body => body)
       subject.keywords = [kw]
 
       subject.respond_to_sms!(from, body)
     end
 
     it 'returns nil for keyword dispatches' do
-      subject.keywords = [OpenStruct.new(:name => 'kwname', :execute_actions => 'returned by execute_actions')]
+      subject.keywords = [mock(:name => 'kwname', :execute_actions => 'returned by execute_actions')]
 
       subject.respond_to_sms!(from, body).should be_nil
     end
@@ -69,7 +69,7 @@ describe SmsReceiver, '#respond_to_sms!' do
     it 'calls receive_message! with :stop? set to false' do
       friendly_vendor.expects(:receive_message!).with(:from => from, :body => body, :stop? => false)
 
-      subject.keywords = [OpenStruct.new(:name => 'kwname', :execute_actions => 'returned by execute_actions')]
+      subject.keywords = [mock(:name => 'kwname', :execute_actions => 'returned by execute_actions')]
 
       subject.respond_to_sms!(from, body)
     end

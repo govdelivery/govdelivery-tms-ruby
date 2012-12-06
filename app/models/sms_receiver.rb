@@ -21,7 +21,7 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
 
   def do_keyword(from, body, kw)
     vendor.receive_message!(:from => from, :body => body, :stop? => false)
-    kw.execute_actions
+    kw.execute_actions(:from => from, :body => body)
     nil
   end
 
