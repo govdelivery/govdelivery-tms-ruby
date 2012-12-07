@@ -33,9 +33,9 @@ class Recipient < ActiveRecord::Base
   validates_presence_of :phone, :vendor
   validates_uniqueness_of :phone, :scope => 'message_id', :message => 'has already been associated with this message' 
 
-  def phone=(str)
+  def phone=(ph)
     super
-    self.formatted_phone = PhoneNumber.new(str).e164
+    self.formatted_phone = PhoneNumber.new(ph.to_s).e164
   end
 
   private  

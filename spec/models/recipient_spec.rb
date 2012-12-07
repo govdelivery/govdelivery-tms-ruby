@@ -26,6 +26,14 @@ describe Recipient do
     its(:formatted_phone) { should be_nil }
   end
 
+  describe "when phone is a non-string number" do
+    before do
+      subject.phone = 6125015456
+      subject.save!
+    end
+    it { should be_valid }
+  end
+
   describe "when phone is valid" do
     before do
       subject.phone = '6515551212'
