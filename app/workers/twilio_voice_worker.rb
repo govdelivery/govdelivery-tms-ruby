@@ -14,40 +14,33 @@ class TwilioVoiceWorker
     if message = Message.find_by_id(message_id)
 
       # set up a client to talk to the Twilio REST API
-      client = Twilio::REST::Client.new(message.vendor.username, message.vendor.password)
+      twilio_client = Twilio::REST::Client.new(message.vendor.username, message.vendor.password)
 
-      account = client.account
+      twilio_account = twilio_client.account
 
-      message.process_blacklist!
-      message.recipients.to_send.find_each do |recipient|
-        logger.debug("Sending voice msg to #{recipient.phone}")
-        begin
-          create_options = {
-              :from => message.vendor.from,
-              :to => "#{recipient.formatted_phone}",
-              :url => message_url
-            }
-          #create_options[:StatusCallback] = callback_url if callback_url
-          twilio_response = account.calls.create(create_options)
-          logger.info("Response from Twilio was #{twilio_response.inspect}")
-          recipient.ack = twilio_response.sid
-          recipient.status = case twilio_response.status
-          when 'queued','sending'
-            Recipient::STATUS_SENDING
-          when 'sent'
-            Recipient::STATUS_SENT
-          else
-            Recipient::STATUS_NEW
-          end
-        rescue Twilio::REST::RequestError => e
-          logger.warn("Failed to send voice msg to #{recipient.phone} for message #{message.id}: #{e.inspect}")
-          recipient.status = Recipient::STATUS_FAILED
-          recipient.error_message = e.to_s
-          recipient.completed_at = Time.now
-        end
-        recipient.sent_at = Time.now
-        recipient.save!
-      end
+      MessageSender.new(message.vendor.from).send!(message.recipients, ->(from, to){
+        resp = twilio_account.calls.create(:from => from,
+                                           :to => to,
+                                           :url => message_url)
+        {ack: resp.sid, status: resp.status}
+      })
+      #message.recipients.to_send.find_each do |recipient|
+      #  logger.debug("Sending voice msg to #{recipient.phone}")
+      #  begin
+      #    create_options = {
+      #        :from => message.vendor.from,
+      #        :to => "#{recipient.formatted_phone}",
+      #        :url => message_url
+      #      }
+      #    create_options[:StatusCallback] = callback_url if callback_url
+      #    twilio_response = twilio_account.calls.create(create_options)
+      #    logger.info("Response from Twilio was #{twilio_response.inspect}")
+      #    recipient.complete!(twilio_response.status, twilio_response.sid)
+      #  rescue Twilio::REST::RequestError => e
+      #    logger.warn("Failed to send voice msg to #{recipient.phone} for message #{message.id}: #{e.inspect}")
+      #    recipient.complete!('failed', nil, e.to_s)
+      #  end
+      #end
 
       message.completed_at = Time.now
       message.save

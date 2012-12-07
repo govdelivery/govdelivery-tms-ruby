@@ -73,4 +73,6 @@ describe Message do
       specify { message.recipients.first.vendor.should eq(voice_vendor) }
     end
   end
+
+
 end
