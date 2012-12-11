@@ -23,7 +23,7 @@ class TwilioMessageWorker
           create_options = {
               :from => message.vendor.from,
               :to => "#{recipient.formatted_phone}",
-              :body => message.body
+              :body => message.short_body
             }
           create_options[:StatusCallback] = callback_url if callback_url
           twilio_response = account.sms.messages.create(create_options)

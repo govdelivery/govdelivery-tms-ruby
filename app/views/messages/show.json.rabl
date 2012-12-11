@@ -1,5 +1,5 @@
 object @message
-attributes :body, :completed_at, :created_at
+attributes :short_body, :completed_at, :created_at
 if @message
   unless @message.errors.empty?
     node(:errors) { |message| message.errors }
