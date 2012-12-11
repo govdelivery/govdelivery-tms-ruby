@@ -11,7 +11,7 @@ describe TwilioVoiceWorker do
     it 'should work' do
       Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => ''))
       MessageSender.any_instance.expects(:send!).with(message.recipients, instance_of(Proc))
-      worker.perform(:message_id => 1)
+      worker.perform(:message_id => message.id)
     end
 
   end
