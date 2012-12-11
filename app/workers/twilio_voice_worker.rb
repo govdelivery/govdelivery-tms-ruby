@@ -18,6 +18,7 @@ class TwilioVoiceWorker
 
       twilio_account = twilio_client.account
 
+
       MessageSender.new(message.vendor.from).send!(message.recipients, ->(from, to){
         resp = twilio_account.calls.create(:from => from,
                                            :to => to,

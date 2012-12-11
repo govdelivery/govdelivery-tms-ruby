@@ -8,14 +8,14 @@ describe MessageSender do
     let(:from) { 'hello' }
 
     it "should send a message to one recipient" do
-      ms = MessageSender.new(from, send_proc_expectation)
-      ms.send!([recipient_expectation])
+      ms = MessageSender.new(from)
+      ms.send!([recipient_expectation], send_proc_expectation)
     end
 
     it "should send a message to multiple recipients" do
       recipient = recipient_expectation(2)
-      ms = MessageSender.new(from, send_proc_expectation(2))
-      ms.send!([recipient, recipient])
+      ms = MessageSender.new(from)
+      ms.send!([recipient, recipient], send_proc_expectation(2))
     end
   end
 
