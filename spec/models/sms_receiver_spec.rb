@@ -5,7 +5,7 @@ require 'ostruct'
 describe SmsReceiver, '#respond_to_sms!' do
   let(:friendly_vendor) { stub_everything('I am a vendor. Call anything on me!') }
   let(:from) { '+5554443333' }
-  let(:body) { 'a message body' }
+  let(:body) { 'subscribe foo@bar.com' }
 
   subject { SmsReceiver.new(friendly_vendor) }
 
@@ -47,14 +47,14 @@ describe SmsReceiver, '#respond_to_sms!' do
 
   describe 'when dispatching on keywords' do
     before do
-      always_kwname_parser = ->(body, dispatch){dispatch['kwname'].call}
+      always_kwname_parser = ->(body, dispatch){dispatch['kwname'].call('foo@bar.com')}
       subject.parser = always_kwname_parser
     end
 
     it "calls keyword's #execute_actions method" do
       kw = stub('keyword')
       kw.stubs(:name).returns('kwname')
-      kw.expects(:execute_actions).with(:from => from, :body => body)
+      kw.expects(:execute_actions).with(:from => from, :args => ['foo@bar.com'])
       subject.keywords = [kw]
 
       subject.respond_to_sms!(from, body)

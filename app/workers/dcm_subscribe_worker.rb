@@ -18,7 +18,7 @@ class DcmSubscribeWorker
 
     client = DCMClient::Client.new(Tsms::Application.config.dcm)
 
-    DcmSubscribeAction.new(client).call(options['from'], options['params'])
+    DcmSubscribeAction.new(client).call(options['from'], options['params'], options['args'])
 
   # DO NOT retry if the response is an Unprocessable Entity
   rescue DCMClient::Error::UnprocessableEntity => e

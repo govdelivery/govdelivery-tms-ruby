@@ -1,5 +1,4 @@
-require_relative '../../app/models/inbound_sms_parser'
-require_relative '../little_spec_helper'
+require File.expand_path('../../spec_helper', __FILE__)
 
 describe InboundSmsParser, '#dispatch!' do
 
@@ -7,21 +6,6 @@ describe InboundSmsParser, '#dispatch!' do
     o = Object.new
     subject.text = ''
     subject.dispatch!({'help' => mock(:call => o)}).should be o
-  end
-
-  it 'dispatches on keywords' do
-    subject.text = 'subscribe news'
-    dispatches_on 'subscribe news'
-  end
-
-  it 'ignores case' do
-    subject.text = 'SUBSCRIBE NEWS'
-    dispatches_on 'subscribe news'
-  end
-
-  it 'ignores surrounding whitespace' do
-    subject.text = " subscribe news \n"
-    dispatches_on 'subscribe news'
   end
 
   it 'dispatches on help when text is "help"' do
@@ -37,6 +21,15 @@ describe InboundSmsParser, '#dispatch!' do
   it 'dispatches on help if nothing else matches' do
     subject.text = 'nonsense'
     dispatches_on 'help'
+  end
+
+  describe 'keywords' do
+    it "should dispatch with variables" do
+      subject.text = " Subscribe  foo@bar.com\n"
+      lamb = mock
+      lamb.expects(:call).with("foo@bar.com")
+      subject.dispatch!({'subscribe' => lamb})
+    end
   end
 
   describe 'stop cases' do
@@ -69,6 +62,7 @@ describe InboundSmsParser, '#dispatch!' do
   end
 end
 
-def dispatches_on(name)
-  subject.dispatch!({name => mock(:call => nil)})
+def dispatches_on(name, lamb=nil)
+  lamb ||= mock(:call => nil)
+  subject.dispatch!({name => lamb})
 end

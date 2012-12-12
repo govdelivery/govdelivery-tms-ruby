@@ -11,7 +11,7 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
     keywords.reduce({
       'stop' => ->{do_stop(from, body)},
       'help' => ->{do_help(from, body)}
-    }) { |memo, kw| memo.merge!(kw.name => ->{do_keyword(from, body, kw)}) }
+    }) { |memo, kw| memo.merge!(kw.name => ->(*args){ do_keyword(from, body, kw, args)}) }
   end
 
   def do_stop(from, body)
@@ -19,9 +19,9 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
     stop_text
   end
 
-  def do_keyword(from, body, kw)
+  def do_keyword(from, body, kw, args)
     vendor.receive_message!(:from => from, :body => body, :stop? => false)
-    kw.execute_actions(:from => from, :body => body)
+    kw.execute_actions(:from => from, :args => args)
     nil
   end
 

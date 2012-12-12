@@ -2,6 +2,7 @@ require 'spec_helper'
 describe DcmSubscribeWorker do
   let(:phone_number) { '+14443332222' }
   let(:data_string) { 'ACCOUNT_CODE:TOPIC_CODE,TOPIC_2' }
+  let(:subscribe_args) { ['foo@bar.com'] }
   let(:subscribe_action) { mock('dcm_subscribe_action') }
 
   before do
@@ -13,17 +14,17 @@ describe DcmSubscribeWorker do
   end
 
   it 'passes options to the subscribe action' do
-    subscribe_action.expects(:call).with(phone_number, data_string)
+    subscribe_action.expects(:call).with(phone_number, data_string, subscribe_args)
 
-    subject.perform({:params => data_string, :from => phone_number})
+    subject.perform({:params => data_string, :from => phone_number, :args => subscribe_args})
   end
 
   it 'ignores UnprocessableEntity errors' do
     subscribe_action.expects(:call)
-      .with(phone_number, data_string) 
+      .with(phone_number, data_string, subscribe_args) 
       .raises(DCMClient::Error::UnprocessableEntity.new("foo"))
 
-    subject.perform({:params => data_string, :from => phone_number})
+    subject.perform({:params => data_string, :from => phone_number, :args => subscribe_args})
   end 
 end
 

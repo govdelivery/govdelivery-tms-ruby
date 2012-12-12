@@ -48,10 +48,10 @@ describe TwilioRequestsController do
     end
   end
 
-  describe '#create with "SUBSCRIBE NEWS"' do
-    let(:params) { twilio_request_params('SUBSCRIBE NEWS') }
+  describe '#create with "SUBSCRIBE"' do
+    let(:params) { twilio_request_params('SUBSCRIBE') }
     before do
-      vendor.create_keyword!(:name => 'subscribe news',
+      vendor.create_keyword!(:name => 'subscribe',
                              :account => create_account(:vendor => vendor))
     end
     it 'should respond with created' do
@@ -72,18 +72,6 @@ describe TwilioRequestsController do
       post :create, params
     end
   end
-
-#   describe "#create with HELP" do
-#     before do
-#       post :create, params
-#     end
-#     it "should respond with created" do
-#       response.response_code.should == 201
-#     end
-#     it 'should respond with help text' do
-#       assigns(:response).response_text.should == vendor.help_text
-#     end
-#   end
 
   def twilio_request_params(body)
     account_id = vendor.username

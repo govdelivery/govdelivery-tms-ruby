@@ -38,6 +38,7 @@ gem 'dcm_client'
 
 group :test do
   gem 'mocha', :require=>false
+  gem 'pry'
 end
 
 group :development, :test do
