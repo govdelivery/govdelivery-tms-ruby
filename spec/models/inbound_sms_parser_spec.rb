@@ -33,7 +33,7 @@ describe InboundSmsParser, '#dispatch!' do
   end
 
   describe 'stop cases' do
-    %w(stop quit STOP QUIT sToP qUiT).each do |stop|
+    %w(stop quit STOP QUIT sToP qUiT cancel unsubscribe).each do |stop|
       it "is stop if the message body == '#{stop}'" do
         subject.text = stop
         dispatches_on 'stop'
