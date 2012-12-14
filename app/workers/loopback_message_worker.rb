@@ -18,7 +18,7 @@ class LoopbackMessageWorker
         recipient.save!
       end
       message.completed_at = Time.now
-      message.save
+      message.save!
     else
       logger.warn("Send failed, unable to find message with id #{message_id}")
     end

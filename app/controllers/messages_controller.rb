@@ -5,7 +5,7 @@ class MessagesController < ApplicationController
   def index
     @messages = current_user.messages.page(@page)
     set_link_header(@messages)
-    respond_with(@message)
+    respond_with(@messages)
   end
 
   def new
@@ -25,6 +25,7 @@ class MessagesController < ApplicationController
       @message.create_recipients(recipients) unless recipients.nil?
       options = {:message_id => @message.id}
       options[:callback_url] = twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
+      options[:message_url] = twiml_url
       @message.worker.send(:perform_async, options)
     end
     respond_with(@message)

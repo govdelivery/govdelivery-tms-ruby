@@ -2,7 +2,7 @@ class TwilioDialPlanController < ApplicationController
   skip_before_filter :authenticate_user!
 
   def show
-    recipient = Recipient.find(:first, :conditions => ["ack = ?", params['CallSid']])
+    recipient = Recipient.scoped(:conditions => {:ack => params['CallSid']}).first
     if !recipient.nil?
       @message = Message.find_by_id(recipient.message_id)
     end
