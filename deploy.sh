@@ -7,8 +7,9 @@ CTRL_USER="evodeploy";
 CTRL_SERVER="prod-deploy1.visi.gdi"
 CTRL_SCRIPT="/var/repo/scripts/release/deployer.rb"
 CTRL_ARGS=""
-
-DEFAULT_ACTIONS="checkout extract stop-sidekiq deploy start-sidekiq status purge-checkouts purge-extracts"
+RUN_TESTS=0
+DEFAULT_ACTIONS="checkout extract stop-sidekiq deploy start-sidekiq status purge-checkouts purge-extracts run-tests"
+BUILD_URL="http://qa-automation.stp01.office.gdi/job/01_TSMS_Client_Test/build"
 
 usage () {
     echo "USAGE: $0 [options] [actions]"
@@ -37,6 +38,7 @@ usage () {
 #    echo "  migrate-db-post  perform the post-release database migrations (data_migrate)"
     echo "  purge-checkouts  purge old copies of checked out code"
     echo "  purge-extracts   purge old copies of extracted code"
+    echo "  run-tests        start integration tests on build server" 
     echo
     echo "default actions if not specified: ${DEFAULT_ACTIONS}"
 }
@@ -72,6 +74,10 @@ while [ $# -gt 0 ]; do
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
 	    ;;
+  run-tests)
+      shift;
+      RUN_TESTS=1
+      ;;
 	-e|--environment)
 	    case $2 in
 		POC|poc)
@@ -107,7 +113,7 @@ done
 
 
 ### If no action specified, set default
-if [[ ${#actions} == 0 ]]; then 
+if [[ ${#actions} == 0 && $RUN_TESTS == 0 ]]; then 
     echo "Executing Default Actions: ${DEFAULT_ACTIONS[@]}"
     actions="${DEFAULT_ACTIONS[@]}"
 fi;
@@ -120,4 +126,19 @@ CMD="${CTRL_SCRIPT} ${CTRL_ARGS} -e ${ENV} -a ${APP} ${actions[@]}"
 echo
 echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
 
-ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}"
+if [[ ${#actions} != 0 ]]; then 
+  ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
+fi;
+
+if [[ RUN_TESTS -eq 1 ]]; then 
+  echo "Starting tests on build server..." 
+  response=$(curl -sL -w "%{http_code}\\n" $BUILD_URL -o /dev/null)
+  if [[ $response == 200 ]]; then
+    echo "Integration tests started."
+  else
+    echo "Could not start integration tests (response status: $response)!"; exit 1
+  fi
+fi
+
+
+
