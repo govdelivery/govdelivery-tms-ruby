@@ -9,7 +9,7 @@ CTRL_SCRIPT="/var/repo/scripts/release/deployer.rb"
 CTRL_ARGS=""
 RUN_TESTS=0
 DEFAULT_ACTIONS="checkout extract stop-sidekiq deploy start-sidekiq status purge-checkouts purge-extracts run-tests"
-BUILD_URL="http://qa-automation.stp01.office.gdi/job/01_TSMS_Client_Test/build"
+BUILD_URL="http://qa-automation.stp01.office.gdi/job/90_TSMS_Client_Test/build"
 
 usage () {
     echo "USAGE: $0 [options] [actions]"
