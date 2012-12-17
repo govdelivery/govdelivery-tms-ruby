@@ -46,6 +46,9 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'sqlite3'
   gem 'pry'
+end
+
+group :development do
   gem 'rails-erd'
 end
 
