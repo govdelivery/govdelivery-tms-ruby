@@ -46,6 +46,7 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'sqlite3'
   gem 'pry'
+  gem 'rails-erd'
 end
 
 gem 'ruby-oci8'
