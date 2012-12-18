@@ -7,8 +7,8 @@ CTRL_USER="evodeploy";
 CTRL_SERVER="prod-deploy1.visi.gdi"
 CTRL_SCRIPT="/var/repo/scripts/release/deployer.rb"
 CTRL_ARGS=""
-RUN_TESTS=0
-DEFAULT_ACTIONS="checkout extract stop-sidekiq deploy start-sidekiq status purge-checkouts purge-extracts run-tests"
+DEFAULT_ACTIONS="checkout extract stop-sidekiq deploy start-sidekiq status purge-checkouts purge-extracts"
+DEFAULT_LOCAL_ACTIONS="run-tests"
 BUILD_URL="http://qa-automation.stp01.office.gdi/job/90_TSMS_Client_Test/build"
 
 usage () {
@@ -38,12 +38,15 @@ usage () {
 #    echo "  migrate-db-post  perform the post-release database migrations (data_migrate)"
     echo "  purge-checkouts  purge old copies of checked out code"
     echo "  purge-extracts   purge old copies of extracted code"
+    echo
+    echo "Local Actions (Note, always run last)"
     echo "  run-tests        start integration tests on build server" 
     echo
-    echo "default actions if not specified: ${DEFAULT_ACTIONS}"
+    echo "default actions if not specified: ${DEFAULT_ACTIONS} ${DEFAULT_LOCAL_ACTIONS}"
 }
 
 declare -a actions
+declare -a local_actions
 
 while [ $# -gt 0 ]; do
     case $1 in
@@ -74,10 +77,10 @@ while [ $# -gt 0 ]; do
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
 	    ;;
-  run-tests)
-      shift;
-      RUN_TESTS=1
-      ;;
+	run-tests)
+	    local_actions[${#local_actions[@]}]="$1"         ## push on end of local_actions
+	    shift;
+	    ;;
 	-e|--environment)
 	    case $2 in
 		POC|poc)
@@ -103,6 +106,7 @@ while [ $# -gt 0 ]; do
 	-T|-d|-v)
 	    CTRL_ARGS="${CTRL_ARGS} ${1}"        ## add to control args
 	    shift;
+	    BUILD_URL="http://www.google.com"    ## Set BUILD_URL to something that will return 200
 	    ;;
 	*)
 	    echo "Unknown paramater: $1"         ## What'chu talkin' 'bout, Willis?
@@ -113,32 +117,48 @@ done
 
 
 ### If no action specified, set default
-if [[ ${#actions} == 0 && $RUN_TESTS == 0 ]]; then 
-    echo "Executing Default Actions: ${DEFAULT_ACTIONS[@]}"
+if [[ ${#actions} == 0 && ${#local_actions} == 0 ]]; then 
+    echo "Executing Default Remote Actions: ${DEFAULT_ACTIONS[@]}"
+    echo "          Default Local Actions:  ${DEFAULT_LOCAL_ACTIONS[@]}"
     actions="${DEFAULT_ACTIONS[@]}"
+    local_actions="${DEFAULT_LOCAL_ACTIONS[@]}"
 fi;
 
-##echo ${actions[@]}
-##echo ${CTRL_ARGS}
-
-CMD="${CTRL_SCRIPT} ${CTRL_ARGS} -e ${ENV} -a ${APP} ${actions[@]}"
-
-echo
-echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
+#echo "Remote Actions: ${actions[@]}"
+#echo "Local Actions:  ${local_actions[@]}"
+#echo "Control Args:   ${CTRL_ARGS}"
 
 if [[ ${#actions} != 0 ]]; then 
-  ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
+    echo
+    echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
+    
+    CMD="${CTRL_SCRIPT} ${CTRL_ARGS} -e ${ENV} -a ${APP} ${actions[@]}"
+    ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
 fi;
 
-if [[ RUN_TESTS -eq 1 ]]; then 
-  echo "Starting tests on build server..." 
-  response=$(curl -sL -w "%{http_code}\\n" $BUILD_URL -o /dev/null)
-  if [[ $response == 200 ]]; then
-    echo "Integration tests started."
-  else
-    echo "Could not start integration tests (response status: $response)!"; exit 1
-  fi
-fi
+if [[ ${#local_actions} != 0 ]]; then 
+    for action in "${local_actions[@]}"; do
+	case ${action} in 
+	    run-tests)
+		echo
+		echo "Starting tests on build server..." 
+		response=$(curl -sL -w "%{http_code}\\n" "${BUILD_URL}" -o /dev/null)
+		if [[ ${response} == 200 ]]; then
+		    echo "Integration tests started."
+		else
+		    echo "Could not start integration tests!";
+		    echo "  URL used:      ${BUILD_URL}"
+		    echo "  Curl response: ${response}"
+		    exit 1
+		fi
+		;;
 
+	    *)
+		echo "Unknown Action: $action"
+		exit 2;
+		;;
+	esac;
+    done
+fi
 
 
