@@ -20,6 +20,7 @@ class TwilioVoiceWorker
 
       MessageSender.new(message.vendor.from).send!(message.recipients, ->(from, to){
         begin
+          logger.debug("Sending voice msg to #{to}")
           resp = twilio_account.calls.create({
                                                  :from => from,
                                                  :to => to,
@@ -28,6 +29,7 @@ class TwilioVoiceWorker
                                              })
           {ack: resp.sid, status: resp.status, error: nil}
         rescue Twilio::REST::RequestError => e
+          logger.warn("Failed to send SMS to #{to} for message #{message.id}: #{e.inspect}")
           {ack: nil, status: 'failed', error:e.to_s}
         end
       })
