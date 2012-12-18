@@ -21,13 +21,13 @@ describe MessageSender do
 
   def recipient_expectation(times=1)
     recipient = OpenStruct.new(:formatted_phone => to)
-    recipient.expects(:complete!).with("good", "ackkkk").times(times)
+    recipient.expects(:complete!).with("good", "ackkkk", nil).times(times)
     recipient
   end
 
   def send_proc_expectation(times=1)
     send_proc = mock()
-    send_proc.expects(:call).with(from,to).times(times).returns({:ack => 'ackkkk', :status => "good"})
+    send_proc.expects(:call).with(from,to).times(times).returns({:ack => 'ackkkk', :status => "good", :error => nil})
     send_proc
   end
 

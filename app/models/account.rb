@@ -35,4 +35,12 @@ class Account < ActiveRecord::Base
        errors.add(:vendors, "must be of different type") 
     end
   end
+
+  def sms_vendor
+    vendors.select {|v| !v.voice?}.first
+  end
+
+  def voice_vendor
+    vendors.select {|v| v.voice?}.first
+  end
 end

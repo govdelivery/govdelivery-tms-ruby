@@ -4,13 +4,13 @@ class InboundMessagesController < ApplicationController
 
   # GET /inbound_messages
   def index
-    @messages = current_user.account.vendors.first.inbound_messages.page(@page)
+    @messages = current_user.sms_vendor.inbound_messages.page(@page)
     set_link_header(@messages)
   end
 
   # GET /inbound_messages/1
   def show
-    @message = current_user.account.vendors.first.inbound_messages.find(params[:id])
+    @message = current_user.sms_vendor.inbound_messages.find(params[:id])
   end
 
   protected

@@ -14,12 +14,14 @@ class Recipient < ActiveRecord::Base
     STATUS_SENT = 3
     STATUS_FAILED = 4
     STATUS_BLACKLISTED = 5
+    STATUS_CANCELED = 6
   end
 
   belongs_to :message
   belongs_to :vendor
 
   scope :incomplete, where(:sent_at => nil)
+  scope :sending, where(:status => Recipient::STATUS_SENDING)
   scope :blacklisted, joins('inner join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone').readonly(false)
 
   scope :to_send, -> { incomplete.not_blacklisted.with_valid_phone_number }
@@ -40,13 +42,16 @@ class Recipient < ActiveRecord::Base
   def complete!(status, ack=nil, error=nil)
     self.ack = ack
     case status
-      when 'queued', 'sending'
+      when 'queued', 'sending', 'ringing', 'in-progress', 'busy', 'no-answer'
         self.status = Recipient::STATUS_SENDING
         self.sent_at = Time.now
-      when 'sent'
+      when 'sent', 'completed'
         self.status = Recipient::STATUS_SENT
       when 'failed'
         self.status = Recipient::STATUS_FAILED
+        self.completed_at = Time.now
+      when 'canceled'
+        self.status = Recipient::STATUS_CANCELED
         self.completed_at = Time.now
       else
         self.status = Recipient::STATUS_NEW

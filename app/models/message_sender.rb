@@ -2,7 +2,7 @@ MessageSender = Struct.new(:from) do
   def send!(recipients, send_proc)
     recipients.each do |r|
       result = send_proc.call(from, r.formatted_phone)
-      r.complete!(result[:status], result[:ack])
+      r.complete!(result[:status], result[:ack], result[:error])
     end
   end
 end
