@@ -10,22 +10,22 @@ describe TwilioVoiceWorker do
     let(:worker) { TwilioVoiceWorker.new }
 
     it 'should work' do
-      Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => ''))
-      MessageSender.any_instance.expects(:send!).with(message.recipients, instance_of(Proc))
-      worker.perform(:message_id => message.id)
+      twilio_calls = mock
+      twilio_calls.expects(:create).returns(OpenStruct.new(:sid => 'abc123', :status => 'completed'))
+      Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+      expect { worker.perform(:message_id => message.id) }.to change { message.recipients.where(:ack => 'abc123').count }.by 1
     end
-
   end
 
   context 'a sad send' do
     let(:worker) { TwilioVoiceWorker.new }
 
     it 'should not work' do
-      Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => ''))
-      MessageSender.any_instance.expects(:send!).with(message.recipients, instance_of(Proc)).raises(Exception.new("TWILIO OH TEH NOES!"))
-      expect { worker.perform(:message_id => message.id) }.to raise_error
+      twilio_calls = mock
+      twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
+      Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+      expect { worker.perform(:message_id => message.id) }.to change { message.recipients.where(:error_message => 'error').count }.by 1
     end
-
   end
 
 end

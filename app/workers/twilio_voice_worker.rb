@@ -29,7 +29,7 @@ class TwilioVoiceWorker
                                              })
           {ack: resp.sid, status: resp.status, error: nil}
         rescue Twilio::REST::RequestError => e
-          logger.warn("Failed to send SMS to #{to} for message #{message.id}: #{e.inspect}")
+          logger.warn("Failed to send voice msg to #{to} for message #{message.id}: #{e.inspect}")
           {ack: nil, status: 'failed', error:e.to_s}
         end
       })
