@@ -19,6 +19,7 @@ gem 'faraday_middleware'
 gem 'dcm_client'
 gem 'ruby-oci8'
 gem 'activerecord-oracle_enhanced-adapter'
+gem 'attr_encrypted'
 
 group :test do
   gem 'mocha', :require=>false

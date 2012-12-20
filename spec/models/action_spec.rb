@@ -4,7 +4,7 @@ describe Action do
   subject {
     vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     account = create_account(vendor: vendor)
-    Action.new(:account => account, :name => "FOO", :action_type => Action::DCM_UNSUBSCRIBE, :params => "PARAMETER OMG")
+    Action.new(:account => account, :name => "FOO", :action_type => Action::DCM_UNSUBSCRIBE, :params => ActionParameters.new(:url => "foo"))
   }
 
   context "when valid" do
@@ -30,7 +30,9 @@ describe Action do
 
   context "call" do
     before do
-      expected = ActionParameters.new(:params => "PARAMETER OMG", :from => "+122222").to_hash
+      # Action should combine it's own (persisted) params with the incoming params, convert them to a 
+      # hash, and pass them to the worker invocation
+      expected = ActionParameters.new(:from => "+122222", :url => "foo").to_hash
       DcmUnsubscribeWorker.expects(:perform_async).with(expected)
     end
     specify { subject.call(ActionParameters.new(:from => "+122222")) }

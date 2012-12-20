@@ -1,7 +1,7 @@
 class Action < ActiveRecord::Base
-  DCM_UNSUBSCRIBE = 1 # :params => "DCM_ACCOUNT_CODE_1,DCM_ACCOUNT_CODE_2,..."
-  DCM_SUBSCRIBE   = 2 # :params => "DCM_ACCOUNT_CODE:TOPIC_CODE1,TOPIC_CODE2"
-  FORWARD         = 3 # :params => "GET http://example.com"
+  DCM_UNSUBSCRIBE = 1 # :params => ActionParameters.new(:dcm_account_codes => ["ACCOUNT_1", "ACCOUNT_2"])
+  DCM_SUBSCRIBE   = 2 # :params => ActionParameters.new(:dcm_account_code => ["ACCOUNT_1"], :dcm_topic_codes => ["TOPIC_1", "TOPIC_2"])
+  FORWARD         = 3 # :params => ActionParameters.new(:method => "POST|GET", :username => "foo", :password => "bar", :url => "https://foobar.com")
   
   ACTION_TYPES = {
     DCM_UNSUBSCRIBE => {:name => :dcm_unsubscribe, :callable => ->(params){ DcmUnsubscribeWorker.perform_async(params.to_hash) }},
@@ -11,6 +11,7 @@ class Action < ActiveRecord::Base
 
   belongs_to :account
   belongs_to :event_handler
+  serialize :params, ActionParameters
 
   attr_accessible :account, :action_type, :name, :params
   validates_presence_of :account, :action_type
@@ -20,7 +21,7 @@ class Action < ActiveRecord::Base
 
   # Execute this action with the provided options, merging in the actions "params" column.
   def call(action_parameters=ActionParameters.new)
-    action_parameters.params = self.params
+    action_parameters.merge!(self.params)
     action_strategy.call(action_parameters)
   end
   

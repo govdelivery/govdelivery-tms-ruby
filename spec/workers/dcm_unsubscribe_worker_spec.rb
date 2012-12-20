@@ -9,7 +9,7 @@ describe DcmUnsubscribeWorker do
       client.expects(:delete_wireless_subscriber).with("1+2222222222", "ACME")
       DCMClient::Client.expects(:new).with(config).returns(client)
     end
-    specify { DcmUnsubscribeWorker.new.perform({:params => "ACME", :from => "+12222222222" }) }
+    specify { DcmUnsubscribeWorker.new.perform({:dcm_account_codes => ["ACME"], :from => "+12222222222" }) }
   end
 
   describe 'perform with two accounts and one 404' do
@@ -24,6 +24,6 @@ describe DcmUnsubscribeWorker do
 
       DCMClient::Client.expects(:new).with(config).returns(client)
     end
-    specify { DcmUnsubscribeWorker.new.perform({:params => "ACME,VANDELAY", :from => "+12222222222" }) }
+    specify { DcmUnsubscribeWorker.new.perform({:dcm_account_codes => ["ACME","VANDELAY"], :from => "+12222222222" }) }
   end 
 end

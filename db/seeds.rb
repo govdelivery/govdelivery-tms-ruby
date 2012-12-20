@@ -28,8 +28,21 @@ voice_loopback = Vendor.find_by_name('Loopback Voice Sender') || Vendor.create!(
 #
 if Rails.env.development?
   omg = Account.create!(:vendors => [sms_loopback, voice_loopback], :name => "OMG")
+
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
-  omg.add_action!(:params => "ACME,VANDELAY", :action_type => Action::DCM_UNSUBSCRIBE)
+  omg.add_action!(:params => ActionParameters.new(:dcm_account_codes => ['ACME','VANDELAY']), :action_type => Action::DCM_UNSUBSCRIBE)
+
+  # SERVICES FOO => POST to http://localhost/forward
+  kw = Keyword.new(:account => omg, :vendor => sms_loopback).tap { |kw| kw.name = 'SERVICES' }
+  kw.save!
+  kw.add_action!(:params => ActionParameters.new(:username => "example@evotest.govdelivery.com", :password => "password", :url => "http://localhost/forward", :method => "POST"), :action_type => Action::FORWARD)
+
+  # SUBSCRIBE ANTHRAX => evolution API request to localhost:3001
+  kw = Keyword.new(:account => omg, :vendor => sms_loopback).tap { |kw| kw.name = 'SUBSCRIBE' }
+  kw.save!
+  kw.add_action!(:params => ActionParameters.new(:dcm_account_code => "ACME", :dcm_topic_codes => ['ANTRHAX']), :action_type => Action::DCM_SUBSCRIBE)
+
+  # Make the product user (admin)
   user = User.find_or_create_by_email(:email => "product@govdelivery.com", :password => "retek01!")
   user.account = omg
   user.admin = true

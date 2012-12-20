@@ -15,13 +15,13 @@ class DcmUnsubscribeWorker
   # options: {"from"=>"+14445556666", "params"=>"ACME,VANDELAY"}
   #
   def perform(options)
-    options = HashWithIndifferentAccess.new(options)
-    logger.info("Performing DCM unsubscribe for #{options.inspect}")
+    options = ActionParameters.new(options)
+    logger.info("Performing DCM unsubscribe for #{options.to_s}")
 
     client = DCMClient::Client.new(Tsms::Application.config.dcm)
-    number = PhoneNumber.new(options["from"]).dcm
+    number = PhoneNumber.new(options.from).dcm
 
-    options["params"].split(",").each do |account_code|
+    options.dcm_account_codes.each do |account_code|
       begin
         client.delete_wireless_subscriber(number, account_code)
       

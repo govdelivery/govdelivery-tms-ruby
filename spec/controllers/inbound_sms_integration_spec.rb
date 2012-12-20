@@ -23,7 +23,7 @@ describe TwilioRequestsController do
     end
     it 'executes an action' do
       acct = vendor.accounts.create!(name: 'aname')
-      action = acct.add_action!(:params => "ACME,VANDELAY", :action_type => Action::DCM_UNSUBSCRIBE)
+      action = acct.add_action!(:params => ActionParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :action_type => Action::DCM_UNSUBSCRIBE)
       Action.any_instance.expects(:call)
       post :create, params
     end
@@ -67,7 +67,7 @@ describe TwilioRequestsController do
         .to change{vendor.inbound_messages.count}.by 1
     end
     it 'executes an action' do
-      action = vendor.keywords.first.add_action!(:params => "ACME,VANDELAY", :action_type => Action::DCM_SUBSCRIBE)
+      action = vendor.keywords.first.add_action!(:params => ActionParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :action_type => Action::DCM_SUBSCRIBE)
       Action.any_instance.expects(:call)
       post :create, params
     end

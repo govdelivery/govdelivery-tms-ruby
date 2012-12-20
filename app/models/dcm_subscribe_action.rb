@@ -13,12 +13,12 @@ DcmSubscribeAction = Struct.new(:client) do
   # data_string: the params from the subscribe action in the database
   # subscribe_args: an array of the tokens the user typed after the configured keyword. For example, 
   #   if the user texted "subscribe foo@bar.com", the subscribe_args should be ["foo@bar.com"].
-  def call(phone_number, data_string, subscribe_args=[], phone_number_constructor=PhoneNumber.public_method(:new))
+  def call(phone_number, account_code, topic_codes, subscribe_args=[], phone_number_constructor=PhoneNumber.public_method(:new))
     if(email_address = extract_email(subscribe_args))
-      client.email_subscribe(email_address, *parse(data_string))
+      client.email_subscribe(email_address, account_code, topic_codes)
     else
       pn = phone_number_constructor.call(phone_number)
-      client.wireless_subscribe(pn.dcm, *parse(data_string))
+      client.wireless_subscribe(pn.dcm, account_code, topic_codes)
     end
   end
 

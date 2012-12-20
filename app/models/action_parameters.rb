@@ -1,21 +1,54 @@
+#
+# This class ends up serialized in YAML in 
+# the actions table.  It mixes variables from different contexts (actions table, 
+# 
+# This class is able to cleanly cross the boundary between web server and background
+# processing without issues (because it can be reconstituted from a plain old Hash).
+#
+# To convert to hash: 
+#   instance.to_hash 
+# To convert from hash: 
+#   ActionParameters.new({...})
+#
 class ActionParameters
-  include MassAssignable
+  include MassAssignment
 
+  # Some attributes in this collection may be persisted in the database as Action#params (marshalled
+  # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or 
+  # handle the missing method error). 
   PARAMS=[
-    :params,     # params column on actions table
-    :account_id, # 
-    :sms_body,   # from the incoming sms message,
-    :sms_tokens, # and array of string tokens in the sms_body
-    :from        # phone number of user that sent us sms message
+    :params,            # params column on actions table
+    :account_id,        # the tsms account id corresponding to this action
+    :sms_body,          # the full body string of the incoming sms message
+    :sms_tokens,        # an array of string tokens in the sms_body, sans keyword
+    :from,              # phone number of user that sent us sms message
+    :username,
+    :encrypted_password,
+    :http_method, 
+    :url,
+    :method,
+    :dcm_account_codes, # an array of codes, used for unsubscribing only
+    :dcm_account_code,  # a single account code, used for subscribing to topics
+    :dcm_topic_codes    # array of topic codes (dcm_account_code must be set)
   ]
   attr_accessor *PARAMS
 
+  # This is not persisted anywhere.  The getter/setter is used for bi-directional
+  # encryption. 
+  attr_encrypted :password, :key => "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
+
+  def merge!(params)
+    assign!(params.to_hash)
+  end
+
+  # return a hash of values for this object's properties, but without any keys that
+  # have nil values
   def to_hash
-    PARAMS.inject({}){ |hsh, param| hsh.merge(param => self.send(param))}
+    PARAMS.inject({}) {|hsh, p| hsh.merge(p => self.send(p))}.keep_if{|k,v| !v.nil?}
   end
 
   def to_s
-    to_hash.to_s
+    "#<#{self.class} #{self.to_hash}>"
   end
 
 end

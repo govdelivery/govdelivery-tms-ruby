@@ -1,7 +1,7 @@
 require 'typhoeus/adapters/faraday'
 module Service
   class ForwardService
-    include MassAssignable
+    include MassAssignment
 
     attr_accessor :connection, :logger
 

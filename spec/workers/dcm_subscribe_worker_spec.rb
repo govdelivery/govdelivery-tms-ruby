@@ -1,7 +1,8 @@
 require 'spec_helper'
 describe DcmSubscribeWorker do
   let(:phone_number) { '+14443332222' }
-  let(:data_string) { 'ACCOUNT_CODE:TOPIC_CODE,TOPIC_2' }
+  let(:account_code) { 'ACCOUNT_CODE' }
+  let(:topic_codes) { ['TOPIC_CODE','TOPIC_2'] }
   let(:subscribe_args) { ['foo@bar.com'] }
   let(:subscribe_action) { mock('dcm_subscribe_action') }
 
@@ -14,17 +15,17 @@ describe DcmSubscribeWorker do
   end
 
   it 'passes options to the subscribe action' do
-    subscribe_action.expects(:call).with(phone_number, data_string, subscribe_args)
+    subscribe_action.expects(:call).with(phone_number, account_code, topic_codes, subscribe_args)
 
-    subject.perform({:params => data_string, :from => phone_number, :args => subscribe_args})
+    subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
   end
 
   it 'ignores UnprocessableEntity errors' do
     subscribe_action.expects(:call)
-      .with(phone_number, data_string, subscribe_args) 
+      .with(phone_number, account_code, topic_codes, subscribe_args) 
       .raises(DCMClient::Error::UnprocessableEntity.new("foo"))
 
-    subject.perform({:params => data_string, :from => phone_number, :args => subscribe_args})
+    subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
   end 
 end
 
