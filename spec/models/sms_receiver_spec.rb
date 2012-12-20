@@ -1,11 +1,11 @@
 require_relative '../../app/models/sms_receiver'
+require_relative '../../app/models/action_parameters'
 require_relative '../little_spec_helper'
 require 'ostruct'
 
 describe SmsReceiver, '#respond_to_sms!' do
   let(:friendly_vendor) { stub_everything('I am a vendor. Call anything on me!') }
-  let(:from) { '+5554443333' }
-  let(:body) { 'subscribe foo@bar.com' }
+  let(:action_parameters) { ActionParameters.new(:from => '+5554443333', :sms_body => 'subscribe foo@bar.com')}
 
   subject { SmsReceiver.new(friendly_vendor) }
 
@@ -16,14 +16,14 @@ describe SmsReceiver, '#respond_to_sms!' do
     end
 
     it 'calls receive_message! with :stop? set to true' do
-      friendly_vendor.expects(:receive_message!).with(:from => from, :body => body, :stop? => true)
+      friendly_vendor.expects(:receive_message!).with(:from => action_parameters.from, :body => action_parameters.sms_body, :stop? => true)
 
-      subject.respond_to_sms!(from, body)
+      subject.respond_to_sms!(action_parameters)
     end
 
     it 'returns stop_text' do
       subject.stop_text = 'you should stop now'
-      subject.respond_to_sms!(from, body).should == 'you should stop now'
+      subject.respond_to_sms!(action_parameters).should == 'you should stop now'
     end
   end
 
@@ -34,14 +34,14 @@ describe SmsReceiver, '#respond_to_sms!' do
     end
 
     it 'calls receive_message! with :stop? set to false' do
-      friendly_vendor.expects(:receive_message!).with(:from => from, :body => body, :stop? => false)
+      friendly_vendor.expects(:receive_message!).with(:from => action_parameters.from, :body => action_parameters.sms_body, :stop? => false)
 
-      subject.respond_to_sms!(from, body)
+      subject.respond_to_sms!(action_parameters)
     end
 
     it 'returns help_text' do
       subject.help_text = 'you have been helped'
-      subject.respond_to_sms!(from, body).should == 'you have been helped'
+      subject.respond_to_sms!(action_parameters).should == 'you have been helped'
     end
   end
 
@@ -54,24 +54,26 @@ describe SmsReceiver, '#respond_to_sms!' do
     it "calls keyword's #execute_actions method" do
       kw = stub('keyword')
       kw.stubs(:name).returns('kwname')
-      kw.expects(:execute_actions).with(:from => from, :args => ['foo@bar.com'])
+      kw.stubs(:account_id).returns(239423)
+      action_parameters.expects(:sms_tokens=).with(['foo@bar.com'])
+      kw.expects(:execute_actions).with(action_parameters)
       subject.keywords = [kw]
 
-      subject.respond_to_sms!(from, body)
+      subject.respond_to_sms!(action_parameters)
     end
 
     it 'returns nil for keyword dispatches' do
       subject.keywords = [mock(:name => 'kwname', :execute_actions => 'returned by execute_actions')]
 
-      subject.respond_to_sms!(from, body).should be_nil
+      subject.respond_to_sms!(action_parameters).should be_nil
     end
 
     it 'calls receive_message! with :stop? set to false' do
-      friendly_vendor.expects(:receive_message!).with(:from => from, :body => body, :stop? => false)
+      friendly_vendor.expects(:receive_message!).with(:from => action_parameters.from, :body => action_parameters.sms_body, :stop? => false)
 
       subject.keywords = [mock(:name => 'kwname', :execute_actions => 'returned by execute_actions')]
 
-      subject.respond_to_sms!(from, body)
+      subject.respond_to_sms!(action_parameters)
     end
   end
 end

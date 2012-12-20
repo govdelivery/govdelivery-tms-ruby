@@ -30,9 +30,9 @@ describe Action do
 
   context "call" do
     before do
-      expected = {:params => "PARAMETER OMG", :from => "+122222"}
+      expected = ActionParameters.new(:params => "PARAMETER OMG", :from => "+122222").to_hash
       DcmUnsubscribeWorker.expects(:perform_async).with(expected)
     end
-    specify { subject.call(:from => "+122222") }
+    specify { subject.call(ActionParameters.new(:from => "+122222")) }
   end
 end

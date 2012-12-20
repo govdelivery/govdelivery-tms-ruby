@@ -34,7 +34,8 @@ class Keyword < ActiveRecord::Base
     event_handler.actions.create!({:account => self.account}.merge(params))
   end
 
-  def execute_actions(params={})
+  def execute_actions(params=ActionParameters.new)
+    params.account_id = self.account_id
     event_handler.actions.each{|a| a.call(params)} if event_handler
   end
 
