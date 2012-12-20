@@ -1,4 +1,10 @@
 class CreateAccountVendors < ActiveRecord::Migration
+class AccountVendor < ActiveRecord::Base
+  attr_accessible :account, :vendor
+  belongs_to :account
+  belongs_to :vendor
+  
+end
   def change
     create_table :account_vendors do |t|
       t.references :account
