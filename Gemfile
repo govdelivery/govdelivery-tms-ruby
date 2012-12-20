@@ -13,7 +13,12 @@ gem 'phony'
 gem 'phony_rails' 
 gem 'slim'
 gem 'sinatra', :require => nil
+gem 'typhoeus'
+gem 'faraday'
+gem 'faraday_middleware'
 gem 'dcm_client'
+gem 'ruby-oci8'
+gem 'activerecord-oracle_enhanced-adapter'
 
 group :test do
   gem 'mocha', :require=>false
@@ -30,6 +35,3 @@ end
 group :development do
   gem 'rails-erd'
 end
-
-gem 'ruby-oci8'
-gem 'activerecord-oracle_enhanced-adapter'

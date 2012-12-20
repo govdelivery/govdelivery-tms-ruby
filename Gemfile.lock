@@ -208,6 +208,8 @@ DEPENDENCIES
   activerecord-oracle_enhanced-adapter
   dcm_client
   devise
+  faraday
+  faraday_middleware
   guard-rspec
   kaminari
   log4r
@@ -226,3 +228,4 @@ DEPENDENCIES
   slim
   sqlite3
   twilio-ruby
+  typhoeus
