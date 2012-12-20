@@ -3,7 +3,7 @@ describe TwilioVoiceWorker do
   let(:voice_vendor) { Vendor.create!(:voice=>true, :name => 'voice vendor', :username => 'username', :password => 'secret', :from => 'from', :worker => 'TwilioVoiceWorker') }
   let(:account) { account = voice_vendor.accounts.create!(:name => 'name') }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { user.messages.create!(:url => 'http://localhost/file.mp3', :recipients_attributes => [{:phone => "6515551212", :vendor => voice_vendor}]) }
+  let(:message) { account.messages.create!(:url => 'http://localhost/file.mp3', :recipients_attributes => [{:phone => "6515551212", :vendor => voice_vendor}]) }
 
   #need to add recipient stubs and verify recipients are modified correctly
   context 'a very happy send' do

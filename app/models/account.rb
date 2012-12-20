@@ -4,7 +4,8 @@ class Account < ActiveRecord::Base
   has_many :users
   has_many :account_vendors
   has_many :vendors, :through => :account_vendors
-
+  has_many :messages
+  
   belongs_to :stop_handler, :class_name => 'EventHandler'
   validate :unique_vendor
   

@@ -4,7 +4,7 @@ describe TwilioStatusCallbacksController do
   let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :help_text => 'Help me!') }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { user.messages.create(:short_body => 'Look out') }
+  let(:message) { account.messages.create(:short_body => 'Look out') }
   let(:recipient) do
     recipient = message.recipients.build(:phone => '+15551112222')
     recipient.ack='SM2e4152a68a31e52bbf035e22b77f09ab'

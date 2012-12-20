@@ -7,11 +7,12 @@ class Message < ActiveRecord::Base
   accepts_nested_attributes_for :recipients
 
   belongs_to :user
-  validates_presence_of :user
+  belongs_to :account
+  validates_presence_of :account
   
   validates_length_of :short_body, :maximum => 160
 
-  delegate :vendors, :to => :user
+  delegate :vendors, :to => :account
   before_validation :verify_sms_or_voice
 
   def create_recipients(recipient_params=[])

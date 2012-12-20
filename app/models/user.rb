@@ -21,6 +21,12 @@ class User < ActiveRecord::Base
     User.find_by_email(email.downcase) if email
   end
 
+  def new_message(params)
+    messages.new(params).tap do |m|
+      m.account = self.account
+    end
+  end
+
   private
   def downcase_email
     self.email.downcase! if self.email

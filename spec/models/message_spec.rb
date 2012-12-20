@@ -6,17 +6,23 @@ describe Message do
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
 
   context "when short body is empty" do
-    let(:message) { user.messages.build(:short_body => nil) }
+    let(:message) { account.messages.build(:short_body => nil) }
     it { should_not be_valid }
   end
   
   context "when short body and url are non-empty" do
-    let(:message) { user.messages.build(:short_body => 'body', :url=>'http://what.the') }
+    let(:message) { account.messages.build(:short_body => 'body', :url=>'http://what.the') }
     it { message.should_not be_valid }
   end
 
+  context "without an account" do
+    let(:message) { Message.new(:short_body => "Hello")}
+    subject { message }
+    it { should_not be_valid }
+  end
+
   context "sms message" do
-    let(:message) { user.messages.build(:short_body => 'short body') }
+    let(:message) { account.messages.build(:short_body => 'short body') }
 
     subject { message }
 
@@ -31,18 +37,18 @@ describe Message do
   end
 
   context 'a message with valid recipients attributes' do
-    let(:message) { user.messages.build(:short_body => "A"*160, :recipients_attributes => [{:phone => "6515551212", :vendor => vendor}]) }
+    let(:message) { account.messages.build(:short_body => "A"*160, :recipients_attributes => [{:phone => "6515551212", :vendor => vendor}]) }
     it { message.should be_valid }
     it { message.should have(1).recipients }
   end
 
   context 'a message with invalid recipients attributes' do
-    let(:message) { user.messages.build(:short_body => "A"*160, :recipients_attributes => [{:phone => nil, :vendor => vendor}]) }
+    let(:message) { account.messages.build(:short_body => "A"*160, :recipients_attributes => [{:phone => nil, :vendor => vendor}]) }
     it { message.should_not be_valid }
   end
 
   context "voice message" do
-    let(:message) { user.messages.build(:url => 'http://localhost/file.mp3') }
+    let(:message) { account.messages.build(:url => 'http://localhost/file.mp3') }
 
     subject { message }
 
@@ -53,7 +59,7 @@ describe Message do
 
   context "an account with voice and sms senders" do
     let(:voice_vendor) { Vendor.create!(:voice=>true, :name => 'voice vendor', :username => 'username', :password => 'secret', :from => 'from', :worker => 'TwilioVoiceWorker') }
-    let(:message) { user.messages.create!(:url => 'http://localhost/file.mp3') }
+    let(:message) { account.messages.create!(:url => 'http://localhost/file.mp3') }
     before do
       account.vendors << voice_vendor
       account.save!

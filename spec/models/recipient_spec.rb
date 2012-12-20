@@ -7,7 +7,7 @@ describe Recipient do
     a = Account.create(:name => 'account', :vendor => v)
     u = User.create(:email => 'admin@get-endorsed-by-bens-mom.com', :password => 'retek01!')
     u.account = a
-    m.user = u
+    m.account = a
     r = Recipient.new
     r.message = m
     r.vendor = v

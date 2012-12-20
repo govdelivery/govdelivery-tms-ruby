@@ -3,7 +3,7 @@ class MessagesController < ApplicationController
   before_filter :set_page, :only => :index
 
   def index
-    @messages = current_user.messages.page(@page)
+    @messages = current_user.account.messages.page(@page)
     set_link_header(@messages)
     respond_with(@messages)
   end
@@ -20,7 +20,7 @@ class MessagesController < ApplicationController
 
   def create
     recipients = params[:message].delete(:recipients) if params[:message]
-    @message = current_user.messages.new(params[:message])
+    @message = current_user.new_message(params[:message])
     if @message.save
       @message.create_recipients(recipients) unless recipients.nil?
       options = {:message_id => @message.id}

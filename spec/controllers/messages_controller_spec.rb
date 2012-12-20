@@ -51,12 +51,11 @@ describe MessagesController do
         m = Message.new(:short_body => "#{"A"*40} #{i}",
                         :recipients_attributes => [{:phone => "800BUNNIES"}])
         m.created_at = i.days.ago
-        m.user = user
       end
     end
     before do
       messages.stubs(:total_pages).returns(5)
-      User.any_instance.expects(:messages).returns(stub(:page => messages))
+      Account.any_instance.expects(:messages).returns(stub(:page => messages))
     end
     it "should work on the first page" do
       messages.stubs(:current_page).returns(1)
