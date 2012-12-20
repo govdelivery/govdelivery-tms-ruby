@@ -19,6 +19,10 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
     stop_text
   end
 
+  # from is the sms phone number
+  # body is the sms text
+  # kw is the Keyword object
+  # args is an array of tokens from the sms input (sans the keyword)
   def do_keyword(from, body, kw, args)
     vendor.receive_message!(:from => from, :body => body, :stop? => false)
     kw.execute_actions(:from => from, :args => args)

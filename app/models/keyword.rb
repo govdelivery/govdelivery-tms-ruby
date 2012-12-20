@@ -1,7 +1,10 @@
 class Keyword < ActiveRecord::Base
   attr_accessible :account, :vendor
 
-  RESERVED_KEYWORDS = %w(stop quit help)
+  # for at least one of our vendors (twilio) we need to support stop, quit, cancel, and unsubscribe
+  # http://www.twilio.com/help/faq/sms/does-twilio-support-stop-block-and-cancel-aka-sms-filtering
+  STOP_WORDS = %w(stop quit unsubscribe cancel)
+  RESERVED_KEYWORDS = STOP_WORDS + ['help']
 
   has_many :actions
 
@@ -12,6 +15,12 @@ class Keyword < ActiveRecord::Base
   validates_length_of :name, :maximum => 160
   validates_uniqueness_of :name, :scope => "account_id"
   validate :name_not_reserved
+
+  class << self
+    def stop?(text)
+      !!(text =~ /^\s*(#{STOP_WORDS.join("|")})(\s|$)/i)
+    end
+  end
 
   def name=(n)
     write_attribute(:name, sanitize_name(n))

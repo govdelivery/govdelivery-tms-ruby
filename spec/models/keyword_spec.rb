@@ -68,4 +68,12 @@ describe Keyword do
         .to change{Action.count}.by 1
     end
   end
+
+  describe 'stop?' do
+    %w(stop quit STOP QUIT sToP qUiT cancel unsubscribe).each do |stop|
+      it "should recognize #{stop}" do
+        Keyword.stop?(stop).should be_true
+      end
+    end
+  end
 end
