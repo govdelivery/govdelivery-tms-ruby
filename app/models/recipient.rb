@@ -39,27 +39,6 @@ class Recipient < ActiveRecord::Base
     self.formatted_phone = PhoneNumber.new(ph.to_s).e164
   end
 
-  def complete!(status, ack=nil, error=nil)
-    self.ack = ack
-    case status
-      when 'queued', 'sending', 'ringing', 'in-progress', 'busy', 'no-answer'
-        self.status = Recipient::STATUS_SENDING
-        self.sent_at = Time.now
-      when 'sent', 'completed'
-        self.status = Recipient::STATUS_SENT
-      when 'failed'
-        self.status = Recipient::STATUS_FAILED
-        self.completed_at = Time.now
-      when 'canceled'
-        self.status = Recipient::STATUS_CANCELED
-        self.completed_at = Time.now
-      else
-        self.status = Recipient::STATUS_NEW
-    end
-    self.error_message = error
-    self.save!
-  end
-
   private
 
   def truncate_error_message

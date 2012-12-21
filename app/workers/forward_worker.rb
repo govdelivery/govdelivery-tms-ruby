@@ -19,18 +19,20 @@ class ForwardWorker
   # Retry for up to ~ 20 days (see https://github.com/mperham/sidekiq/wiki/Error-Handling)
   # That should get us through a long outage on the remote end.
   sidekiq_options retry: 25
-  
-  # :params => "POST http://foo.com"
-  # :sms_body => "FOOBAR"
-  # :from => "+14448593849"
-  # :account_id => 123123
+
   def perform(options)
-    options = HashWithIndifferentAccess.new(options)
-    logger.info("Performing Forward for #{options.inspect}")
-    method, action = options[:params].split(/\s/)
+    options = ActionParameters.new(options)
+    logger.info("Performing Forward for #{options}")
 
-    forward_response = forward_service.send(method.downcase, action, {:from => options[:from], :sms_body => options[:sms_body]})
-
+    method   = options.method.downcase
+    action   = options.url
+    username = options.username
+    password = options.password
+    sms_body = options.sms_body
+    from     = options.from
+    account  = Account.find(options.account_id)
+    
+    forward_response = forward_service.send(method, action, username, password, {:from => from, :sms_body => sms_body}).body.strip
 
   end
 

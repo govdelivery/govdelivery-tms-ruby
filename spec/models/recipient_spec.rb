@@ -33,21 +33,6 @@ describe Recipient do
     end
   end
 
-  describe 'a valid recipient' do
-    before do
-      subject.phone = '501 555 9999'
-      subject.save!
-    end
-
-    it 'should receive a status update' do
-      subject.complete!('sending', 'ack', 'error_message')
-      subject.reload
-      subject.status.should eq(Recipient::STATUS_SENDING)
-      subject.ack.should eq('ack')
-      subject.error_message.should eq('error_message')
-    end
-  end
-
   describe "when phone is valid" do
     before do
       subject.phone = '6515551212'

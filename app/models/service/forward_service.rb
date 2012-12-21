@@ -3,23 +3,25 @@ module Service
   class ForwardService
     include MassAssignment
 
-    attr_accessor :connection, :logger
+    attr_accessor :logger
 
-    def post(href, body)
-      connection.post do |req|
-        req.url href
-        req.body = body.to_json
+    def post(url, username, password, body)
+      connection(username, password).post(url) do |req|
+        req.body = body
       end
     end
 
-    def connection(url)
-      Faraday.new(:url => url) do |faraday|
+    def get(url, username, password, body)
+      connection(username, password).get(url) do |req|
+        req.params = body
+      end
+    end
+
+    def connection(username, password)
+      Faraday.new do |faraday|
         faraday.use Faraday::Response::Logger, self.logger if self.logger
         faraday.use Faraday::Response::RaiseError
-
-        faraday.request :text
-        #faraday.basic_auth(self.username, self.password)
-        faraday.response :text, :content_type => /\btext\/plain$/
+        faraday.basic_auth(self.username, self.password) if username && password
         faraday.adapter :typhoeus
       end
     end

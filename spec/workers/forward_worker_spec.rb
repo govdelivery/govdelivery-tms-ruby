@@ -1,18 +1,17 @@
+require File.expand_path("../../little_spec_helper", __FILE__)
 require 'spec_helper'
 
 describe ForwardWorker do
   let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
   let(:account) { vendor.accounts.create(:name => 'name') }
-  
+  let(:options) { {:url => "url", :method => "post", :username => nil, :password => nil, :from => "333", :sms_body => "sms body", :account_id => account.id} }
   subject { ForwardWorker.new }
 
   it 'should perform happily' do
-    forward_response = "ATLANTA IS FULL OF ZOMBIES, STAY AWAY"
+    forward_response = mock(:body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY")
     subject.forward_service = mock
-    subject.forward_service.expects(:post).with("url", {:from => "+12223334444", :sms_body => "SERVICES 33333"}).returns(forward_response)
-    # subject.twilio_service = mock
-    # subject.twilio_service.expects(:send).with(:from => "+12223334444", :sms_body => forward_response)
-
-    subject.perform(:params => "POST url", :from => "+12223334444", :sms_body => "SERVICES 33333")
+    subject.forward_service.expects(:post).with("url", nil, nil, {:from => "333", :sms_body => "sms body"}).returns(forward_response)
+    
+    subject.perform(options)
   end
 end
