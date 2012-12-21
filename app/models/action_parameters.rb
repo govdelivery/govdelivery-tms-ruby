@@ -34,7 +34,8 @@ class ActionParameters
   attr_accessor *PARAMS
 
   # This is not persisted anywhere.  The getter/setter is used for bi-directional
-  # encryption. 
+  # encryption. If this property were in PARAMS, it would be serialized into the 
+  # database, which is exactly what we don't want. 
   attr_encrypted :password, :encode => true, :key => "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
 
   def merge!(params)
@@ -42,7 +43,8 @@ class ActionParameters
   end
 
   # return a hash of values for this object's properties, but without any keys that
-  # have nil values
+  # have nil values.  Please don't ever include password in this.  Only encrypted_password is
+  # safe.  
   def to_hash
     PARAMS.inject({}) {|hsh, p| hsh.merge(p => self.send(p))}.keep_if{|k,v| !v.nil?}
   end
@@ -51,4 +53,9 @@ class ActionParameters
     "#<#{self.class} #{self.to_hash}>"
   end
 
+  # This is what tells YAML which properties on this object
+  # are to be included in serialization.  
+  def to_yaml_properties
+    to_hash.keys.map{|p| "@#{p}"}
+  end  
 end

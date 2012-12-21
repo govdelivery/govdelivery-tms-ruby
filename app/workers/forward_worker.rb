@@ -50,7 +50,7 @@ class ForwardWorker
   def build_message(short_body)
     message = account.messages.new(:short_body => short_body)
     # User is out of context for this message, as there is no current user - the 
-    # incoming controller request was from a handset (not an app)
+    # incoming controller request was from a handset (not a client's app)
     message.recipients.build(:phone => options.from, :vendor => account.sms_vendor)
     message.save!
     message
