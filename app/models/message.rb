@@ -45,7 +45,7 @@ class Message < ActiveRecord::Base
     elsif url
       vendors.voice.first
     else
-      nil
+      raise "Cannot find a vendor for #{self}"
     end
   end
 end

@@ -6,11 +6,17 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Emanuel', :city => cities.first)
 
-twilio_sender = Vendor.find_by_name('Twilio Sender') || Vendor.create!(:name => 'Twilio Sender',
+twilio_sms_sender = Vendor.find_by_name('Twilio Sender') || Vendor.create!(:name => 'Twilio Sender',
   :worker => 'TwilioMessageWorker',
   :username => Rails.configuration.twilio_username,
   :password => Rails.configuration.twilio_password,
   :from => Rails.configuration.twilio_number)
+twilio_voice_sender = Vendor.find_by_name('Twilio Voice Sender') || Vendor.create!(:name => 'Twilio Voice Sender',
+  :worker => 'TwilioVoiceWorker',
+  :username => Rails.configuration.twilio_username,
+  :password => Rails.configuration.twilio_password,
+  :from => Rails.configuration.twilio_number, 
+  :voice => true)
 sms_loopback = Vendor.find_by_name('Loopback SMS Sender') || Vendor.create!(:name => 'Loopback SMS Sender',
   :worker => 'LoopbackMessageWorker',
   :username => 'dont care',

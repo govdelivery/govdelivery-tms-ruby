@@ -14,7 +14,7 @@ class TwilioVoiceWorker
     logger.debug("******************************* #{Message.find_by_id(message_id).to_yaml}")
 
     if message = Message.find_by_id(message_id)
-      TwilioVoiceMessageService.new(message.vendor.username, message.vendor.password).deliver!(message, message_url, callback_url)
+      Service::TwilioVoiceMessageService.new(message.vendor.username, message.vendor.password).deliver!(message, message_url, callback_url)
     else
       logger.warn("Send failed, unable to find message with id #{message_id}")
     end

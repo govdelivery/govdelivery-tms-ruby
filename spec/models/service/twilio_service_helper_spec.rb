@@ -17,9 +17,9 @@ describe Service::TwilioServiceHelper do
     it 'should set the right fields' do
       service.complete!(recipient, response, "OMG")
 
-      subject.status.should eq(Recipient::STATUS_SENDING)
-      subject.ack.should eq('123')
-      subject.error_message.should eq('OMG')
+      recipient.status.should eq(Recipient::STATUS_SENDING)
+      recipient.ack.should eq('123')
+      recipient.error_message.should eq('OMG')
     end
   end
 end
