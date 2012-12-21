@@ -22,10 +22,9 @@ describe MessagesController do
     end
     it "should be accepted" do
       response.response_code.should == 201
-    end
 
-    it "should populate new Message" do
       assigns(:message).short_body.should == 'A short body'
+      assigns(:message).account_id.should == user.account_id
     end
   end
 

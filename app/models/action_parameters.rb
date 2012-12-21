@@ -18,15 +18,15 @@ class ActionParameters
   # handle the missing method error). 
   PARAMS=[
     :params,            # params column on actions table
-    :account_id,        # the tsms account id corresponding to this action
+    :account_id,        # the tsms account id corresponding to this action,
+    :callback_url,      # a callback url for the external sms/voice service to call if needed
     :sms_body,          # the full body string of the incoming sms message
     :sms_tokens,        # an array of string tokens in the sms_body, sans keyword
     :from,              # phone number of user that sent us sms message
     :username,
     :encrypted_password,
-    :http_method, 
     :url,
-    :method,
+    :http_method,
     :dcm_account_codes, # an array of codes, used for unsubscribing only
     :dcm_account_code,  # a single account code, used for subscribing to topics
     :dcm_topic_codes    # array of topic codes (dcm_account_code must be set)
@@ -35,7 +35,7 @@ class ActionParameters
 
   # This is not persisted anywhere.  The getter/setter is used for bi-directional
   # encryption. 
-  attr_encrypted :password, :key => "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
+  attr_encrypted :password, :encode => true, :key => "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
 
   def merge!(params)
     assign!(params.to_hash)

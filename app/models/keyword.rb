@@ -6,8 +6,6 @@ class Keyword < ActiveRecord::Base
   STOP_WORDS = %w(stop quit unsubscribe cancel)
   RESERVED_KEYWORDS = STOP_WORDS + ['help']
 
-  has_many :actions
-
   belongs_to :vendor
   belongs_to :account
   belongs_to :event_handler

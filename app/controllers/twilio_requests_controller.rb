@@ -10,7 +10,7 @@ class TwilioRequestsController < ApplicationController
 
   def twilio_request_response
     vendor = find_vendor
-    action_params = ActionParameters.new(:sms_body => params['Body'], :from => params['From'])
+    action_params = ActionParameters.new(:sms_body => params['Body'], :from => params['From'], :callback_url => callback_url)
     sms_receiver = SmsReceiver.new(vendor, vendor.stop_text, vendor.help_text)
     sms_receiver.keywords = vendor.keywords
     response_text = sms_receiver.respond_to_sms!(action_params)
@@ -19,5 +19,9 @@ class TwilioRequestsController < ApplicationController
 
   def find_vendor
     Vendor.find_by_username!(params['AccountSid'])
+  end
+
+  def callback_url
+    twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
   end
 end

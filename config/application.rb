@@ -12,6 +12,8 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
+
 module Tsms
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.

@@ -14,33 +14,49 @@ require 'base'
 class ForwardWorker
   include Workers::Base
   
-  attr_accessor :twilio_service, :forward_service
+  attr_accessor :sms_service, :forward_service, :options, :account
 
   # Retry for up to ~ 20 days (see https://github.com/mperham/sidekiq/wiki/Error-Handling)
   # That should get us through a long outage on the remote end.
   sidekiq_options retry: 25
 
-  def perform(options)
-    options = ActionParameters.new(options)
+  def perform(opts)
+    self.options = ActionParameters.new(opts)
     logger.info("Performing Forward for #{options}")
 
-    method   = options.method.downcase
-    action   = options.url
-    username = options.username
-    password = options.password
-    sms_body = options.sms_body
-    from     = options.from
-    account  = Account.find(options.account_id)
+    http_method  = options.http_method.downcase
+    action       = options.url
+    username     = options.username
+    password     = options.password
+    sms_body     = options.sms_body
+    from         = options.from
+    callback_url = options.callback_url
+    self.account = Account.find(options.account_id)
     
-    forward_response = forward_service.send(method, action, username, password, {:from => from, :sms_body => sms_body}).body.strip
+    # Send the message to the external service.  
+    forward_response = forward_service.send(http_method, action, username, password, {:from => from, :sms_body => sms_body}).body.strip
 
+    # Build an SMS message with the response of the previous HTTP call. 
+    message = build_message(forward_response)
+    
+    # Send a text back to the user via twilio
+    sms_service.deliver!(message, callback_url)
   end
 
   def forward_service
-    @forward_service ||= ForwardService.new
+    @forward_service ||= Service::ForwardService.new
   end
 
-  def twilio_service
-    @twilio_service ||= TwilioMessageService.new
+  def build_message(short_body)
+    message = account.messages.new(:short_body => short_body)
+    # User is out of context for this message, as there is no current user - the 
+    # incoming controller request was from a handset (not an app)
+    message.recipients.build(:phone => options.from, :vendor => account.sms_vendor)
+    message.save!
+    message
+  end
+
+  def sms_service
+    @sms_service ||= Service::TwilioSmsMessageService.new(self.account.vendor.username, self.account.vendor.password)
   end
 end

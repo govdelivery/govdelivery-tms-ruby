@@ -1,11 +1,3 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Mayor.create(:name => 'Emanuel', :city => cities.first)
-
 twilio_sms_sender = Vendor.find_by_name('Twilio Sender') || Vendor.create!(:name => 'Twilio Sender',
   :worker => 'TwilioMessageWorker',
   :username => Rails.configuration.twilio_username,
@@ -32,19 +24,33 @@ voice_loopback = Vendor.find_by_name('Loopback Voice Sender') || Vendor.create!(
 #
 # This is just stuff for DEVELOPMENT purposes
 #
+# $ USE_TWILIO=true rake db:seed 
+#   if you want to really connect to twilio, set USE_TWILIO=true; otherwise
+#   the seeds will load with loopback vendors. 
+#
 if Rails.env.development?
-  omg = Account.create!(:vendors => [sms_loopback, voice_loopback], :name => "OMG")
+  vendors = if(ENV['USE_TWILIO'] != 'false')
+    [twilio_sms_sender, twilio_voice_sender]
+  else
+    [sms_loopback, voice_loopback]
+  end
+
+  omg = Account.create!(:vendors => vendors, :name => "OMG")
 
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
   omg.add_action!(:params => ActionParameters.new(:dcm_account_codes => ['ACME','VANDELAY']), :action_type => Action::DCM_UNSUBSCRIBE)
 
   # SERVICES FOO => POST to http://localhost/forward
-  kw = Keyword.new(:account => omg, :vendor => sms_loopback).tap { |kw| kw.name = 'SERVICES' }
+  kw = Keyword.new(:account => omg, :vendor => omg.sms_vendor).tap { |kw| kw.name = 'SERVICES' }
   kw.save!
-  kw.add_action!(:params => ActionParameters.new(:username => "example@evotest.govdelivery.com", :password => "password", :url => "http://localhost/forward", :method => "POST"), :action_type => Action::FORWARD)
+  kw.add_action!(:params => ActionParameters.new(
+                              :username => "example@evotest.govdelivery.com", 
+                              :password => "password", 
+                              :url => "http://localhost/forward", 
+                              :http_method => "POST"), :action_type => Action::FORWARD)
 
   # SUBSCRIBE ANTHRAX => evolution API request to localhost:3001
-  kw = Keyword.new(:account => omg, :vendor => sms_loopback).tap { |kw| kw.name = 'SUBSCRIBE' }
+  kw = Keyword.new(:account => omg, :vendor => omg.sms_vendor).tap { |kw| kw.name = 'SUBSCRIBE' }
   kw.save!
   kw.add_action!(:params => ActionParameters.new(:dcm_account_code => "ACME", :dcm_topic_codes => ['ANTRHAX']), :action_type => Action::DCM_SUBSCRIBE)
 
