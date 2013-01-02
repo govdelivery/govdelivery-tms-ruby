@@ -1,7 +1,7 @@
 class Action < ActiveRecord::Base
   DCM_UNSUBSCRIBE = 1 # :params => ActionParameters.new(:dcm_account_codes => ["ACCOUNT_1", "ACCOUNT_2"])
   DCM_SUBSCRIBE   = 2 # :params => ActionParameters.new(:dcm_account_code => ["ACCOUNT_1"], :dcm_topic_codes => ["TOPIC_1", "TOPIC_2"])
-  FORWARD         = 3 # :params => ActionParameters.new(:method => "POST|GET", :username => "foo", :password => "bar", :url => "https://foobar.com")
+  FORWARD         = 3 # :params => ActionParameters.new(:http_method => "POST|GET", :username => "foo", :password => "bar", :url => "https://foobar.com")
   
   ACTION_TYPES = {
     DCM_UNSUBSCRIBE => {:name => :dcm_unsubscribe, :callable => ->(params){ DcmUnsubscribeWorker.perform_async(params.to_hash) }},

@@ -17,7 +17,6 @@ class ActionParameters
   # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or 
   # handle the missing method error). 
   PARAMS=[
-    :params,            # params column on actions table
     :account_id,        # the tsms account id corresponding to this action,
     :callback_url,      # a callback url for the external sms/voice service to call if needed
     :sms_body,          # the full body string of the incoming sms message

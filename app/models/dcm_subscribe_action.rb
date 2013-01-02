@@ -29,10 +29,4 @@ DcmSubscribeAction = Struct.new(:client) do
       subscribe_args[0]
     end
   end
-
-  # account_code:topic1,topic2,topic3
-  def parse(str)
-    account_code, topics = str.split(':')
-    [account_code, topics.split(',')]
-  end
 end
