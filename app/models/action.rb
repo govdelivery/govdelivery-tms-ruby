@@ -21,7 +21,7 @@ class Action < ActiveRecord::Base
 
   # Execute this action with the provided options, merging in the actions "params" column.
   def call(action_parameters=ActionParameters.new)
-    action_parameters.merge!(self.params)
+    action_parameters.merge!(:parems => self.params)
     action_strategy.call(action_parameters)
   end
   
