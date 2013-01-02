@@ -17,7 +17,7 @@ describe MessagesController do
       Message.any_instance.expects(:save).returns(true)
       Message.any_instance.stubs(:new_record?).returns(false)
 
-      LoopbackMessageWorker.expects(:perform_async).with(anything).returns(true)
+      CreateRecipientsWorker.expects(:perform_async).with(anything).returns(true)
       do_create
     end
     it "should be accepted" do
@@ -54,7 +54,7 @@ describe MessagesController do
     end
     before do
       messages.stubs(:total_pages).returns(5)
-      Account.any_instance.expects(:messages).returns(stub(:page => messages))
+      User.any_instance.expects(:account_messages).returns(stub(:page => messages))
     end
     it "should work on the first page" do
       messages.stubs(:current_page).returns(1)

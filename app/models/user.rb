@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email
       
   has_many :messages, :order => 'messages.created_at DESC'
+  has_many :account_messages, :through=>:account, :source=>:messages
   
   before_validation :downcase_email
   

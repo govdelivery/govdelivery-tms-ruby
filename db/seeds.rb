@@ -41,6 +41,7 @@ if Rails.env.development?
   omg.add_action!(:params => ActionParameters.new(:dcm_account_codes => ['ACME','VANDELAY']), :action_type => Action::DCM_UNSUBSCRIBE)
 
   # SERVICES FOO => POST to http://localhost/forward
+  Keyword.delete_all
   kw = Keyword.new(:account => omg, :vendor => omg.sms_vendor).tap { |kw| kw.name = 'SERVICES' }
   kw.save!
   kw.add_action!(:params => ActionParameters.new(

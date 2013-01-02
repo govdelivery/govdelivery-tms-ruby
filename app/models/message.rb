@@ -15,9 +15,14 @@ class Message < ActiveRecord::Base
   delegate :vendors, :to => :account
   before_validation :verify_sms_or_voice
 
+  def complete!
+    self.completed_at = Time.zone.now
+    save!
+  end
+
   def create_recipients(recipient_params=[])
     recipients << recipient_params.map do |r| 
-      recipient = recipients.create(r.merge(:vendor => self.vendor))
+      recipients.create(r.merge(:vendor => self.vendor))
     end
   end
 
@@ -29,6 +34,10 @@ class Message < ActiveRecord::Base
       recipient.sent_at = Time.now
       recipient.save!
     end
+  end
+
+  def some_recipients
+    recipients.page(1)
   end
   
   def worker

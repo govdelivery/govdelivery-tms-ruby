@@ -19,7 +19,7 @@ class ApplicationController < ActionController::API
   end
 
   def set_page
-    @page = params[:page] || 1
+    @page = Integer(params[:page]) rescue 1
   end
 
   def set_link_header(scope)

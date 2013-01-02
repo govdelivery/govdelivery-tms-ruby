@@ -22,8 +22,7 @@ module Service
           complete!(recipient, nil, e.to_s)
         end
       end
-      message.completed_at = Time.now
-      message.save!
+      message.complete!
     end
   end
 end

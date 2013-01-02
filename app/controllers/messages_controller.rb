@@ -3,7 +3,7 @@ class MessagesController < ApplicationController
   before_filter :set_page, :only => :index
 
   def index
-    @messages = current_user.account.messages.page(@page)
+    @messages = current_user.account_messages.page(@page)
     set_link_header(@messages)
     respond_with(@messages)
   end
@@ -22,23 +22,25 @@ class MessagesController < ApplicationController
     recipients = params[:message].delete(:recipients) if params[:message]
     @message = current_user.new_message(params[:message])
     if @message.save
-      @message.create_recipients(recipients) unless recipients.nil?
-      options = {:message_id => @message.id}
-      options[:callback_url] = twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
-      options[:message_url] = twiml_url
-      @message.worker.send(:perform_async, options)
+      CreateRecipientsWorker.send(:perform_async, {:recipients => recipients, :message_id => @message.id, :send_options => send_options})
     end
     respond_with(@message)
   end
 
   private
- 
+
   def page_link(page)
     if page==1
       messages_path
     else
       paged_messages_path(page)
     end
+  end
+
+  def send_options
+    opts = {:message_url => twiml_url}
+    opts[:callback_url] = twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
+    opts
   end
 
 end
