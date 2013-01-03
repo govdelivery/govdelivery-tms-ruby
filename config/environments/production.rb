@@ -65,8 +65,11 @@ Tsms::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.sidekiq[:server][:url] = "redis://prod-redis-master.visi.gdi:6379/1"
-  config.sidekiq[:client][:url] = "redis://prod-redis-master.visi.gdi:6379/1"
+  config.redis_url = 'redis://prod-redis-master.visi.gdi:6379'
+  config.cache_store = :redis_store, config.redis_url
+
+  config.sidekiq[:server][:url] = "#{config.redis_url}/1"
+  config.sidekiq[:client][:url] = "#{config.redis_url}/1"
 
   config.dcm = {
     username: '',

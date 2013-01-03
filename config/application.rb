@@ -67,11 +67,13 @@ module Tsms
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
-    
+
+    config.redis_url = 'redis://localhost:6379'
+
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq = {
       default: { 
-        url: 'redis://localhost:6379/1', 
+        url: "#{config.redis_url}/1",
         namespace: 'tsms'
       },
       client: { size: 1 },

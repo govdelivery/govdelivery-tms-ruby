@@ -14,7 +14,7 @@ class MessagesController < ApplicationController
   end
 
   def show
-    @message = current_user.messages.find_by_id(params[:id])
+    @message = current_user.messages.find(params[:id])
     respond_with(@message)
   end
 
@@ -22,6 +22,7 @@ class MessagesController < ApplicationController
     recipients = params[:message].delete(:recipients) if params[:message]
     @message = current_user.new_message(params[:message])
     if @message.save
+      Rails.cache.write(CreateRecipientsWorker.job_key(@message.id), 1)
       CreateRecipientsWorker.send(:perform_async, {:recipients => recipients, :message_id => @message.id, :send_options => send_options})
     end
     respond_with(@message)

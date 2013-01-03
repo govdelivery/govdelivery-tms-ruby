@@ -3,6 +3,10 @@ require 'base'
 class CreateRecipientsWorker
   include Workers::Base
 
+  def self.job_key(message_id)
+    "tsms:#{self.to_s.underscore}_in_progress_#{message_id}"
+  end
+
   def perform(options)
     message = Message.find(options['message_id'])
     recipient_params = options['recipients']
@@ -12,5 +16,7 @@ class CreateRecipientsWorker
     elsif message
       message.complete!
     end
+  ensure
+    Rails.cache.delete(self.class.job_key(message.id)) if message
   end
 end

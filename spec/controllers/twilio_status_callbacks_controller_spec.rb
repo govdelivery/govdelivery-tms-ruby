@@ -12,11 +12,10 @@ describe TwilioStatusCallbacksController do
     recipient.save!
     recipient
   end
-  
+
   it "should error when calling #create with an SmsSid that is not found" do
-    lambda {
-      post :create, twilio_status_callback_params('sent ', "NO THIS IS WRONG")
-    }.should raise_error(ActiveRecord::RecordNotFound)
+    post :create, twilio_status_callback_params('sent ', "NO THIS IS WRONG")
+    response.response_code.should == 404
   end
 
   context "#create with garbage status" do

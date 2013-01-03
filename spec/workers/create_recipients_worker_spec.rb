@@ -5,7 +5,8 @@ describe CreateRecipientsWorker do
   let(:send_worker) { mock('LoopbackMessageWorker', :perform_async => true) }
 
   it 'should enqueue a message worker job if there are recipients' do
-    message = mock('message', :worker => send_worker, :id => 1)
+    message = mock('message', :worker => send_worker)
+    message.stubs(:id).returns(1)
     message.expects(:create_recipients).with(recipient_params)
     Message.expects(:find).with(1).returns(message)
 
@@ -14,6 +15,7 @@ describe CreateRecipientsWorker do
 
   it 'should complete if there are no recipients' do
     message = mock('message')
+    message.stubs(:id).returns(1)
     message.expects(:complete!)
     Message.expects(:find).with(1).returns(message)
 

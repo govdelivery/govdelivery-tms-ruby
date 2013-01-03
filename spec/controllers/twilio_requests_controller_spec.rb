@@ -7,7 +7,8 @@ describe TwilioRequestsController, '#create' do
 
   it 'should error on an incorrect AccountSid' do
     Vendor.expects(:find_by_username!).raises(ActiveRecord::RecordNotFound)
-    ->{ post :create, twilio_request_params('HELP ') }.should raise_error(ActiveRecord::RecordNotFound)
+    post :create, twilio_request_params('HELP ')
+    response.response_code.should eq(404)
   end
   
   it 'uses an SmsReceiver to get the response text' do

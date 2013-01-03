@@ -6,10 +6,16 @@ class ApplicationController < ActionController::API
   before_filter :authenticate_user!
   before_filter :set_default_format
 
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
+
   protected
 
   def set_default_format
     request.format = :json unless params[:format]
+  end
+
+  def render_not_found
+    render :json=>'{}', :status => :not_found
   end
 
   def find_user

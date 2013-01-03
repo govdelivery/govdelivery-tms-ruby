@@ -1,6 +1,7 @@
 class RecipientsController < ApplicationController
   before_filter :find_user
   before_filter :find_message
+  before_filter :verify_no_create_in_progress, :only => :index
   before_filter :set_page, :only => :index
 
   def index
@@ -23,6 +24,12 @@ class RecipientsController < ApplicationController
       message_recipients_path(@message.id)
     else
       paged_message_recipients_path(@message.id, page)
+    end
+  end
+
+  def verify_no_create_in_progress
+    if Rails.cache.exist?(CreateRecipientsWorker.job_key(@message.id))
+      render :json=>{:message=>'Recipient list is being built and is not yet complete'}, :status => 202 and return false
     end
   end
 

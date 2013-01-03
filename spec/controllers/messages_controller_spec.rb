@@ -44,6 +44,15 @@ describe MessagesController do
     end
   end
 
+  context 'show' do
+    it 'should work' do
+      message = Message.new
+      User.any_instance.expects(:messages).returns(stub(:find => message))
+      get :show, :id => 1
+      response.response_code.should == 200
+    end
+  end
+
   context "index" do
     let(:messages) do
       msgs = 3.times.collect do |i|

@@ -29,11 +29,14 @@ voice_loopback = Vendor.find_by_name('Loopback Voice Sender') || Vendor.create!(
 #   the seeds will load with loopback vendors. 
 #
 if Rails.env.development?
-  vendors = if(ENV['USE_TWILIO'] != 'false')
-    [twilio_sms_sender, twilio_voice_sender]
-  else
-    [sms_loopback, voice_loopback]
-  end
+  vendors = if (ENV['USE_TWILIO'] == 'true')
+              puts "** using Twilio senders for default account **"
+              [twilio_sms_sender, twilio_voice_sender]
+            else
+              puts "**  using loopback senders for default account   **"
+              puts "** run with USE_TWILIO=true to use Twilio sender **"
+              [sms_loopback, voice_loopback]
+            end
 
   omg = Account.create!(:vendors => vendors, :name => "OMG")
 
