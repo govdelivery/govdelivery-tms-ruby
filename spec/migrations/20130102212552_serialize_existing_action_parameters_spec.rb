@@ -42,7 +42,7 @@ class UnserializedAction < ActiveRecord::Base
   DCM_SUBSCRIBE   = 2 # :params => ActionParameters.new(:dcm_account_code => ["ACCOUNT_1"], :dcm_topic_codes => ["TOPIC_1", "TOPIC_2"])
   FORWARD         = 3 # :params => ActionParameters.new(:http_method => "POST|GET", :username => "foo", :password => "bar", :url => "https://foobar.com")
   
-  set_table_name :actions
+  self.table_name = 'actions'
 
   belongs_to :account
   belongs_to :event_handler
@@ -51,6 +51,6 @@ class UnserializedAction < ActiveRecord::Base
 end
 
 class SerializedAction < ActiveRecord::Base
-  set_table_name :actions
+  self.table_name = 'actions'
   serialize :params, ActionParameters
 end
