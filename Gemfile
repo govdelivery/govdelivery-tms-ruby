@@ -21,7 +21,6 @@ gem 'dcm_client'
 
 platforms :ruby do
   gem 'ruby-oci8'
-  gem 'savon'
 end
 
 platforms :jruby do
