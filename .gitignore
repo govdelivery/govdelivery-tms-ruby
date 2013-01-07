@@ -18,3 +18,6 @@
 /config/database.yml
 .tags
 .tags_sorted_by_file
+.jbundler/classpath.rb
+/ext/java/**/*
+build/**/*

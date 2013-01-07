@@ -18,7 +18,17 @@ gem 'typhoeus'
 gem 'faraday'
 gem 'faraday_middleware'
 gem 'dcm_client'
-gem 'ruby-oci8'
+
+platforms :ruby do
+  gem 'ruby-oci8'
+  gem 'savon'
+end
+
+platforms :jruby do
+  gem 'jbundler'
+  gem 'trinidad', :require => nil
+end
+
 gem 'activerecord-oracle_enhanced-adapter'
 gem 'attr_encrypted'
 
@@ -30,7 +40,9 @@ end
 group :development, :test do
   gem 'rspec-rails'
   gem 'guard-rspec'
-  gem 'sqlite3'
+  platforms :ruby do
+    gem 'sqlite3'
+  end
   gem 'pry'
 end
 

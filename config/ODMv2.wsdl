@@ -1,0 +1,343 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="ODMv2" targetNamespace="http://odm.govdelivery.com/ODMv2" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://odm.govdelivery.com/ODMv2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://odm.govdelivery.com/ODMv2" xmlns:tns="http://odm.govdelivery.com/ODMv2" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name="click" type="tns:clickEventType"/>
+<xs:element name="credentials" type="tns:credentials"/>
+<xs:element name="delivery" type="tns:deliveryEventType"/>
+<xs:element name="open" type="tns:openEventType"/>
+<xs:complexType name="credentials">
+<xs:sequence>
+<xs:element default="ODM" minOccurs="0" name="realm" type="xs:string"/>
+<xs:element name="username" type="xs:string"/>
+<xs:element name="password" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="message">
+<xs:sequence>
+<xs:element minOccurs="0" name="body" type="xs:string"/>
+<xs:element default="email" name="emailColumn" type="xs:string"/>
+<xs:element name="fromName" type="xs:string"/>
+<xs:element minOccurs="0" name="plainTextBody" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientIdColumn" type="xs:string"/>
+<xs:element default="email" name="recordDesignator" type="xs:string"/>
+<xs:element name="subject" type="xs:string"/>
+<xs:element minOccurs="0" name="suppressedValidations" type="tns:sendMessageValidations"/>
+<xs:element maxOccurs="unbounded" name="to" type="xs:string"/>
+<xs:element default="true" name="trackClicks" type="xs:boolean"/>
+<xs:element default="true" name="trackOpens" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="sendMessageValidations">
+<xs:sequence>
+<xs:element default="true" name="emailLength" type="xs:boolean"/>
+<xs:element default="true" name="emailMissing" type="xs:boolean"/>
+<xs:element default="true" name="emailSyntax" type="xs:boolean"/>
+<xs:element default="true" name="recipientIDLength" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType abstract="true" name="authenticatedRequest">
+<xs:sequence/>
+</xs:complexType>
+<xs:complexType name="activityRequest">
+<xs:complexContent>
+<xs:extension base="tns:authenticatedRequest">
+<xs:sequence>
+<xs:element default="1000" name="maxResults" type="xs:int"/>
+<xs:element default="--" minOccurs="0" name="sequence" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType abstract="true" name="eventReport">
+<xs:sequence/>
+<xs:attribute name="nextSequence" type="xs:string"/>
+</xs:complexType>
+<xs:complexType name="openActivity">
+<xs:complexContent>
+<xs:extension base="tns:eventReport">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="open" type="tns:openEventType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="openEventType">
+<xs:sequence/>
+<xs:attribute name="messageID" type="xs:string" use="required"/>
+<xs:attribute name="recipientID" type="xs:string"/>
+<xs:attribute name="address" type="xs:string" use="required"/>
+<xs:attribute name="at" type="xs:dateTime" use="required"/>
+</xs:complexType>
+<xs:complexType name="deliveryActivity">
+<xs:complexContent>
+<xs:extension base="tns:eventReport">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="delivery" type="tns:deliveryEventType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="deliveryEventType">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute name="messageID" type="xs:string" use="required"/>
+<xs:attribute name="recipientID" type="xs:string"/>
+<xs:attribute name="address" type="xs:string" use="required"/>
+<xs:attribute name="delivered" type="xs:boolean" use="required"/>
+<xs:attribute name="at" type="xs:dateTime" use="required"/>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="clickActivity">
+<xs:complexContent>
+<xs:extension base="tns:eventReport">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="click" type="tns:clickEventType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="clickEventType">
+<xs:sequence/>
+<xs:attribute name="messageID" type="xs:string" use="required"/>
+<xs:attribute name="recipientID" type="xs:string"/>
+<xs:attribute name="address" type="xs:string" use="required"/>
+<xs:attribute name="url" type="xs:string" use="required"/>
+<xs:attribute name="at" type="xs:dateTime" use="required"/>
+</xs:complexType>
+<xs:simpleType name="activityType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="DELIVERY"/>
+<xs:enumeration value="CLICK"/>
+<xs:enumeration value="OPEN"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:element name="ODMFault" type="tns:ODMFault"/>
+<xs:complexType name="ODMFault">
+<xs:sequence>
+<xs:element name="code" nillable="true" type="xs:string"/>
+<xs:element name="category" nillable="true" type="xs:string"/>
+<xs:element name="detail" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="message" nillable="true" type="tns:message"/>
+<xs:element name="messageID" nillable="true" type="xs:string"/>
+<xs:element name="activityType" nillable="true" type="tns:activityType"/>
+<xs:element name="lastSequence" nillable="true" type="xs:string"/>
+<xs:element name="newPassword" nillable="true" type="xs:string"/>
+<xs:element name="success" nillable="true" type="xs:boolean"/>
+<xs:element name="openActivitySince" nillable="true" type="tns:activityRequest"/>
+<xs:element name="opens" nillable="true" type="tns:openActivity"/>
+<xs:element name="deliveryActivitySince" nillable="true" type="tns:activityRequest"/>
+<xs:element name="deliveries" nillable="true" type="tns:deliveryActivity"/>
+<xs:element name="clickActivitySince" nillable="true" type="tns:activityRequest"/>
+<xs:element name="clicks" nillable="true" type="tns:clickActivity"/>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="sendMessageResponse">
+    <wsdl:part element="tns:messageID" name="messageID">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deliveryActivitySince">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:deliveryActivitySince" name="deliveryActivitySince">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="clickActivitySinceResponse">
+    <wsdl:part element="tns:clicks" name="clicks">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="sendMessage">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:message" name="message">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="lastActivitySequence">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:activityType" name="activityType">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="lastActivitySequenceResponse">
+    <wsdl:part element="tns:lastSequence" name="lastSequence">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="changePassword">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:newPassword" name="newPassword">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deliveryActivitySinceResponse">
+    <wsdl:part element="tns:deliveries" name="deliveries">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="changePasswordResponse">
+    <wsdl:part element="tns:success" name="success">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openActivitySinceResponse">
+    <wsdl:part element="tns:opens" name="opens">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ODMFault">
+    <wsdl:part element="tns:ODMFault" name="ODMFault">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openActivitySince">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:openActivitySince" name="openActivitySince">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="clickActivitySince">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:clickActivitySince" name="clickActivitySince">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ODMv2">
+    <wsdl:operation name="sendMessage">
+      <wsdl:input message="tns:sendMessage" name="sendMessage">
+    </wsdl:input>
+      <wsdl:output message="tns:sendMessageResponse" name="sendMessageResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ODMFault" name="ODMFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="lastActivitySequence">
+      <wsdl:input message="tns:lastActivitySequence" name="lastActivitySequence">
+    </wsdl:input>
+      <wsdl:output message="tns:lastActivitySequenceResponse" name="lastActivitySequenceResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ODMFault" name="ODMFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="changePassword">
+      <wsdl:input message="tns:changePassword" name="changePassword">
+    </wsdl:input>
+      <wsdl:output message="tns:changePasswordResponse" name="changePasswordResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ODMFault" name="ODMFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="openActivitySince">
+      <wsdl:input message="tns:openActivitySince" name="openActivitySince">
+    </wsdl:input>
+      <wsdl:output message="tns:openActivitySinceResponse" name="openActivitySinceResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ODMFault" name="ODMFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="deliveryActivitySince">
+      <wsdl:input message="tns:deliveryActivitySince" name="deliveryActivitySince">
+    </wsdl:input>
+      <wsdl:output message="tns:deliveryActivitySinceResponse" name="deliveryActivitySinceResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ODMFault" name="ODMFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="clickActivitySince">
+      <wsdl:input message="tns:clickActivitySince" name="clickActivitySince">
+    </wsdl:input>
+      <wsdl:output message="tns:clickActivitySinceResponse" name="clickActivitySinceResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ODMFault" name="ODMFault">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ODMv2SoapBinding" type="tns:ODMv2">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="sendMessage">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="sendMessage">
+        <soap:header message="tns:sendMessage" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="message" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="sendMessageResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ODMFault">
+        <soap:fault name="ODMFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="lastActivitySequence">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="lastActivitySequence">
+        <soap:header message="tns:lastActivitySequence" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="activityType" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="lastActivitySequenceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ODMFault">
+        <soap:fault name="ODMFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="changePassword">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="changePassword">
+        <soap:header message="tns:changePassword" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="newPassword" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="changePasswordResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ODMFault">
+        <soap:fault name="ODMFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="openActivitySince">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="openActivitySince">
+        <soap:header message="tns:openActivitySince" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="openActivitySince" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="openActivitySinceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ODMFault">
+        <soap:fault name="ODMFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="clickActivitySince">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="clickActivitySince">
+        <soap:header message="tns:clickActivitySince" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="clickActivitySince" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="clickActivitySinceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ODMFault">
+        <soap:fault name="ODMFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="deliveryActivitySince">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="deliveryActivitySince">
+        <soap:header message="tns:deliveryActivitySince" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="deliveryActivitySince" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="deliveryActivitySinceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ODMFault">
+        <soap:fault name="ODMFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ODMv2">
+    <wsdl:port binding="tns:ODMv2SoapBinding" name="ODMv2Port">
+      <soap:address location="http://qc-tms1.visi.gdi:65080/service/ODMv2"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
