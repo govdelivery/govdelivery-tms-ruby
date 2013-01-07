@@ -28,6 +28,7 @@ if defined?(JRUBY_VERSION)
       end
     end
 
+    desc 'build ODMv2 SOAP JAR'
     task :jar => :compile do
       ant.jar :destfile => "lib/odm.jar", :basedir => build_dir
     end
