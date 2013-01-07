@@ -58,7 +58,7 @@ describe Message do
   end
 
   context "an account with voice and sms senders" do
-    let(:voice_vendor) { Vendor.create!(:voice=>true, :name => 'voice vendor', :username => 'username', :password => 'secret', :from => 'from', :worker => 'TwilioVoiceWorker') }
+    let(:voice_vendor) { Vendor.create!(:name => 'voice vendor', :username => 'username', :password => 'secret', :from => 'from', :worker => 'TwilioVoiceWorker') }
     let(:message) { account.messages.create!(:url => 'http://localhost/file.mp3') }
     before do
       account.vendors << voice_vendor

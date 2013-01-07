@@ -7,19 +7,21 @@ twilio_voice_sender = Vendor.find_by_name('Twilio Voice Sender') || Vendor.creat
   :worker => 'TwilioVoiceWorker',
   :username => Rails.configuration.twilio_username,
   :password => Rails.configuration.twilio_password,
-  :from => Rails.configuration.twilio_number, 
-  :voice => true)
+  :from => Rails.configuration.twilio_number)
 sms_loopback = Vendor.find_by_name('Loopback SMS Sender') || Vendor.create!(:name => 'Loopback SMS Sender',
   :worker => 'LoopbackMessageWorker',
   :username => 'dont care',
   :password => 'dont care',
-  :from => 'dont care')
+  :from => 'dont care',
+  :vtype=>:sms)
 voice_loopback = Vendor.find_by_name('Loopback Voice Sender') || Vendor.create!(:name => 'Loopback Voice Sender',
   :worker => 'LoopbackMessageWorker',
   :username => 'dont care',
   :password => 'dont care',
   :from => 'dont care',
-  :voice => true)
+  :vtype=>:voice)
+
+tms_sender =  Vendor.find_by_name('TMS Sender') ||  Vendor.create(:name => 'TMS Sender', :username => 'gd3', :password => 'R0WG38piNv5NRK0DT8mq04fU', :from => 'GovDelivery TMS', :worker => 'TmsWorker')
 
 #
 # This is just stuff for DEVELOPMENT purposes
@@ -37,6 +39,7 @@ if Rails.env.development?
               puts "** run with USE_TWILIO=true to use Twilio sender **"
               [sms_loopback, voice_loopback]
             end
+  vendors << tms_sender
 
   omg = Account.create!(:vendors => vendors, :name => "OMG")
 

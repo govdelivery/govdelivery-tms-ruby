@@ -18,6 +18,7 @@ gem 'typhoeus'
 gem 'faraday'
 gem 'faraday_middleware'
 gem 'dcm_client'
+gem 'enumify'
 
 platforms :ruby do
   gem 'ruby-oci8'

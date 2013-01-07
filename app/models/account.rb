@@ -8,7 +8,7 @@ class Account < ActiveRecord::Base
   has_many :keywords
     
   belongs_to :stop_handler, :class_name => 'EventHandler'
-  validate :unique_vendor
+  validate :ensure_unique_vendors
   
   validates_presence_of :name
   
@@ -32,17 +32,21 @@ class Account < ActiveRecord::Base
     vendors=[vendor]
   end
   
-  def unique_vendor
-    if vendors.select {|v| v.voice?}.count > 1 || vendors.select {|v| !v.voice?}.count > 1
+  def ensure_unique_vendors
+    if Hash[vendors.group_by(&:vtype)].values.map(&:length).max.to_i > 1
        errors.add(:vendors, "must be of different type") 
     end
   end
 
   def sms_vendor
-    vendors.select {|v| !v.voice?}.first
+    vendors.select(&:sms?).first
   end
 
   def voice_vendor
-    vendors.select {|v| v.voice?}.first
+    vendors.select(&:voice?).first
+  end
+
+  def email_vendor
+    vendors.select(&:email?).first
   end
 end

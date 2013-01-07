@@ -30,13 +30,13 @@ describe Account do
   
   context 'with multiple vendors' do
     before do
-    subject.vendors << Vendor.create!(:name => 'new name', :username => 'username2', :password => 'secret2', :from => 'from', :worker => 'TwilioMessageWorker', :voice => true) 
+    subject.vendors << Vendor.create!(:name => 'new name', :username => 'username2', :password => 'secret2', :from => 'from', :worker => 'TwilioVoiceWorker')
     end
     specify { subject.voice_vendor.name.should == 'new name' }
     specify { subject.sms_vendor.name.should == 'name' }
     it{should be_valid}
     it 'should not be able to have two same-type vendors' do
-      subject.vendors << Vendor.create!(:name => 'extra voice vendor', :username => 'username2', :password => 'secret2', :from => 'from', :worker => 'TwilioMessageWorker', :voice => false) 
+      subject.vendors << Vendor.create!(:name => 'extra voice vendor', :username => 'username2', :password => 'secret2', :from => 'from', :worker => 'TwilioVoiceWorker')
       subject.should_not be_valid
     end
   end

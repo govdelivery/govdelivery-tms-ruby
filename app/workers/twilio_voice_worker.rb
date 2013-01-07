@@ -2,6 +2,10 @@ require 'base'
 class TwilioVoiceWorker
   include Workers::Base
   sidekiq_options retry: false
+
+  def self.vendor_type
+    :voice
+  end
   
   def perform(options)
     options.symbolize_keys!    

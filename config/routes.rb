@@ -20,6 +20,8 @@ Tsms::Application.routes.draw do
     end
   end
 
+  resources(:emails, :only => :create)
+
   resources(:messages, :only => [:index, :new, :create, :show]) do
     pageable('messages')
     resources(:recipients, :only => [:index, :show]) do

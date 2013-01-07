@@ -2,7 +2,12 @@ require 'base'
 class LoopbackMessageWorker
   include Workers::Base
   sidekiq_options retry: false
-  
+
+  #These can be any type of worker, just set vendor vtype manually and this will be overridden
+  def self.vendor_type
+    :sms
+  end
+
   def perform(options)
     message_id = options['message_id']
     logger.info("Send initiated for message_id=#{message_id}")
