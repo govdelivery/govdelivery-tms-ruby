@@ -3,18 +3,15 @@ class MessagesController < ApplicationController
   before_filter :set_page, :only => :index
 
   def index
-    @messages = current_user.account_messages.page(@page)
     set_link_header(@messages)
     respond_with(@messages)
   end
 
   def new
-    @message = current_user.messages.build
     render :show
   end
 
   def show
-    @message = current_user.messages.find(params[:id])
     respond_with(@message)
   end
 
@@ -32,9 +29,9 @@ class MessagesController < ApplicationController
 
   def page_link(page)
     if page==1
-      messages_path
+      send("#{controller_name}_path")
     else
-      paged_messages_path(page)
+      send("paged_#{controller_name}_path", page)
     end
   end
 

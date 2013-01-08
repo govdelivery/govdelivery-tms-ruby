@@ -1,5 +1,6 @@
 class RecipientsController < ApplicationController
   before_filter :find_user
+  before_filter :find_type
   before_filter :find_message
   before_filter :verify_no_create_in_progress, :only => :index
   before_filter :set_page, :only => :index
@@ -15,15 +16,19 @@ class RecipientsController < ApplicationController
 
   protected
 
+  def find_type
+    @message_type = params.has_key?(:sms_message_id) ? "sms" : "voice"
+  end
+
   def find_message
-    @message = current_user.account_messages.find(params[:message_id])
+    @message = current_user.account_messages.find(params["#{@message_type}_message_id".to_sym])
   end
 
   def page_link(page)
     if page==1
-      message_recipients_path(@message.id)
+      send("#{@message_type}_message_recipients_path", @message.id)
     else
-      paged_message_recipients_path(@message.id, page)
+      send("paged_#{@message_type}_message_recipients_path", @message.id, page)
     end
   end
 

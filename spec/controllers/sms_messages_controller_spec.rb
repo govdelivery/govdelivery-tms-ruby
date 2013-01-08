@@ -1,40 +1,41 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-def do_create
+def do_create_sms
   post :create, :message => {:short_body => 'A short body'}, :format => :json
 end
 
-describe MessagesController do
-  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
+describe SmsMessagesController do
+  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :voice => false) }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   before do
     sign_in user
   end
 
-  context "#create with a valid message" do
+  context "#create with a valid sms message" do
     before do
       Message.any_instance.expects(:save).returns(true)
       Message.any_instance.stubs(:new_record?).returns(false)
 
       CreateRecipientsWorker.expects(:perform_async).with(anything).returns(true)
-      do_create
+      do_create_sms
     end
     it "should be accepted" do
       response.response_code.should == 201
+    end
 
+    it "should populate new Message" do
       assigns(:message).short_body.should == 'A short body'
-      assigns(:message).account_id.should == user.account_id
     end
   end
 
-  context "#create with an invalid message" do
+  context "#create with an invalid sms message" do
     before do
       Message.any_instance.expects(:save).returns(false)
       Message.any_instance.stubs(:new_record?).returns(true)
-      do_create
+      do_create_sms
     end
-    
+
     it "should be unprocessable_entity" do
       response.response_code.should == 422
     end
@@ -44,14 +45,6 @@ describe MessagesController do
     end
   end
 
-  context 'show' do
-    it 'should work' do
-      message = Message.new
-      User.any_instance.expects(:messages).returns(stub(:find => message))
-      get :show, :id => 1
-      response.response_code.should == 200
-    end
-  end
 
   context "index" do
     let(:messages) do
@@ -63,7 +56,7 @@ describe MessagesController do
     end
     before do
       messages.stubs(:total_pages).returns(5)
-      User.any_instance.expects(:account_messages).returns(stub(:page => messages))
+      User.any_instance.expects(:sms_messages).returns(stub(:page => messages))
     end
     it "should work on the first page" do
       messages.stubs(:current_page).returns(1)

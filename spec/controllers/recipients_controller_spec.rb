@@ -19,7 +19,7 @@ describe RecipientsController do
     it 'should work' do
       stub_pagination(recipients, 1, 5)
       Message.any_instance.expects(:recipients).returns(stub(:page => recipients))
-      get :index, :message_id => 1, :format => :json
+      get :index, :sms_message_id => 1, :format => :json
       assigns(:page).should eq(1)
       response.headers['Link'].should =~ /next/
       response.headers['Link'].should =~ /last/
@@ -32,7 +32,7 @@ describe RecipientsController do
       Message.any_instance.expects(:recipients).returns(stub(:page => recipients))
 
 
-      get :index, :message_id => 1, :format => :json, :page => 2
+      get :index, :sms_message_id => 1, :format => :json, :page => 2
       assigns(:page).should eq(2)
       response.headers['Link'].should =~ /first/
       response.headers['Link'].should =~ /prev/
@@ -46,7 +46,7 @@ describe RecipientsController do
       stub_pagination(recipients, 2, 5)
       Message.any_instance.expects(:recipients).returns(stub(:find => stub(:find => Recipient.new(:phone => '6125551200'))))
 
-      get :show, :message_id => 1, :format => :json, :id=> 2
+      get :show, :sms_message_id => 1, :format => :json, :id=> 2
       response.response_code.should == 200
       assigns(:recipient).should_not be_nil
     end
