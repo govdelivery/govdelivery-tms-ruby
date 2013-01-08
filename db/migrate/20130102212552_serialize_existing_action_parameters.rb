@@ -1,9 +1,9 @@
 class SerializeExistingActionParameters < ActiveRecord::Migration
   def up
-    # DCM_UNSUBSCRIBE = 1 # :params => ActionParameters.new(:dcm_account_codes => ["ACCOUNT_1", "ACCOUNT_2"])
-    # DCM_SUBSCRIBE   = 2 # :params => ActionParameters.new(:dcm_account_code => ["ACCOUNT_1"], :dcm_topic_codes => ["TOPIC_1", "TOPIC_2"])
-    # FORWARD         = 3 # :params => ActionParameters.new(:http_method => "POST|GET", :username => "foo", :password => "bar", :url => "https://foobar.com")
-    Action.where(:action_type => Action::DCM_UNSUBSCRIBE).each do |a|
+    # :params => ActionParameters.new(:dcm_account_codes => ["ACCOUNT_1", "ACCOUNT_2"])
+    # :params => ActionParameters.new(:dcm_account_code => ["ACCOUNT_1"], :dcm_topic_codes => ["TOPIC_1", "TOPIC_2"])
+    # :params => ActionParameters.new(:http_method => "POST|GET", :username => "foo", :password => "bar", :url => "https://foobar.com")
+    Action.where(:action_type => :dcm_unsubscribe).each do |a|
       unless a.params.is_a? ActionParameters
         ap = ActionParameters.new(:dcm_account_codes => a.params.split(','))
         a.params = ap
@@ -11,7 +11,7 @@ class SerializeExistingActionParameters < ActiveRecord::Migration
       end
     end
 
-    Action.where(:action_type => Action::DCM_SUBSCRIBE).each do |a|
+    Action.where(:action_type => :dcm_subscribe).each do |a|
       unless a.params.is_a? ActionParameters
         ap = ActionParameters.new(parse_dcm_subscribe_params(a.params))
         a.params = ap
@@ -19,7 +19,7 @@ class SerializeExistingActionParameters < ActiveRecord::Migration
       end
     end
 
-    Action.where(:action_type => Action::FORWARD).each do |a|
+    Action.where(:action_type => :forward).each do |a|
       unless a.params.is_a? ActionParameters
         ap = ActionParameters.new(parse_forward_params(a.params))
         a.params = ap

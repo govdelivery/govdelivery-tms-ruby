@@ -35,6 +35,7 @@ Tsms::Application.routes.draw do
 
   root :to => 'services#index'
   get 'load_balancer' => 'load_balancer#show'
+  get 'action_types'=> 'action_types#index'
   post 'twilio_requests' => 'twilio_requests#create'
   post 'twilio_status_callbacks' => 'twilio_status_callbacks#create'
   post 'twiml' => 'twilio_dial_plan#show', :defaults => {:format => 'xml'}

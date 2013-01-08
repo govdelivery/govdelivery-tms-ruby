@@ -4,7 +4,7 @@ describe Action do
   subject {
     vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     account = create_account(vendor: vendor)
-    Action.new(:account => account, :name => "FOO", :action_type => Action::DCM_UNSUBSCRIBE, :params => ActionParameters.new(:url => "foo"))
+    Action.new(:account => account, :name => "FOO", :action_type => :dcm_unsubscribe, :params => ActionParameters.new(:url => "foo"))
   }
 
   context "when valid" do

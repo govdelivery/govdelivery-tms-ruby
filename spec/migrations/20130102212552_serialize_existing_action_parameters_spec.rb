@@ -8,14 +8,14 @@ describe SerializeExistingActionParameters do
   }
 
   it 'serializes DCM_UNSUBSCRIBE actions' do
-    action = UnserializedAction.create!(:params => 'ACME,VANDELAY', :action_type => Action::DCM_UNSUBSCRIBE, :account => account)
+    action = UnserializedAction.create!(:params => 'ACME,VANDELAY', :action_type => :dcm_unsubscribe, :account => account)
     params = action_params_after_migration(action)
     params.should be_a ActionParameters
     Set.new(params.dcm_account_codes).should == Set.new(%w[ACME VANDELAY])
   end
 
   it 'serializes DCM_SUBSCRIBE actions' do
-    action = UnserializedAction.create!(:params => 'ACME:TOPIC_1,TOPIC_2', :action_type => Action::DCM_SUBSCRIBE, :account => account)
+    action = UnserializedAction.create!(:params => 'ACME:TOPIC_1,TOPIC_2', :action_type => :dcm_subscribe, :account => account)
     params = action_params_after_migration(action)
     params.should be_a ActionParameters
     Set.new(params.dcm_topic_codes).should == Set.new(%w[TOPIC_1 TOPIC_2])
@@ -23,7 +23,7 @@ describe SerializeExistingActionParameters do
   end
 
   it 'serializes FORWARD actions' do
-    action = UnserializedAction.create!(:params => 'GET http://foo.com', :action_type => Action::FORWARD, :account => account)
+    action = UnserializedAction.create!(:params => 'GET http://foo.com', :action_type => :forward, :account => account)
     params = action_params_after_migration(action)
     params.should be_a ActionParameters
     params.http_method.should == 'GET'
