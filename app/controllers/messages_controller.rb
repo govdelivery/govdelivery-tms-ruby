@@ -1,17 +1,22 @@
 class MessagesController < ApplicationController
   before_filter :find_user
   before_filter :set_page, :only => :index
+  before_filter :set_scope, :except => :create
+  before_filter :set_attr
 
   def index
+    @messages = @message_scope.page(@page)
     set_link_header(@messages)
     respond_with(@messages)
   end
 
   def new
+    @messages = @message_scope.build
     render :show
   end
 
   def show
+    @messages = @message_scope.find_by_id(params[:id])
     respond_with(@message)
   end
 
@@ -26,13 +31,12 @@ class MessagesController < ApplicationController
   end
 
   private
+  def set_scope
+    raise "@message_scope must be set in MessagesController subclass"
+  end
 
-  def page_link(page)
-    if page==1
-      send("#{controller_name}_path")
-    else
-      send("paged_#{controller_name}_path", page)
-    end
+  def set_attr
+    raise "@content_attribute must be set in MessagesController subclass"
   end
 
   def send_options

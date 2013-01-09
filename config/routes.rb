@@ -6,7 +6,6 @@ Tsms::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-  resources :inbound_messages, except: :edit
 
   devise_for :users, :skip => :all
 
@@ -20,29 +19,33 @@ Tsms::Application.routes.draw do
     end
   end
 
-  resources(:emails, :only => :create)
+  scope :messages, :path=>'messages' do
+    resources(:email, :only => :create, :controller => :emails)
 
-  resources(:sms_messages, :only => [:index, :new, :create, :show]) do
-    pageable('sms_messages')
-    resources(:recipients, :only => [:index, :show]) do
-      pageable('recipients')
+    resources(:sms, :only => [:index, :new, :create, :show], :controller => :sms_messages) do
+      pageable('sms_messages')
+      resources(:recipients, :only => [:index, :show]) do
+        pageable('recipients')
+      end
+    end
+
+    resources(:voice, :only => [:index, :new, :create, :show], :controller => :voice_messages) do
+      pageable('voice_messages')
+      resources(:recipients, :only => [:index, :show]) do
+        pageable('recipients')
+      end
     end
   end
 
-  resources(:voice_messages, :only => [:index, :new, :create, :show]) do
-    pageable('voice_messages')
-    resources(:recipients, :only => [:index, :show]) do
-      pageable('recipients')
+  scope :inbound, :path=>'inbound', :as=>'inbound' do
+    resources(:sms, :only => [:index, :show], :controller => :inbound_messages) do
+      pageable('inbound_messages')
     end
-  end
-
-  resources(:inbound_messages, :only => [:index, :show]) do
-    pageable('inbound_messages')
   end
 
   root :to => 'services#index'
   get 'load_balancer' => 'load_balancer#show'
-  get 'action_types'=> 'action_types#index'
+  get 'action_types' => 'action_types#index'
   post 'twilio_requests' => 'twilio_requests#create'
   post 'twilio_status_callbacks' => 'twilio_status_callbacks#create'
   post 'twiml' => 'twilio_dial_plan#show', :defaults => {:format => 'xml'}

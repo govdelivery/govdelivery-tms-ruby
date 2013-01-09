@@ -42,4 +42,10 @@ class ApplicationController < ActionController::API
     # set first, prev, next, last
     response.headers['Link'] = links.collect { |k, v| %Q|<#{v}>; rel="#{k}",| }.join("")
   end
+
+  def page_link(page)
+    opts = {:only_path=>true}
+    opts[:page] = page if page
+    url_for(opts)
+  end
 end

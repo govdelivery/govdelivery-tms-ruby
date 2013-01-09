@@ -1,23 +1,9 @@
 class VoiceMessagesController < MessagesController
-  before_filter :set_attr
 
-  def index
-    @messages = current_user.voice_messages.page(@page)
-    super
-  end
+  protected
 
-  def new
-    @message = current_user.voice_messages.build
-    super
-  end
-
-  def show
-    @message = current_user.voice_messages.find_by_id(params[:id])
-    super
-  end
-
-  def create
-    super
+  def set_scope
+    @message_scope = current_user.voice_messages
   end
 
   def set_attr

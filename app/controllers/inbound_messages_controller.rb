@@ -13,13 +13,4 @@ class InboundMessagesController < ApplicationController
     @message = current_user.sms_vendor.inbound_messages.find(params[:id])
   end
 
-  protected
-
-  def page_link(page)
-    if page==1
-      inbound_messages_path
-    else
-      paged_inbound_messages_path(page)
-    end
-  end
 end

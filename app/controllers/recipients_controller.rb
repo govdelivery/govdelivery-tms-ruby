@@ -24,14 +24,6 @@ class RecipientsController < ApplicationController
     @message = current_user.account_messages.find(params["#{@message_type}_message_id".to_sym])
   end
 
-  def page_link(page)
-    if page==1
-      send("#{@message_type}_message_recipients_path", @message.id)
-    else
-      send("paged_#{@message_type}_message_recipients_path", @message.id, page)
-    end
-  end
-
   def verify_no_create_in_progress
     if Rails.cache.exist?(CreateRecipientsWorker.job_key(@message.id))
       render :json=>{:message=>'Recipient list is being built and is not yet complete'}, :status => 202 and return false
