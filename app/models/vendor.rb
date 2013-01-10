@@ -22,7 +22,8 @@ class Vendor < ActiveRecord::Base
   validates_length_of [:help_text, :stop_text], :maximum => 160
 
   def create_keyword!(options)
-    kw = self.keywords.build(:account => options[:account])
+    kw = self.keywords.build
+    kw.account = options[:account]
     kw.name = options[:name]
     self.save!
     kw

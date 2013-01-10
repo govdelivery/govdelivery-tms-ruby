@@ -48,7 +48,9 @@ if Rails.env.development?
 
   # SERVICES FOO => POST to http://localhost/forward
   Keyword.delete_all
-  kw = Keyword.new(:account => omg, :vendor => omg.sms_vendor).tap { |kw| kw.name = 'SERVICES' }
+  kw = Keyword.new(:name => 'SERVICES')
+  kw.account = omg
+  kw.vendor = omg.sms_vendor
   kw.save!
   kw.add_action!(:params => ActionParameters.new(
                               :username => "example@evotest.govdelivery.com", 
@@ -57,7 +59,9 @@ if Rails.env.development?
                               :http_method => "POST"), :action_type => :forward)
 
   # SUBSCRIBE ANTHRAX => evolution API request to localhost:3001
-  kw = Keyword.new(:account => omg, :vendor => omg.sms_vendor).tap { |kw| kw.name = 'SUBSCRIBE' }
+  kw = Keyword.new(:name => 'SUBSCRIBE')
+  kw.account = omg
+  kw.vendor = omg.sms_vendor
   kw.save!
   kw.add_action!(:params => ActionParameters.new(:dcm_account_code => "ACME", :dcm_topic_codes => ['ANTRHAX']), :action_type => :dcm_subscribe)
 

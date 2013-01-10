@@ -4,7 +4,10 @@ describe Keyword do
   subject {
     vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
     account = Account.create!(:name => 'name', :vendor => vendor)
-    Keyword.new(:account => account, :vendor => vendor).tap { |kw| kw.name = 'HELPME' }
+    keyword = Keyword.new(:name =>'HELPME')
+    keyword.account= account
+    keyword.vendor = vendor
+    keyword
   }
 
   context "when valid" do
@@ -24,7 +27,11 @@ describe Keyword do
   end
 
   context "with duplicate name" do
-    before { subject.save! ; @new_keyword = Keyword.new(:account => subject.account).tap { |kw| kw.name = subject.name }}
+    before do 
+      subject.save!
+      @new_keyword = Keyword.new(:name => subject.name)
+      @new_keyword.account = subject.account
+    end
     specify { @new_keyword.should be_invalid }
   end
 

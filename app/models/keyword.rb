@@ -1,5 +1,5 @@
 class Keyword < ActiveRecord::Base
-  attr_accessible :account, :vendor
+  attr_accessible :name
 
   # for at least one of our vendors (twilio) we need to support stop, quit, cancel, and unsubscribe
   # http://www.twilio.com/help/faq/sms/does-twilio-support-stop-block-and-cancel-aka-sms-filtering

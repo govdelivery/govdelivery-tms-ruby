@@ -21,7 +21,7 @@ gem 'dcm_client'
 gem 'enumify'
 
 platforms :ruby do
-  gem 'ruby-oci8'
+  #gem 'ruby-oci8'
 end
 
 platforms :jruby do
@@ -29,7 +29,7 @@ platforms :jruby do
   gem 'trinidad', :require => nil
 end
 
-gem 'activerecord-oracle_enhanced-adapter'
+#gem 'activerecord-oracle_enhanced-adapter'
 gem 'attr_encrypted'
 
 group :test do
