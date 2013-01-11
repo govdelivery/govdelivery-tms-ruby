@@ -1,6 +1,6 @@
 class KeywordsController < ApplicationController
   before_filter :find_user
-  before_filter :find_keyword, :only => [:show, :update]
+  before_filter :find_keyword, :only => [:show, :update, :destroy]
 
   def index
     @keywords = @account.keywords
@@ -11,6 +11,7 @@ class KeywordsController < ApplicationController
 
   def create
     @keyword = @account.keywords.new(params[:keyword])
+    @keyword.vendor = @account.sms_vendor
     @keyword.save
     respond_with(@keyword)
   end
@@ -18,6 +19,10 @@ class KeywordsController < ApplicationController
   def update
     @keyword.update_attributes(params[:keyword])
     respond_with(@keyword)
+  end
+
+  def destroy
+    @keyword.destroy
   end
 
   private

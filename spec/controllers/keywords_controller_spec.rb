@@ -21,9 +21,7 @@ describe KeywordsController do
   end
   context "Showing a keyword" do
     before do
-      find = mock()
-      find.expects(:find).returns(keywords.first)
-      Account.any_instance.expects(:keywords).returns(find)
+      mock_finder('twelve')
       get :show, :id => 'twelve', :format => :json
     end
     it "should work" do
@@ -54,9 +52,7 @@ describe KeywordsController do
     before do
       keywords.first.expects(:update_attributes).returns(true)
       keywords.first.expects(:valid?).returns(true)
-      find = mock()
-      find.expects(:find).returns(keywords.first)
-      Account.any_instance.expects(:keywords).returns(find)
+      mock_finder('twelve')
       put :update, :id => 'twelve', :keyword => {:name => "OMG"},
           :format => :json    
     end
@@ -68,10 +64,7 @@ describe KeywordsController do
     before do
       keywords.first.expects(:update_attributes).returns(false)
       keywords.first.expects(:valid?).returns(false)
-
-      find = mock()
-      find.expects(:find).returns(keywords.first)
-      Account.any_instance.expects(:keywords).returns(find)
+      mock_finder('twelve')
       put :update, :id => 'twelve', :keyword => {:name => "OMG"},
           :format => :json    
     end
@@ -79,4 +72,20 @@ describe KeywordsController do
       response.response_code.should == 422
     end
   end
+  context "Deleting a keyword" do
+    before do
+      keywords.first.expects(:destroy)
+      mock_finder('twelve')
+      delete :destroy, :id => 'twelve'
+    end
+    it "should work" do
+      response.response_code.should == 200
+    end
+  end
+
+  def mock_finder(id)
+    find = mock()
+    find.expects(:find).with(id).returns(keywords.first)
+    Account.any_instance.expects(:keywords).returns(find)
+  end 
 end
