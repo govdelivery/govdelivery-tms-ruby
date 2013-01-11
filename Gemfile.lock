@@ -2,12 +2,12 @@ GEM
   remote: http://buildbox.office.gdi:6789/
   remote: https://rubygems.org/
   specs:
-    actionmailer (3.2.9)
-      actionpack (= 3.2.9)
+    actionmailer (3.2.11)
+      actionpack (= 3.2.11)
       mail (~> 2.4.4)
-    actionpack (3.2.9)
-      activemodel (= 3.2.9)
-      activesupport (= 3.2.9)
+    actionpack (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       journey (~> 1.0.4)
@@ -15,25 +15,25 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    activemodel (3.2.9)
-      activesupport (= 3.2.9)
+    activemodel (3.2.11)
+      activesupport (= 3.2.11)
       builder (~> 3.0.0)
-    activerecord (3.2.9)
-      activemodel (= 3.2.9)
-      activesupport (= 3.2.9)
+    activerecord (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activeresource (3.2.9)
-      activemodel (= 3.2.9)
-      activesupport (= 3.2.9)
-    activesupport (3.2.9)
+    activerecord-oracle_enhanced-adapter (1.4.1.3)
+    activeresource (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
+    activesupport (3.2.11)
       i18n (~> 0.6)
       multi_json (~> 1.0)
     arel (3.0.2)
     attr_encrypted (1.2.1)
       encryptor (>= 1.1.1)
     bcrypt-ruby (3.0.1)
-    bcrypt-ruby (3.0.1-java)
     builder (3.0.4)
     celluloid (0.12.4)
       facter (>= 1.6.12)
@@ -49,7 +49,7 @@ GEM
       faraday_middleware
       json
       typhoeus
-    devise (2.1.2)
+    devise (2.2.0)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
       railties (~> 3.1)
@@ -66,8 +66,7 @@ GEM
       multipart-post (~> 1.1)
     faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
-    ffi (1.2.0)
-    ffi (1.2.0-java)
+    ffi (1.2.1)
     guard (1.6.1)
       listen (>= 0.6.0)
       lumberjack (>= 1.0.2)
@@ -78,25 +77,20 @@ GEM
       rspec (~> 2.11)
     hike (1.2.1)
     i18n (0.6.1)
-    jbundler (0.3.2)
-      ruby-maven (= 3.0.4.1)
     journey (1.0.4)
-    jruby-rack (1.1.12)
     json (1.7.6)
-    json (1.7.6-java)
     jwt (0.1.5)
       multi_json (>= 1.0)
     kaminari (0.14.1)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
-    listen (0.7.1)
+    listen (0.7.2)
     log4r (1.1.10)
     lumberjack (1.0.2)
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    maven-tools (0.29.3)
     metaclass (0.0.1)
     method_source (0.8.1)
     mime-types (1.19)
@@ -115,15 +109,10 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.3.1)
-    pry (0.9.10-java)
-      coderay (~> 1.0.5)
-      method_source (~> 0.8)
-      slop (~> 3.3.1)
-      spoon (~> 0.0)
     rabl (0.7.9)
       activesupport (>= 2.3.14)
       multi_json (~> 1.0)
-    rack (1.4.2)
+    rack (1.4.3)
     rack-cache (1.2)
       rack (>= 0.4)
     rack-protection (1.3.2)
@@ -132,14 +121,14 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    rails (3.2.9)
-      actionmailer (= 3.2.9)
-      actionpack (= 3.2.9)
-      activerecord (= 3.2.9)
-      activeresource (= 3.2.9)
-      activesupport (= 3.2.9)
+    rails (3.2.11)
+      actionmailer (= 3.2.11)
+      actionpack (= 3.2.11)
+      activerecord (= 3.2.11)
+      activeresource (= 3.2.11)
+      activesupport (= 3.2.11)
       bundler (~> 1.0)
-      railties (= 3.2.9)
+      railties (= 3.2.11)
     rails-api (0.0.3)
       actionpack (>= 3.2.6)
       railties (>= 3.2.6)
@@ -149,9 +138,9 @@ GEM
       activesupport (>= 3.0)
       choice (~> 0.1.6)
       ruby-graphviz (~> 1.0.4)
-    railties (3.2.9)
-      actionpack (= 3.2.9)
-      activesupport (= 3.2.9)
+    railties (3.2.11)
+      actionpack (= 3.2.11)
+      activesupport (= 3.2.11)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
@@ -186,7 +175,7 @@ GEM
     rspec-expectations (2.12.1)
       diff-lcs (~> 1.1.3)
     rspec-mocks (2.12.1)
-    rspec-rails (2.12.0)
+    rspec-rails (2.12.1)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       railties (>= 3.0)
@@ -194,10 +183,8 @@ GEM
       rspec-expectations (~> 2.12.0)
       rspec-mocks (~> 2.12.0)
     ruby-graphviz (1.0.8)
-    ruby-maven (3.0.4.1)
-      maven-tools (~> 0.29.1)
-      thor (>= 0.14.6, < 2.0)
-    sidekiq (2.6.2)
+    ruby-oci8 (2.1.4)
+    sidekiq (2.6.4)
       celluloid (~> 0.12.0)
       connection_pool (~> 1.0)
       multi_json (~> 1)
@@ -211,7 +198,6 @@ GEM
       temple (~> 0.5.5)
       tilt (~> 1.3.3)
     slop (3.3.3)
-    spoon (0.0.1)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -225,10 +211,6 @@ GEM
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
-    trinidad (1.4.4)
-      jruby-rack (>= 1.1.10)
-      trinidad_jars (>= 1.1.0)
-    trinidad_jars (1.1.1)
     twilio-ruby (3.9.0)
       builder (>= 2.1.2)
       jwt (>= 0.1.2)
@@ -240,10 +222,10 @@ GEM
       rack (>= 1.0)
 
 PLATFORMS
-  java
   ruby
 
 DEPENDENCIES
+  activerecord-oracle_enhanced-adapter
   attr_encrypted
   dcm_client
   devise
@@ -259,11 +241,12 @@ DEPENDENCIES
   phony_rails
   pry
   rabl
-  rails (= 3.2.9)
+  rails
   rails-api
   rails-erd
   redis-rails
   rspec-rails
+  ruby-oci8
   sidekiq
   sinatra
   slim

@@ -1,7 +1,7 @@
 source "http://buildbox.office.gdi:6789"
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.9'
+gem 'rails'
 gem 'rails-api'
 gem 'redis-rails'
 gem 'sidekiq'
