@@ -10,7 +10,7 @@ module RecipientStatus
     [STATUS_SENT, STATUS_FAILED].include?(status)
   end
 
-  def self.not_sent(status)
+  def self.not_sent?(status)
     [STATUS_BLACKLISTED].include?(status)
   end
 end
