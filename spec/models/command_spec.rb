@@ -28,6 +28,15 @@ describe Command do
     specify { subject.should be_invalid }
   end
 
+  context "when name is missing" do
+    before { subject.name = nil; subject.save }
+    specify { subject.name.to_s.should == subject.command_type.to_s }
+  end
+
+  context "when name is NOT missing" do
+    before { subject.save }
+    specify { subject.name.to_s.should_not == subject.command_type.to_s }
+  end
   context "call" do
     before do
       # Command should combine it's own (persisted) params with the incoming params, convert them to a 

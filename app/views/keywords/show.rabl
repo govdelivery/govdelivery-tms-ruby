@@ -5,6 +5,9 @@ if @keyword
     node(:errors) { |keyword| keyword.errors }
   end
   node(:_links) do |k|
-    {:self => k.persisted? ? keyword_path(k) : keywords_path}
+    {
+      :self => k.persisted? ? keyword_path(k) : keywords_path,
+      :commands => keyword_commands_path(k)
+    }
   end
 end
