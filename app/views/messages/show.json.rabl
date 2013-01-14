@@ -18,7 +18,7 @@ if root_object
   end
 
   node(:_links) do |m|
-    {:self => m.persisted? ? url_for(:controller=>'voice_messages', :action=>'show', :id=>m.id) : url_for(:controller=>'voice_messages'),
+    {:self => m.persisted? ? url_for(:controller=>controller_name, :action=>'show', :id=>m.id) : url_for(:controller=>controller_name),
      :recipients => message_recipients_path(m)}
   end
 end
