@@ -5,6 +5,7 @@ class RenameActionsToCommands < ActiveRecord::Migration
     # production server yet, this is ok
     rename_table :actions, :commands
     rename_column :commands, :action_type, :command_type
+    Command.reset_column_information
     Command.all.each do |c|
       c.save!
     end
