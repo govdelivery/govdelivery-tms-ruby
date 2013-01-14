@@ -1,6 +1,6 @@
 #
 # This class ends up serialized in YAML in 
-# the actions table.  It mixes variables from different contexts (actions table, 
+# the commands table.  It mixes variables from different contexts (commands table, 
 # 
 # This class is able to cleanly cross the boundary between web server and background
 # processing without issues (because it can be reconstituted from a plain old Hash).
@@ -8,16 +8,16 @@
 # To convert to hash: 
 #   instance.to_hash 
 # To convert from hash: 
-#   ActionParameters.new({...})
+#   CommandParameters.new({...})
 #
-class ActionParameters
+class CommandParameters
   include MassAssignment
 
-  # Some attributes in this collection may be persisted in the database as Action#params (marshalled
+  # Some attributes in this collection may be persisted in the database as Command#params (marshalled
   # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or 
   # handle the missing method error). 
   PARAMS=[
-    :account_id,        # the tsms account id corresponding to this action,
+    :account_id,        # the tsms account id corresponding to this command,
     :callback_url,      # a callback url for the external sms/voice service to call if needed
     :sms_body,          # the full body string of the incoming sms message
     :sms_tokens,        # an array of string tokens in the sms_body, sans keyword

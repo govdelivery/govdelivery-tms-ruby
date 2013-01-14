@@ -44,7 +44,7 @@ class Vendor < ActiveRecord::Base
     # we need to maintain a blacklist at the vendor (i.e. short-code) level
     stop_request = stop_requests.find_or_create_by_phone(from)
     stop_request.save!
-    # ...and we need to execute account-specific stop actions
+    # ...and we need to execute account-specific stop commands
     accounts.each { |a| a.stop(:from => from) }
   end
 end

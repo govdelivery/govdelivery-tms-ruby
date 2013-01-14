@@ -44,7 +44,7 @@ if Rails.env.development?
   omg = Account.create!(:vendors => vendors, :name => "OMG")
 
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
-  omg.add_action!(:params => ActionParameters.new(:dcm_account_codes => ['ACME','VANDELAY']), :action_type => :dcm_unsubscribe)
+  omg.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACME','VANDELAY']), :command_type => :dcm_unsubscribe)
 
   # SERVICES FOO => POST to http://localhost/forward
   Keyword.delete_all
@@ -52,18 +52,18 @@ if Rails.env.development?
   kw.account = omg
   kw.vendor = omg.sms_vendor
   kw.save!
-  kw.add_action!(:params => ActionParameters.new(
+  kw.add_command!(:params => CommandParameters.new(
                               :username => "example@evotest.govdelivery.com", 
                               :password => "password", 
                               :url => "http://localhost/forward", 
-                              :http_method => "POST"), :action_type => :forward)
+                              :http_method => "POST"), :command_type => :forward)
 
   # SUBSCRIBE ANTHRAX => evolution API request to localhost:3001
   kw = Keyword.new(:name => 'SUBSCRIBE')
   kw.account = omg
   kw.vendor = omg.sms_vendor
   kw.save!
-  kw.add_action!(:params => ActionParameters.new(:dcm_account_code => "ACME", :dcm_topic_codes => ['ANTRHAX']), :action_type => :dcm_subscribe)
+  kw.add_command!(:params => CommandParameters.new(:dcm_account_code => "ACME", :dcm_topic_codes => ['ANTRHAX']), :command_type => :dcm_subscribe)
 
   # Make the product user (admin)
   user = User.find_or_create_by_email(:email => "product@govdelivery.com", :password => "retek01!")

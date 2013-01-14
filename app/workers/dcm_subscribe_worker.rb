@@ -13,12 +13,12 @@ class DcmSubscribeWorker
   # options: {"from"=>"+14445556666", "params"=>"ACME:TOPIC_1,TOPIC_2"}
   #
   def perform(options)
-    options = ActionParameters.new(options)
+    options = CommandParameters.new(options)
     logger.info("Performing DCM subscribe for #{options}")
 
     client = DCMClient::Client.new(Tsms::Application.config.dcm)
 
-    DcmSubscribeAction.new(client).call(options.from, options.dcm_account_code, options.dcm_topic_codes, options.sms_tokens)
+    DcmSubscribeCommand.new(client).call(options.from, options.dcm_account_code, options.dcm_topic_codes, options.sms_tokens)
 
   # DO NOT retry if the response is an Unprocessable Entity
   rescue DCMClient::Error::UnprocessableEntity => e

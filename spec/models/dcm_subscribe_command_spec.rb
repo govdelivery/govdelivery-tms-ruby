@@ -1,11 +1,11 @@
 require File.expand_path('../../../app/models/phone_number', __FILE__)
-require File.expand_path('../../../app/models/dcm_subscribe_action', __FILE__)
+require File.expand_path('../../../app/models/dcm_subscribe_command', __FILE__)
 require File.expand_path('../../little_spec_helper', __FILE__)
 
-describe DcmSubscribeAction do
+describe DcmSubscribeCommand do
   let(:client) { mock('dcm_client') }
   let(:fake_phone_number_constructor) { lambda {|pn| stub(:dcm => '1+4443332222') } }
-  subject { DcmSubscribeAction.new(client) }
+  subject { DcmSubscribeCommand.new(client) }
 
   it 'should call wireless_subscribe on the DCM Client' do
     client.expects(:wireless_subscribe).with('1+4443332222', 'ACCOUNT_CODE', ['TOPIC_CODE', 'TOPIC_2'])

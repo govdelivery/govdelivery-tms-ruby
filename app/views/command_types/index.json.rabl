@@ -1,2 +1,2 @@
-collection @action_types
+collection @command_types
 attributes :name, :fields

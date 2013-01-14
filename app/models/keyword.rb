@@ -24,21 +24,21 @@ class Keyword < ActiveRecord::Base
     write_attribute(:name, sanitize_name(n))
   end
 
-  def add_action!(params)
-    actions.create!({:account => self.account}.merge(params))
+  def add_command!(params)
+    commands.new(params).tap{|c| c.account = self.account}.save!
   end
 
-  def execute_actions(params=ActionParameters.new)
+  def execute_commands(params=CommandParameters.new)
     params.account_id = self.account_id
-    actions.each{|a| a.call(params)} if event_handler
+    commands.each{|a| a.call(params)} if event_handler
   end
 
-  def actions
+  def commands
     unless event_handler
       self.create_event_handler!
       self.save!
     end
-    event_handler.actions
+    event_handler.commands
   end
 
   private

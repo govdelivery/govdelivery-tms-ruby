@@ -69,10 +69,10 @@ describe Keyword do
     end
   end
 
-  describe '#add_action!' do
-    it 'creates an action' do
-      expect{subject.add_action!(:params => ActionParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :action_type => :dcm_unsubscribe)}
-        .to change{Action.count}.by 1
+  describe '#add_command!' do
+    it 'creates a command' do
+      expect{subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)}
+        .to change{Command.count}.by 1
     end
   end
 

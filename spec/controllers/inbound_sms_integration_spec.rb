@@ -21,10 +21,10 @@ describe TwilioRequestsController do
       expect{post :create, params}
         .to change{vendor.inbound_messages.count}.by 1
     end
-    it 'executes an action' do
+    it 'executes a command' do
       acct = vendor.accounts.create!(name: 'aname')
-      action = acct.add_action!(:params => ActionParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :action_type => :dcm_unsubscribe)
-      Action.any_instance.expects(:call)
+      command = acct.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)
+      Command.any_instance.expects(:call)
       post :create, params
     end
   end
@@ -43,8 +43,8 @@ describe TwilioRequestsController do
       expect{post :create, params}
         .to change{vendor.inbound_messages.count}.by 1
     end
-    it 'does not execute any actions' do
-      Action.any_instance.expects(:call).never
+    it 'does not execute any commands' do
+      Command.any_instance.expects(:call).never
     end
   end
 
@@ -66,9 +66,9 @@ describe TwilioRequestsController do
       expect{post :create, params}
         .to change{vendor.inbound_messages.count}.by 1
     end
-    it 'executes an action' do
-      action = vendor.keywords.first.add_action!(:params => ActionParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :action_type => :dcm_subscribe)
-      Action.any_instance.expects(:call)
+    it 'executes a command' do
+      command = vendor.keywords.first.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_subscribe)
+      Command.any_instance.expects(:call)
       post :create, params
     end
   end

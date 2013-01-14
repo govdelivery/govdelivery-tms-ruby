@@ -16,16 +16,16 @@ class Account < ActiveRecord::Base
 
   before_create :create_stop_handler!
 
-  def add_action!(params)
+  def add_command!(params)
     unless stop_handler
       self.create_stop_handler!
       self.save!
     end
-    stop_handler.actions.create!({:account => self}.merge(params))
+    stop_handler.commands.new(params).tap{|c| c.account = self}.save!
   end
 
   def stop(params={})
-    stop_handler.actions.each{|a| a.call(params)} if stop_handler
+    stop_handler.commands.each{|a| a.call(params)} if stop_handler
   end
   
   def vendor=(vendor)

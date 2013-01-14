@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe ActionTypesController do
+describe CommandTypesController do
 
   let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
   let(:account) { vendor.accounts.create(:name => 'name') }

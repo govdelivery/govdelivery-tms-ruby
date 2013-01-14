@@ -21,7 +21,7 @@ class ForwardWorker
   sidekiq_options retry: 25
 
   def perform(opts)
-    self.options = ActionParameters.new(opts)
+    self.options = CommandParameters.new(opts)
     logger.info("Performing Forward for #{options}")
 
     http_method  = options.http_method.downcase

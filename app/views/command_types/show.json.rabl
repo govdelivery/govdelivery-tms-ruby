@@ -1,2 +1,2 @@
-object @action_type
+object @command_type
 attributes :name, :fields

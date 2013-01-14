@@ -1,4 +1,4 @@
-# Sends a subscription action to DCM
+# Sends a subscription to DCM
 #
 # Example: call("1+2222222222", "ACME:TOPIC_1,TOPIC2", ['foo@bar.com']
 #   -> Subscribe foo@bar.com to ACME topics TOPIC_1 and TOPIC_2
@@ -8,9 +8,9 @@
 #   -> Subscribe 1+2222222222 to ACME topics TOPIC_1 and TOPIC_2 
 #   In this scenario, the user text was something like "subscribe"
 #
-DcmSubscribeAction = Struct.new(:client) do
+DcmSubscribeCommand = Struct.new(:client) do
   # phone_number: the incoming phone number string
-  # data_string: the params from the subscribe action in the database
+  # data_string: the params from the subscribe command in the database
   # subscribe_args: an array of the tokens the user typed after the configured keyword. For example, 
   #   if the user texted "subscribe foo@bar.com", the subscribe_args should be ["foo@bar.com"].
   def call(phone_number, account_code, topic_codes, subscribe_args=[], phone_number_constructor=PhoneNumber.public_method(:new))

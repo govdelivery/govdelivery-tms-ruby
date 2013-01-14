@@ -15,7 +15,7 @@ class DcmUnsubscribeWorker
   # options: {"from"=>"+14445556666", "params"=>"ACME,VANDELAY"}
   #
   def perform(options)
-    options = ActionParameters.new(options)
+    options = CommandParameters.new(options)
     logger.info("Performing DCM unsubscribe for #{options.to_s}")
 
     client = DCMClient::Client.new(Tsms::Application.config.dcm)

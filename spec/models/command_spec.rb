@@ -19,11 +19,11 @@ describe Account do
   end
 
   context "calling stop" do
-    it 'should call actions' do
-      subject.add_action!(:params => ActionParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :action_type => :dcm_unsubscribe)
+    it 'should call commands' do
+      subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :command_type => :dcm_unsubscribe)
       from = "123123123"
-      Keyword.any_instance.expects(:execute_actions).never
-      Action.any_instance.expects(:call).with(:from => from)
+      Keyword.any_instance.expects(:execute_commands).never
+      Command.any_instance.expects(:call).with(:from => from)
       subject.stop(:from => from)
     end
   end
