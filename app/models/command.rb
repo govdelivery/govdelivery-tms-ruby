@@ -6,7 +6,6 @@ class Command < ActiveRecord::Base
   attr_accessible :command_type, :name, :params
   validates_presence_of :account, :command_type
   validates_length_of :name, :maximum => 255, :allow_nil => true
-  validates_uniqueness_of :name, :scoped_to => :event_handler_id
   validates_length_of :params, :maximum => 4000, :allow_nil => true
   before_save :set_name
   validate :check_command_type
