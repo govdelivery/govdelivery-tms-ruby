@@ -3,6 +3,8 @@ class SmsMessagesController < MessagesController
   before_filter :set_attr
   feature :sms
 
+  wrap_parameters :message, :include => [:body, :recipients], :format => :json
+
   protected
 
   def set_scope
