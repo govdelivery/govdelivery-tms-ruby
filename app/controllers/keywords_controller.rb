@@ -1,7 +1,9 @@
 class KeywordsController < ApplicationController
+  include FeatureChecker
   before_filter :find_user
   before_filter :find_keyword, :only => [:show, :update, :destroy]
-
+  feature :sms
+  
   def index
     @keywords = @account.keywords
   end

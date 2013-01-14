@@ -1,7 +1,9 @@
 class InboundMessagesController < ApplicationController
+  include FeatureChecker
   before_filter :find_user
   before_filter :set_page, :only => :index
-
+  feature :sms
+  
   # GET /inbound_messages
   def index
     @messages = current_user.sms_vendor.inbound_messages.page(@page)

@@ -26,6 +26,10 @@ class Account < ActiveRecord::Base
     stop_handler.commands.new(params).tap{|c| c.account = self}.save!
   end
 
+  def feature_enabled?(feature)
+    !!self.send("#{feature}_vendor")
+  end
+
   def stop(params={})
     stop_handler.commands.each{|a| a.call(params)} if stop_handler
   end

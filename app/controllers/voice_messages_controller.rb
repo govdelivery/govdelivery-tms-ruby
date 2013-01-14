@@ -1,5 +1,6 @@
 class VoiceMessagesController < MessagesController
-
+  include FeatureChecker
+  feature :voice
   protected
 
   def set_scope
