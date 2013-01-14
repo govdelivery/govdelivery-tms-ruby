@@ -1,29 +1,40 @@
 require 'spec_helper'
 
-describe Account do
+describe Command do
   subject {
-    Account.new(:name => 'name', :sms_vendor => create_sms_vendor)
+    vendor = SmsVendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
+    account = create_account(sms_vendor: vendor)
+    Command.new(:name => "FOO", :command_type => :dcm_unsubscribe, :params => CommandParameters.new(:url => "foo")).tap{|c| c.account = account }
   }
 
-  it { should be_valid }
-
-  context "when name is empty" do
-    before { subject.name = nil }
-    it { should_not be_valid }
+  context "when valid" do
+    specify { subject.valid?.should == true }
   end
 
-  context "when name too long" do
-    before { subject.name = "W"*257 }
-    it { should_not be_valid }
-  end
-
-  context "calling stop" do
-    it 'should call commands' do
-      subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :command_type => :dcm_unsubscribe)
-      from = "123123123"
-      Keyword.any_instance.expects(:execute_commands).never
-      Command.any_instance.expects(:call).with(:from => from)
-      subject.stop(:from => from)
+  [:account, :command_type].each do |field|
+    context "when #{field} is empty" do
+      before { subject.send("#{field}=", nil) }
+      specify { subject.valid?.should == false }
     end
+  end
+
+  context "when name is too long" do
+    before { subject.name = 'A'*256 }
+    specify { subject.should be_invalid }
+  end
+  
+  context "when params is too long" do
+    before { subject.params = 'A'*4001 }
+    specify { subject.should be_invalid }
+  end
+
+  context "call" do
+    before do
+      # Command should combine it's own (persisted) params with the incoming params, convert them to a 
+      # hash, and pass them to the worker invocation
+      expected = CommandParameters.new(:from => "+122222", :url => "foo").to_hash
+      DcmUnsubscribeWorker.expects(:perform_async).with(expected)
+    end
+    specify { subject.call(CommandParameters.new(:from => "+122222")) }
   end
 end

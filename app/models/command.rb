@@ -31,8 +31,10 @@ class Command < ActiveRecord::Base
   end
 
   private
+  
+  # Copies the name from the command unless it was specified explicitly. 
   def set_name
-    if self.name.nil? || self.command_type_changed?
+    if self.name.nil? || (self.command_type_changed? && !self.command_type_was.nil?)
       self.name = command_type_name
     end
   end
