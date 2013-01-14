@@ -16,7 +16,7 @@ class MessagesController < ApplicationController
   end
 
   def show
-    @messages = @message_scope.find_by_id(params[:id])
+    @message = @message_scope.find_by_id(params[:id])
     respond_with(@message)
   end
 

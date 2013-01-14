@@ -30,6 +30,15 @@ describe VoiceMessagesController do
     end
   end
 
+  describe "#show" do
+    it 'should work' do
+      message = stub(:message)
+      User.any_instance.expects(:voice_messages).returns(stub(:find_by_id=>message))
+      get :show, :id=>1
+      assigns(:message).should_not be_nil
+    end
+  end
+
   context "#create with an invalid voice message" do
     before do
       VoiceMessage.any_instance.expects(:save).returns(false)
