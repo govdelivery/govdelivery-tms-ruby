@@ -15,7 +15,7 @@ module Recipient
     attr_accessible :message_id, :vendor_id
 
     def complete!
-      raise "bag of dicks"
+      raise NotImplementedError.new('implement it')
     end
   end
 

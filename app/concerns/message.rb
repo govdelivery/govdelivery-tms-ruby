@@ -28,6 +28,10 @@ module Message
       end
     end
 
+    def process_blacklist!
+      #do nothing by default
+    end
+
     def complete!
       self.completed_at = Time.zone.now
       save!

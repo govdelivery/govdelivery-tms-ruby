@@ -8,7 +8,7 @@ class CreateRecipientsWorker
   end
 
   def perform(options)
-    message = Message.find(options['message_id'])
+    message = options['klass'].constantize.find(options['message_id'])
     recipient_params = options['recipients']
     if message && !recipient_params.blank?
       message.create_recipients(recipient_params)

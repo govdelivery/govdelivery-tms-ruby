@@ -7,7 +7,7 @@ module PhoneRecipient
 
     scope :incomplete, where(:sent_at => nil)
     scope :sending, where(:status => RecipientStatus::STATUS_SENDING)
-    scope :blacklisted, joins('inner join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone').readonly(false)
+    scope :blacklisted, joins("inner join #{StopRequest.table_name} on #{StopRequest.table_name}.vendor_id = #{self.table_name}.vendor_id and #{StopRequest.table_name}.phone = #{self.table_name}.formatted_phone").readonly(false)
 
     scope :to_send, -> { incomplete.not_blacklisted.with_valid_phone_number }
 
@@ -42,11 +42,11 @@ module PhoneRecipient
     end
 
     def self.not_blacklisted
-      joins('left outer join stop_requests on stop_requests.vendor_id = recipients.vendor_id and stop_requests.phone = recipients.formatted_phone').where('stop_requests.phone is null').readonly(false)
+      joins("left outer join #{StopRequest.table_name} on #{StopRequest.table_name}.vendor_id = #{self.table_name}.vendor_id and #{StopRequest.table_name}.phone =  #{self.table_name}.formatted_phone").where("#{StopRequest.table_name}.phone is null").readonly(false)
     end
 
     def self.with_valid_phone_number
-      where('recipients.formatted_phone is not null')
+      where("#{self.table_name}.formatted_phone is not null")
     end
   end
 

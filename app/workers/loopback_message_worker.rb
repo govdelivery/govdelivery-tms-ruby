@@ -5,9 +5,13 @@ class LoopbackMessageWorker
 
   def perform(options)
     message_id = options['message_id']
-    logger.info("Send initiated for message_id=#{message_id}")
+    if message = SmsMessage.find_by_id(message_id)
+      logger.info("Send initiated for SmsMessage #{message_id}")
+    elsif message = VoiceMessage.find_by_id(message_id)
+      logger.info("Send initiated for VoiceMessage #{message_id}")
+    end
 
-    if message = Message.find_by_id(message_id)
+    if message
       message.process_blacklist!
       message.recipients.to_send.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")

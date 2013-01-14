@@ -1,11 +1,24 @@
 object @message
 attributes @content_attribute, :completed_at, :created_at
-if @message
-  unless @message.errors.empty?
+
+def message_recipients_path(m)
+    return nil unless m.id
+    opts = {:controller=>'recipients'}
+    if m.is_a?(VoiceMessage)
+      opts[:voice_id] = m.id
+    elsif m.is_a?(SmsMessage)
+      opts[:sms_id] = m.id
+    end
+    url_for(opts)
+end
+
+if root_object
+  unless root_object.errors.empty?
     node(:errors) { |message| message.errors }
   end
 
   node(:_links) do |m|
-    {:self => m.persisted? ? send("#{controller_name.singularize}_path",m) : send("#{controller_name}_path"), :recipients => message_recipients_path(m)}
+    {:self => m.persisted? ? url_for(:controller=>'voice_messages', :action=>'show', :id=>m.id) : url_for(:controller=>'voice_messages'),
+     :recipients => message_recipients_path(m)}
   end
 end

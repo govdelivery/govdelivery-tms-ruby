@@ -8,11 +8,11 @@ class User < ActiveRecord::Base
   validates_presence_of :email
   validates_length_of :email, :maximum => 256
   validates_uniqueness_of :email
-      
-  has_many :messages, :order => 'messages.created_at DESC'
-  has_many :account_messages, :through=>:account, :source=>:messages
+
   has_many :sms_messages, :order => 'sms_messages.created_at DESC'
+  has_many :account_sms_messages, :through=>:account, :source=>:sms_messages
   has_many :voice_messages, :order => 'voice_messages.created_at DESC'
+  has_many :account_voice_messages, :through=>:account, :source=>:voice_messages
   
   before_validation :downcase_email
   

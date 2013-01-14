@@ -31,7 +31,8 @@ class MessagesController < ApplicationController
     respond_with(@message)
   end
 
-  private
+  protected
+
   def set_scope
     raise "@message_scope must be set in MessagesController subclass"
   end

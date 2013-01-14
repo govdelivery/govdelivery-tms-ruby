@@ -8,18 +8,18 @@ describe CreateRecipientsWorker do
     message = mock('message', :worker => send_worker)
     message.stubs(:id).returns(1)
     message.expects(:create_recipients).with(recipient_params)
-    Message.expects(:find).with(1).returns(message)
+    SmsMessage.expects(:find).with(1).returns(message)
 
-    worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => recipient_params)
+    worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => recipient_params, 'klass'=>'SmsMessage')
   end
 
   it 'should complete if there are no recipients' do
     message = mock('message')
     message.stubs(:id).returns(1)
     message.expects(:complete!)
-    Message.expects(:find).with(1).returns(message)
+    VoiceMessage.expects(:find).with(1).returns(message)
 
-    worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {})
+    worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass'=>'VoiceMessage')
   end
 
 end

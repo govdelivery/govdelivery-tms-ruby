@@ -5,21 +5,35 @@ describe RecipientsController do
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:message) { user.sms_messages.create(:body => "A"*160) }
+  let(:voice_message) { user.voice_messages.create(:play_url => "http://your.mom") }
   let(:recipients) do
     3.times.map { |i| message.recipients.build(:phone => (6125551200 + i).to_s) }
   end
+  let(:voice_recipients) do
+      3.times.map { |i| voice_message.recipients.build(:phone => (6125551200 + i).to_s) }
+    end
 
   before do
     sign_in user
-    User.any_instance.expects(:account_messages).returns(stub(:find => message))
+    User.any_instance.stubs(:account_sms_messages).returns(stub(:find => message))
     SmsMessage.any_instance.stubs(:id).returns(1)
   end
 
   context '#index' do
-    it 'should work' do
+    it 'should work with sms recipients' do
       stub_pagination(recipients, 1, 5)
       SmsMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
       get :index, :sms_id => 1, :format => :json
+      assigns(:page).should eq(1)
+      response.headers['Link'].should =~ /next/
+      response.headers['Link'].should =~ /last/
+    end
+    it 'should work with voice recipients' do
+      VoiceMessage.any_instance.stubs(:id).returns(1)
+      User.any_instance.stubs(:account_voice_messages).returns(stub(:find => voice_message))
+      stub_pagination(voice_recipients, 1, 5)
+      VoiceMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
+      get :index, :voice_id => 1, :format => :json
       assigns(:page).should eq(1)
       response.headers['Link'].should =~ /next/
       response.headers['Link'].should =~ /last/
