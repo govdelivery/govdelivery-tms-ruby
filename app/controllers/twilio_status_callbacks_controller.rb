@@ -4,14 +4,13 @@ class TwilioStatusCallbacksController < ApplicationController
   respond_to :xml
 
   def create
-    if params['SmsStatus'] == 'sent'
-      @recipient.status=RecipientStatus::STATUS_SENT
-      @recipient.completed_at = Time.now
-    elsif params['SmsStatus'] == 'failed'
-      @recipient.status=RecipientStatus::STATUS_FAILED
-      @recipient.completed_at = Time.now
-    end
-    @recipient.save
+    status = case params['SmsStatus']
+               when 'sent'
+                 RecipientStatus::STATUS_SENT
+               when 'failed'
+                 RecipientStatus::STATUS_FAILED
+             end
+    @recipient.complete!(:status => status)
     render :text => '', :status => 201
   end
 
@@ -19,4 +18,5 @@ class TwilioStatusCallbacksController < ApplicationController
   def find_recipient
     @recipient=SmsRecipient.find_by_ack!(params['SmsSid'])
   end
+
 end

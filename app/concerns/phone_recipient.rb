@@ -29,9 +29,9 @@ module PhoneRecipient
       self.ack = attrs[:ack]
       self.status = attrs[:status] unless attrs[:status].blank?
       self.error_message = attrs[:error_message]
-      #sent, new mean don't set sent_at
-      self.sent_at = Time.now if [RecipientStatus::STATUS_SENT, RecipientStatus::STATUS_NEW].include?(self.status)
-      self.completed_at = Time.now
+      # sent_at is when we send the msg to twilio, completed_at is when we finalize it
+      self.sent_at ||= Time.now unless RecipientStatus.not_sent?(status)
+      self.completed_at ||= Time.now if RecipientStatus.complete?(status)
       self.save!
     end
 
