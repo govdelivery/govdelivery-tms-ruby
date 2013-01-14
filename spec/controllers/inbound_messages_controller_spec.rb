@@ -8,16 +8,12 @@ describe InboundMessagesController do
   let(:valid_attributes) { {:vendor => vendor,
                             :body => 'nice body!',
                             :from => '12345678'} }
-  let(:vendor) { Vendor.create(:name => 'name',
-                               :username => 'username',
-                               :password => 'secret',
-                               :from => 'from',
-                               :worker => 'LoopbackMessageWorker') }
+  let(:vendor) { create_sms_vendor }
+  let(:account){vendor.accounts.create(:name => 'name')}
+  let(:user){account.users.create(:email => 'foo@evotest.govdelivery.com',
+                                  :password => "schwoop")}
 
   before do
-    account = vendor.accounts.create(:name => 'name')
-    user = account.users.create(:email => 'foo@evotest.govdelivery.com',
-                                :password => "schwoop")
     sign_in user
   end
 
@@ -30,7 +26,7 @@ describe InboundMessagesController do
     end
     before do
       results.stubs(:total_pages).returns(5)
-      Vendor.any_instance
+      SmsVendor.any_instance
         .expects(:inbound_messages)
         .returns(stub(:page => results))
     end

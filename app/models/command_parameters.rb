@@ -22,6 +22,7 @@ class CommandParameters
     :sms_body,          # the full body string of the incoming sms message
     :sms_tokens,        # an array of string tokens in the sms_body, sans keyword
     :from,              # phone number of user that sent us sms message
+    :to,                # phone number to which user sent message
     :username,
     :encrypted_password,
     :url,

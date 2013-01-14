@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe InboundMessage do
-  let(:vendor) { create_vendor }
+  let(:vendor) { create_sms_vendor }
   let(:inbound_message) { InboundMessage.create(:vendor => vendor,
                                                 :body => 'this is my body',
                                                 :from => '5551112222') }

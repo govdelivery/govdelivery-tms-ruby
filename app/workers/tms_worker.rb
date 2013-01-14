@@ -20,8 +20,8 @@ class TmsWorker
   end
 
   def perform(options)
-    raise "TmsWorker requires JRuby" unless self.class.jruby?
-    vendor = Account.find_by_id(options['account_id']).vendors.email.first
+    raise NotImplementedError.new("TmsWorker requires JRuby") unless self.class.jruby?
+    vendor = Account.find_by_id(options['account_id']).email_vendor
 
     cred=Credentials.new
     cred.username=vendor.username
@@ -31,7 +31,7 @@ class TmsWorker
     msg = Message.new #this is an ODM message, not a TSMS Message
     msg.subject = email_params['subject']
     msg.body = email_params['body']
-    msg.from_name = vendor.from
+    msg.from_name = email_params['from']
     msg.email_column = 'email'
     msg.record_designator='email'
     email_params['recipients'].each { |recipient| msg.to << recipient }

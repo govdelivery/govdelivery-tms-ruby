@@ -1,7 +1,7 @@
 class MessagesController < ApplicationController
   before_filter :find_user
   before_filter :set_page, :only => :index
-  before_filter :set_scope, :except => :create
+  before_filter :set_scope
   before_filter :set_attr
 
   def index
@@ -22,10 +22,11 @@ class MessagesController < ApplicationController
 
   def create
     recipients = params[:message].delete(:recipients) if params[:message]
-    @message = current_user.new_message(params[:message])
+    @message = @message_scope.build(params[:message])
     if @message.save
       Rails.cache.write(CreateRecipientsWorker.job_key(@message.id), 1)
-      CreateRecipientsWorker.send(:perform_async, {:recipients => recipients, :message_id => @message.id, :send_options => send_options})
+      CreateRecipientsWorker.send(:perform_async, {:recipients => recipients, :klass => @message.class.name,
+                                                   :message_id => @message.id, :send_options => send_options})
     end
     respond_with(@message)
   end

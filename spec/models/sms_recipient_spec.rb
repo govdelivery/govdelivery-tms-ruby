@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Recipient do
+describe SmsRecipient do
   subject {
-    v = Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
-    m = Message.new(:short_body => 'short body')
-    a = Account.create(:name => 'account', :vendor => v)
+    v = create_sms_vendor
+    m = SmsMessage.new(:body => 'short body')
+    a = Account.create(:name => 'account', :sms_vendor => v)
     u = User.create(:email => 'admin@get-endorsed-by-bens-mom.com', :password => 'retek01!')
     u.account = a
     m.account = a
-    r = Recipient.new
+    r = SmsRecipient.new
     r.message = m
     r.vendor = v
     r

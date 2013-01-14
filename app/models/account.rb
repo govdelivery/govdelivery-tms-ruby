@@ -1,17 +1,19 @@
 class Account < ActiveRecord::Base
-  attr_accessible :name, :vendors, :vendor
-  
+  attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor
+
   has_many :users
-  has_many :account_vendors
-  has_many :vendors, :through => :account_vendors
-  has_many :messages
+  belongs_to :voice_vendor
+  belongs_to :sms_vendor
+  belongs_to :email_vendor
+  has_many :sms_messages
+  has_many :voice_messages
+  #has_many :emails
   has_many :keywords
-    
+
   belongs_to :stop_handler, :class_name => 'EventHandler'
-  validate :ensure_unique_vendors
-  
+
   validates_presence_of :name
-  
+
   validates_length_of :name, :maximum => 256
 
   before_create :create_stop_handler!
@@ -26,27 +28,5 @@ class Account < ActiveRecord::Base
 
   def stop(params={})
     stop_handler.commands.each{|a| a.call(params)} if stop_handler
-  end
-  
-  def vendor=(vendor)
-    vendors=[vendor]
-  end
-  
-  def ensure_unique_vendors
-    if Hash[vendors.group_by(&:vtype)].values.map(&:length).max.to_i > 1
-       errors.add(:vendors, "must be of different type") 
-    end
-  end
-
-  def sms_vendor
-    vendors.select(&:sms?).first
-  end
-
-  def voice_vendor
-    vendors.select(&:voice?).first
-  end
-
-  def email_vendor
-    vendors.select(&:email?).first
   end
 end

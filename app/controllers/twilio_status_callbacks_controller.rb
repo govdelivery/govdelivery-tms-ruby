@@ -5,10 +5,10 @@ class TwilioStatusCallbacksController < ApplicationController
 
   def create
     if params['SmsStatus'] == 'sent'
-      @recipient.status=Recipient::STATUS_SENT
+      @recipient.status=RecipientStatus::STATUS_SENT
       @recipient.completed_at = Time.now
     elsif params['SmsStatus'] == 'failed'
-      @recipient.status=Recipient::STATUS_FAILED
+      @recipient.status=RecipientStatus::STATUS_FAILED
       @recipient.completed_at = Time.now
     end
     @recipient.save
@@ -17,6 +17,6 @@ class TwilioStatusCallbacksController < ApplicationController
 
   protected
   def find_recipient
-    @recipient=Recipient.find_by_ack!(params['SmsSid'])
+    @recipient=SmsRecipient.find_by_ack!(params['SmsSid'])
   end
 end

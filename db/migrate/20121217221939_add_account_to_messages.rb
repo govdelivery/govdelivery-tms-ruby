@@ -1,3 +1,8 @@
+class Message < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :account
+end
+
 class AddAccountToMessages < ActiveRecord::Migration
   def change
     add_column(:messages, :account_id, :integer)

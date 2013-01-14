@@ -6,7 +6,7 @@ class Keyword < ActiveRecord::Base
   STOP_WORDS = %w(stop quit unsubscribe cancel)
   RESERVED_KEYWORDS = STOP_WORDS + ['help']
 
-  belongs_to :vendor
+  belongs_to :vendor, :class_name=>'SmsVendor'
   belongs_to :account
   belongs_to :event_handler, :dependent => :destroy
   validates_presence_of :name, :account, :vendor

@@ -6,7 +6,7 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
   # +params+ - A CommandParameter instance
   #
   def respond_to_sms!(params)
-    inbound_sms = parser.call(params.sms_body, command_dispatch_hash(params))
+    parser.call(params.sms_body, command_dispatch_hash(params))
   end
 
   private
@@ -25,19 +25,19 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
   end
 
   def do_stop(params)
-    vendor.receive_message!(:from => params.from, :body => params.sms_body, :stop? => true)
+    vendor.receive_message!(:from => params.from, :to=>params.to, :body => params.sms_body, :stop? => true)
     stop_text
   end
 
   def execute_keyword_commands(params, keyword, sms_tokens)
     params.sms_tokens = sms_tokens
-    vendor.receive_message!(:from => params.from, :body => params.sms_body, :stop? => false)
+    vendor.receive_message!(:from => params.from, :to=>params.to, :body => params.sms_body, :stop? => false)
     keyword.execute_commands(params)
     nil
   end
 
   def do_help(params)
-    vendor.receive_message!(:from => params.from, :body => params.sms_body, :stop? => false)
+    vendor.receive_message!(:to=>params.to, :from => params.from, :body => params.sms_body, :stop? => false)
     help_text
   end
 

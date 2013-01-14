@@ -1,9 +1,9 @@
 require 'spec_helper'
 describe TwilioVoiceWorker do
-  let(:voice_vendor) { Vendor.create!(:name => 'voice vendor', :username => 'username', :password => 'secret', :from => 'from', :worker => 'TwilioVoiceWorker') }
+  let(:voice_vendor) { create_voice_vendor(:worker => 'TwilioVoiceWorker') }
   let(:account) { account = voice_vendor.accounts.create!(:name => 'name') }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { account.messages.create!(:url => 'http://localhost/file.mp3', :recipients_attributes => [{:phone => "6515551212", :vendor => voice_vendor}]) }
+  let(:message) { account.voice_messages.create!(:play_url => 'http://localhost/file.mp3', :recipients_attributes => [{:phone => "6515551212", :vendor => voice_vendor}]) }
 
   #need to add recipient stubs and verify recipients are modified correctly
   context 'a very happy send' do

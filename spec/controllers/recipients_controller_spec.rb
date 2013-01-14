@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe RecipientsController do
-  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
+  let(:vendor) { create_sms_vendor }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { u = user.new_message(:short_body => "A"*160) }
+  let(:message) { user.sms_messages.create(:body => "A"*160) }
   let(:recipients) do
     3.times.map { |i| message.recipients.build(:phone => (6125551200 + i).to_s) }
   end
@@ -12,13 +12,13 @@ describe RecipientsController do
   before do
     sign_in user
     User.any_instance.expects(:account_messages).returns(stub(:find => message))
-    Message.any_instance.stubs(:id).returns(1)
+    SmsMessage.any_instance.stubs(:id).returns(1)
   end
 
   context '#index' do
     it 'should work' do
       stub_pagination(recipients, 1, 5)
-      Message.any_instance.expects(:recipients).returns(stub(:page => recipients))
+      SmsMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
       get :index, :sms_id => 1, :format => :json
       assigns(:page).should eq(1)
       response.headers['Link'].should =~ /next/
@@ -29,7 +29,7 @@ describe RecipientsController do
   context '#page' do
     it 'should work' do
       stub_pagination(recipients, 2, 5)
-      Message.any_instance.expects(:recipients).returns(stub(:page => recipients))
+      SmsMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
 
 
       get :index, :sms_id => 1, :format => :json, :page => 2
@@ -44,7 +44,7 @@ describe RecipientsController do
   context '#show' do
     it 'should work' do
       stub_pagination(recipients, 2, 5)
-      Message.any_instance.expects(:recipients).returns(stub(:find => stub(:find => Recipient.new(:phone => '6125551200'))))
+      SmsMessage.any_instance.expects(:recipients).returns(stub(:find => stub(:find => recipients.first)))
 
       get :show, :sms_id => 1, :format => :json, :id=> 2
       response.response_code.should == 200

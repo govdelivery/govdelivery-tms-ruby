@@ -1,27 +1,29 @@
-twilio_sms_sender = Vendor.find_by_name('Twilio Sender') || Vendor.create!(:name => 'Twilio Sender',
+twilio_sms_sender = SmsVendor.find_by_name('Twilio Sender') || SmsVendor.create!(:name => 'Twilio Sender',
   :worker => 'TwilioMessageWorker',
   :username => Rails.configuration.twilio_username,
   :password => Rails.configuration.twilio_password,
   :from => Rails.configuration.twilio_number)
-twilio_voice_sender = Vendor.find_by_name('Twilio Voice Sender') || Vendor.create!(:name => 'Twilio Voice Sender',
+twilio_voice_sender = VoiceVendor.find_by_name('Twilio Voice Sender') || VoiceVendor.create!(:name => 'Twilio Voice Sender',
   :worker => 'TwilioVoiceWorker',
   :username => Rails.configuration.twilio_username,
   :password => Rails.configuration.twilio_password,
   :from => Rails.configuration.twilio_number)
-sms_loopback = Vendor.find_by_name('Loopback SMS Sender') || Vendor.create!(:name => 'Loopback SMS Sender',
+sms_loopback = SmsVendor.find_by_name('Loopback SMS Sender') || SmsVendor.create!(:name => 'Loopback SMS Sender',
   :worker => 'LoopbackMessageWorker',
   :username => 'dont care',
   :password => 'dont care',
-  :from => 'dont care',
+  :from => '1555111222',
   :vtype=>:sms)
-voice_loopback = Vendor.find_by_name('Loopback Voice Sender') || Vendor.create!(:name => 'Loopback Voice Sender',
+voice_loopback = VoiceVendor.find_by_name('Loopback Voice Sender') || VoiceVendor.create!(:name => 'Loopback Voice Sender',
   :worker => 'LoopbackMessageWorker',
   :username => 'dont care',
   :password => 'dont care',
-  :from => 'dont care',
+  :from => '1555111222',
   :vtype=>:voice)
 
-tms_sender =  Vendor.find_by_name('TMS Sender') ||  Vendor.create(:name => 'TMS Sender', :username => 'gd3', :password => 'R0WG38piNv5NRK0DT8mq04fU', :from => 'GovDelivery TMS', :worker => 'TmsWorker')
+
+tms_sender =  EmailVendor.find_by_name('TMS Sender') ||  EmailVendor.create(:name => 'TMS Sender', :username => 'gd3', :password => 'R0WG38piNv5NRK0DT8mq04fU', :from => 'GovDelivery TMS', :worker => 'TmsWorker')
+email_loopback = EmailVendor.find_by_name('Email Loopback Sender') || EmailVendor.create(:name => 'Email Loopback Sender', :username => 'blah', :password => 'wat', :from => 'GovDelivery LoopbackSender', :worker => 'LoopbackMessageWorker')
 
 #
 # This is just stuff for DEVELOPMENT purposes
@@ -31,17 +33,22 @@ tms_sender =  Vendor.find_by_name('TMS Sender') ||  Vendor.create(:name => 'TMS 
 #   the seeds will load with loopback vendors. 
 #
 if Rails.env.development?
-  vendors = if (ENV['USE_TWILIO'] == 'true')
-              puts "** using Twilio senders for default account **"
-              [twilio_sms_sender, twilio_voice_sender]
-            else
-              puts "**  using loopback senders for default account   **"
-              puts "** run with USE_TWILIO=true to use Twilio sender **"
-              [sms_loopback, voice_loopback]
-            end
-  vendors << tms_sender
 
-  omg = Account.create!(:vendors => vendors, :name => "OMG")
+  omg = if (ENV['USE_TWILIO'] == 'true')
+          puts "** using Twilio and TMS senders for default account **"
+          Account.create!(:voice_vendor => twilio_voice_sender,
+                          :sms_vendor => twilio_sms_sender,
+                          :email_vendor => tms_sender,
+                          :name => "OMG")
+        else
+          puts "**  using loopback senders for default account   **"
+          puts "** run with USE_TWILIO=true to use Twilio/TMS senders **"
+          Account.create!(:voice_vendor => voice_loopback,
+                          :sms_vendor => sms_loopback,
+                          :email_vendor => email_loopback,
+                          :name => "OMG")
+        end
+
 
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
   omg.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACME','VANDELAY']), :command_type => :dcm_unsubscribe)

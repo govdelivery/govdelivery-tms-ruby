@@ -3,24 +3,13 @@ class TwilioVoiceWorker
   include Workers::Base
   sidekiq_options retry: false
 
-  def self.vendor_type
-    :voice
-  end
-  
   def perform(options)
-    options.symbolize_keys!    
-
-    message_id   = options[:message_id]
+    options.symbolize_keys!
     callback_url = options[:callback_url]
-    message_url  = options[:message_url]
-    
-    logger.info("Send initiated for message_id=#{message_id} and callback_url=#{callback_url}")
-    logger.debug("******************************* #{Message.find_by_id(message_id).to_yaml}")
 
-    if message = Message.find_by_id(message_id)
-      Service::TwilioVoiceMessageService.new(message.vendor.username, message.vendor.password).deliver!(message, message_url, callback_url)
-    else
-      logger.warn("Send failed, unable to find message with id #{message_id}")
+    if message = VoiceMessage.find(options[:message_id])
+      logger.info("Send initiated for message_id=#{message.id} and callback_url=#{callback_url}")
+      Service::TwilioVoiceMessageService.new(message.vendor.username, message.vendor.password).deliver!(message, options[:message_url], callback_url)
     end
   end
 end

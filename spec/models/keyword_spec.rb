@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Keyword do
   subject {
-    vendor = Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
-    account = Account.create!(:name => 'name', :vendor => vendor)
+    vendor = create_sms_vendor
+    account = vendor.accounts.create!(:name => 'name')
     keyword = Keyword.new(:name =>'HELPME')
     keyword.account= account
     keyword.vendor = vendor

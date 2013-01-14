@@ -11,8 +11,8 @@ class User < ActiveRecord::Base
       
   has_many :messages, :order => 'messages.created_at DESC'
   has_many :account_messages, :through=>:account, :source=>:messages
-  has_many :sms_messages, :class_name => "Message", :conditions => { :url => nil }, :order => 'messages.created_at DESC'
-  has_many :voice_messages, :class_name => "Message", :conditions => { :short_body => nil }, :order => 'messages.created_at DESC'
+  has_many :sms_messages, :order => 'sms_messages.created_at DESC'
+  has_many :voice_messages, :order => 'voice_messages.created_at DESC'
   
   before_validation :downcase_email
   
@@ -22,12 +22,6 @@ class User < ActiveRecord::Base
   
   def self.authenticate(email, password)
     User.find_by_email(email.downcase) if email
-  end
-
-  def new_message(params)
-    messages.new(params).tap do |m|
-      m.account = self.account
-    end
   end
 
   private

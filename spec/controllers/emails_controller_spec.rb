@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe EmailsController do
-  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'TmsWorker') }
+  let(:vendor) { EmailVendor.create(:name => 'name', :username => 'username', :password => 'secret', :worker => 'TmsWorker') }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   before do

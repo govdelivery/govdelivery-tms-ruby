@@ -1,11 +1,24 @@
 module FixtureHelper
-  def create_vendor(attrs={})
-    Vendor.create!({
-      :name => 'name', 
-      :username => 'username', 
-      :password => 'secret', 
-      :from => 'from', 
+  def create_sms_vendor(attrs={})
+    SmsVendor.create!({
+      :name => 'name',
+      :username => 'username',
+      :password => 'secret',
+      :from=>'+15555555555',
       :worker => 'LoopbackMessageWorker'}.merge(attrs))
+  end
+
+  def create_voice_vendor(attrs={})
+    VoiceVendor.create!({
+                          :name => 'voice vendor',
+                          :username => 'username',
+                          :password => 'secret',
+                          :from=>'+15555551111',
+                          :worker => 'LoopbackMessageWorker'}.merge(attrs))
+  end
+
+  def create_email_vendor(attrs={})
+    EmailVendor.create!({:name => 'new name', :username => 'username2', :password => 'secret2', :worker => 'LoopbackMessageWorker'}.merge(attrs))
   end
 
   def create_account(attrs={})

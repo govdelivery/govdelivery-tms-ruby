@@ -1,12 +1,13 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 def do_create_voice
-  post :create, :message => {:url => 'http://com.com/'}, :format => :json
+  post :create, :message => {:play_url => 'http://com.com/'}, :format => :json
 end
 
 describe VoiceMessagesController do
-  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :voice => true) }
-  let(:account) { vendor.accounts.create(:name => 'name') }
+
+  let(:voice_vendor) { create_voice_vendor }
+  let(:account) { voice_vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   before do
     sign_in user
@@ -14,8 +15,8 @@ describe VoiceMessagesController do
 
   context "#create with a valid voice message" do
     before do
-      Message.any_instance.expects(:save).returns(true)
-      Message.any_instance.stubs(:new_record?).returns(false)
+      VoiceMessage.any_instance.expects(:save).returns(true)
+      VoiceMessage.any_instance.stubs(:new_record?).returns(false)
 
       CreateRecipientsWorker.expects(:perform_async).with(anything).returns(true)
       do_create_voice
@@ -24,15 +25,15 @@ describe VoiceMessagesController do
       response.response_code.should == 201
     end
 
-    it "should populate new Message" do
-      assigns(:message).url.should == 'http://com.com/'
+    it "should populate new VoiceMessage" do
+      assigns(:message).play_url.should == 'http://com.com/'
     end
   end
 
   context "#create with an invalid voice message" do
     before do
-      Message.any_instance.expects(:save).returns(false)
-      Message.any_instance.stubs(:new_record?).returns(true)
+      VoiceMessage.any_instance.expects(:save).returns(false)
+      VoiceMessage.any_instance.stubs(:new_record?).returns(true)
       do_create_voice
     end
 
@@ -41,14 +42,14 @@ describe VoiceMessagesController do
     end
 
     it "should populate new Message" do
-      assigns(:message).url.should == 'http://com.com/'
+      assigns(:message).play_url.should == 'http://com.com/'
     end
   end
 
   context "index" do
     let(:messages) do
       messages = 3.times.collect do |i|
-        m = Message.new(:url => "http://com.com/#{i}",
+        m = VoiceMessage.new(:play_url => "http://com.com/#{i}",
                         :recipients_attributes => [{:phone => "800BUNNIES"}])
         m.created_at = i.days.ago
       end

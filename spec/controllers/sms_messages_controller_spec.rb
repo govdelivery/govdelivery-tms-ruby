@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 def do_create_sms
-  post :create, :message => {:short_body => 'A short body'}, :format => :json
+  post :create, :message => {:body => 'A short body'}, :format => :json
 end
 
 describe SmsMessagesController do
-  let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :voice => false) }
+  let(:vendor) { create_sms_vendor }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   before do
@@ -14,8 +14,8 @@ describe SmsMessagesController do
 
   context "#create with a valid sms message" do
     before do
-      Message.any_instance.expects(:save).returns(true)
-      Message.any_instance.stubs(:new_record?).returns(false)
+      SmsMessage.any_instance.expects(:save).returns(true)
+      SmsMessage.any_instance.stubs(:new_record?).returns(false)
 
       CreateRecipientsWorker.expects(:perform_async).with(anything).returns(true)
       do_create_sms
@@ -25,14 +25,14 @@ describe SmsMessagesController do
     end
 
     it "should populate new Message" do
-      assigns(:message).short_body.should == 'A short body'
+      assigns(:message).body.should == 'A short body'
     end
   end
 
   context "#create with an invalid sms message" do
     before do
-      Message.any_instance.expects(:save).returns(false)
-      Message.any_instance.stubs(:new_record?).returns(true)
+      SmsMessage.any_instance.expects(:save).returns(false)
+      SmsMessage.any_instance.stubs(:new_record?).returns(true)
       do_create_sms
     end
 
@@ -41,7 +41,7 @@ describe SmsMessagesController do
     end
 
     it "should populate new Message" do
-      assigns(:message).short_body.should == 'A short body'
+      assigns(:message).body.should == 'A short body'
     end
   end
 
@@ -49,7 +49,7 @@ describe SmsMessagesController do
   context "index" do
     let(:messages) do
       msgs = 3.times.collect do |i|
-        m = Message.new(:short_body => "#{"A"*40} #{i}",
+        m = SmsMessage.new(:body => "#{"A"*40} #{i}",
                         :recipients_attributes => [{:phone => "800BUNNIES"}])
         m.created_at = i.days.ago
       end

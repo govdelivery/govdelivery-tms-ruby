@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe TwilioStatusCallbacksController do
-  let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :help_text => 'Help me!') }
+  let(:vendor) { create_sms_vendor(:help_text => 'Help me!') }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { account.messages.create(:short_body => 'Look out') }
+  let(:message) { account.sms_messages.create(:body => 'Look out') }
   let(:recipient) do
     recipient = message.recipients.build(:phone => '+15551112222')
     recipient.ack='SM2e4152a68a31e52bbf035e22b77f09ab'
@@ -27,7 +27,7 @@ describe TwilioStatusCallbacksController do
       response.response_code.should == 201
     end
     it "should not update recipient status" do
-      recipient.status.should == Recipient::STATUS_NEW
+      recipient.status.should == RecipientStatus::STATUS_NEW
     end
     it "should not set the completed_at date for the recipient" do
       recipient.completed_at.should == nil
@@ -42,7 +42,7 @@ describe TwilioStatusCallbacksController do
       response.response_code.should == 201
     end
     it "should update recipient status" do
-      recipient.reload.status.should == Recipient::STATUS_SENT
+      recipient.reload.status.should == RecipientStatus::STATUS_SENT
     end
     it "should set the completed_at date for the recipient" do
       recipient.reload.completed_at.should_not == nil
@@ -58,7 +58,7 @@ describe TwilioStatusCallbacksController do
       response.response_code.should == 201
     end
     it "should update recipient status" do
-      recipient.status.should == Recipient::STATUS_FAILED
+      recipient.status.should == RecipientStatus::STATUS_FAILED
     end
     it "should set the completed_at date for the recipient" do
       recipient.completed_at.should_not == nil

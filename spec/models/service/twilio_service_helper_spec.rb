@@ -1,4 +1,5 @@
 require_relative '../../../app/models/service/twilio_service_helper'
+require_relative '../../../app/models/recipient_status'
 require_relative '../../little_spec_helper'
 
 class FooService
@@ -7,19 +8,15 @@ end
 
 describe Service::TwilioServiceHelper do
   let(:service) { FooService.new }
-  let(:response) { mock(:status => "sending", :sid => "123") }
-  let(:recipient) { Recipient.new }
+  let(:response) { mock('response', :status => "sending", :sid => "123") }
+  let(:recipient) { stub('recipient') }
 
   describe "completing a recipient" do
     before do
-      recipient.expects(:save!)
+      recipient.expects(:complete!).with(:ack=> '123', :error_message=>'OMG', :status=>RecipientStatus::STATUS_SENDING)
     end
     it 'should set the right fields' do
       service.complete!(recipient, response, "OMG")
-
-      recipient.status.should eq(Recipient::STATUS_SENDING)
-      recipient.ack.should eq('123')
-      recipient.error_message.should eq('OMG')
     end
   end
 end

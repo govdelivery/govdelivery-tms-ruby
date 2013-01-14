@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe TwilioRequestsController do
-  let(:vendor) { Vendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker', :help_text => 'Help me!') }
+  let(:vendor) { create_sms_vendor(:help_text => 'Help me!') }
 
   describe '#create with "STOP"' do
     let(:params) { twilio_request_params('STOP') }
@@ -52,7 +52,7 @@ describe TwilioRequestsController do
     let(:params) { twilio_request_params('SUBSCRIBE') }
     before do
       vendor.create_keyword!(:name => 'subscribe',
-                             :account => create_account(:vendor => vendor))
+                             :account => create_account(:sms_vendor => vendor))
     end
     it 'should respond with created' do
       post :create, params

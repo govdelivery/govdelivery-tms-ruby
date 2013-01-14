@@ -9,7 +9,7 @@ describe ApplicationController do
   end
 
   describe "raising an ActiveRecord::RecordNotFound" do
-    let(:vendor) { Vendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
+    let(:vendor) { create_sms_vendor }
     let(:account) { vendor.accounts.create(:name => 'name') }
     let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
     before do

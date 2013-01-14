@@ -1,7 +1,7 @@
 namespace :db do
   namespace :migrate do
-    desc  ['db:structure:drop', 'db:migrate', 'db:seed'].join(', ')
-    task :full_rebuild => ['db:structure:drop', 'db:migrate', 'db:seed'] do
+    desc  ['db:structure:drop', 'db:migrate'].join(', ')
+    task :full_rebuild => ['db:structure:drop', 'db:migrate'] do
 
     end
   end

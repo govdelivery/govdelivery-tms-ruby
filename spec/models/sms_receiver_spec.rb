@@ -1,11 +1,13 @@
 require_relative '../../app/models/sms_receiver'
 require_relative '../../app/models/command_parameters'
+require_relative '../../app/concerns/mass_assignment'
+require 'attr_encrypted'
 require_relative '../little_spec_helper'
 require 'ostruct'
 
 describe SmsReceiver, '#respond_to_sms!' do
   let(:friendly_vendor) { stub_everything('I am a vendor. Call anything on me!') }
-  let(:command_parameters) { CommandParameters.new(:from => '+5554443333', :sms_body => 'subscribe foo@bar.com')}
+  let(:command_parameters) { CommandParameters.new(:to=>'+5554443334', :from => '+5554443333', :sms_body => 'subscribe foo@bar.com')}
 
   subject { SmsReceiver.new(friendly_vendor) }
 
@@ -16,7 +18,7 @@ describe SmsReceiver, '#respond_to_sms!' do
     end
 
     it 'calls receive_message! with :stop? set to true' do
-      friendly_vendor.expects(:receive_message!).with(:from => command_parameters.from, :body => command_parameters.sms_body, :stop? => true)
+      friendly_vendor.expects(:receive_message!).with(:to => command_parameters.to, :from => command_parameters.from, :body => command_parameters.sms_body, :stop? => true)
 
       subject.respond_to_sms!(command_parameters)
     end
@@ -34,7 +36,7 @@ describe SmsReceiver, '#respond_to_sms!' do
     end
 
     it 'calls receive_message! with :stop? set to false' do
-      friendly_vendor.expects(:receive_message!).with(:from => command_parameters.from, :body => command_parameters.sms_body, :stop? => false)
+      friendly_vendor.expects(:receive_message!).with(:to => command_parameters.to, :from => command_parameters.from, :body => command_parameters.sms_body, :stop? => false)
 
       subject.respond_to_sms!(command_parameters)
     end
@@ -69,7 +71,7 @@ describe SmsReceiver, '#respond_to_sms!' do
     end
 
     it 'calls receive_message! with :stop? set to false' do
-      friendly_vendor.expects(:receive_message!).with(:from => command_parameters.from, :body => command_parameters.sms_body, :stop? => false)
+      friendly_vendor.expects(:receive_message!).with(:to => command_parameters.to, :from => command_parameters.from, :body => command_parameters.sms_body, :stop? => false)
 
       subject.keywords = [mock(:name => 'kwname', :execute_commands => 'returned by execute_commands')]
 
