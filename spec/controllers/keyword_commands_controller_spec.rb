@@ -6,6 +6,7 @@ describe KeywordCommandsController do
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:keyword) { k=account.keywords.new(:name => "HI").tap{|k| k.vendor = vendor}; k.save!; k }
   let(:command) { Command.new(:command_type => :dcm_subscribe, :name => "ALLIGATORZ") }
+  let(:commands) { [stub(:name => "Hello New York")] }
 
   before do
     sign_in user
@@ -64,5 +65,52 @@ describe KeywordCommandsController do
     it "should return error" do
       response.response_code.should == 422
     end
+  end
+
+
+  context "Updating a command" do
+    before do
+      commands.first.expects(:update_attributes).returns(true)
+      commands.first.expects(:valid?).returns(true)
+      mock_finder('1')
+      put :update, :keyword_id => keyword.id, :id => '1', :command => {
+        :name => "Hello Chicago", 
+      }
+    end
+    it "should work" do
+      response.response_code.should == 200
+    end
+  end
+
+  context "Updating an invalid command" do
+    before do
+      commands.first.expects(:update_attributes).returns(false)
+      commands.first.expects(:valid?).returns(false)
+      mock_finder('1')
+      put :update, :keyword_id => keyword.id, :id => '1', :command => {
+        :name => "Hello Chicago", 
+      }
+    end
+    it "should work" do
+      response.response_code.should == 422
+    end
+  end
+
+  context "Deleting a keyword" do
+    before do
+      commands.first.expects(:destroy)
+      mock_finder('1')
+      delete :destroy, :keyword_id => keyword.id, :id => '1'
+    end
+    it "should work" do
+      response.response_code.should == 200
+    end
+  end
+
+  private
+  def mock_finder(id)
+    find = mock()
+    find.expects(:find).with(id).returns(commands.first)
+    Keyword.any_instance.expects(:commands).returns(find)
   end
 end

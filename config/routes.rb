@@ -20,7 +20,7 @@ Tsms::Application.routes.draw do
   end
 
   resources(:keywords, :only => [:index, :show, :create, :update, :destroy]) do
-    resources(:commands, :only => [:index, :show, :create], :controller => :keyword_commands)
+    resources(:commands, :only => [:index, :show, :create, :update, :destroy], :controller => :keyword_commands)
   end
 
   scope :messages, :path=>'messages' do

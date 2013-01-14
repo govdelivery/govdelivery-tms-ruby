@@ -1,6 +1,8 @@
 class KeywordCommandsController < ApplicationController
+  wrap_parameters :command, :include => [:params, :name, :command_type], :format => :json
+
   before_filter :find_user, :find_keyword
-  before_filter :find_command, :only => [:show, :update]
+  before_filter :find_command, :only => [:show, :update, :destroy]
   before_filter :parse_command_parameters, :only => [:create, :update]
 
   def index
@@ -19,6 +21,10 @@ class KeywordCommandsController < ApplicationController
   def update
     @command.update_attributes(params[:command])
     respond_with(@command)
+  end
+
+  def destroy
+    @command.destroy
   end
 
   private
