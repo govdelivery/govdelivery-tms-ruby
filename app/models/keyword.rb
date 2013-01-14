@@ -8,7 +8,7 @@ class Keyword < ActiveRecord::Base
 
   belongs_to :vendor
   belongs_to :account
-  belongs_to :event_handler
+  belongs_to :event_handler, :dependent => :destroy
   validates_presence_of :name, :account, :vendor
   validates_length_of :name, :maximum => 160
   validates_uniqueness_of :name, :scope => "account_id"
@@ -25,16 +25,20 @@ class Keyword < ActiveRecord::Base
   end
 
   def add_action!(params)
-    unless event_handler
-      self.create_event_handler!
-      self.save!
-    end
-    event_handler.actions.create!({:account => self.account}.merge(params))
+    actions.create!({:account => self.account}.merge(params))
   end
 
   def execute_actions(params=ActionParameters.new)
     params.account_id = self.account_id
-    event_handler.actions.each{|a| a.call(params)} if event_handler
+    actions.each{|a| a.call(params)} if event_handler
+  end
+
+  def actions
+    unless event_handler
+      self.create_event_handler!
+      self.save!
+    end
+    event_handler.actions
   end
 
   private

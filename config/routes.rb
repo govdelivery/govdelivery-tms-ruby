@@ -19,7 +19,9 @@ Tsms::Application.routes.draw do
     end
   end
 
-  resources(:keywords, :only => [:index, :show, :create, :update, :destroy])
+  resources(:keywords, :only => [:index, :show, :create, :update, :destroy]) do
+    resources(:actions, :only => [:index, :show, :create], :controller => :keyword_actions)
+  end
 
   scope :messages, :path=>'messages' do
     resources(:email, :only => :create, :controller => :emails)

@@ -3,7 +3,7 @@ class Action < ActiveRecord::Base
   belongs_to :event_handler
   serialize :params, ActionParameters
 
-  attr_accessible :account, :action_type, :name, :params
+  attr_accessible :action_type, :name, :params
   validates_presence_of :account, :action_type
   validates_length_of :name, :maximum => 255, :allow_nil => true
   validates_length_of :params, :maximum => 4000, :allow_nil => true
