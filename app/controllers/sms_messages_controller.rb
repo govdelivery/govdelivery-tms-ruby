@@ -12,6 +12,6 @@ class SmsMessagesController < MessagesController
   end
 
   def set_attr
-    @content_attribute = :short_body
+    @content_attribute = :body
   end
 end

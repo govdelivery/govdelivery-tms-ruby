@@ -11,6 +11,6 @@ class VoiceMessagesController < MessagesController
   end
 
   def set_attr
-    @content_attribute = :url
+    @content_attribute = :play_url
   end
 end
