@@ -30,6 +30,8 @@ describe VoiceMessage do
     context "with valid recipient" do
       before { message.create_recipients([{:phone => "6093433422"}]) }
       specify { message.recipients.first.should be_valid }
+      specify { message.sendable_recipients.first.should be_valid }
+      specify { message.should respond_to(:process_blacklist!) }
       specify { message.recipients.first.vendor.should eq(vendor) }
     end
   end

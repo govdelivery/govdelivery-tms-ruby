@@ -32,6 +32,10 @@ module Message
       #do nothing by default
     end
 
+    def sendable_recipients
+      recipients.to_send(vendor.id)
+    end
+
     def complete!
       self.completed_at = Time.zone.now
       save!

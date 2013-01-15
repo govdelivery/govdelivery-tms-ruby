@@ -5,11 +5,7 @@ module PhoneRecipient
     include Recipient
     attr_accessible :phone, :vendor
 
-    scope :incomplete, where(:sent_at => nil)
-    scope :sending, where(:status => RecipientStatus::STATUS_SENDING)
-    scope :blacklisted, joins("inner join #{StopRequest.table_name} on #{StopRequest.table_name}.vendor_id = #{self.table_name}.vendor_id and #{StopRequest.table_name}.phone = #{self.table_name}.formatted_phone").readonly(false)
-
-    scope :to_send, -> { incomplete.not_blacklisted.with_valid_phone_number }
+    scope :to_send, -> vendor_id { with_valid_phone_number }
 
     before_validation :truncate_error_message
 
@@ -39,10 +35,6 @@ module PhoneRecipient
 
     def truncate_error_message
       self.error_message.truncate(512) if self.error_message
-    end
-
-    def self.not_blacklisted
-      joins("left outer join #{StopRequest.table_name} on #{StopRequest.table_name}.vendor_id = #{self.table_name}.vendor_id and #{StopRequest.table_name}.phone =  #{self.table_name}.formatted_phone").where("#{StopRequest.table_name}.phone is null").readonly(false)
     end
 
     def self.with_valid_phone_number

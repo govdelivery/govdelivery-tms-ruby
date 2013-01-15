@@ -28,7 +28,7 @@ class TmsWorker
     cred.password=vendor.password
 
     email_params = options['email']
-    msg = Message.new #this is an ODM message, not a XACT Message
+    msg = Message.new # this is an com.govdelivery.odm.odmv2.Message, not an XACT Message
     msg.subject = email_params['subject']
     msg.body = email_params['body']
     msg.from_name = email_params['from']

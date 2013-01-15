@@ -13,7 +13,7 @@ class LoopbackMessageWorker
 
     if message
       message.process_blacklist!
-      message.recipients.to_send.find_each do |recipient|
+      message.sendable_recipients.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         recipient.complete!(:ack => ack,
                             :status => RecipientStatus::STATUS_SENT
@@ -21,7 +21,7 @@ class LoopbackMessageWorker
       end
       message.complete!
     else
-      logger.warn("Send failed, unable to find message with id #{message_id}")
+      logger.warn("Unable to find message with id #{message_id}")
     end
   end
 

@@ -12,6 +12,8 @@ module Recipient
     belongs_to :message, :class_name => self.name.gsub('Recipient', 'Message')
     belongs_to :vendor, :class_name => self.name.gsub('Recipient', 'Vendor')
 
+    scope :to_send, -> vendor_id { {} }
+
     attr_accessible :message_id, :vendor_id
 
     def complete!

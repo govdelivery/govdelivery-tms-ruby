@@ -11,7 +11,7 @@ module Service
 
     def deliver!(message, callback_url = nil)
       message.process_blacklist!
-      message.recipients.to_send.find_each do |recipient|
+      message.sendable_recipients.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         begin
           response = twilio_client.sms.messages.create(create_options(message, recipient, callback_url))
