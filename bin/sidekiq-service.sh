@@ -28,7 +28,7 @@ status () {
 	
 	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep sidekiq)
 	if [[ $? -eq 0 ]]; then
-	    echo "Found Unmanaged Processes!"
+	    echo "PID file not found, but Sidekiq processes are running!"
 	    echo "$UNMANAGED"
 	    return 10
 	else
@@ -56,7 +56,7 @@ status () {
 	
 	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep -v $pid | grep sidekiq)
 	if [[ $? -eq 0 ]]; then
-	    echo "Found Unmanaged Processes!"
+	    echo "Found unmanaged Sidekiq processes!"
 	    echo "$UNMANAGED"
 	    let RETVAL+=10
 	fi;
