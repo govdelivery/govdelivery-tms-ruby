@@ -1,4 +1,4 @@
-Tsms::Application.routes.draw do
+Xact::Application.routes.draw do
 
   require 'sidekiq/web'
   constraint = lambda { |request| request.env["warden"].authenticate? and request.env['warden'].user.admin? }

@@ -18,7 +18,7 @@ class DcmUnsubscribeWorker
     options = CommandParameters.new(options)
     logger.info("Performing DCM unsubscribe for #{options.to_s}")
 
-    client = DCMClient::Client.new(Tsms::Application.config.dcm)
+    client = DCMClient::Client.new(Xact::Application.config.dcm)
     number = PhoneNumber.new(options.from).dcm
 
     options.dcm_account_codes.each do |account_code|

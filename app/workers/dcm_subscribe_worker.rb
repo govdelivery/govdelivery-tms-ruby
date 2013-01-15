@@ -16,7 +16,7 @@ class DcmSubscribeWorker
     options = CommandParameters.new(options)
     logger.info("Performing DCM subscribe for #{options}")
 
-    client = DCMClient::Client.new(Tsms::Application.config.dcm)
+    client = DCMClient::Client.new(Xact::Application.config.dcm)
 
     DcmSubscribeCommand.new(client).call(options.from, options.dcm_account_code, options.dcm_topic_codes, options.sms_tokens)
 

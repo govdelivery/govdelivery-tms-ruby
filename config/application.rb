@@ -14,7 +14,7 @@ end
 
 Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
 
-module Tsms
+module Xact
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -74,7 +74,7 @@ module Tsms
     config.sidekiq = {
       default: { 
         url: "#{config.redis_url}/1",
-        namespace: 'tsms'
+        namespace: 'xact'
       },
       client: { size: 1 },
       server: { }

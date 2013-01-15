@@ -9,7 +9,7 @@ describe DcmSubscribeWorker do
   before do
     config = {:username => "foo", :password => "bar", :api_root => "http://example.com"}
     client = mock('dcm_client')
-    Tsms::Application.config.expects(:dcm).returns(config)
+    Xact::Application.config.expects(:dcm).returns(config)
     DCMClient::Client.expects(:new).with(config).returns(client)
     DcmSubscribeCommand.expects(:new).with(client).returns(subscribe_command)
   end

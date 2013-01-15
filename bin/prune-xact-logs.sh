@@ -30,22 +30,22 @@ rotatelog() {
 
 
 
-## TSMS App logs
-LOGDIRS[0]="/opt/tsms/log"
-PATTERNS[0]=".*/tsms_[a-z]+_20[0-9][0-9]-[01][0-9]-[0123][0-9]\.log"
+## XACT App logs
+LOGDIRS[0]="/opt/xact/log"
+PATTERNS[0]=".*/xact_[a-z]+_20[0-9][0-9]-[01][0-9]-[0123][0-9]\.log"
 
 ## Sidekiq Logs
-LOGDIRS[1]="/opt/tsms/log"
+LOGDIRS[1]="/opt/xact/log"
 PATTERNS[1]=".*/sidekiq${ROTATE_LOG_DATE_PATTERN}\.log"
 rotatelog "${LOGDIRS[1]}/sidekiq.log"
 
 ## Bundler Logs
-LOGDIRS[2]="/opt/tsms/log"
+LOGDIRS[2]="/opt/xact/log"
 PATTERNS[2]=".*/bundler\.log\.20[0-9][0-9][01][0-9][0123][0-9]"
 
 ## DB Migrate Logs
-LOGDIRS[3]="/opt/tsms/log"
-PATTERNS[3]=".*/tsms_[a-z]+_db-migrate-[-a-z_0-9]+_20[0-9][0-9][01][0-9][0123][0-9]-[0-9]{6}\.log"
+LOGDIRS[3]="/opt/xact/log"
+PATTERNS[3]=".*/xact_[a-z]+_db-migrate-[-a-z_0-9]+_20[0-9][0-9][01][0-9][0123][0-9]-[0-9]{6}\.log"
 
 
 

@@ -4,7 +4,7 @@ class CreateRecipientsWorker
   include Workers::Base
 
   def self.job_key(message_id)
-    "tsms:#{self.to_s.underscore}_in_progress_#{message_id}"
+    "xact:#{self.to_s.underscore}_in_progress_#{message_id}"
   end
 
   def perform(options)

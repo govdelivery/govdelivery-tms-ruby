@@ -1,4 +1,4 @@
-Tsms::Application.configure do
+Xact::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests
@@ -69,7 +69,7 @@ Tsms::Application.configure do
   config.sidekiq[:client][:url] = "redis://poc-redis-master.visi.gdi:6379/1"
 
   config.dcm = {
-    username: 'tsms-api@govdelivery.com',
+    username: 'xact-api@govdelivery.com',
     password: "let's do Ortega Bombs",
     api_root: 'https://qc-api.govdelivery.com' 
   }

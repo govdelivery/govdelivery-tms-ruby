@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Tsms::Application.load_tasks
+Xact::Application.load_tasks

@@ -17,7 +17,7 @@ class CommandParameters
   # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or 
   # handle the missing method error). 
   PARAMS=[
-    :account_id,        # the tsms account id corresponding to this command,
+    :account_id,        # the xact account id corresponding to this command,
     :callback_url,      # a callback url for the external sms/voice service to call if needed
     :sms_body,          # the full body string of the incoming sms message
     :sms_tokens,        # an array of string tokens in the sms_body, sans keyword

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP="tsms"
+APP="xact"
 ENV="stg"
 
 CTRL_USER="evodeploy";
