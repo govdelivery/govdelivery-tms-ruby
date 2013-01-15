@@ -40,7 +40,9 @@ Xact::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
   # Use a different cache store in production
-  # config.cache_store = :mem_cache_store
+
+  config.redis_url = 'redis://stg-redis-master.visi.gdi:6379'
+  config.cache_store = :redis_store, config.redis_url
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -65,8 +67,8 @@ Xact::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.sidekiq[:server][:url] = "redis://stg-redis-master.visi.gdi:6379/1"
-  config.sidekiq[:client][:url] = "redis://stg-redis-master.visi.gdi:6379/1"
+  config.sidekiq[:server][:url] = "#{config.redis_url}/1"
+  config.sidekiq[:client][:url] = "#{config.redis_url}/1"
 
   config.dcm = {
     username: 'xact-api@govdelivery.com',
