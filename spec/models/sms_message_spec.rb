@@ -7,7 +7,7 @@ describe SmsMessage do
 
   context "when short body is empty" do
     let(:message) { account.sms_messages.build(:body => nil) }
-    it { should_not be_valid }
+    it { message.should_not be_valid }
   end
 
   context "without an account" do
