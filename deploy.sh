@@ -129,10 +129,11 @@ fi;
 #echo "Control Args:   ${CTRL_ARGS}"
 
 if [[ ${#actions} != 0 ]]; then 
+    CMD="${CTRL_SCRIPT} ${CTRL_ARGS} -e ${ENV} -a ${APP} ${actions[@]}"
+
     echo
     echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
     
-    CMD="${CTRL_SCRIPT} ${CTRL_ARGS} -e ${ENV} -a ${APP} ${actions[@]}"
     ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
 fi;
 
