@@ -47,8 +47,8 @@ describe SmsMessage do
       message.blacklisted_recipients.count.should eq(1)
       message.sendable_recipients.count.should eq(1)
       message.process_blacklist!
-      message.recipients.first.reload.status.should eq(RecipientStatus::STATUS_BLACKLISTED)
-      message.recipients.last.reload.status.should eq(RecipientStatus::STATUS_NEW)
+      message.recipients.find_by_phone('6515551212').status.should eq(RecipientStatus::STATUS_BLACKLISTED)
+      message.recipients.find_by_phone('6515551215').status.should eq(RecipientStatus::STATUS_NEW)
     end
   end
 

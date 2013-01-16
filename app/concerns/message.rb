@@ -2,8 +2,6 @@ module Message
   extend ActiveSupport::Concern
 
   included do
-    paginates_per 50
-
     belongs_to :user
     belongs_to :account
     validates_presence_of :account
@@ -11,7 +9,7 @@ module Message
 
     attr_accessible :recipients_attributes
 
-    has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id'
+    has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id', :order => "#{self.quoted_table_name.gsub('MESSAGES', 'RECIPIENTS')}.created_at DESC"
     accepts_nested_attributes_for :recipients
 
     def vendor

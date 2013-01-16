@@ -1,6 +1,5 @@
 class InboundMessage < ActiveRecord::Base
   belongs_to :vendor, :inverse_of => :inbound_messages, :class_name=>'SmsVendor'
-  paginates_per 50
 
   attr_accessible :body, :from, :vendor, :to
   validates_presence_of :body, :from, :vendor

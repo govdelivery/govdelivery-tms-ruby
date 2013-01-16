@@ -10,7 +10,7 @@ class SmsVendor < ActiveRecord::Base
 
   has_many :keywords, :foreign_key => 'vendor_id'
   has_many :stop_requests, :foreign_key => 'vendor_id'
-  has_many :inbound_messages, :inverse_of => :vendor, :foreign_key => 'vendor_id'
+  has_many :inbound_messages, :inverse_of => :vendor, :foreign_key => 'vendor_id', :order=>"#{InboundMessage.table_name}.created_at DESC"
 
   validates_presence_of [:help_text, :stop_text]
   validates_length_of [:help_text, :stop_text], :maximum => 160
