@@ -1,3 +1,7 @@
+class EmailVendor < ActiveRecord::Base
+
+end
+
 class TmsToOdm < ActiveRecord::Migration
   def up
     EmailVendor.find_all_by_worker('TmsWorker').each do |v|
