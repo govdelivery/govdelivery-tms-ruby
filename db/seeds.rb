@@ -96,7 +96,7 @@ elsif Account.count == 0 && User.count ==0
                            :sms_vendor => twilio_sms_sender,
                            :email_vendor => odm_sender,
                            :name => 'GovDelivery')
-  user = account.users.create!(:email => "product@govdelivery.com", :password => "retek01!")
+  user = account.users.create!(:email => "product@evotest.govdelivery.com", :password => "retek01!")
   user.admin = true
   user.save!
 else
