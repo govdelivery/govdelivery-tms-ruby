@@ -39,6 +39,7 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'json_spec'
   gem 'guard-rspec'
   platforms :ruby do
     gem 'sqlite3'
