@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe EmailsController do
-  let(:vendor) { EmailVendor.create(:name => 'name', :username => 'username', :password => 'secret', :worker => 'TmsWorker') }
+  let(:vendor) { EmailVendor.create(:name => 'name', :username => 'username', :password => 'secret', :worker => 'OdmWorker') }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   before do
@@ -13,7 +13,7 @@ describe EmailsController do
       email_params = {'body' => 'msg body',
                       'subject' => 'msg subject',
                       'recipients' => ['email@sink.govdelivery.com', 'email2@sink.govdelivery.com']}
-      TmsWorker.expects(:perform_async).with(:email => email_params,
+      OdmWorker.expects(:perform_async).with(:email => email_params,
                                              :account_id => account.id).returns(true)
       post :create, {:email => email_params, :format => :json}
     end

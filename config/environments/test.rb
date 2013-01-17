@@ -35,6 +35,11 @@ Xact::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
+  config.odm_host = "http://nowhere:65080"
+  config.odm_endpoint = "#{config.odm_host}/service/ODMv2"
+  config.odm_username = 'doesnt'
+  config.odm_password = 'matter'
+
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.

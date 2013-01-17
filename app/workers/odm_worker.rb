@@ -1,6 +1,6 @@
 require 'base'
 
-class TmsWorker
+class OdmWorker
   include Workers::Base
 
   def self.jruby?
@@ -9,6 +9,7 @@ class TmsWorker
 
   if jruby?
     require 'lib/odm.jar'
+    java_import java.net.URL
     java_import com.govdelivery.odm.odmv2.Credentials
     java_import com.govdelivery.odm.odmv2.Message
     java_import com.govdelivery.odm.odmv2.ODMv2_Service
@@ -20,7 +21,7 @@ class TmsWorker
   end
 
   def perform(options)
-    raise NotImplementedError.new("TmsWorker requires JRuby") unless self.class.jruby?
+    raise NotImplementedError.new("#{self.class.name} requires JRuby") unless self.class.jruby?
     vendor = Account.find_by_id(options['account_id']).email_vendor
 
     cred=Credentials.new
@@ -34,12 +35,12 @@ class TmsWorker
     msg.from_name = email_params['from']
     msg.email_column = 'email'
     msg.record_designator='email'
-    email_params['recipients'].each { |recipient| msg.to << recipient }
-    tms.send_message(cred, msg)
+    email_params['recipients'].each { |recipient| msg.to << recipient['email'] }
+    odm.send_message(cred, msg)
   end
 
-  def tms
-    tms_service = ODMv2_Service.new
-    tms_service.getODMv2Port
+  def odm
+    odm_service = ODMv2_Service.new(URL.new(Rails.configuration.odm_endpoint))
+    odm_service.getODMv2Port
   end
 end

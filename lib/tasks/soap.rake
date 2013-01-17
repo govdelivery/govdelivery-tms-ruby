@@ -5,7 +5,7 @@ if defined?(JRUBY_VERSION)
   require 'ant'
   ant.taskdef(name: "wsimport", classname: "com.sun.tools.ws.ant.WsImport")
 
-  namespace :tms do
+  namespace :odm do
     src_dir = 'ext/java'
     build_dir = "build"
     wsdl = 'config/ODMv2.wsdl'
@@ -19,6 +19,7 @@ if defined?(JRUBY_VERSION)
 
     task :compile => :clean do
       ant.mkdir(dir: build_dir)
+      ant.mkdir(dir: src_dir)
       ant.wsimport(wsdl: wsdl,
                    sourcedestdir: src_dir,
                    destdir: build_dir,

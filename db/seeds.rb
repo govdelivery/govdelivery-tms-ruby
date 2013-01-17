@@ -22,7 +22,7 @@ voice_loopback = VoiceVendor.find_by_name('Loopback Voice Sender') || VoiceVendo
   :vtype=>:voice)
 
 
-tms_sender =  EmailVendor.find_by_name('TMS Sender') ||  EmailVendor.create(:name => 'TMS Sender', :username => 'gd3', :password => 'R0WG38piNv5NRK0DT8mq04fU', :from => 'GovDelivery TMS', :worker => 'TmsWorker')
+odm_sender = EmailVendor.find_by_name('ODM Sender') || EmailVendor.create(:name => 'ODM Sender', :username => 'gd3', :password => 'R0WG38piNv5NRK0DT8mq04fU', :from => nil, :worker => 'OdmWorker')
 email_loopback = EmailVendor.find_by_name('Email Loopback Sender') || EmailVendor.create(:name => 'Email Loopback Sender', :username => 'blah', :password => 'wat', :from => 'GovDelivery LoopbackSender', :worker => 'LoopbackMessageWorker')
 
 #
@@ -35,14 +35,14 @@ email_loopback = EmailVendor.find_by_name('Email Loopback Sender') || EmailVendo
 if Rails.env.development?
 
   omg = if (ENV['USE_TWILIO'] == 'true')
-          puts "** using Twilio and TMS senders for default account **"
+          puts "** using Twilio and ODM senders for default account **"
           Account.create!(:voice_vendor => twilio_voice_sender,
                           :sms_vendor => twilio_sms_sender,
-                          :email_vendor => tms_sender,
+                          :email_vendor => odm_sender,
                           :name => "OMG")
         else
           puts "**  using loopback senders for default account   **"
-          puts "** run with USE_TWILIO=true to use Twilio/TMS senders **"
+          puts "** run with USE_TWILIO=true to use Twilio/ODM senders **"
           Account.create!(:voice_vendor => voice_loopback,
                           :sms_vendor => sms_loopback,
                           :email_vendor => email_loopback,

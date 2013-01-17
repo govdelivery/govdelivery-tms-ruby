@@ -40,6 +40,12 @@ Xact::Application.configure do
   config.twilio_username = 'ACcc41a7e742457806f26d91a1ea19de9f'
   config.twilio_password = '331b3a44b5067a3c02013a6cfaa18b1c'
   config.twilio_number = '(651) 433-6311'
+
+  # qc ODM
+  config.odm_host = "http://qc-tms1.visi.gdi:65080"
+  config.odm_endpoint = "#{config.odm_host}/service/ODMv2"
+  config.odm_username = 'gd3'
+  config.odm_password = 'R0WG38piNv5NRK0DT8mq04fU'
   
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
