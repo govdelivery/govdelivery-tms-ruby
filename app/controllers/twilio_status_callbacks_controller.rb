@@ -6,9 +6,9 @@ class TwilioStatusCallbacksController < ApplicationController
   def create
     status = case params['SmsStatus']
                when 'sent'
-                 RecipientStatus::STATUS_SENT
+                 RecipientStatus::SENT
                when 'failed'
-                 RecipientStatus::STATUS_FAILED
+                 RecipientStatus::FAILED
              end
     @recipient.complete!(:status => status)
     render :text => '', :status => 201

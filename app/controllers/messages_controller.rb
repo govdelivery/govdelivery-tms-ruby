@@ -11,12 +11,12 @@ class MessagesController < ApplicationController
   end
 
   def new
-    @messages = @message_scope.build
+    @message = @message_scope.build
     render :show
   end
 
   def show
-    @message = @message_scope.find_by_id(params[:id])
+    @message = @message_scope.find(params[:id])
     respond_with(@message)
   end
 
@@ -25,8 +25,10 @@ class MessagesController < ApplicationController
     @message = @message_scope.build(params[:message])
     if @message.save
       Rails.cache.write(CreateRecipientsWorker.job_key(@message.id), 1)
-      CreateRecipientsWorker.send(:perform_async, {:recipients => recipients, :klass => @message.class.name,
-                                                   :message_id => @message.id, :send_options => send_options})
+      CreateRecipientsWorker.send(:perform_async, {:recipients => recipients,
+                                                   :klass => @message.class.name,
+                                                   :message_id => @message.id,
+                                                   :send_options => send_options})
     end
     respond_with(@message)
   end
@@ -46,5 +48,4 @@ class MessagesController < ApplicationController
     opts[:callback_url] = twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
     opts
   end
-
 end

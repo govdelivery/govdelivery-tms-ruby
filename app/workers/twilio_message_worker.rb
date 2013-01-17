@@ -16,7 +16,8 @@ class TwilioMessageWorker
     logger.info("Send initiated for message_id=#{message_id} and callback_url=#{callback_url}")
 
     if message = SmsMessage.find_by_id(message_id)
-      Service::TwilioSmsMessageService.new(message.vendor.username, message.vendor.password).deliver!(message, callback_url)
+      client = Service::TwilioClient::Sms.new(message.vendor.username, message.vendor.password)
+      Service::TwilioMessageService.new(client).deliver!(message, callback_url)
     else
       logger.warn("Send failed, unable to find message with id #{message_id}")
     end

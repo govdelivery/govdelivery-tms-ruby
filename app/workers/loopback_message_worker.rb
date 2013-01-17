@@ -16,7 +16,7 @@ class LoopbackMessageWorker
       message.sendable_recipients.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         recipient.complete!(:ack => ack,
-                            :status => RecipientStatus::STATUS_SENT
+                            :status => RecipientStatus::SENT
         )
       end
       message.complete!

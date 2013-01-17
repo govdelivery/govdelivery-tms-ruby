@@ -29,23 +29,23 @@ class ApplicationController < ActionController::API
   end
 
   def set_link_header(scope)
-    links = {}
-    unless scope.first_page?
-      links[:first] = page_link(1)
-      links[:prev] = page_link(scope.current_page-1)
-    end
-    unless scope.last_page?
-      links[:next] = page_link(scope.current_page + 1)
-      links[:last] = page_link(scope.total_pages)
-    end
-
     # set first, prev, next, last
-    response.headers['Link'] = links.collect { |k, v| %Q|<#{v}>; rel="#{k}",| }.join("")
+    response.headers['Link'] = link_header(scope, params)
   end
 
-  def page_link(page)
-    opts = {:only_path=>true}
-    opts[:page] = page if page
-    url_for(opts)
+  def link_header(scope, params)
+    links = {}
+    param_name = Kaminari.config.param_name
+    ps = params.merge(only_path: true, format: nil)
+    unless scope.first_page?
+      links[:first] = url_for(ps.merge(param_name => 1))
+      links[:prev] = url_for(ps.merge(param_name => scope.current_page-1))
+    end
+    unless scope.last_page?
+      links[:next] = url_for(ps.merge(param_name => scope.current_page+1))
+      links[:last] = url_for(ps.merge(param_name => scope.total_pages))
+    end
+
+    links.collect { |k, v| %Q|<#{v}>; rel="#{k}",| }.join("")
   end
 end

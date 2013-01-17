@@ -1,21 +1,26 @@
 require 'spec_helper'
 describe TwilioMessageWorker do
-  let(:vendor) { create_sms_vendor(:worker => 'TwilioVoiceWorker') }
-  let(:account) { vendor.accounts.create!(:name => 'name') }
+  let(:sms_vendor) { create_sms_vendor(:worker => 'TwilioMessageWorker') }
+  let(:account) { account = sms_vendor.accounts.create!(:name => 'name') }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { stub('SmsMessage', :vendor=>vendor, :id=>1) }
+  let(:message) { account.sms_messages.create!(:body => 'hello, message worker!', :recipients_attributes => [{:phone => "5554443333", :vendor => sms_vendor}]) }
 
-  describe 'a happy or sad send' do
-    let(:worker) { TwilioMessageWorker.new }
-
+  #need to add recipient stubs and verify recipients are modified correctly
+  context 'a very happy send' do
     it 'should work' do
-      SmsMessage.expects(:find_by_id).with(message.id).returns(message)
+      twilio_sms_messages = mock
+      twilio_sms_messages.expects(:create).returns(OpenStruct.new(:sid => 'abc123', :status => 'completed'))
+      Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:sms => OpenStruct.new(:messages => twilio_sms_messages))))
+      expect { subject.perform(:message_id => message.id) }.to change { message.recipients.where(:ack => 'abc123').count }.by 1
+    end
+  end
 
-      klass = Service::TwilioSmsMessageService
-      service = mock('Service::TwilioSmsMessageService')
-      service.expects(:deliver!).with(message, 'callback_url').returns(true)
-      klass.expects(:new).with(vendor.username, vendor.password).returns(service)
-      worker.perform('callback_url' => 'callback_url', 'message_id' => message.id)
+  context 'a sad send' do
+    it 'should not work' do
+      twilio_sms_messages = mock
+      twilio_sms_messages.expects(:create).raises(Twilio::REST::RequestError.new('error'))
+      Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:sms => OpenStruct.new(:messages => twilio_sms_messages))))
+      expect { subject.perform(:message_id => message.id) }.to change { message.recipients.where(:error_message => 'error').count }.by 1
     end
   end
 end

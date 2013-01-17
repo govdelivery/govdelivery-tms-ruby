@@ -57,6 +57,8 @@ class ForwardWorker
   end
 
   def sms_service
-    @sms_service ||= Service::TwilioSmsMessageService.new(self.account.sms_vendor.username, self.account.sms_vendor.password)
+    return @sms_service if @sms_service
+    client = Service::TwilioClient::Sms.new(self.account.sms_vendor.username, self.account.sms_vendor.password)
+    @sms_service = Service::TwilioMessageService.new(client)
   end
 end

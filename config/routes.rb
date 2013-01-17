@@ -11,12 +11,10 @@ Xact::Application.routes.draw do
 
   # call this to add pagination to your controller
   # e.g.
-  # pageable('messages') =>
+  # pageable =>
   # paged_messages GET    /messages/page/:page(.:format)                        messages#index
-  def pageable(controller)
-    collection do
-      get 'page/:page' => "#{controller}#index", :as => :paged
-    end
+  def pageable
+    get 'page/:page', :action => :index, :on => :collection
   end
 
   resources(:keywords, :only => [:index, :show, :create, :update, :destroy]) do
@@ -27,23 +25,23 @@ Xact::Application.routes.draw do
     resources(:email, :only => :create, :controller => :emails)
 
     resources(:sms, :only => [:index, :new, :create, :show], :controller => :sms_messages) do
-      pageable('sms_messages')
+      pageable
       resources(:recipients, :only => [:index, :show]) do
-        pageable('recipients')
+        pageable
       end
     end
 
     resources(:voice, :only => [:index, :new, :create, :show], :controller => :voice_messages) do
-      pageable('voice_messages')
+      pageable
       resources(:recipients, :only => [:index, :show]) do
-        pageable('recipients')
+        pageable
       end
     end
   end
 
   scope :inbound, :path=>'inbound', :as=>'inbound' do
     resources(:sms, :only => [:index, :show], :controller => :inbound_messages) do
-      pageable('inbound_messages')
+      pageable
     end
   end
 

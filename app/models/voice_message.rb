@@ -1,3 +1,6 @@
+require 'active_record'
+require File.expand_path('../../concerns/message', __FILE__)
+
 class VoiceMessage < ActiveRecord::Base
   include Message
 

@@ -21,6 +21,7 @@ module PhoneRecipient
     end
 
     def complete!(attrs)
+      # leaving this in for an audit trail
       self.vendor = message.vendor
       self.ack = attrs[:ack]
       self.status = attrs[:status] unless attrs[:status].blank?

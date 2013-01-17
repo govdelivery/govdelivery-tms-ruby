@@ -27,7 +27,7 @@ describe TwilioStatusCallbacksController do
       response.response_code.should == 201
     end
     it "should not update recipient status" do
-      recipient.status.should == RecipientStatus::STATUS_NEW
+      recipient.status.should == RecipientStatus::NEW
     end
     it "should not set the completed_at date for the recipient" do
       recipient.completed_at.should == nil
@@ -42,7 +42,7 @@ describe TwilioStatusCallbacksController do
       response.response_code.should == 201
     end
     it "should update recipient status" do
-      recipient.reload.status.should == RecipientStatus::STATUS_SENT
+      recipient.reload.status.should == RecipientStatus::SENT
     end
     it "should set the completed_at date for the recipient" do
       recipient.reload.completed_at.should_not == nil
@@ -58,7 +58,7 @@ describe TwilioStatusCallbacksController do
       response.response_code.should == 201
     end
     it "should update recipient status" do
-      recipient.status.should == RecipientStatus::STATUS_FAILED
+      recipient.status.should == RecipientStatus::FAILED
     end
     it "should set the completed_at date for the recipient" do
       recipient.completed_at.should_not == nil

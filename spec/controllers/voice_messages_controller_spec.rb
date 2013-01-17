@@ -33,7 +33,7 @@ describe VoiceMessagesController do
   describe "#show" do
     it 'should work' do
       message = stub(:message)
-      User.any_instance.expects(:voice_messages).returns(stub(:find_by_id=>message))
+      User.any_instance.expects(:voice_messages).returns(stub(:find=>message))
       get :show, :id=>1
       assigns(:message).should_not be_nil
     end

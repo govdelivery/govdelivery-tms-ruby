@@ -11,7 +11,7 @@ describe 'recipients/show.rabl' do
          :message => message,
          :formatted_phone => '+16125551212',
          :phone => '6125551212',
-         :status => RecipientStatus::STATUS_SENT,
+         :status => RecipientStatus::SENT,
          :created_at => Time.now,
          :sent_at => Time.now,
          :error_message => nil,
