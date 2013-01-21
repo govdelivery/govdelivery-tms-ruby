@@ -11,7 +11,7 @@ gem 'kaminari'
 gem 'log4r'
 gem 'devise'
 gem 'phony'
-gem 'phony_rails' 
+gem 'phony_rails'
 gem 'slim'
 gem 'sinatra', :require => nil
 gem 'typhoeus'
@@ -33,8 +33,9 @@ gem 'activerecord-oracle_enhanced-adapter'
 gem 'attr_encrypted'
 
 group :test do
-  gem 'mocha', :require=>false
+  gem 'mocha', :require => false
   gem 'pry'
+  gem 'tms_client', :git => 'https://github.com/govdelivery/tms_client.git'
 end
 
 group :development, :test do

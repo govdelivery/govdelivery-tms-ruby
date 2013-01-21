@@ -1,3 +1,13 @@
+GIT
+  remote: https://github.com/govdelivery/tms_client.git
+  revision: edb5560cee16c46e8e30e4848f7f7302d7b4722a
+  specs:
+    tms_client (0.0.2)
+      activesupport
+      faraday
+      faraday_middleware
+      link_header
+
 GEM
   remote: http://buildbox.office.gdi:6789/
   remote: https://rubygems.org/
@@ -93,6 +103,7 @@ GEM
     kaminari (0.14.1)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
+    link_header (0.0.5)
     listen (0.7.2)
     log4r (1.1.10)
     lumberjack (1.0.2)
@@ -276,6 +287,7 @@ DEPENDENCIES
   sinatra
   slim
   sqlite3
+  tms_client!
   trinidad
   twilio-ruby
   typhoeus

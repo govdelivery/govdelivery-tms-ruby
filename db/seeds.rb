@@ -12,14 +12,12 @@ sms_loopback = SmsVendor.find_by_name('Loopback SMS Sender') || SmsVendor.create
                                                                                   :worker => 'LoopbackMessageWorker',
                                                                                   :username => 'dont care',
                                                                                   :password => 'dont care',
-                                                                                  :from => '1555111222',
-                                                                                  :vtype => :sms)
+                                                                                  :from => '1555111222')
 voice_loopback = VoiceVendor.find_by_name('Loopback Voice Sender') || VoiceVendor.create!(:name => 'Loopback Voice Sender',
                                                                                           :worker => 'LoopbackMessageWorker',
                                                                                           :username => 'dont care',
                                                                                           :password => 'dont care',
-                                                                                          :from => '1555111222',
-                                                                                          :vtype => :voice)
+                                                                                          :from => '1555111222')
 
 
 odm_sender = EmailVendor.find_by_name('ODM Sender') ||
