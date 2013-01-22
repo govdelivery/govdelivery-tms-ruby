@@ -25,7 +25,24 @@ describe 'MessageControllers' do
     end
 
     describe VoiceMessagesController do
-      let(:message) { create_message(:voice, Message::Status::SENDING) }
+      describe 'with no recipients' do
+        let(:message) { create_message(:voice, Message::Status::SENDING) }
+        let(:json) {
+          get :show, :id => message.id
+          HashWithIndifferentAccess.new(JSON.parse(response.body))
+        }
+        it 'has 0 for all recipient_counts' do
+          json['recipient_counts']['total'].should == 0
+          RecipientStatus.each do |status|
+            json['recipient_counts'][status].should == 0
+          end
+        end
+      end
+      let(:message) {
+        m = create_message(:voice, Message::Status::SENDING)
+        add_recipients!(m)
+        m
+      }
       let(:json) {
         get :show, :id => message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
@@ -40,7 +57,11 @@ describe 'MessageControllers' do
     end
 
     describe SmsMessagesController do
-      let(:message) { create_message(:sms, Message::Status::SENDING) }
+      let(:message) {
+        m = create_message(:sms, Message::Status::SENDING)
+        add_recipients!(m)
+        m
+      }
       let(:json) {
         get :show, :id => message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
@@ -62,12 +83,14 @@ describe 'MessageControllers' do
       end
       m.status = status
       m.save!
+      m
+    end
+    def add_recipients!(m)
       RecipientStatus.each_with_index do |status, i|
         attrs = {:phone => "555444#{i}111"}
         m.create_recipients([attrs])
         m.recipients.where(attrs).each {|r| r.status = status; r.save!}
       end
-      m
     end
   end
 end

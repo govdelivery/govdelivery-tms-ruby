@@ -60,12 +60,6 @@ module Message
 
     def recipient_counts
       {'total' => recipients.count}.merge(recipient_state_counts)
-      # TODO How to handle when recipient creation has been backgrounded and is still running?
-      # if (Rails.cache.exist?(CreateRecipientsWorker.job_key(@message.id)) rescue false)
-      #   {:message=>'Recipient list is being built and is not yet complete'}
-      # else
-      #   message.recipients.count
-      # end
     end
 
     protected
@@ -77,8 +71,9 @@ module Message
     private
 
     def recipient_state_counts
-      # naive implementation - will probably need to be rolled up or something
-      Hash[RecipientStatus.map{ |s| [s, recipients.where(:status => s).count] }]
+      groups = recipients.select('count(status) the_count, status').group('status')
+      h = Hash[groups.map{|r| [r.status, r.the_count]}]
+      Hash[RecipientStatus.map{ |s| [s, 0] }].merge(h)
     end
   end
 end
