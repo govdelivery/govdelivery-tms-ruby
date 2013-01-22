@@ -7,7 +7,7 @@ class ServicesController < ApplicationController
     if @account.sms_vendor
       @services << {:keywords => keywords_path}
       @services << {:command_types => command_types_path }
-      @services << {:inbound_sms => inbound_sms_index_path }
+      @services << {:inbound_sms_messages => inbound_sms_index_path }
       @services << {:sms_messages => sms_index_path }
     end
 
