@@ -2,11 +2,12 @@ require 'spec_helper'
 
 describe 'recipients/show.rabl' do
   let(:message) do
-    stub('message', :id => 22, :class => SmsMessage)
+    stub('message', :id => 22, :to_param => 22, :class => SmsMessage)
   end
   let(:recipient) do
     stub('recipient',
          :id => 11,
+         :to_param => 11,
          :message_id => 22,
          :message => message,
          :formatted_phone => '+16125551212',
@@ -24,20 +25,12 @@ describe 'recipients/show.rabl' do
     assign(:recipient, recipient)
     controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "recipients", :sms_id => message.id.to_s}, :script_name => "")
     render
-    @json = ActiveSupport::JSON.decode(rendered)
   end
   it 'should have one item' do
-    @json.each do |k, v|
-      if k=='_links'
-        verify_links(v, recipient)
-      elsif [:created_at, :sent_at, :completed_at].include?(k.to_sym)
-        recipient.send(k).to_s(:json).should eq(Time.parse(v).to_s(:json))
-      elsif [:formatted_phone, :phone, :status].include?(k.to_sym)
-        recipient.send(k).should eq(v)
-      else
-        fail("Unrecognized JSON attribute #{k}: #{rendered}")
-      end
-    end
+    rendered.should be_json_for(recipient).
+                      with_timestamps(:created_at, :sent_at, :completed_at).
+                      with_attributes(:formatted_phone, :phone, :status).
+                      with_links('sms_message'=>sms_path(22), 'self'=>sms_recipient_path(22, 11))
   end
 
   def verify_links(hsh, recipient)
