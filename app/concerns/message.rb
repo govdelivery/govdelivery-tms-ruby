@@ -71,7 +71,7 @@ module Message
     private
 
     def recipient_state_counts
-      groups = recipients.select('count(status) the_count, status').group('status')
+      groups = recipients.select('count(status) the_count, status').group('status').reorder('')
       h = Hash[groups.map{|r| [r.status, r.the_count]}]
       Hash[RecipientStatus.map{ |s| [s, 0] }].merge(h)
     end
