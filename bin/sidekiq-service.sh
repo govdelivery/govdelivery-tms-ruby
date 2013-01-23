@@ -83,7 +83,15 @@ start () {
     cd "${app_path}" || exit 5
     su ${user} -s /bin/sh -c "bundle exec sidekiq -P \"${pid_file}\" >> ${app_path}/log/sidekiq.log 2>&1 &"
 
-    sleep 3
+    i=30
+    RETVAL=1
+    while [[ i -gt 0 && $RETVAL -ne 0 ]]; do
+        sleep 1
+        status > /dev/null
+        RETVAL=$?
+        let i--
+    done
+
     status
     RETVAL=$?
     if [[ $RETVAL -ne 0 ]]; then
