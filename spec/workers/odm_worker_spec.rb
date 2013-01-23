@@ -17,8 +17,8 @@ if defined?(JRUBY_VERSION)
         odm_v2 = mock('OdmWorker::ODMv2')
         odm_v2.expects(:send_message).returns('dummy_id')
 
-        odm_service = stub('OdmWorker::ODMv2_Service', :getODMv2Port => odm_v2)
-        OdmWorker::ODMv2_Service.expects(:new).returns(odm_service)
+        odm_service = stub('OdmWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)
+        OdmWorker::TMSExtended_Service.expects(:new).returns(odm_service)
 
         worker.perform(params)
       end

@@ -8,12 +8,12 @@ class OdmWorker
   end
 
   if jruby?
-    require 'lib/odm.jar'
+    require 'lib/tms_extended.jar'
     java_import java.net.URL
-    java_import com.govdelivery.odm.odmv2.Credentials
-    java_import com.govdelivery.odm.odmv2.Message
-    java_import com.govdelivery.odm.odmv2.ODMv2_Service
-    java_import com.govdelivery.odm.odmv2.ODMv2
+    java_import com.govdelivery.tms.tmsextended.Credentials
+    java_import com.govdelivery.tms.tmsextended.Message
+    java_import com.govdelivery.tms.tmsextended.TMSExtended_Service
+    java_import com.govdelivery.tms.tmsextended.TMSExtended
   end
 
   def self.vendor_type
@@ -29,7 +29,7 @@ class OdmWorker
     cred.password=vendor.password
 
     email_params = options['email']
-    msg = Message.new # this is an com.govdelivery.odm.odmv2.Message, not an XACT Message
+    msg = Message.new # this is an com.govdelivery.tms.tmsextended.Message, not an XACT Message
     msg.subject = email_params['subject']
     msg.body = email_params['body']
     msg.from_name = email_params['from']
@@ -40,7 +40,7 @@ class OdmWorker
   end
 
   def odm
-    odm_service = ODMv2_Service.new(URL.new(Rails.configuration.odm_endpoint))
-    odm_service.getODMv2Port
+    odm_service = TMSExtended_Service.new(URL.new(Rails.configuration.odm_endpoint))
+    odm_service.getTMSExtendedPort
   end
 end

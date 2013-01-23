@@ -8,7 +8,7 @@ if defined?(JRUBY_VERSION)
   namespace :odm do
     src_dir = 'ext/java'
     build_dir = "build"
-    wsdl = 'config/ODMv2.wsdl'
+    wsdl = 'config/TMSExtended.wsdl'
 
     task :clean do
       ant.delete(:includeemptydirs => true, :failonerror => false) do
@@ -31,7 +31,7 @@ if defined?(JRUBY_VERSION)
 
     desc 'build ODMv2 SOAP JAR'
     task :jar => :compile do
-      ant.jar :destfile => "lib/odm.jar", :basedir => build_dir
+      ant.jar :destfile => "lib/tms_extended.jar", :basedir => build_dir
     end
 
   end
