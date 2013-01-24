@@ -4,24 +4,17 @@ class LoopbackMessageWorker
   sidekiq_options retry: false
 
   def perform(options)
-    message_id = options['message_id']
-    if message = SmsMessage.find_by_id(message_id)
-      logger.info("Send initiated for SmsMessage #{message_id}")
-    elsif message = VoiceMessage.find_by_id(message_id)
-      logger.info("Send initiated for VoiceMessage #{message_id}")
-    end
-
-    if message
-      message.process_blacklist!
-      message.sendable_recipients.find_each do |recipient|
+    if @message
+      @message.process_blacklist!
+      @message.sendable_recipients.find_each do |recipient|
         logger.debug("Sending SMS to #{recipient.phone}")
         recipient.complete!(:ack => ack,
                             :status => RecipientStatus::SENT
         )
       end
-      message.complete!
+      @message.complete!
     else
-      logger.warn("Unable to find message with id #{message_id}")
+      logger.warn("Unable to find message: #{options}")
     end
   end
 

@@ -9,12 +9,12 @@ twilio_voice_sender = VoiceVendor.find_by_name('Twilio Voice Sender') || VoiceVe
                                                                                              :password => Rails.configuration.twilio_password,
                                                                                              :from => Rails.configuration.twilio_number)
 sms_loopback = SmsVendor.find_by_name('Loopback SMS Sender') || SmsVendor.create!(:name => 'Loopback SMS Sender',
-                                                                                  :worker => 'LoopbackMessageWorker',
+                                                                                  :worker => 'LoopbackSmsWorker',
                                                                                   :username => 'dont care',
                                                                                   :password => 'dont care',
                                                                                   :from => '1555111222')
 voice_loopback = VoiceVendor.find_by_name('Loopback Voice Sender') || VoiceVendor.create!(:name => 'Loopback Voice Sender',
-                                                                                          :worker => 'LoopbackMessageWorker',
+                                                                                          :worker => 'LoopbackVoiceWorker',
                                                                                           :username => 'dont care',
                                                                                           :password => 'dont care',
                                                                                           :from => '1555111222')
@@ -33,7 +33,7 @@ email_loopback = EmailVendor.find_by_name('Email Loopback Sender') ||
     :username => 'blah',
     :password => 'wat',
     :from => 'GovDelivery LoopbackSender',
-    :worker => 'LoopbackMessageWorker')
+    :worker => 'LoopbackEmailWorker')
 
 if Rails.env.development?
   #
