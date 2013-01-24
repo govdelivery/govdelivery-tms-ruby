@@ -1,14 +1,17 @@
-class TwilioDialPlanController < ApplicationController 
+class TwilioDialPlanController < ApplicationController
   skip_before_filter :authenticate_user!
+  before_filter :find_recipient
+  respond_to :xml
 
   def show
-    recipient = Recipient.scoped(:conditions => {:ack => params['CallSid']}).first
-    if !recipient.nil?
-      @message = Message.find_by_id(recipient.message_id)
+    if !@recipient.nil?
+      @message = @recipient.message
     end
-    #TODO rescue bad SID for message
     respond_to do |format|
         format.xml { @message }
     end
+  end
+  def find_recipient
+    @recipient=VoiceRecipient.find_by_ack!(params['CallSid'])
   end
 end
