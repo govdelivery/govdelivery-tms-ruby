@@ -12,7 +12,7 @@ class ServicesController < ApplicationController
     end
 
     if @account.email_vendor
-      @services << {:emails => email_index_path}
+      @services << {:email_messages => email_index_path}
     end
 
     if @account.voice_vendor
