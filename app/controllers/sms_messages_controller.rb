@@ -1,6 +1,5 @@
 class SmsMessagesController < MessagesController
   include FeatureChecker
-  before_filter :set_attr
   feature :sms
 
   wrap_parameters :message, :include => [:body, :recipients], :format => :json

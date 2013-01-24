@@ -14,7 +14,7 @@ module Recipient
 
     scope :to_send, -> vendor_id { {} }
 
-    attr_accessible :message_id, :vendor_id
+    attr_accessible :message_id, :vendor_id, :vendor
 
     def complete!
       raise NotImplementedError.new('implement it')

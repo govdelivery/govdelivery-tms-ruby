@@ -22,21 +22,25 @@ class OdmWorker
 
   def perform(options)
     raise NotImplementedError.new("#{self.class.name} requires JRuby") unless self.class.jruby?
-    vendor = Account.find_by_id(options['account_id']).email_vendor
+
+    message = EmailMessage.find(options['message_id'])
+
+    vendor = message.vendor
 
     cred=Credentials.new
     cred.username=vendor.username
     cred.password=vendor.password
 
-    email_params = options['email']
     msg = Message.new # this is an com.govdelivery.tms.tmsextended.Message, not an XACT Message
-    msg.subject = email_params['subject']
-    msg.body = email_params['body']
-    msg.from_name = email_params['from']
+    msg.subject = message.subject
+    msg.body = message.body
+    msg.from_name = message.from_name
+
     msg.email_column = 'email'
     msg.record_designator='email'
-    email_params['recipients'].each { |recipient| msg.to << recipient['email'] }
-    odm.send_message(cred, msg)
+    message.recipients.find_each { |recipient| msg.to << recipient.email }
+    ack = odm.send_message(cred, msg)
+    message.sending!
   end
 
   def odm

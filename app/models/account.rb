@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
   belongs_to :email_vendor
   has_many :sms_messages
   has_many :voice_messages
-  #has_many :emails
+  has_many :email_messages
   has_many :keywords
 
   belongs_to :stop_handler, :class_name => 'EventHandler'

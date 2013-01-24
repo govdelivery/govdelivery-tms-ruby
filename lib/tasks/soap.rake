@@ -24,7 +24,7 @@ if defined?(JRUBY_VERSION)
                    sourcedestdir: src_dir,
                    destdir: build_dir,
                    xadditionalHeaders: true)
-      ant.javac(:destdir => build_dir) do
+      ant.javac(:destdir => build_dir, :target=>'1.6') do
         src { path :location => src_dir }
       end
     end

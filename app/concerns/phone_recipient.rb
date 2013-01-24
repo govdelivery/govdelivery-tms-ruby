@@ -3,16 +3,15 @@ module PhoneRecipient
 
   included do
     include Recipient
-    attr_accessible :phone, :vendor
+    attr_accessible :phone
 
     scope :to_send, -> vendor_id { with_valid_phone_number }
 
     before_validation :truncate_error_message
 
     validates_length_of :ack, :maximum => 256
-    validates_length_of :phone, :maximum => 256
+    validates :phone, :presence => true, length: {maximum: 256}
     validates_length_of :formatted_phone, :maximum => 256
-    validates_presence_of :phone
     validates_uniqueness_of :phone, :scope => 'message_id', :message => 'has already been associated with this message'
 
     def phone=(ph)
