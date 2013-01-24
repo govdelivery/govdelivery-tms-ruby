@@ -2,14 +2,14 @@ namespace :test do
   namespace :integration do
     task :setup => :environment do
       sms_loopback = SmsVendor.find_or_create_by_name!(:name => 'Loopback SMS Sender',
-                                                       :worker => 'LoopbackMessageWorker',
+                                                       :worker => 'LoopbackSmsWorker',
                                                        :username => 'dont care',
                                                        :password => 'dont care',
                                                        :from => '1555111222',
                                                        :vtype => :sms)
 
       voice_loopback = VoiceVendor.find_or_create_by_name!(:name => 'Loopback Voice Sender',
-                                                           :worker => 'LoopbackMessageWorker',
+                                                           :worker => 'LoopbackVoiceWorker',
                                                            :username => 'dont care',
                                                            :password => 'dont care',
                                                            :from => '1555111222')
@@ -18,7 +18,7 @@ namespace :test do
                                                            :username => 'blah',
                                                            :password => 'wat',
                                                            :from => 'GovDelivery LoopbackSender',
-                                                           :worker => 'LoopbackMessageWorker')
+                                                           :worker => 'LoopbackEmailWorker')
 
       account = Account.find_or_create_by_name!(:voice_vendor => voice_loopback,
                                                 :sms_vendor => sms_loopback,

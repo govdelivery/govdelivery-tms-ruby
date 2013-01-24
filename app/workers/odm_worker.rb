@@ -11,7 +11,7 @@ class OdmWorker
     require 'lib/tms_extended.jar'
     java_import java.net.URL
     java_import com.govdelivery.tms.tmsextended.Credentials
-    java_import com.govdelivery.tms.tmsextended.Message
+    java_import com.govdelivery.tms.tmsextended.ExtendedMessage
     java_import com.govdelivery.tms.tmsextended.TMSExtended_Service
     java_import com.govdelivery.tms.tmsextended.TMSExtended
   end
@@ -31,10 +31,10 @@ class OdmWorker
     cred.username=vendor.username
     cred.password=vendor.password
 
-    msg = Message.new # this is an com.govdelivery.tms.tmsextended.Message, not an XACT Message
+    msg = ExtendedMessage.new
     msg.subject = message.subject
     msg.body = message.body
-    msg.from_name = message.from_name
+    msg.from_name = message.from_name || ''
 
     msg.email_column = 'email'
     msg.record_designator='email'

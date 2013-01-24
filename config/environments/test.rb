@@ -36,7 +36,7 @@ Xact::Application.configure do
   config.active_support.deprecation = :stderr
 
   config.odm_host = "http://nowhere:65080"
-  config.odm_endpoint = "#{config.odm_host}/service/ODMv2"
+  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'doesnt'
   config.odm_password = 'matter'
 

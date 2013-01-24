@@ -43,7 +43,7 @@ Xact::Application.configure do
 
   # qc ODM
   config.odm_host = "http://qc-tms1.visi.gdi:65080"
-  config.odm_endpoint = "#{config.odm_host}/service/ODMv2"
+  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'gd3'
   config.odm_password = 'R0WG38piNv5NRK0DT8mq04fU'
   
