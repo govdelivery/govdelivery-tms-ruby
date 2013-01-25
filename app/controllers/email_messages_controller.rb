@@ -15,6 +15,7 @@ class EmailMessagesController < MessagesController
   end
 
   def set_attr
-    @content_attribute = :subject
+    @content_attributes = [:subject, :from_name]
+    @content_attributes << :body unless action_name=='index'
   end
 end

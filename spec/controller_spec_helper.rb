@@ -1,8 +1,8 @@
-def it_should_create_a_message(klass, message_opts={}, worker=CreateRecipientsWorker)
-  context "#create with a valid sms message" do
+def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
+  describe "#create with a valid sms message" do
     before do
-      klass.any_instance.expects(:save).returns(true)
-      klass.any_instance.stubs(:new_record?).returns(false)
+      model.any_instance.expects(:save).returns(true)
+      model.any_instance.stubs(:new_record?).returns(false)
 
       worker.expects(:perform_async).with(anything).returns(true)
       post :create, :message => message_opts, :format => :json
@@ -12,10 +12,10 @@ def it_should_create_a_message(klass, message_opts={}, worker=CreateRecipientsWo
     end
   end
 
-  context "#create with an invalid sms message" do
+  describe "#create with an invalid sms message" do
     before do
-      klass.any_instance.expects(:save).returns(false)
-      klass.any_instance.stubs(:new_record?).returns(true)
+      model.any_instance.expects(:save).returns(false)
+      model.any_instance.stubs(:new_record?).returns(true)
       post :create, :message => message_opts, :format => :json
     end
 
@@ -25,14 +25,12 @@ def it_should_create_a_message(klass, message_opts={}, worker=CreateRecipientsWo
   end
 end
 
-def it_should_have_a_pageable_index(klass)
-  assoc = klass.to_s.tableize
-
-  context "index" do
+def it_should_have_a_pageable_index
+  describe "index" do
 
     before do
       messages.stubs(:total_pages).returns(5)
-      User.any_instance.expects(assoc).returns(stub(:page => messages))
+      User.any_instance.expects(model.to_s.tableize).returns(stub(:page => messages))
     end
     it "should work on the first page" do
       messages.stubs(:current_page).returns(1)
@@ -65,4 +63,16 @@ def it_should_have_a_pageable_index(klass)
     end
   end
 
+end
+
+def it_should_show_with_attributes(*attrs)
+  describe "#show" do
+    it 'should work' do
+      message = stub(:message)
+      User.any_instance.expects(model.to_s.tableize).returns(stub(:find => message))
+      get :show, :id => 1
+      assigns(:message).should_not be_nil
+      assigns(:content_attributes).should match_array(attrs) unless attrs.blank?
+    end
+  end
 end

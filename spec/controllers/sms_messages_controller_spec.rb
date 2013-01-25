@@ -8,6 +8,7 @@ describe SmsMessagesController do
   let(:vendor) { create_sms_vendor }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+  let(:model){SmsMessage}
   let(:messages) do
         3.times.collect do |i|
           m = SmsMessage.new(:body => "#{"A"*40} #{i}",
@@ -20,8 +21,8 @@ describe SmsMessagesController do
     sign_in user
   end
 
-  it_should_create_a_message(SmsMessage, {:body => 'A short body'})
+  it_should_create_a_message({:body => 'A short body'})
 
-  it_should_have_a_pageable_index(SmsMessage)
+  it_should_show_with_attributes(:body)
 
 end

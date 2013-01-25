@@ -12,12 +12,15 @@ describe EmailMessagesController do
       m.created_at = i.days.ago
     end
   end
+  let(:model){EmailMessage}
 
   before do
     sign_in user
   end
 
-  it_should_create_a_message(EmailMessage, {:body => 'A short body'})
+  it_should_create_a_message({:body => 'A short body'})
 
-  it_should_have_a_pageable_index(EmailMessage)
+  it_should_have_a_pageable_index
+
+  it_should_show_with_attributes(:body, :subject, :from_name)
 end
