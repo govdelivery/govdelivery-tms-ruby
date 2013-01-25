@@ -1,4 +1,4 @@
-if defined?(JRUBY_VERSION)
+if defined?(JRUBY_VERSION) && ['development', nil].include?(ENV['RAILS_ENV'])
 
   require 'jbundler/lazy'
   include JBundler::Lazy
