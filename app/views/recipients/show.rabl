@@ -1,5 +1,5 @@
 object @recipient
-attributes :formatted_phone, :phone, :status, :created_at, :sent_at, :completed_at
+attributes *@content_attributes, :status, :created_at, :sent_at, :completed_at
 
 node(:error_message, :unless => lambda { |r| r.error_message.nil? }) do |r|
   r.error_message

@@ -21,17 +21,30 @@ class RecipientsController < ApplicationController
   end
 
   def find_message
-    @message = if params[:sms_id]
-                 current_user.account_sms_messages.find(params[:sms_id])
-               elsif params[:voice_id]
-                 current_user.account_voice_messages.find(params[:voice_id])
-               end
+    if params[:sms_id]
+      @message = current_user.account_sms_messages.find(params[:sms_id])
+      set_phone_recipient_attributes
+    elsif params[:voice_id]
+      @message = current_user.account_voice_messages.find(params[:voice_id])
+      set_phone_recipient_attributes
+    elsif params[:email_id]
+      @message = current_user.account_email_messages.find(params[:email_id])
+      set_email_recipient_attributes
+    end
   end
 
   def verify_no_create_in_progress
     if (Rails.cache.exist?(CreateRecipientsWorker.job_key(@message.id)) rescue false)
-      render :json=>{:message=>'Recipient list is being built and is not yet complete'}, :status => 202 and return false
+      render :json => {:message => 'Recipient list is being built and is not yet complete'}, :status => 202 and return false
     end
+  end
+
+  def set_phone_recipient_attributes
+    @content_attributes = [:formatted_phone, :phone]
+  end
+
+  def set_email_recipient_attributes
+    @content_attributes = [:email]
   end
 
 end
