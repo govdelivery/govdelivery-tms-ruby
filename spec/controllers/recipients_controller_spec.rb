@@ -14,7 +14,7 @@ describe RecipientsController do
   end
   let(:email_message) { user.email_messages.create(:subject => "subs", :from_name => 'dude', :body => 'hi') }
   let(:email_recipients) do
-    3.times.map { |i| message.recipients.build(:email => "dude#{i}@sink.govdelivery.com") }
+    3.times.map { |i| email_message.recipients.build(:email => "dude#{i}@sink.govdelivery.com") }
   end
 
   before do
@@ -48,8 +48,9 @@ describe RecipientsController do
       EmailMessage.any_instance.stubs(:id).returns(1)
       User.any_instance.stubs(:account_email_messages).returns(stub(:find => email_message))
       stub_pagination(email_recipients, 1, 5)
-      VoiceMessage.any_instance.expects(:recipients).returns(stub(:page => email_recipients))
-      get :index, :voice_id => 1, :format => :json
+      EmailMessage.any_instance.expects(:recipients).returns(stub(:page => email_recipients))
+      get :index, :email_id => 1, :format => :json
+      response.response_code.should == 200
       assigns(:page).should eq(1)
       assigns(:content_attributes).should match_array([:email])
       response.headers['Link'].should =~ /next/
