@@ -18,7 +18,7 @@ if [[ -z "$environment" ]]; then
 fi
 
 export RAILS_ENV=$environment
-
+log_file="${app_path}/log/${app}.log"
 
 status () {
     RETVAL=0
@@ -78,7 +78,9 @@ start () {
 	return 0
     fi
 
-    echo "starting ${app_name}"
+    echo "Starting ${app_name}"
+    echo "$(date) Starting ${app_name}" >> "${log_file}"
+
     pid_dir=$(dirname $pid_file)
     if [[ ! -d $pid_dir ]]; then
 	echo "Creating pid_dir: ${pid_dir}"
@@ -87,7 +89,7 @@ start () {
     fi
     
     cd "${app_path}" || exit 5
-    su ${user} -s /bin/sh -c "bundle exec \"${app}\" -e \"${environment}\" --monitor \"${pid_dir}/restart.txt\" --ajp  >> ${app_path}/log/${app}.log 2>&1 & echo "'$!'" > \"${pid_file}\"  "
+    su ${user} -s /bin/sh -c "bundle exec \"${app}\" -e \"${environment}\" -p 8080 --monitor \"${pid_dir}/restart.txt\" --ajp  >> ${log_file} 2>&1 & echo "'$!'" > \"${pid_file}\"  "
 
     i=30
     RETVAL=1
@@ -121,6 +123,8 @@ stop () {
 	    ;;
         0)
             echo "Stopping ${app_name}"
+    	    echo "$(date) Stopping ${app_name}" >> "${log_file}"
+
             cd "${app_path}" || exit 5
 	    pid=$(cat "$pid_file")
 	    echo "killing ${pid}"
@@ -169,7 +173,6 @@ case "$1" in
 	RETVAL=$?
         ;;
   restart)
-	quiet
         stop
         start
 	RETVAL=$?
