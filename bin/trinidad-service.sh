@@ -80,6 +80,7 @@ start () {
 
     echo "Starting ${app_name}"
     echo "$(date) Starting ${app_name}" >> "${log_file}"
+    chown "${user}:${user}" "${log_file}" || exit 5
 
     pid_dir=$(dirname $pid_file)
     if [[ ! -d $pid_dir ]]; then

@@ -103,7 +103,7 @@ while [ $# -gt 0 ]; do
 	    usage;
 	    exit 0;
 	    ;;
-	-T|-d|-v)
+	-T|-d|-v|-y)
 	    CTRL_ARGS="${CTRL_ARGS} ${1}"        ## add to control args
 	    shift;
 	    BUILD_URL="http://www.google.com"    ## Set BUILD_URL to something that will return 200
