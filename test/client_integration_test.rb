@@ -9,9 +9,21 @@ class ClientIntegrationTest
   def run
     test_phone_message_and_recipient_gets(@client.voice_messages, {:play_url => 'http://www.thesubstars.com'})
     test_phone_message_and_recipient_gets(@client.sms_messages, {:body => 'hey awesome'})
+    test_email_message
   end
 
   protected
+
+  def test_email_message
+    puts @client.subresources
+    message = @client.email_messages.build({:body => 'hey awesome', :subject => 'hi', :from_name => "bangin'"})
+    email = "recipient00"
+    70.times do
+      message.recipients.build(:email => email)
+      email = email.succ
+    end
+    post_message_and_verify_recipient_gets(message)
+  end
 
   def test_phone_message_and_recipient_gets(message_collection, message_attributes)
     message = message_collection.build(message_attributes)
@@ -20,7 +32,10 @@ class ClientIntegrationTest
       message.recipients.build(:phone => phone)
       phone = phone.succ
     end
+    post_message_and_verify_recipient_gets(message)
+  end
 
+  def post_message_and_verify_recipient_gets(message)
     puts "POST to #{message.href}"
     message.post
     puts "GET to #{message.href}:"
@@ -38,7 +53,7 @@ class ClientIntegrationTest
     next_recipients = next_page_of_recipients(message)
     prev_recipients = previous_page_of_recipients(next_recipients)
 
-    recip = individual_recipient(prev_recipients)
+    individual_recipient(prev_recipients)
   end
 
   def next_page_of_recipients(message)

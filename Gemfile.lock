@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/govdelivery/tms_client.git
-  revision: edb5560cee16c46e8e30e4848f7f7302d7b4722a
+  revision: 18e2c854cd7ddc91981fbd5087bc6ec1415e4149
   specs:
-    tms_client (0.0.2)
+    tms_client (0.0.3)
       activesupport
       faraday
       faraday_middleware

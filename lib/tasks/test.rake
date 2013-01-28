@@ -25,7 +25,7 @@ namespace :test do
                                                 :email_vendor => email_loopback,
                                                 :name => 'Integration Test')
 
-      account.users.find_or_create_by_email!(:email => "test@sink.govdelivery.com", :password => "abcd1234", :admin => true)
+      account.users.find_or_create_by_email!(:email => "test@sink.govdelivery.com", :password => "abcd1234")
 
     end
 
