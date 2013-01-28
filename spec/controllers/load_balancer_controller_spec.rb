@@ -11,6 +11,7 @@ describe LoadBalancerController, "testing status" do
       @connection.expects(:select_one).with('SELECT SYSDATE FROM DUAL')
       get :show
       response.code.should == "200"
+      response.body.should eq('XACT Donkey Cookies')
     end
   end
   
