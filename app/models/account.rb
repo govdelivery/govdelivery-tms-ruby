@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor
+  attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :from_address
 
   has_many :users
   belongs_to :voice_vendor
@@ -8,6 +8,7 @@ class Account < ActiveRecord::Base
   has_many :sms_messages
   has_many :voice_messages
   has_many :email_messages
+  has_one :from_address
   has_many :keywords
 
   belongs_to :stop_handler, :class_name => 'EventHandler'
@@ -32,5 +33,9 @@ class Account < ActiveRecord::Base
 
   def stop(params={})
     stop_handler.commands.each{|a| a.call(params)} if stop_handler
+  end
+
+  def from_email
+    from_address.try(:email)
   end
 end

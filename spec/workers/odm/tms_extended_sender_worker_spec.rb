@@ -1,7 +1,7 @@
 require 'spec_helper'
 if defined?(JRUBY_VERSION)
 
-  describe OdmWorker do
+  describe Odm::TmsExtendedSenderWorker do
     let(:odm_vendor) { create_email_vendor(:worker => 'LoopbackMessageWorker') }
     let(:account) { odm_vendor.accounts.create!(:name => 'name') }
     let(:recipients) do
@@ -13,24 +13,25 @@ if defined?(JRUBY_VERSION)
       msg = account.email_messages.new({'body' => 'msg body',
                                         'subject' => 'msg subject',
                                         'from_name' => 'Emailing Cat'})
+      msg.expects(:sending!).with('dummy_id')
       msg.stubs('recipients').returns(recipients)
       msg
     end
 
 
     context 'a very happy send' do
-      let(:worker) { OdmWorker.new }
+      let(:worker) { Odm::TmsExtendedSenderWorker.new }
 
       it 'should work' do
 
         EmailMessage.expects(:find).with(11).returns(email_message)
         params = {'message_id' => 11,
                   'account_id' => account.id}
-        odm_v2 = mock('OdmWorker::ODMv2')
+        odm_v2 = mock(' Odm::TmsExtendedSenderWorker::ODMv2')
         odm_v2.expects(:send_message).returns('dummy_id')
 
-        odm_service = stub('OdmWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)
-        OdmWorker::TMSExtended_Service.expects(:new).returns(odm_service)
+        odm_service = stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)
+        Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
 
         worker.perform(params)
       end

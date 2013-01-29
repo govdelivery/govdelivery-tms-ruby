@@ -5,4 +5,14 @@ class EmailMessage < ActiveRecord::Base
 
   validates :body, presence: true
   validates :subject, presence: true, length: {maximum: 400}
+
+  delegate :from_email, :to => :account
+
+
+  def sending_with_ack!(ack)
+    self.ack=ack
+    sending_without_ack!
+  end
+  alias_method_chain :sending!, :ack
+
 end

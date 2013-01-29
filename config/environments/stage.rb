@@ -78,8 +78,8 @@ Xact::Application.configure do
 
   config.odm_host = "http://stg-tms1.visi.gdi:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
-  config.odm_username = 'gd3'
-  config.odm_password = 'R0WG38piNv5NRK0DT8mq04fU'
+  config.odm_username = 'xact'
+  config.odm_password = 'Eish8sai2Heofereekae5ohmiyeijiN'
 
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application

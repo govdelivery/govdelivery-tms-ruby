@@ -22,11 +22,8 @@ voice_loopback = VoiceVendor.find_by_name('Loopback Voice Sender') || VoiceVendo
 
 odm_sender = EmailVendor.find_by_name('ODM Sender') ||
   EmailVendor.create(
-    :name => 'ODM Sender',
-    :username => Rails.configuration.odm_username,
-    :password => Rails.configuration.odm_password,
-    :from => nil,
-    :worker => 'OdmWorker')
+    :name => 'TMS Extended Sender',
+    :worker => Odm::TMS_EXTENDED_WORKER)
 email_loopback = EmailVendor.find_by_name('Email Loopback Sender') ||
   EmailVendor.create(
     :name => 'Email Loopback Sender',

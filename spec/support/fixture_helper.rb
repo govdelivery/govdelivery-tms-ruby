@@ -18,7 +18,7 @@ module FixtureHelper
   end
 
   def create_email_vendor(attrs={})
-    EmailVendor.create!({:name => 'new name', :username => 'username2', :password => 'secret2', :worker => 'LoopbackMessageWorker'}.merge(attrs))
+    EmailVendor.create!({:name => 'new name', :worker => 'LoopbackMessageWorker'}.merge(attrs))
   end
 
   def create_account(attrs={})

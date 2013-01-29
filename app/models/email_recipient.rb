@@ -5,4 +5,9 @@ class EmailRecipient < ActiveRecord::Base
   validates_presence_of :message
   validates :email, :presence => true, length: {maximum: 256}
 
+
+  def complete!
+
+  end
+
 end

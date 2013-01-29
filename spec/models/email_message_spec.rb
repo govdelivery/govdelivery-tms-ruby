@@ -19,6 +19,12 @@ describe EmailMessage do
         rcpt = email.create_recipients([:email => 'tyler@dudes.com'])
         email.recipients.reload.count.should eq(1)
       end
+
+      context 'and sending!' do
+        before { email.sending!('dummy_id') }
+        it { email.ack.should eq('dummy_id') }
+      end
+
     end
   end
 
