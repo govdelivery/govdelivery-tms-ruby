@@ -28,6 +28,8 @@ email_loopback = EmailVendor.find_or_create_by_name!(
     :worker => 'LoopbackEmailWorker')
 
 if Rails.env.development?
+  from_address = FromAddress.find_or_create_by_from_email!(:from_email=>'tms_dev@evotest.govdelivery.com')
+
   #
   # This is just stuff for DEVELOPMENT purposes
   #
@@ -38,17 +40,19 @@ if Rails.env.development?
 
   omg = if (ENV['USE_TWILIO'] == 'true')
           puts "** using Twilio and ODM senders for default account **"
-          Account.find_or_create_by_name(:voice_vendor => twilio_voice_sender,
-                                         :sms_vendor => twilio_sms_sender,
-                                         :email_vendor => odm_sender,
-                                         :name => "OMG")
+          Account.find_or_create_by_name(voice_vendor: twilio_voice_sender,
+                                         sms_vendor: twilio_sms_sender,
+                                         email_vendor: odm_sender,
+                                         name: "OMG",
+                                         from_address: from_address)
         else
           puts "**  using loopback senders for default account   **"
           puts "** run with USE_TWILIO=true to use Twilio/ODM senders **"
           Account.find_or_create_by_name(:voice_vendor => voice_loopback,
                                          :sms_vendor => sms_loopback,
                                          :email_vendor => email_loopback,
-                                         :name => "OMG")
+                                         :name => "OMG",
+                                         from_address: from_address)
         end
 
 
@@ -82,10 +86,12 @@ if Rails.env.development?
 
 elsif Account.count == 0 && User.count ==0
   puts "#{Rails.env} DB looks empty, creating a GovDelivery account."
+  from_address = FromAddress.find_or_create_by_from_email!(:from_email => 'info99@service.govdelivery.com')
   account= Account.create!(:voice_vendor => twilio_voice_sender,
                            :sms_vendor => twilio_sms_sender,
                            :email_vendor => odm_sender,
-                           :name => 'GovDelivery')
+                           :name => 'GovDelivery',
+                           :from_address => from_address)
   user = account.users.create!(:email => "product@evotest.govdelivery.com", :password => "retek01!")
   user.admin = true
   user.save!

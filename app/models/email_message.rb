@@ -7,6 +7,7 @@ class EmailMessage < ActiveRecord::Base
   validates :subject, presence: true, length: {maximum: 400}
 
   delegate :from_email, :to => :account
+  delegate :from_email, :to => :account
 
 
   def sending!(ack)

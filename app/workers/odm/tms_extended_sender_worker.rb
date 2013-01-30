@@ -12,7 +12,10 @@ module Odm
       msg.subject = message.subject
       msg.body = message.body
       msg.from_name = message.from_name || ''
-      msg.from_email = message.from_email
+      account = message.account
+      msg.from_email = account.from_email
+      msg.errors_to_email = account.bounce_email
+      msg.reply_to_email = account.reply_to_email
       msg.email_column = 'email'
       msg.recipient_id_column = 'recipient_id'
       msg.record_designator='email::recipient_id'

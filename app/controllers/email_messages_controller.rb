@@ -2,7 +2,7 @@ class EmailMessagesController < MessagesController
   include FeatureChecker
   feature :email
 
-  wrap_parameters :message, :include => [:recipients, :subject, :body], :format => :json
+  wrap_parameters :message, :include => [:recipients, :subject, :body, :from_name], :format => :json
 
   protected
 

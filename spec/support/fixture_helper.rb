@@ -1,4 +1,8 @@
 module FixtureHelper
+  def create_from_address(attrs={})
+    FromAddress.create!({from_email: 'hey@dude.test'}.merge(attrs))
+  end
+
   def create_sms_vendor(attrs={})
     SmsVendor.create!({
       :name => 'name',
