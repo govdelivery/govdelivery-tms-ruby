@@ -7,7 +7,7 @@ class LoopbackMessageWorker
     if @message
       @message.process_blacklist!
       @message.sendable_recipients.find_each do |recipient|
-        logger.debug("Sending SMS to #{recipient.phone}")
+        logger.debug("Sending #{@message.class.name} to #{recipient.to_s}")
         recipient.complete!(:ack => ack,
                             :status => RecipientStatus::SENT)
       end

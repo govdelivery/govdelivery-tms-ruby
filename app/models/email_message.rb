@@ -11,6 +11,7 @@ class EmailMessage < ActiveRecord::Base
 
   def sending_with_ack!(ack)
     self.ack=ack
+    self.recipients.update_all(:status=>RecipientStatus::SENDING)
     sending_without_ack!
   end
   alias_method_chain :sending!, :ack

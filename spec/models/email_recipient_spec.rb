@@ -10,7 +10,6 @@ describe EmailRecipient do
     m.account = a
     r = m.recipients.build
     r.message = m
-    r.vendor = v
     r
   }
 
@@ -22,8 +21,15 @@ describe EmailRecipient do
       subject.email='hi@man.com'
       subject.save!
     end
-    it 'should complete!' do
-      lambda { subject.complete! }.should_not raise_exception
+    context 'that complete!s' do
+      before do
+        subject.complete!(:status => RecipientStatus::SENT)
+      end
+      it 'should update the record' do
+        subject.reload
+        subject.vendor.should_not be_nil
+        subject.status.should eq(RecipientStatus::SENT)
+      end
     end
   end
 end

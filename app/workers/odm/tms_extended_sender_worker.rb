@@ -13,11 +13,11 @@ module Odm
       msg.body = message.body
       msg.from_name = message.from_name || ''
       msg.from_email = message.from_email
-
       msg.email_column = 'email'
-      msg.record_designator='email'
-      message.recipients.find_each { |recipient| msg.to << recipient.email }
-      ack = odm.send_message(credentials, msg)
+      msg.recipient_id_column = 'recipient_id'
+      msg.record_designator='email::recipient_id'
+      message.recipients.find_each { |recipient| msg.to << recipient.to_odm }
+      ack = odm.send_message(credentials(message.vendor), msg)
       message.sending!(ack)
     end
   end

@@ -26,10 +26,10 @@ module Odm
       odm_service.getTMSExtendedPort
     end
 
-    def credentials
+    def credentials(vendor)
       cred=Credentials.new
-      cred.username=Rails.configuration.odm_username
-      cred.password=Rails.configuration.odm_password
+      cred.username=vendor.username
+      cred.password=vendor.password
       cred
     end
 

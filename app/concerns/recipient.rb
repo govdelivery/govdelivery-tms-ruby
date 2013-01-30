@@ -13,6 +13,7 @@ module Recipient
     belongs_to :vendor, :class_name => self.name.gsub('Recipient', 'Vendor')
 
     scope :to_send, -> vendor_id { {} }
+    scope :incomplete, where(status: RecipientStatus::INCOMPLETE_STATUSES)
 
     attr_accessible :message_id, :vendor_id, :vendor
 

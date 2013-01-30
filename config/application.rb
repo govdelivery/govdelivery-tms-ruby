@@ -70,20 +70,24 @@ module Xact
 
     config.redis_url = 'redis://localhost:6379'
 
+    # Kick off ODM stats job every five minutes
+    config.odm_stats_crontab = "* 0/5 * * * ?"
+    config.odm_stats_batch_size = 500
+
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq = {
-      default: { 
+      default: {
         url: "#{config.redis_url}/1",
         namespace: 'xact'
       },
-      client: { size: 1 },
-      server: { }
+      client: {size: 1},
+      server: {}
     }
 
     config.dcm = {
-        username: 'product@govdelivery.com',
-        password: 'retek01!',
-        api_root: 'http://localhost:3000'
+      username: 'product@govdelivery.com',
+      password: 'retek01!',
+      api_root: 'http://localhost:3000'
     }
   end
 end

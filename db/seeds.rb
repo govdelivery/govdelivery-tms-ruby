@@ -27,9 +27,6 @@ odm_sender = EmailVendor.find_by_name('ODM Sender') ||
 email_loopback = EmailVendor.find_by_name('Email Loopback Sender') ||
   EmailVendor.create(
     :name => 'Email Loopback Sender',
-    :username => 'blah',
-    :password => 'wat',
-    :from => 'GovDelivery LoopbackSender',
     :worker => 'LoopbackEmailWorker')
 
 if Rails.env.development?

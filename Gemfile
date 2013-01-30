@@ -6,6 +6,7 @@ gem 'rails-api'
 gem 'redis-rails'
 gem 'sidekiq'
 gem 'sidekiq-failures'
+gem 'sidekiq-unique-jobs'
 gem 'twilio-ruby'
 gem 'rabl'
 gem 'kaminari'
@@ -28,6 +29,7 @@ end
 platforms :jruby do
   gem 'jbundler'
   gem 'trinidad', :require => nil
+  gem 'trinidad_scheduler_extension'
 end
 
 gem 'activerecord-oracle_enhanced-adapter'

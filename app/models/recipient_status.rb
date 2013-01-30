@@ -8,12 +8,15 @@ module RecipientStatus
   BLACKLISTED = 'blacklisted'
   CANCELED = 'canceled'
 
+  INCOMPLETE_STATUSES = [NEW, SENDING].freeze
+  COMPLETE_STATUSES = [SENT, FAILED].freeze
+
   def self.each(&block)
     [NEW, SENDING, SENT, FAILED, BLACKLISTED, CANCELED].each(&block)
   end
 
   def self.complete?(status)
-    [SENT, FAILED].include?(status)
+    COMPLETE_STATUSES.include?(status)
   end
 
   def self.not_sent?(status)

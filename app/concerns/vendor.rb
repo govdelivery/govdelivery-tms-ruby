@@ -4,7 +4,7 @@ module Vendor
   included do
     attr_accessible :name, :username, :password, :worker
     has_many :accounts, :foreign_key=>self.name.foreign_key
-    has_many :recipients,  :class_name => self.name.gsub('Vendor', 'Recipient')
+    has_many :recipients, :class_name => self.name.gsub('Vendor', 'Recipient'), :foreign_key => 'vendor_id'
     validates_presence_of [:name, :username, :password, :worker]
 
     validates_uniqueness_of :name

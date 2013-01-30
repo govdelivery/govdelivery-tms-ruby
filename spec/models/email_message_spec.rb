@@ -21,7 +21,10 @@ describe EmailMessage do
       end
 
       context 'and sending!' do
-        before { email.sending!('dummy_id') }
+        before do
+          email.expects(:recipients).returns(mock(:update_all=>true))
+          email.sending!('dummy_id')
+        end
         it { email.ack.should eq('dummy_id') }
       end
 
