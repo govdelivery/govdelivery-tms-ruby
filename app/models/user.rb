@@ -10,11 +10,11 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email
 
   has_many :email_messages, :order => 'email_messages.created_at DESC'
-  has_many :account_email_messages, :through => :account, :source => :sms_messages
+  has_many :account_email_messages, :through => :account, :source => EmailMessage.table_name
   has_many :sms_messages, :order => 'sms_messages.created_at DESC'
-  has_many :account_sms_messages, :through => :account, :source => :sms_messages
+  has_many :account_sms_messages, :through => :account, :source => SmsMessage.table_name
   has_many :voice_messages, :order => 'voice_messages.created_at DESC'
-  has_many :account_voice_messages, :through => :account, :source => :voice_messages
+  has_many :account_voice_messages, :through => :account, :source => VoiceMessage.table_name
 
   before_validation :downcase_email
 

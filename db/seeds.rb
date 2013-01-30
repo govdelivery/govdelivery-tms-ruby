@@ -1,31 +1,29 @@
-twilio_sms_sender = SmsVendor.find_by_name('Twilio Sender') || SmsVendor.create!(:name => 'Twilio Sender',
-                                                                                 :worker => 'TwilioMessageWorker',
-                                                                                 :username => Rails.configuration.twilio_username,
-                                                                                 :password => Rails.configuration.twilio_password,
-                                                                                 :from => Rails.configuration.twilio_number)
-twilio_voice_sender = VoiceVendor.find_by_name('Twilio Voice Sender') || VoiceVendor.create!(:name => 'Twilio Voice Sender',
-                                                                                             :worker => 'TwilioVoiceWorker',
-                                                                                             :username => Rails.configuration.twilio_username,
-                                                                                             :password => Rails.configuration.twilio_password,
-                                                                                             :from => Rails.configuration.twilio_number)
-sms_loopback = SmsVendor.find_by_name('Loopback SMS Sender') || SmsVendor.create!(:name => 'Loopback SMS Sender',
-                                                                                  :worker => 'LoopbackSmsWorker',
-                                                                                  :username => 'dont care',
-                                                                                  :password => 'dont care',
-                                                                                  :from => '1555111222')
-voice_loopback = VoiceVendor.find_by_name('Loopback Voice Sender') || VoiceVendor.create!(:name => 'Loopback Voice Sender',
-                                                                                          :worker => 'LoopbackVoiceWorker',
-                                                                                          :username => 'dont care',
-                                                                                          :password => 'dont care',
-                                                                                          :from => '1555111222')
+twilio_sms_sender = SmsVendor.find_or_create_by_name!(:name => 'Twilio Sender',
+                                                      :worker => 'TwilioMessageWorker',
+                                                      :username => Rails.configuration.twilio_username,
+                                                      :password => Rails.configuration.twilio_password,
+                                                      :from => Rails.configuration.twilio_number)
+twilio_voice_sender = VoiceVendor.find_or_create_by_name!(:name => 'Twilio Voice Sender',
+                                                          :worker => 'TwilioVoiceWorker',
+                                                          :username => Rails.configuration.twilio_username,
+                                                          :password => Rails.configuration.twilio_password,
+                                                          :from => Rails.configuration.twilio_number)
+sms_loopback = SmsVendor.find_or_create_by_name!(:name => 'Loopback SMS Sender',
+                                                 :worker => 'LoopbackSmsWorker',
+                                                 :username => 'dont care',
+                                                 :password => 'dont care',
+                                                 :from => '1555111222')
+voice_loopback = VoiceVendor.find_or_create_by_name!(:name => 'Loopback Voice Sender',
+                                                     :worker => 'LoopbackVoiceWorker',
+                                                     :username => 'dont care',
+                                                     :password => 'dont care',
+                                                     :from => '1555111222')
 
 
-odm_sender = EmailVendor.find_by_name('ODM Sender') ||
-  EmailVendor.create(
+odm_sender = EmailVendor.find_or_create_by_name!(
     :name => 'TMS Extended Sender',
     :worker => Odm::TMS_EXTENDED_WORKER)
-email_loopback = EmailVendor.find_by_name('Email Loopback Sender') ||
-  EmailVendor.create(
+email_loopback = EmailVendor.find_or_create_by_name!(
     :name => 'Email Loopback Sender',
     :worker => 'LoopbackEmailWorker')
 
