@@ -4,8 +4,6 @@ module Odm
 
     def perform(*args)
       raise NotImplementedError.new("#{self.class.name} requires JRuby") unless self.class.jruby?
-
-      logger.debug('hey')
       EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor) }
     end
 
