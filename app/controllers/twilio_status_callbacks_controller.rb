@@ -4,15 +4,7 @@ class TwilioStatusCallbacksController < ApplicationController
   respond_to :xml
 
   def create
-    status = case @status
-               when 'sent', 'completed', 'busy', 'no-answer'
-                 RecipientStatus::SENT
-               when 'failed'
-                 RecipientStatus::FAILED
-               when 'canceled'
-                 RecipientStatus::CANCELED
-             end
-    @recipient.complete!(:status => status)
+    @recipient.send(@transition, @sid)
     render :text => '', :status => 201
   end
 
@@ -25,13 +17,16 @@ class TwilioStatusCallbacksController < ApplicationController
               else
                 ''
               end
+    @transition = Service::TwilioResponseMapper.recipient_callback(@status)
   end
 
   def find_recipient
     @recipient=if params.has_key?('SmsStatus')
-                 SmsRecipient.find_by_ack!(params['SmsSid'])
+                 @sid = params['SmsSid']
+                 SmsRecipient.find_by_ack!(@sid)
                elsif params.has_key?('CallStatus')
-                 VoiceRecipient.find_by_ack!(params['CallSid'])
+                 @sid = params['CallSid']
+                 VoiceRecipient.find_by_ack!(@sid)
                else
                  nil
                end

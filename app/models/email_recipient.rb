@@ -9,15 +9,17 @@ class EmailRecipient < ActiveRecord::Base
     "#{self.email}::#{self.id}"
   end
 
-  def complete!(attrs)
-    return if RecipientStatus.complete?(status)
+  def sent!(completed_at)
+    update_status!(RecipientStatus::SENT, completed_at)
+  end
 
-    self.vendor = message.vendor
-    self.status = attrs[:status]
+  def failed!(completed_at)
+    update_status!(RecipientStatus::FAILED, completed_at)
+  end
 
-    self.sent_at = Time.now
-    self.completed_at = Time.now
-    self.save!
+  def update_status!(status, completed_at)
+    self.completed_at = completed_at
+    super(status)
   end
 
 end

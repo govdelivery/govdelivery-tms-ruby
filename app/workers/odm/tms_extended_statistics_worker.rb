@@ -37,7 +37,7 @@ module Odm
           recipient_id = Integer(event.recipient_id)
           logger.debug("Processing message #{event.message_id} sent to #{event.address} (EmailRecipient #{recipient_id})")
           recipient = vendor.recipients.incomplete.find(recipient_id)
-          recipient.complete!(status: to_status(event))
+          update_recipient(recipient, event)
         rescue TypeError => e # recipient_id isn't a number
           logger.warn("Couldn't process delivery_activity for message #{event.message_id} sent to #{event.address}: #{e.message}")
         rescue ActiveRecord::RecordNotFound => e
@@ -46,8 +46,13 @@ module Odm
       end
     end
 
-    def to_status(delivery_event)
-      delivery_event.delivered? ? RecipientStatus::SENT : RecipientStatus::FAILED
+    def update_recipient(recipient, delivery_event)
+      sent_at = Time.at(event.at.to_gregorian_calendar.time.time/1000)
+      if delivery_event.delivered?
+        recipient.sent!(sent_at)
+      else
+        recipient.failed!(sent_at)
+      end
     end
   end
 end

@@ -12,5 +12,4 @@ class SmsRecipient < ActiveRecord::Base
     joins("left outer join #{StopRequest.table_name} on #{StopRequest.table_name}.vendor_id = #{vendor_id} and #{StopRequest.table_name}.phone =  #{self.table_name}.formatted_phone").where("#{StopRequest.table_name}.phone is null").readonly(false)
   }
 
-
 end

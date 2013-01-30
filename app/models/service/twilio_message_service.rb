@@ -21,7 +21,7 @@ module Service
         begin
           response = delivery_mechanism.create(message, recipient, callback_url, message_url)
           logger.info("Response from Twilio was #{response.inspect}")
-          complete_recipient!(recipient, response)
+          complete_recipient!(recipient, response.status, response.sid)
           success_count += 1
         rescue Twilio::REST::RequestError => e
           err_count += 1
@@ -35,25 +35,12 @@ module Service
     end
 
     def complete_recipient_with_error!(recipient, error_message)
-      recipient.complete!(:error_message=>error_message)
+      recipient.failed!(nil, error_message)
     end
 
-    def complete_recipient!(recipient, response)
-      unless response.nil?
-        status = case response.status
-          when 'queued', 'sending', 'ringing', 'in-progress', 'busy', 'no-answer'
-            RecipientStatus::SENDING
-          when 'sent', 'completed'
-            RecipientStatus::SENT
-          when 'failed'
-            RecipientStatus::FAILED
-          when 'canceled'
-            RecipientStatus::CANCELED
-          else
-            RecipientStatus::NEW
-        end
-      end
-      recipient.complete!(:ack=> response.sid, :status=>status)
+    def complete_recipient!(recipient, status, sid)
+      transition = Service::TwilioResponseMapper.recipient_callback(status)
+      recipient.send(transition, sid)
     end
 
     def complete_message!(message, counts)

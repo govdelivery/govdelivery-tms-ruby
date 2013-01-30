@@ -9,11 +9,16 @@ class EmailMessage < ActiveRecord::Base
   delegate :from_email, :to => :account
 
 
-  def sending_with_ack!(ack)
+  def sending!(ack)
     self.ack=ack
-    self.recipients.update_all(:status=>RecipientStatus::SENDING)
-    sending_without_ack!
+    recipients_sending!
+    super()
   end
-  alias_method_chain :sending!, :ack
+
+  protected
+
+  def recipients_sending!
+    self.recipients.update_all(status: RecipientStatus::SENDING, sent_at: Time.now)
+  end
 
 end
