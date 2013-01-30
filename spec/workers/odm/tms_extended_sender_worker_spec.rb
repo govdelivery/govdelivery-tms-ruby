@@ -3,7 +3,7 @@ if defined?(JRUBY_VERSION)
 
   describe Odm::TmsExtendedSenderWorker do
     let(:odm_vendor) { create_email_vendor(:worker => 'LoopbackMessageWorker') }
-    let(:account) { odm_vendor.accounts.create!(:name => 'name') }
+    let(:account) { odm_vendor.accounts.create!(:name => 'name', :from_address=>create_from_address) }
     let(:recipients) do
       s = stub('recipients')
       s.stubs(:find_each).yields(EmailRecipient.new(:email => 'email@sink.govdelivery.com')).then.yields(EmailRecipient.new(:email => 'email2@sink.govdelivery.com'))
