@@ -71,7 +71,7 @@ module Xact
     config.redis_url = 'redis://localhost:6379'
 
     # Kick off ODM stats job every five minutes
-    config.odm_stats_crontab = "* 0/5 * * * ?"
+    config.odm_stats_crontab = "0 */5 * * * ?"
     config.odm_stats_batch_size = 500
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
