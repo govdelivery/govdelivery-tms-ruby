@@ -3,7 +3,7 @@ module Service
     def self.recipient_callback(twilio_status)
       case twilio_status
         when 'queued', 'sending', 'ringing', 'in-progress', 'busy', 'no-answer'
-          :sending
+          :sending!
         when 'sent', 'completed'
           :sent!
         when 'failed'
