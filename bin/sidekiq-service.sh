@@ -81,7 +81,11 @@ start () {
     fi
     
     cd "${app_path}" || exit 5
-    su ${user} -s /bin/sh -c "bundle exec sidekiq -P \"${pid_file}\" >> ${app_path}/log/sidekiq.log 2>&1 &"
+
+    JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=3020 -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
+#    JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
+
+    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} -S sidekiq -P \"${pid_file}\" >> ${app_path}/log/sidekiq.log 2>&1 &"
 
     i=30
     RETVAL=1
