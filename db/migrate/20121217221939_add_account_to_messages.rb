@@ -1,4 +1,5 @@
-class Message < ActiveRecord::Base
+class Message2 < ActiveRecord::Base
+  self.table_name = 'messages'
   belongs_to :user
   belongs_to :account
 end
@@ -6,8 +7,8 @@ end
 class AddAccountToMessages < ActiveRecord::Migration
   def change
     add_column(:messages, :account_id, :integer)
-    Message.reset_column_information
-    Message.find_each do |m|
+    Message2.reset_column_information
+    Message2.find_each do |m|
       m.account_id = m.user.account_id
       m.save!
     end
