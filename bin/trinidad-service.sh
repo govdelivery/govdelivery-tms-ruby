@@ -90,7 +90,11 @@ start () {
     fi
     
     cd "${app_path}" || exit 5
-    su ${user} -s /bin/sh -c "bundle exec \"${app}\" -e \"${environment}\" -p 8080 --monitor \"${pid_dir}/restart.txt\" --ajp  >> ${log_file} 2>&1 & echo "'$!'" > \"${pid_file}\"  "
+
+    JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=3019 -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
+#    JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
+
+    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} -S \"${app}\" -e \"${environment}\" -p 8080 --monitor \"${pid_dir}/restart.txt\" --ajp >> ${log_file} 2>&1 & echo "'$!'" > \"${pid_file}\"  "
 
     i=30
     RETVAL=1
