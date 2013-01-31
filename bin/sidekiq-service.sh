@@ -5,6 +5,12 @@
 # Source function library.
 . /etc/rc.d/init.d/functions || exit 5
 
+
+JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=3020 -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
+# JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
+JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPermSize=256m"
+
+
 # Source sidekiq settings
 . /etc/sysconfig/sidekiq || exit 5
 
@@ -14,6 +20,7 @@ if [[ -z "$environment" ]]; then
 fi
 
 export RAILS_ENV=$environment
+
 
 
 status () {
@@ -82,10 +89,7 @@ start () {
     
     cd "${app_path}" || exit 5
 
-    JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=3020 -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
-#    JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
-
-    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} -S sidekiq -P \"${pid_file}\" >> ${app_path}/log/sidekiq.log 2>&1 &"
+    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S sidekiq -P \"${pid_file}\" >> ${app_path}/log/sidekiq.log 2>&1 &"
 
     i=30
     RETVAL=1
