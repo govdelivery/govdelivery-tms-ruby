@@ -91,7 +91,7 @@ start () {
 
     su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S sidekiq -P \"${pid_file}\" >> ${app_path}/log/sidekiq.log 2>&1 &"
 
-    i=30
+    i=60
     RETVAL=1
     while [[ i -gt 0 && $RETVAL -ne 0 ]]; do
         sleep 1
