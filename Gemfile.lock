@@ -270,8 +270,6 @@ GEM
       jruby-rack (>= 1.1.10)
       trinidad_jars (>= 1.1.0)
     trinidad_jars (1.2.0)
-    trinidad_jmx_remote_extension (0.1.1)
-      trinidad (>= 1.3.5)
     trinidad_scheduler_extension (0.1.2)
       trinidad_jars
     twilio-ruby (3.9.0)
@@ -319,7 +317,6 @@ DEPENDENCIES
   sqlite3
   tms_client!
   trinidad
-  trinidad_jmx_remote_extension
   trinidad_scheduler_extension
   twilio-ruby
   typhoeus

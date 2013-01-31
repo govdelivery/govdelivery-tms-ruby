@@ -29,7 +29,6 @@ end
 platforms :jruby do
   gem 'jbundler'
   gem 'trinidad', :require => nil
-  gem 'trinidad_jmx_remote_extension', :require => false
   gem 'trinidad_scheduler_extension'
 end
 
