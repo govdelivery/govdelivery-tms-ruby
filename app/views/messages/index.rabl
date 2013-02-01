@@ -1,5 +1,5 @@
 # app/views/posts/index.rabl
 collection @messages.map{|m| View::MessageLinks.new(m, self)}
-attributes *@content_attributes, :completed_at, :created_at, :_links
+attributes *@content_attributes, :created_at, :_links
 
 node(:errors, :if => ->(message){ message.errors.any? }) { |message| message.errors }

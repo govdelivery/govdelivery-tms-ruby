@@ -57,6 +57,7 @@ module Message
 
   def sending!
     self.status = Status::SENDING
+    self.sent_at = Time.now
     save!
   end
 

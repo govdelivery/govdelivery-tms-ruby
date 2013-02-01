@@ -6,7 +6,6 @@ RSpec::Matchers.define :be_json_for do |expected|
 
   chain :with_timestamps do |*timestamps|
     @timestamps = timestamps
-    @timestamps = [:created_at, :updated_at] if @timestamps.compact.empty?
   end
 
   chain :with_links do |links|
@@ -20,18 +19,25 @@ RSpec::Matchers.define :be_json_for do |expected|
   match do |actual|
     json = ActiveSupport::JSON.decode(actual)
 
+    @links ||= []
+    @timestamps ||= [:created_at, :updated_at]
+    fail('no attributes specified') unless @attributes
+
     json.each do |k, v|
       if k=='_links'
         @links.each { |rel, href| v[rel.to_s].should eq(href) }
         @links.keys.length.should eq(v.keys.length)
-      elsif @timestamps.include?(k.to_sym)
-        Time.parse(v).to_s(:json).should eq(expected.send(k).to_s(:json))
-      elsif @attributes.include?(k.to_sym)
+      elsif ts=@timestamps.delete(k.to_sym)
+        Time.parse(v).to_s(:json).should eq(expected.send(ts).to_s(:json))
+      elsif attr = @attributes.delete(k.to_sym)
         v.should eq(expected.send(k))
       else
         fail("Unrecognized JSON attribute #{k}: #{rendered}")
       end
     end
+    all_attrs = @timestamps + @attributes
+    fail("Did not find attributes #{all_attrs.join(', ')}") unless all_attrs.empty?
+    true
   end
 end
 

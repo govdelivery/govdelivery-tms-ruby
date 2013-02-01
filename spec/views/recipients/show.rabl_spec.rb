@@ -31,7 +31,7 @@ describe 'recipients/show.rabl' do
     end
     it 'should have one item' do
       rendered.should be_json_for(recipient).
-                        with_timestamps(:created_at, :sent_at, :completed_at).
+                        with_timestamps(:created_at, :completed_at).
                         with_attributes(:formatted_phone, :phone, :status).
                         with_links('sms_message' => sms_path(22), 'self' => sms_recipient_path(22, 11))
     end
@@ -65,7 +65,7 @@ describe 'recipients/show.rabl' do
     end
     it 'should have one item' do
       rendered.should be_json_for(recipient).
-                        with_timestamps(:created_at, :sent_at, :completed_at).
+                        with_timestamps(:created_at, :completed_at).
                         with_attributes(:status, :email).
                         with_links('email_message' => email_path(22), 'self' => email_recipient_path(22, 11))
     end

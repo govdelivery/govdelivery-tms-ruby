@@ -1,5 +1,5 @@
 object View::MessageLinks.new(@message, self)
-attributes *@content_attributes, :completed_at, :created_at, :_links, :status
+attributes *@content_attributes, :created_at, :status, :_links
 
 if root_object
   unless root_object.errors.empty?
