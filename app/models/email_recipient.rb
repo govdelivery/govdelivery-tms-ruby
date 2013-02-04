@@ -10,16 +10,11 @@ class EmailRecipient < ActiveRecord::Base
   end
 
   def sent!(completed_at)
-    update_status!(RecipientStatus::SENT, completed_at)
+    update_status!(RecipientStatus::SENT, nil, completed_at: completed_at)
   end
 
   def failed!(completed_at)
-    update_status!(RecipientStatus::FAILED, completed_at)
-  end
-
-  def update_status!(status, completed_at)
-    self.completed_at = completed_at
-    super(status)
+    update_status!(RecipientStatus::FAILED, nil, completed_at: completed_at)
   end
 
 end

@@ -74,6 +74,12 @@ module Xact
     config.odm_stats_crontab = "0 */5 * * * ?"
     config.odm_stats_batch_size = 500
 
+    # Messages sent via Twilio that we haven't heard back about should be finalized
+    config.twilio_sms_poll_crontab = "0 15 */4 * * ?"
+    config.twilio_voice_poll_crontab = "0 45 */4 * * ?"
+    config.min_twilio_polling_age = '24.hours'
+    config.max_twilio_polling_age = '72.hours'
+
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq = {
       default: {

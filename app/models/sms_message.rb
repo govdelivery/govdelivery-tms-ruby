@@ -13,7 +13,7 @@ class SmsMessage < ActiveRecord::Base
   end
 
   def blacklisted_recipients
-    recipients.incomplete.blacklisted(vendor.id)
+    recipients.not_sent.blacklisted(vendor.id)
   end
 
 end

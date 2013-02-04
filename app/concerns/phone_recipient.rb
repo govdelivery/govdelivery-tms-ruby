@@ -14,6 +14,12 @@ module PhoneRecipient
     validates_length_of :formatted_phone, :maximum => 256
     validates_uniqueness_of :phone, :scope => 'message_id', :message => 'has already been associated with this message'
 
+    scope :to_poll, lambda {
+      start_time = eval("#{Rails.configuration.min_twilio_polling_age}.ago")
+      end_time = eval("#{Rails.configuration.max_twilio_polling_age}.ago")
+      incomplete.where("#{self.quoted_table_name}.created_at BETWEEN ? and ?", start_time, end_time).includes(:vendor)
+    }
+
     def self.with_valid_phone_number
       where("#{self.table_name}.formatted_phone is not null")
     end

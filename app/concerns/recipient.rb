@@ -18,19 +18,19 @@ module Recipient
     attr_accessible :message_id, :vendor_id, :vendor
   end
 
-  def sending!(ack)
+  def sending!(ack, *args)
     update_status!(RecipientStatus::SENDING, ack)
   end
 
-  def sent!(ack)
-    update_status!(RecipientStatus::SENT, ack)
+  def sent!(ack, date_sent=nil)
+    update_status!(RecipientStatus::SENT, ack, completed_at: date_sent)
   end
 
   def failed!(ack=nil, error_message=nil)
-    update_status!(RecipientStatus::FAILED, ack, error_message)
+    update_status!(RecipientStatus::FAILED, ack, error_message: error_message)
   end
 
-  def canceled!(ack)
+  def canceled!(ack, *args)
     update_status!(RecipientStatus::CANCELED, ack)
   end
 
@@ -71,16 +71,16 @@ module Recipient
   #     '  `'` fd d$$$$$$$$.?$$$$F,$$$$$$$$$$$,?$$$$ $$$$$$$$$$$$c`!H>
 
   def ack!(ack=nil)
-    update_status!(nil, ack, nil)
+    update_status!(nil, ack)
   end
 
-  def update_status!(status, ack=nil, error_message=nil)
+  def update_status!(status, ack=nil, opts={})
     raise "#{self.class.name} #{self.id} is already complete" if RecipientStatus.complete?(self.status)
     self.vendor ||= message.vendor
     self.ack ||= ack
     self.status = status if status
-    self.completed_at = Time.now if RecipientStatus.complete?(status)
-    self.error_message ||= error_message
+    self.completed_at = opts[:completed_at] || Time.now if RecipientStatus.complete?(status)
+    self.error_message ||= opts[:error_message]
     self.save!
   end
 
