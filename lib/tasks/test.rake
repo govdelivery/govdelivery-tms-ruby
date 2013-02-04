@@ -37,15 +37,16 @@ namespace :test do
                                                            :from => '1555111222')
 
       email_loopback = EmailVendor.find_or_create_by_name!(:name => 'Email Loopback Sender',
-                                                           :username => 'blah',
-                                                           :password => 'wat',
                                                            :from => 'GovDelivery LoopbackSender',
                                                            :worker => 'LoopbackEmailWorker')
+
+      from_address = FromAddress.find_or_create_by_from_email!(from_email: 'test@sink.govdelivery.com')
 
       account = Account.find_or_create_by_name!(:voice_vendor => voice_loopback,
                                                 :sms_vendor => sms_loopback,
                                                 :email_vendor => email_loopback,
-                                                :name => 'Integration Test')
+                                                :name => 'Integration Test',
+                                                :from_address=>from_address)
 
       account.users.find_or_create_by_email!(:email => "test@sink.govdelivery.com", :password => "abcd1234")
 

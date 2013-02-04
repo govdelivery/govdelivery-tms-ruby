@@ -50,6 +50,16 @@ describe SmsMessage do
       message.recipients.find_by_phone('6515551212').status.should eq(RecipientStatus::BLACKLISTED)
       message.recipients.find_by_phone('6515551215').status.should eq(RecipientStatus::NEW)
     end
+    context 'and checked for completion' do
+      before do
+        message.process_blacklist!
+        message.recipients.find_by_phone('6515551215').sent!('ack1')
+      end
+      it 'should change status' do
+        message.check_complete!.should eq(true)
+        message.status.should eq(SmsMessage::Status::COMPLETED)
+      end
+    end
   end
 
   context 'a message with invalid recipients attributes' do

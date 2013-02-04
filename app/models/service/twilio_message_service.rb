@@ -8,8 +8,8 @@ module Service
 
     def deliver!(message, callback_url=nil, message_url=nil)
       message.process_blacklist!
-      counts = do_deliver(message, callback_url, message_url)
-      complete_message!(message, counts)
+      do_deliver(message, callback_url, message_url)
+      message.sending!
     end
 
     private
@@ -22,16 +22,11 @@ module Service
           response = delivery_mechanism.create(message, recipient, callback_url, message_url)
           logger.info("Response from Twilio was #{response.inspect}")
           complete_recipient!(recipient, response.status, response.sid)
-          success_count += 1
         rescue Twilio::REST::RequestError => e
-          err_count += 1
           logger.warn("Failed to send #{message} to #{recipient.phone}: #{e.inspect}")
           complete_recipient_with_error!(recipient, e.to_s)
-        ensure
-          total += 1
         end
       end
-      {:errors => err_count, :successes => success_count, :total => total}
     end
 
     def complete_recipient_with_error!(recipient, error_message)
@@ -41,16 +36,6 @@ module Service
     def complete_recipient!(recipient, status, sid)
       transition = Service::TwilioResponseMapper.recipient_callback(status)
       recipient.send(transition, sid)
-    end
-
-    def complete_message!(message, counts)
-      if counts[:successes] == counts[:total]
-        message.complete!
-      elsif counts[:errors] == counts[:total]
-        message.failed!
-      else
-        message.sending!
-      end
     end
 
     def logger

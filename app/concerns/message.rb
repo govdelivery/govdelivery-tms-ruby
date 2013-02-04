@@ -6,7 +6,6 @@ module Message
   module Status
     NEW = 'new'
     SENDING = 'sending'
-    FAILED = 'failed'
     COMPLETED = 'completed'
   end
 
@@ -18,6 +17,7 @@ module Message
 
     attr_accessible :recipients_attributes
 
+    scope :incomplete, where("#{self.quoted_table_name}.status != ? ", Status::COMPLETED)
     has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id', :order => "#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC"
     accepts_nested_attributes_for :recipients
   end
@@ -44,21 +44,24 @@ module Message
     recipients.to_send(vendor.id)
   end
 
-  def complete!
-    self.completed_at = Time.zone.now
-    self.status = Status::COMPLETED
-    save!
-  end
-
-  def failed!
-    self.status = Status::FAILED
-    save!
-  end
-
   def sending!
     self.status = Status::SENDING
     self.sent_at = Time.now
     save!
+  end
+
+  def check_complete!
+    counts = recipient_state_counts
+    if val = RecipientStatus::INCOMPLETE_STATUSES.collect { |state| counts[state] }.sum == 0
+      Rails.logger.debug("#{self.class.name} #{self.to_param} is complete")
+      self.completed_at = recipients.most_recently_sent.first.sent_at rescue Time.now
+      self.status = Status::COMPLETED
+    else
+      Rails.logger.debug("#{self.class.name} #{self.to_param} is not yet complete")
+      self.status = Status::SENDING
+    end
+    save!
+    val
   end
 
   def recipient_counts

@@ -14,6 +14,7 @@ module Recipient
 
     scope :to_send, -> vendor_id { {} }
     scope :incomplete, where(status: RecipientStatus::INCOMPLETE_STATUSES)
+    scope :most_recently_sent, order('sent_at DESC').limit(1)
 
     attr_accessible :message_id, :vendor_id, :vendor
   end

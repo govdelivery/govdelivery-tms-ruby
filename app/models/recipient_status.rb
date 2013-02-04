@@ -3,6 +3,7 @@ module RecipientStatus
 
   NEW = 'new'
   SENDING = 'sending'
+
   SENT = 'sent'
   FAILED = 'failed'
   BLACKLISTED = 'blacklisted'

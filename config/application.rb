@@ -80,6 +80,8 @@ module Xact
     config.min_twilio_polling_age = '24.hours'
     config.max_twilio_polling_age = '72.hours'
 
+    config.message_completion_crontab = "0 */5 * * * ?"
+
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq = {
       default: {
