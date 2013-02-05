@@ -1,7 +1,10 @@
+class OldVendor < ActiveRecord::Base
+  set_table_name "vendors"
+end
 class ConvertVendorIsVoiceToEnum < ActiveRecord::Migration
   def up
     add_column(:vendors, :vtype, :string, :limit => 30)
-    Vendor.all.each do |v|
+    OldVendor.all.each do |v|
       if v.worker == 'LoopbackMessageWorker'
         v.vtype= v.name =~/SMS/ ? :sms : :voice
         puts "setting #{v.name} type to #{v.vtype}"

@@ -1,3 +1,4 @@
+Account.reset_column_information
 class MakeFromAddressesFromUsersForInvalidAccounts < ActiveRecord::Migration
   def change
     Account.includes(:from_address).where('from_addresses.id IS NULL AND email_vendor_id IS NOT NULL').each do |account|
