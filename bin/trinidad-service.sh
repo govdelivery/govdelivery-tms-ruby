@@ -7,7 +7,11 @@
 
 app="trinidad"
 app_name="Trinidad"
+jmx_port="3019"
 
+JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=${jmx_port} -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
+# JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
+JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPermSize=256m"
 
 # Source Application settings
 . /etc/sysconfig/${app} || exit 5
@@ -91,12 +95,10 @@ start () {
     
     cd "${app_path}" || exit 5
 
-    JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=3019 -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
-#    JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
+    umask 0007;
+    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S \"${app}\" -e \"${environment}\" -p 8080 --monitor \"${pid_dir}/restart.txt\" --ajp >> ${log_file} 2>&1 & echo "'$!'" > \"${pid_file}\"  "
 
-    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} -S \"${app}\" -e \"${environment}\" -p 8080 --monitor \"${pid_dir}/restart.txt\" --ajp >> ${log_file} 2>&1 & echo "'$!'" > \"${pid_file}\"  "
-
-    i=30
+    i=60
     RETVAL=1
     while [[ i -gt 0 && $RETVAL -ne 0 ]]; do
         sleep 1
@@ -168,7 +170,7 @@ case "$1" in
   start)
         start
 	RETVAL=$?
-        ;;
+	;;
   stop)
         stop
 	RETVAL=$?

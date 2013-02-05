@@ -5,14 +5,17 @@
 # Source function library.
 . /etc/rc.d/init.d/functions || exit 5
 
+app="sidekiq"
+app_name="Sidekiq"
+jmx_port="3020"
 
-JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=3020 -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
+JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=${jmx_port} -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
 # JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
 JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPermSize=256m"
 
 
-# Source sidekiq settings
-. /etc/sysconfig/sidekiq || exit 5
+# Source Application settings
+. /etc/sysconfig/${app} || exit 5
 
 if [[ -z "$environment" ]]; then
     echo "no environment set!"
@@ -20,8 +23,7 @@ if [[ -z "$environment" ]]; then
 fi
 
 export RAILS_ENV=$environment
-
-
+log_file="${app_path}/log/${app}.log"
 
 status () {
     RETVAL=0
@@ -33,13 +35,13 @@ status () {
     
     if [[ -z $pid ]]; then  ## no known pid
 	
-	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep sidekiq)
+	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep ${app})
 	if [[ $? -eq 0 ]]; then
-	    echo "PID file not found, but Sidekiq processes are running!"
+	    echo "PID file not found, but ${app_name} processes are running!"
 	    echo "$UNMANAGED"
 	    return 10
 	else
-	    echo "Sidekiq not running"
+	    echo "${app_name} not running"
 	    return 1
 	fi;
 	
@@ -47,23 +49,23 @@ status () {
 	
 	MANAGED=$(ps -f --pid $pid --ppid $pid)
 	if [[ $? -eq 0 ]]; then
-	    echo "Sidekiq Process:"
+	    echo "${app_name} Process:"
 	    echo "$MANAGED"
 	else
-	    echo "PID file exists, but no managed sidekiq process found. Removing pid file"
+	    echo "PID file exists, but no managed ${app_name} process found. Removing pid file"
 	    rm $pid_file
 	    let RETVAL++
 	fi
 	
 	CHILDREN=$(ps -f --ppid $pid)
 	if [[ $? -eq 0 ]]; then
-	    echo "Sidekiq Children:"
+	    echo "${app_name} Children:"
 	    echo "$CHILDREN"
 	fi
 	
-	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep -v $pid | grep sidekiq)
+	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep -v $pid | grep ${app})
 	if [[ $? -eq 0 ]]; then
-	    echo "Found unmanaged Sidekiq processes!"
+	    echo "Found unmanaged ${app_name} processes!"
 	    echo "$UNMANAGED"
 	    let RETVAL+=10
 	fi;
@@ -73,13 +75,18 @@ status () {
 
 ### Start
 start () {
+    [[ $(whoami) == "root" ]] || { echo "Must be root"; exit 2; }
+
     status > /dev/null
     if [[ $? -eq 0 ]]; then 
-	echo "Sidekiq already running"
+	echo "${app_name} already running"
 	return 0
     fi
 
-    echo "starting Sidekiq"
+    echo "Starting ${app_name}"
+    echo "$(date) Starting ${app_name}" >> "${log_file}"
+    chown "${user}:${user}" "${log_file}" || exit 5
+
     pid_dir=$(dirname $pid_file)
     if [[ ! -d $pid_dir ]]; then
 	echo "Creating pid_dir: ${pid_dir}"
@@ -89,7 +96,8 @@ start () {
     
     cd "${app_path}" || exit 5
 
-    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S sidekiq -P \"${pid_file}\" >> ${app_path}/log/sidekiq.log 2>&1 &"
+    umask 0007;
+    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S \"${app}\" -P \"${pid_file}\" >> ${log_file} 2>&1 &"
 
     i=60
     RETVAL=1
@@ -103,7 +111,7 @@ start () {
     status
     RETVAL=$?
     if [[ $RETVAL -ne 0 ]]; then
-	echo "Sidekiq failed to start"
+	echo "${app_name} failed to start"
     fi;
     
     return ${RETVAL}
@@ -125,13 +133,17 @@ quiet () {
 
 ### Stop
 stop () {
+    [[ $(whoami) == "root" ]] || { echo "Must be root"; exit 2; }
+
     status > /dev/null
     if [[ $? -eq 1 ]]; then 
-	echo "Sidekiq is not running"
+	echo "${app_name} is not running"
 	return 0
     fi
     
-    echo "Stopping Sidekiq"
+    echo "Stopping ${app_name}"
+    echo "$(date) Stopping ${app_name}" >> "${log_file}"
+
     cd "${app_path}" || exit 5
     su ${user} -s /bin/sh -c "bundle exec sidekiqctl stop \"${pid_file}\" ${deadline_timeout}"
     RETVAL=$?
@@ -149,8 +161,11 @@ stop () {
 	let i--
     done
 
-    if [[ $RETVAL -ne 1 ]]; then
-	echo "Sidekiq failed to stop correctly"
+    if [[ $RETVAL -eq 1 ]]; then
+	echo "${app_name} stopped"
+	return 0
+    else
+	echo "${app_name} failed to stop correctly"
 	return 1
     fi;    
     return 0
@@ -162,7 +177,7 @@ case "$1" in
   start)
         start
 	RETVAL=$?
-        ;;
+	;;
  quiet)
 	quiet
 	RETVAL=$?
