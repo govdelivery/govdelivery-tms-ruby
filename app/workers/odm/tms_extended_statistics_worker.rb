@@ -13,18 +13,18 @@ module Odm
       delivery_activity = nil
       @activity_request = activity_request(vendor)
       while (delivery_activity.nil? || (delivery_activity.delivery.size == 1000 && delivery_activity.delivery.size > 0))
-        logger.debug("Processing ODM data for #{vendor.name} starting from #{vendor.activities_sequence}")
+        logger.debug("Processing ODM data for #{vendor.name} starting from #{vendor.deliveries_sequence}")
         delivery_activity = odm.delivery_activity_since(credentials(vendor), @activity_request)
         process(delivery_activity, vendor)
         @activity_request.sequence = delivery_activity.next_sequence
       end
-      vendor.update_attributes(activities_sequence: delivery_activity.next_sequence)
-      logger.debug("Processed ODM data for #{vendor.name} through #{vendor.activities_sequence}")
+      vendor.update_attributes(deliveries_sequence: delivery_activity.next_sequence)
+      logger.debug("Processed ODM data for #{vendor.name} through #{vendor.deliveries_sequence}")
     end
 
     def activity_request(vendor)
       da = ActivityRequest.new
-      da.sequence = vendor.activities_sequence
+      da.sequence = vendor.deliveries_sequence
       da.max_results = Rails.configuration.odm_stats_batch_size
       da
     end

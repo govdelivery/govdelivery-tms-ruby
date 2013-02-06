@@ -1,6 +1,6 @@
 class EmailVendor < ActiveRecord::Base
   include Vendor
-  attr_accessible :activities_sequence, :clicks_sequence, :opens_sequence
+  attr_accessible :deliveries_sequence, :clicks_sequence, :opens_sequence
 
   scope :tms_extended, where(worker: Odm::TMS_EXTENDED_WORKER)
 
