@@ -16,7 +16,7 @@ describe CreateRecipientsWorker do
   it 'should complete if there are no recipients' do
     message = mock('message')
     message.stubs(:id).returns(1)
-    message.expects(:complete!)
+    message.expects(:check_complete!)
     VoiceMessage.expects(:find).with(1).returns(message)
 
     worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass'=>'VoiceMessage')
