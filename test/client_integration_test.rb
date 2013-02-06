@@ -3,7 +3,7 @@ require 'tms_client'
 class ClientIntegrationTest
 
   def initialize
-    @client = TMS::Client.new('test@sink.govdelivery.com', 'abcd1234', :api_root => 'http://localhost:3000')
+    @client = TMS::Client.new('test@sink.govdelivery.com', 'abcd1234', :api_root => 'http://localhost:3000', :logger => Rails.logger)
   end
 
   def run
@@ -58,6 +58,7 @@ class ClientIntegrationTest
 
   def next_page_of_recipients(message)
     puts "GET to #{message.recipients.next.href}"
+
     message.recipients.next.get
   end
 

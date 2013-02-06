@@ -16,7 +16,7 @@ log4r_config:
       dirname     : "#{LOG_DIR}"
       formatter   :
         date_pattern: '%X'
-        pattern     : "%l %d pid=#{Process.pid} :: %m"
+        pattern     : "%l %d pid=#{Process.pid} tid=%h :: %m"
         type        : PatternFormatter
 
   

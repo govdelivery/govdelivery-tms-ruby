@@ -14,7 +14,7 @@ class CreateRecipientsWorker
       message.create_recipients(recipient_params)
       message.worker.send(:perform_async, {:message_id => message.id}.merge!(options['send_options']))
     elsif message
-      message.complete!
+      message.check_complete!
     end
   ensure
     Rails.cache.delete(self.class.job_key(message.id)) if message

@@ -10,7 +10,7 @@ class LoopbackMessageWorker
         logger.debug("Sending #{@message.class.name} to #{recipient.to_s}")
         recipient.sent!(:ack => ack)
       end
-      @message.complete!
+      @message.check_complete!
     else
       logger.warn("Unable to find message: #{options}")
     end
