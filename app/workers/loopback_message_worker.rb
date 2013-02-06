@@ -8,7 +8,7 @@ class LoopbackMessageWorker
       @message.process_blacklist!
       @message.sendable_recipients.find_each do |recipient|
         logger.debug("Sending #{@message.class.name} to #{recipient.to_s}")
-        recipient.sent!(:ack => ack)
+        recipient.sent!(ack)
       end
       @message.check_complete!
     else
