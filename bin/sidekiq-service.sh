@@ -96,7 +96,7 @@ start () {
     
     cd "${app_path}" || exit 5
 
-    umask 0007;
+    umask 0003;
     su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S \"${app}\" -P \"${pid_file}\" >> ${log_file} 2>&1 &"
 
     i=60
