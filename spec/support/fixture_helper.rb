@@ -26,7 +26,10 @@ module FixtureHelper
   end
 
   def create_account(attrs={})
-    Account.create!({:name => "ACME"}.merge(attrs))
+    Account.new({:name => "ACME"}.merge(attrs)).tap do |a|
+      a.build_from_address({from_email: 'hey@dude.test'})
+      a.save!
+    end
   end
 end
 RSpec.configure do |config|

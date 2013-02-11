@@ -5,7 +5,7 @@ describe EmailRecipient do
     v = create_email_vendor
     m = EmailMessage.new(:body => 'short body', :subject => 'fuuu')
     m.stubs(:vendor).returns(v)
-    a = v.accounts.create(:name => 'account', :email_vendor => v)
+    a = create_account(:email_vendor => v, :name => 'account', :email_vendor => v)
     u = User.create(:email => 'admin@example.com', :password => 'retek01!')
     u.account = a
     m.account = a
