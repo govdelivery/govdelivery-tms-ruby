@@ -4,9 +4,11 @@ module Message
   extend ActiveSupport::Concern
 
   module Status
-    NEW = 'new'
-    SENDING = 'sending'
-    COMPLETED = 'completed'
+    unless defined?(NEW)
+      NEW = 'new'
+      SENDING = 'sending'
+      COMPLETED = 'completed'
+    end
   end
 
   included do

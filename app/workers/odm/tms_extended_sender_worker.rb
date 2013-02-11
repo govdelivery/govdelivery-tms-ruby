@@ -2,6 +2,7 @@ require 'base'
 
 module Odm
   class TmsExtendedSenderWorker < Odm::TmsExtendedWorker
+  sidekiq_options retry: false
 
     def perform(options)
       raise NotImplementedError.new("#{self.class.name} requires JRuby") unless self.class.jruby?
