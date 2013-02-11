@@ -32,6 +32,11 @@ describe EmailRecipient do
         subject.completed_at.should_not be_nil
         subject.status.should eq(RecipientStatus::SENT)
       end
+      it 'should save clicks' do
+        subject.email_recipient_clicks.count.should == 0
+        subject.clicked!("http://foo.bar.com", DateTime.now)
+        subject.email_recipient_clicks.count.should == 1
+      end
     end
   end
 end
