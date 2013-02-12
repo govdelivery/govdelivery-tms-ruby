@@ -6,6 +6,7 @@ class EmailRecipient < ActiveRecord::Base
   validates :email, :presence => true, length: {maximum: 256}
   
   has_many :email_recipient_clicks
+  has_many :email_recipient_opens
 
   def to_odm
     "#{self.email}::#{self.id}"
@@ -27,6 +28,17 @@ class EmailRecipient < ActiveRecord::Base
       erc.email_message = message
       erc.email = email
       erc.save!
+    end
+  end
+
+  # Record an open on this email / recipient combination
+  def opened!(ip, date)
+    email_recipient_opens.build.tap do |ero|
+      ero.opened_at = date
+      ero.event_ip = ip
+      ero.email_message = message
+      ero.email = email
+      ero.save!
     end
   end
 end

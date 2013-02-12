@@ -23,6 +23,23 @@ describe RecipientsController do
     SmsMessage.any_instance.stubs(:id).returns(1)
   end
 
+  [:opened, :clicked].each do |type|
+    context "##{type}" do
+      it "should work with recipients who #{type}" do
+        EmailMessage.any_instance.stubs(:id).returns(1)
+        User.any_instance.stubs(:account_email_messages).returns(stub(:find => email_message))
+        stub_pagination(email_recipients, 1, 5)
+        EmailMessage.any_instance.expects(:"recipients_who_#{type}").returns(stub(:page => email_recipients))
+        get type, :email_id => 1, :format => :json
+        response.response_code.should == 200
+        assigns(:page).should eq(1)
+        assigns(:content_attributes).should match_array([:email])
+        response.headers['Link'].should =~ /next/
+        response.headers['Link'].should =~ /last/ 
+      end
+    end
+  end
+
   context '#index' do
     it 'should work with sms recipients' do
       stub_pagination(recipients, 1, 5)
@@ -56,6 +73,7 @@ describe RecipientsController do
       response.headers['Link'].should =~ /next/
       response.headers['Link'].should =~ /last/
     end
+
   end
 
   context '#page' do

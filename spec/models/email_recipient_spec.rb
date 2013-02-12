@@ -37,6 +37,11 @@ describe EmailRecipient do
         subject.clicked!("http://foo.bar.com", DateTime.now)
         subject.email_recipient_clicks.count.should == 1
       end
+      it 'should save opens' do
+        subject.email_recipient_opens.count.should == 0
+        subject.opened!("1.1.1.1", DateTime.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
+        subject.email_recipient_opens.count.should == 1
+      end
     end
   end
 end

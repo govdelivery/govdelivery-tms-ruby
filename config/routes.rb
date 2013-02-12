@@ -28,6 +28,10 @@ Xact::Application.routes.draw do
         pageable
         resources(:recipients, :only => [:index, :show]) do
           pageable
+          collection do 
+            get :clicked
+            get :opened
+          end
         end
       end
     end

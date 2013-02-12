@@ -77,7 +77,9 @@ describe 'messages/show.rabl' do
                       with_attributes(:from_name, :subject, :body, :status).
                       with_timestamps(:created_at).
                       with_links('self' => email_path(email_message),
-                                 'recipients' => email_recipients_path(email_message))
+                                 'recipients' => email_recipients_path(email_message),
+                                 'opened' => opened_email_recipients_path(email_message),
+                                 'clicked' => clicked_email_recipients_path(email_message))
   end
 
 

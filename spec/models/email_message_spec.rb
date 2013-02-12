@@ -28,6 +28,19 @@ describe EmailMessage do
         it { email.ack.should eq('dummy_id') }
       end
 
+      [:opened, :clicked].each do |type|
+        context "with recips who #{type}" do
+          before do
+            email.create_recipients([:email => 'tyler@dudes.com', :email => 'ben@dudees.com'])
+            
+            # one dude twice, the other not at all
+            recip = email.recipients.reload.first
+            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
+            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
+          end
+          it { email.send(:"recipients_who_#{type}").count.should == 1 }
+        end
+      end
     end
   end
 

@@ -3,7 +3,7 @@ class RecipientsController < ApplicationController
   before_filter :find_type
   before_filter :find_message
   before_filter :verify_no_create_in_progress, :only => :index
-  before_filter :set_page, :only => :index
+  before_filter :set_page, :only => [:index, :clicked, :opened]
 
   def index
     @recipients = @message.recipients.page(@page)
@@ -14,7 +14,21 @@ class RecipientsController < ApplicationController
     @recipient = @message.recipients.find(params[:id])
   end
 
+  def clicked
+    render_recipient_subset(:clicked)
+  end
+
+  def opened
+    render_recipient_subset(:opened)
+  end
+
   protected
+
+  def render_recipient_subset(type)
+    @recipients = @message.send(:"recipients_who_#{type}").page(@page)
+    set_link_header(@recipients)
+    respond_with(@recipients)
+  end
 
   def find_type
     @message_type = params.has_key?(:sms_message_id) ? "sms" : "voice"

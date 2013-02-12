@@ -11,7 +11,39 @@ describe View::MessageLinks do
     end
   end
 
-  describe '#_links' do
+  describe '#_links in email context' do
+    let(:context) {
+      context = mock('Context')
+      context.stubs(:controller_name).returns('email_messages')
+      context
+    }
+    let(:message) {
+      m = mock('EmailMessage')
+      m.stubs(:id => 1)
+      m
+    }
+    subject { View::MessageLinks.new(message, context) }
+    it "should show email-specific links" do
+      opts = {:only_path => true, :format => nil}
+      message.stubs(:persisted?).returns(true)
+      
+      # recipients
+      context.stubs(:url_for).with(opts.merge(:controller => 'recipients', :email_id => 1)).returns('recipients')
+
+      # self
+      context.stubs(:url_for).with(opts.merge(:controller => 'email_messages', :action => 'show', :id => 1)).returns('self')
+
+      # opened
+      context.expects(:url_for).with(opts.merge(:controller => 'recipients', :action => 'opened', :email_id => 1)).returns('opened')
+
+      # clicked
+      context.expects(:url_for).with(opts.merge(:controller => 'recipients', :action => 'clicked', :email_id => 1)).returns('clicked')
+
+      subject._links.should == {:self => 'self', :recipients => 'recipients', :clicked => 'clicked', :opened => 'opened'}
+    end
+  end
+
+  describe '#_links in sms context' do
     let(:context) {
       context = mock('Context')
       context.stubs(:controller_name).returns('sms_messages')

@@ -23,7 +23,7 @@ module FeatureChecker
     #
     def feature(feat)
       before_filter :check_if_feature_is_enabled if features.length == 0
-      features << feat
+      features << feat unless features.include?(feat)
     end
     
     def features
