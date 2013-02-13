@@ -70,8 +70,9 @@ module Xact
 
     config.redis_url = 'redis://localhost:6379'
 
-    # Kick off ODM stats job every five minutes
-    config.odm_stats_crontab = "0 */5 * * * ?"
+    # ODM stats jobs
+    config.odm_stats_crontab  = "0 */5 * * * ?"
+    config.odm_clicks_crontab = "0 */5 * * * ?"
     config.odm_stats_batch_size = 500
 
     # Messages sent via Twilio that we haven't heard back about should be finalized

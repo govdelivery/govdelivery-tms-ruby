@@ -24,7 +24,7 @@ module Service
           ->{Fetcher.new(:delivery, 'creds', service, 1000).fetch('a sequence')}.should raise_error
         end
       end
-      [:open, :delivery].each do |type|
+      [:open, :delivery, :click].each do |type|
         describe "with a service that returns #{type}_activity_batch" do
           let(:activity_batch) {
             OpenStruct.new(type => ['event'] * 5, :next_sequence => 'the next one')

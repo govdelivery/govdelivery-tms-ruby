@@ -7,6 +7,12 @@ if $servlet_context
       end
     end
 
+    class ScheduleTmsClickStats < TrinidadScheduler.Cron Rails.configuration.odm_clicks_crontab
+      def run
+        _logger.info("Running #{self.class.name} at #{Time.zone.now}")
+        Odm::TmsExtendedClicksWorker.perform_async
+      end
+    end
 
     class ScheduleTwilioSmsPoll < TrinidadScheduler.Cron Rails.configuration.twilio_sms_poll_crontab
       def run

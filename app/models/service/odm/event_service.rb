@@ -24,6 +24,10 @@ module Service
         event_iterator(vendor, :open)
       end
 
+      def self.click_events(vendor)
+        event_iterator(vendor, :click)
+      end
+      
       private
 
       def self.credentials(vendor)
