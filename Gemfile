@@ -21,6 +21,8 @@ gem 'faraday'
 gem 'faraday_middleware'
 gem 'dcm_client'
 gem 'enumify'
+gem 'attr_encrypted'
+gem 'activerecord-oracle_enhanced-adapter'
 
 platforms :ruby do
   gem 'ruby-oci8'
@@ -30,15 +32,6 @@ platforms :jruby do
   gem 'jbundler'
   gem 'trinidad', :require => nil
   gem 'trinidad_scheduler_extension'
-end
-
-gem 'activerecord-oracle_enhanced-adapter'
-gem 'attr_encrypted'
-
-group :test do
-  gem 'mocha', :require => false
-  gem 'pry'
-  gem 'tms_client', :git => 'https://github.com/govdelivery/tms_client.git'
 end
 
 group :development, :test do
@@ -53,4 +46,9 @@ end
 
 group :development do
   gem 'rails-erd'
+end
+
+group :test do
+  gem 'mocha', :require => false
+  gem 'tms_client', :git => 'https://github.com/govdelivery/tms_client.git'
 end
