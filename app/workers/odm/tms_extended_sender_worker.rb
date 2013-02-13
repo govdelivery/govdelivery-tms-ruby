@@ -20,6 +20,8 @@ module Odm
       msg.email_column = 'email'
       msg.recipient_id_column = 'recipient_id'
       msg.record_designator='email::recipient_id'
+      msg.track_clicks = true
+      msg.track_opens = true
       message.recipients.find_each { |recipient| msg.to << recipient.to_odm }
       ack = odm.send_message(credentials(message.vendor), msg)
       message.sending!(ack)
