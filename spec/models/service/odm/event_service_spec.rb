@@ -4,7 +4,7 @@ require File.expand_path('../../../../little_spec_helper', __FILE__)
 module Service
   module Odm
     describe EventService do
-      [:open, :delivery].each do |type|
+      [:open, :delivery, :click].each do |type|
         it "gives me #{type} events" do
           fetcher = 'YO!'
           sequence = 'STUFF!!!'
