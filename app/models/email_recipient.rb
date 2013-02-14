@@ -2,7 +2,7 @@ class EmailRecipient < ActiveRecord::Base
   include Recipient
 
   attr_accessible :email
-  validates_presence_of :message
+  validates_presence_of :message, :unless => :skip_message_validation
   validates :email, :presence => true, length: {maximum: 256}
   
   has_many :email_recipient_clicks

@@ -33,8 +33,12 @@ module Message
   end
 
   def create_recipients(recipient_params=[])
-    recipients << recipient_params.map do |r|
-      recipients.create(r.merge(:vendor => self.vendor))
+    recipient_params.each_with_index do |r, i|
+      recipient = recipients.build(r.merge(:vendor => self.vendor))
+      recipient.skip_message_validation=true
+      recipient.save
+      recipients << recipient
+      recipients.reset if i % 10 == 0
     end
   end
 

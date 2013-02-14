@@ -9,6 +9,8 @@ module Recipient
   extend ActiveSupport::Concern
 
   included do
+    attr_accessor :skip_message_validation
+    
     belongs_to :message, :class_name => self.name.gsub('Recipient', 'Message')
     belongs_to :vendor, :class_name => self.name.gsub('Recipient', 'Vendor')
 
