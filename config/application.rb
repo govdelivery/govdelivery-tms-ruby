@@ -73,6 +73,7 @@ module Xact
     # ODM stats jobs
     config.odm_stats_crontab  = "0 */5 * * * ?"
     config.odm_clicks_crontab = "0 */5 * * * ?"
+    config.odm_opens_crontab = "0 */5 * * * ?"
     config.odm_stats_batch_size = 500
 
     # Messages sent via Twilio that we haven't heard back about should be finalized
