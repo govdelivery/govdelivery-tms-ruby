@@ -23,11 +23,11 @@ module View
     private
 
     def self_link
-      opts = {:only_path => true, :format => nil}
+      opts = {:only_path => true, :format => nil, :controller => context.controller_name}
       if message.persisted?
-        context.url_for(opts.merge(:controller=>context.controller_name, :action=>'show', :id=>message.id))
+        context.url_for(opts.merge(:action=>'show', :id=>message.id))
       else
-        context.url_for(opts.merge(:controller=>context.controller_name))
+        context.url_for(opts)
       end
     end
 

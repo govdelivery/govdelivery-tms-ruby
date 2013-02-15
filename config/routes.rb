@@ -32,6 +32,9 @@ Xact::Application.routes.draw do
             get :clicked
             get :opened
           end
+          resources(:opens, only: [:index, :show]) do
+            pageable
+          end
         end
       end
     end

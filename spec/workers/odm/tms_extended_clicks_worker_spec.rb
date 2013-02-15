@@ -13,7 +13,7 @@ if defined?(JRUBY_VERSION)
     end
 
     it 'should process all email vendors' do
-      xmlgregorian = stub(:to_gregorian_calendar => stub(:time_in_millis => 1359784800))
+      xmlgregorian = stub(:to_gregorian_calendar => stub(:time_in_millis => 1359784800000))
       events = [stub('click events', :recipient_id => '1', :address => 'foo@bar.com', :message_id => 'slkdlfk', :at => xmlgregorian, :url => "clickonme.com")]
       recipient = mock
 
