@@ -49,12 +49,11 @@ describe View::EmailRecipientEvent do
         email_id:   event.email_message_id,
         id:         event.email_recipient_id
       }
-      context.expects(:url_for).with(self_opts).at_least_once.returns('the url!!!!!!!!!!')
-      context.expects(:url_for).with(recipient_opts).at_least_once.returns('the url!!!!!!!!!!')
-      View::EmailRecipientEvent.new(event, context)._links[:self].should == 'the url!!!!!!!!!!'
+      context.expects(:url_for).with(self_opts).at_least_once.returns('the self url!!!!!!!!!!')
+      context.expects(:url_for).with(recipient_opts).at_least_once.returns('the recipient url!!!!!!!!!!')
+      event_view = View::EmailRecipientEvent.new(event, context)
+      event_view._links[:self].should == 'the self url!!!!!!!!!!'
+      event_view._links[:recipient].should == 'the recipient url!!!!!!!!!!'
     end
   end
-
 end
-
-
