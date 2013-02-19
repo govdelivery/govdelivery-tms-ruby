@@ -11,9 +11,9 @@ module View
     end
 
     def _links
-      links = {self: self_link}.merge(message_link)
+      links = {:self => self_link, message_name => message_link}
       if recipient.class.name.downcase.include?('email')
-        links.merge(opens: context.url_for(action: 'index', controller: 'opens', only_path: true, format: nil, email_id: recipient.message_id, recipient_id: recipient.id))
+        links.merge(:opens => opens_link)
       else
         links
       end
@@ -33,7 +33,7 @@ module View
     end
 
     def message_link
-      return nil unless recipient.id
+      return {} unless recipient.id
       opts = {
         only_path: true,
         format: nil,
@@ -41,7 +41,20 @@ module View
         action: 'show',
         id: recipient.message_id
       }
-      {:"#{recipient.message.class.name.underscore}" => context.url_for(opts)}
+      context.url_for(opts)
+    end
+
+    def message_name
+      :"#{recipient.message.class.name.underscore}"
+    end
+
+    def opens_link
+      context.url_for(action: 'index',
+                      controller: 'opens',
+                      only_path: true,
+                      format: nil,
+                      email_id: recipient.message_id,
+                      recipient_id: recipient.id)
     end
   end
 end

@@ -53,7 +53,7 @@ describe View::EmailRecipientEvent do
       context.expects(:url_for).with(recipient_opts).at_least_once.returns('the recipient url!!!!!!!!!!')
       event_view = View::EmailRecipientEvent.new(event, context)
       event_view._links[:self].should == 'the self url!!!!!!!!!!'
-      event_view._links[:recipient].should == 'the recipient url!!!!!!!!!!'
+      event_view._links[:email_recipient].should == 'the recipient url!!!!!!!!!!'
     end
   end
 end

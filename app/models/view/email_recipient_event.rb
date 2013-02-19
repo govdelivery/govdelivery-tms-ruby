@@ -12,7 +12,7 @@ module View
 
     def _links
       {self:      self_link,
-       recipient: recipient_link}
+       email_recipient: recipient_link}
     end
 
     def event_at
