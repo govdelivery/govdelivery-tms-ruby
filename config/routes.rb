@@ -22,19 +22,27 @@ Xact::Application.routes.draw do
   end
 
   scope :messages, :path => 'messages' do
-
-    {:email => :email_messages, :sms => :sms_messages, :voice => :voice_messages}.each do |_resource, _controller|
+    resources(:email, :only => [:index, :new, :create, :show], :controller => :email_messages) do
+      pageable
+      resources(:recipients, :only => [:index, :show]) do
+        pageable
+        collection do 
+          get :clicked
+          get :opened
+        end
+        resources(:opens, only: [:index, :show]) do
+          pageable
+        end
+        resources(:clicks, only: [:index, :show]) do
+          pageable
+        end
+      end
+    end
+    {:sms => :sms_messages, :voice => :voice_messages}.each do |_resource, _controller|
       resources(_resource, :only => [:index, :new, :create, :show], :controller => _controller) do
         pageable
         resources(:recipients, :only => [:index, :show]) do
           pageable
-          collection do 
-            get :clicked
-            get :opened
-          end
-          resources(:opens, only: [:index, :show]) do
-            pageable
-          end
         end
       end
     end

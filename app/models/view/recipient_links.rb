@@ -13,7 +13,7 @@ module View
     def _links
       links = {:self => self_link, message_name => message_link}
       if recipient.class.name.downcase.include?('email')
-        links.merge(:opens => opens_link)
+        links.merge(:opens => opens_link, :clicks => clicks_link)
       else
         links
       end
@@ -49,8 +49,16 @@ module View
     end
 
     def opens_link
+      stats_link('opens')
+    end
+
+    def clicks_link
+      stats_link('clicks')
+    end
+
+    def stats_link(stat)
       context.url_for(action: 'index',
-                      controller: 'opens',
+                      controller: stat,
                       only_path: true,
                       format: nil,
                       email_id: recipient.message_id,
