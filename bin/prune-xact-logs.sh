@@ -47,6 +47,14 @@ PATTERNS[2]=".*/bundler\.log\.20[0-9][0-9][01][0-9][0123][0-9]"
 LOGDIRS[3]="/opt/xact/log"
 PATTERNS[3]=".*/xact_[a-z]+_db-migrate-[-a-z_0-9]+_20[0-9][0-9][01][0-9][0123][0-9]-[0-9]{6}\.log"
 
+## Trinidad Logs
+LOGDIRS[4]="/opt/xact/log"
+PATTERNS[4]=".*/trinidad${ROTATE_LOG_DATE_PATTERN}\.log"
+rotatelog "${LOGDIRS[1]}/trinidad.log"
+
+## ENV Logs
+LOGDIRS[5]="/opt/xact/log"
+PATTERNS[5]=".*/(poc|qc|integration|stage|production)20[0-9][0-9]-[01][0-9]-[0123][0-9]\.log"
 
 
 
