@@ -34,8 +34,8 @@ require 'spec_helper'
         get 'index', email_id: email_message.id, recipient_id: email_recipient.id
         response.response_code.should == 200
         assigns(:page).should == 1
-        assigns(:"#{stat}s").map(&:id).sort.should == stats.map(&:id).sort
-        assigns(:"#{stat}s").should match_array stats
+        assigns(:events).map(&:id).sort.should == stats.map(&:id).sort
+        assigns(:events).should match_array stats
       end
     end
 
@@ -43,7 +43,7 @@ require 'spec_helper'
       it "returns http success" do
         get 'show', email_id: email_message.id, recipient_id: email_recipient.id, id: stats.first.id
         response.response_code.should == 200
-        assigns(stat).should_not be_nil
+        assigns(:event).should_not be_nil
       end
     end
 
