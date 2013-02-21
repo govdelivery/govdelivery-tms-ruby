@@ -17,7 +17,7 @@ describe DcmSubscribeWorker do
   it 'passes options to the subscribe command' do
     subscribe_command.expects(:call).with(phone_number, account_code, topic_codes, subscribe_args)
 
-    subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
+    subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => "TOPIC_CODE, TOPIC_2", :sms_tokens => subscribe_args})
   end
 
   it 'ignores UnprocessableEntity errors' do
@@ -25,7 +25,7 @@ describe DcmSubscribeWorker do
       .with(phone_number, account_code, topic_codes, subscribe_args) 
       .raises(DCMClient::Error::UnprocessableEntity.new("foo"))
 
-    subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
+    subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => "TOPIC_CODE, TOPIC_2", :sms_tokens => subscribe_args})
   end 
 end
 
