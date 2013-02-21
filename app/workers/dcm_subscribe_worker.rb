@@ -18,8 +18,6 @@ class DcmSubscribeWorker
 
     client = DCMClient::Client.new(Xact::Application.config.dcm)
 
-    options.dcm_topic_codes = options.dcm_topic_codes.split(',').map(&:strip)
-
     DcmSubscribeCommand.new(client).call(options.from, options.dcm_account_code, options.dcm_topic_codes, options.sms_tokens)
 
   # DO NOT retry if the response is an Unprocessable Entity
