@@ -3,7 +3,6 @@ class KeywordCommandsController < ApplicationController
 
   before_filter :find_user, :find_keyword
   before_filter :find_command, :only => [:show, :update, :destroy]
-  before_filter :parse_command_parameters, :only => [:create, :update]
 
   def index
     @commands = @keyword.commands
@@ -36,9 +35,5 @@ class KeywordCommandsController < ApplicationController
     @command = @keyword.commands.find(params[:id])
   end
 
-  def parse_command_parameters
-    if params[:command] && params[:command][:params]
-      params[:command][:params] = CommandParameters.new(params[:command][:params])
-    end
-  end
+
 end
