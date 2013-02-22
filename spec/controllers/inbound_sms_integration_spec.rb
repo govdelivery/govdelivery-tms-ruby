@@ -67,7 +67,7 @@ describe TwilioRequestsController do
         .to change{vendor.inbound_messages.count}.by 1
     end
     it 'executes a command' do
-      command = vendor.keywords.first.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_subscribe)
+      vendor.keywords.first.add_command!(:params => CommandParameters.new(dcm_account_codes: ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)
       Command.any_instance.expects(:call)
       post :create, params
     end

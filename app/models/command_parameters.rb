@@ -32,6 +32,7 @@ class CommandParameters
     :dcm_topic_codes    # array of topic codes (dcm_account_code must be set)
   ]
   attr_accessor *PARAMS
+  attr_accessor :errors
 
   # This is not persisted anywhere.  The getter/setter is used for bi-directional
   # encryption. If this property were in PARAMS, it would be serialized into the 
@@ -57,5 +58,5 @@ class CommandParameters
   # are to be included in serialization.  
   def to_yaml_properties
     to_hash.keys.map{|p| "@#{p}"}
-  end  
+  end
 end

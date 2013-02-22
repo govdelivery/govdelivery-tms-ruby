@@ -6,7 +6,7 @@ class Command < ActiveRecord::Base
   attr_accessible :command_type, :name, :params
   validates_presence_of :account, :command_type
   validates_length_of :name, :maximum => 255, :allow_nil => true
-  validates_length_of :params, :maximum => 4000, :allow_nil => true
+  validates :params, length: {maximum: 4000}, :allow_nil => true
   before_save :set_name
   validate :check_command_type
 
@@ -40,6 +40,11 @@ class Command < ActiveRecord::Base
   end
 
   def check_command_type
-    errors.add(:command_type, 'does not exist') unless CommandType[self.command_type]
+    if !CommandType[self.command_type]
+      errors.add(:command_type, 'is invalid')
+    elsif (cmd_errors = CommandType[self.command_type].validate_params(params)).any?
+      errors.add(:params, "has invalid #{self.command_type} parameters: #{cmd_errors.join(', ')}")
+    end
+    errors.empty?
   end
 end
