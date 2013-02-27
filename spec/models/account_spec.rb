@@ -7,7 +7,7 @@ describe Account do
 
   context 'with SMS vendor' do
     subject {
-      Account.new(:name => 'name', :sms_vendor => sms_vendor)
+      Account.new(:name => 'name', :sms_vendor => sms_vendor, :dcm_account_codes=> ['ACCOUNT_CODE'])
     }
 
     it { should be_valid }

@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe TwilioRequestsController do
   let(:vendor) { create_sms_vendor(:help_text => 'Help me!') }
+  let(:account) { create_account(:sms_vendor => vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
 
   describe '#create with "STOP"' do
     let(:params) { twilio_request_params('STOP') }
@@ -22,8 +23,7 @@ describe TwilioRequestsController do
         .to change{vendor.inbound_messages.count}.by 1
     end
     it 'executes a command' do
-      acct = vendor.accounts.create!(name: 'aname')
-      command = acct.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)
+      account.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)
       Command.any_instance.expects(:call)
       post :create, params
     end
@@ -52,7 +52,7 @@ describe TwilioRequestsController do
     let(:params) { twilio_request_params('SUBSCRIBE') }
     before do
       vendor.create_keyword!(:name => 'subscribe',
-                             :account => create_account(:sms_vendor => vendor))
+                             :account => account)
     end
     it 'should respond with created' do
       post :create, params
@@ -63,8 +63,7 @@ describe TwilioRequestsController do
       assigns(:response).response_text.should be_nil
     end
     it 'should persist an inbound message' do
-      expect{post :create, params}
-        .to change{vendor.inbound_messages.count}.by 1
+      expect{post :create, params}.to change{vendor.inbound_messages.count}.by 1
     end
     it 'executes a command' do
       vendor.keywords.first.add_command!(:params => CommandParameters.new(dcm_account_codes: ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)

@@ -1,5 +1,7 @@
+require 'set'
+
 class Account < ActiveRecord::Base
-  attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :from_address
+  attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :from_address, :dcm_account_codes
 
   has_many :users
   belongs_to :voice_vendor
@@ -12,6 +14,9 @@ class Account < ActiveRecord::Base
   has_many :keywords
   belongs_to :stop_handler, :class_name => 'EventHandler'
 
+  before_validation :normalize_dcm_account_codes
+
+  serialize :dcm_account_codes, Set
   delegate :from_email, :reply_to_email, :bounce_email, :to => :from_address
 
   before_create :create_stop_handler!
@@ -33,6 +38,15 @@ class Account < ActiveRecord::Base
 
   def stop(params={})
     stop_handler.commands.each { |a| a.call(params) } if stop_handler
+  end
+
+  protected
+
+  def normalize_dcm_account_codes
+    if dcm_account_codes
+      self.dcm_account_codes = dcm_account_codes.to_set unless dcm_account_codes.is_a?(Set)
+      dcm_account_codes.collect!(&:upcase)
+    end
   end
 
 end

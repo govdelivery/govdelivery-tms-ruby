@@ -1,9 +1,13 @@
 require 'spec_helper'
 
 describe Command do
+  let(:vendor){create_sms_vendor}
+  let(:account){create_account(sms_vendor: vendor, :dcm_account_codes=>['foo'])}
+  let(:dcm_subscribe_command) {
+    Command.new(:name => "FOO", :command_type => :dcm_subscribe, :params => CommandParameters.new(:dcm_account_code => ["foo"], :dcm_topic_codes=>['XXX'])).tap{|c| c.account = account }
+  }
+
   subject {
-    vendor = SmsVendor.create!(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker')
-    account = create_account(sms_vendor: vendor)
     Command.new(:name => "FOO", :command_type => :dcm_unsubscribe, :params => CommandParameters.new(:dcm_account_codes => ["foo"])).tap{|c| c.account = account }
   }
 
@@ -24,7 +28,7 @@ describe Command do
   end
   
   context "when params is too long" do
-    before { subject.params = {'dcm_account_code' => 'A'*4001 } }
+    before { subject.params = {'dcm_account_codes' => ['A'*4001] } }
     specify { subject.should be_invalid }
   end
 
@@ -46,6 +50,27 @@ describe Command do
     it 'should show a proper error' do
       subject.valid?.should be_false
       subject.errors['params'].should eq(["has invalid #{subject.command_type} parameters: #{CommandType[subject.command_type].all_fields.map(&:to_s).join(', ')}"])
+    end
+  end
+
+  context 'when dcm_unsubscribe command param has invalid account codes' do
+    before do
+      subject.command_type = :dcm_unsubscribe
+      subject.params = {'dcm_account_codes' => ['FooB']}
+    end
+    it 'should show a proper error' do
+      subject.valid?.should be_false
+      subject.errors['params'].should eq(["has invalid #{subject.command_type} parameters: #{CommandType[subject.command_type].all_fields.map(&:to_s).join(', ')}"])
+    end
+  end
+
+  context 'when dcm_subscribe command param has invalid account codes' do
+    before do
+      dcm_subscribe_command.params = {'dcm_account_code' => 'FooB', 'dcm_topic_codes'=>['XXX']}
+    end
+    it 'should show a proper error' do
+      dcm_subscribe_command.valid?.should be_false
+      dcm_subscribe_command.errors['params'].should eq(["has invalid #{dcm_subscribe_command.command_type} parameters: #{CommandType[dcm_subscribe_command.command_type].fields.map(&:to_s).join(', ')}"])
     end
   end
 

@@ -1,3 +1,5 @@
+require 'set'
+
 class CommandType#= Struct.new(:name, :fields, :callable) do
   attr_accessor :name, :fields, :callable, :array_fields
 
@@ -28,11 +30,16 @@ class CommandType#= Struct.new(:name, :fields, :callable) do
     end
   end
 
-  def validate_params(command_params)
+  def validate_params(command_params, account)
     command_params = CommandParameters.new(command_params) unless command_params.is_a?(CommandParameters)
     invalid_fields = fields.select{|f| command_params.send(f).blank?}
     invalid_fields.concat(array_fields.select{|f| !command_params.send(f).is_a?(Array)})
-    invalid_fields
+    if fields.include?(:dcm_account_code) && !account.dcm_account_codes.include?(command_params.dcm_account_code.try(:upcase))
+      invalid_fields << :dcm_account_code
+    elsif array_fields.include?(:dcm_account_codes) && !command_params.dcm_account_codes.map(&:upcase).to_set.subset?(account.dcm_account_codes)
+      invalid_fields << :dcm_account_codes
+    end
+    invalid_fields.uniq
   end
 end
 

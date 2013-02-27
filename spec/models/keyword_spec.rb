@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Keyword do
   subject {
     vendor = create_sms_vendor
-    account = vendor.accounts.create!(:name => 'name')
+    account = vendor.accounts.create!(:name => 'name', :dcm_account_codes=>["ACME","VANDELAY"])
     keyword = Keyword.new(:name =>'HELPME')
     keyword.account= account
     keyword.vendor = vendor
@@ -71,8 +71,7 @@ describe Keyword do
 
   describe '#add_command!' do
     it 'creates a command' do
-      expect{subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)}
-        .to change{Command.count}.by 1
+      expect{subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)}.to change{Command.count}.by 1
     end
   end
 
