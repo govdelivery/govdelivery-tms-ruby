@@ -55,8 +55,9 @@ if Rails.env.development?
                                          from_address: from_address)
         end
 
-
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
+  omg.dcm_account_codes = Set.new(['ACME', 'VANDELAY'])
+  omg.save!
   omg.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACME', 'VANDELAY']), :command_type => :dcm_unsubscribe)
 
   # SERVICES FOO => POST to http://localhost/forward
