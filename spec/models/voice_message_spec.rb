@@ -22,6 +22,13 @@ describe VoiceMessage do
       message.worker.should eq(TwilioVoiceWorker)
     end
 
+    context "being marked as sending" do
+      before do 
+        message.create_recipients([{:phone => "4054343424"}])
+        message.sending!
+      end
+      specify { message.recipients.first.sent_at.should_not be_nil }
+    end
     context "with invalid recipient" do
       before { message.create_recipients([{:phone => nil}]) }
       specify { message.recipients.first.should_not be_valid }

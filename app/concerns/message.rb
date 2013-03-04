@@ -80,6 +80,10 @@ module Message
     self.account ||= self.user.account if user
   end
 
+  def recipients_sending!
+    self.recipients.update_all(status: RecipientStatus::SENDING, sent_at: Time.now)
+  end
+
   private
 
   def recipient_state_counts

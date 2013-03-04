@@ -29,9 +29,4 @@ class EmailMessage < ActiveRecord::Base
   def recipients_with(type)
     recipients.where(["email_recipients.id in (select distinct(email_recipient_id) from email_recipient_#{type} where email_message_id = ?)", self.id])
   end
-
-  def recipients_sending!
-    self.recipients.update_all(status: RecipientStatus::SENDING, sent_at: Time.now)
-  end
-
 end
