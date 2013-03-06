@@ -49,34 +49,13 @@ describe Command do
     end
     it 'should show a proper error' do
       subject.valid?.should be_false
-      subject.errors['params'].should eq(["has invalid #{subject.command_type} parameters: #{CommandType[subject.command_type].all_fields.map(&:to_s).join(', ')}"])
-    end
-  end
-
-  context 'when dcm_unsubscribe command param has invalid account codes' do
-    before do
-      subject.command_type = :dcm_unsubscribe
-      subject.params = {'dcm_account_codes' => ['FooB']}
-    end
-    it 'should show a proper error' do
-      subject.valid?.should be_false
-      subject.errors['params'].should eq(["has invalid #{subject.command_type} parameters: #{CommandType[subject.command_type].all_fields.map(&:to_s).join(', ')}"])
-    end
-  end
-
-  context 'when dcm_subscribe command param has invalid account codes' do
-    before do
-      dcm_subscribe_command.params = {'dcm_account_code' => 'FooB', 'dcm_topic_codes'=>['XXX']}
-    end
-    it 'should show a proper error' do
-      dcm_subscribe_command.valid?.should be_false
-      dcm_subscribe_command.errors['params'].should eq(["has invalid #{dcm_subscribe_command.command_type} parameters: #{CommandType[dcm_subscribe_command.command_type].fields.map(&:to_s).join(', ')}"])
+      subject.errors['params'].length.should be > 0 # this is tested in further detail in command parameters spec.
     end
   end
 
   context "call" do
     before do
-      # Command should combine it's own (persisted) params with the incoming params, convert them to a 
+      # Command should combine its own (persisted) params with the incoming params, convert them to a 
       # hash, and pass them to the worker invocation
       expected = CommandParameters.new(:from => "+122222", :dcm_account_codes => ["foo"]).to_hash
       DcmUnsubscribeWorker.expects(:perform_async).with(expected)

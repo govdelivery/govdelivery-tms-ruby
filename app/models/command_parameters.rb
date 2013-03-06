@@ -12,6 +12,11 @@
 #
 class CommandParameters
   include MassAssignment
+  include ActiveModel::Validations
+
+  validate :validate_fields
+  validate :validate_array_fields
+  validate :validate_dcm_account
 
   # Some attributes in this collection may be persisted in the database as Command#params (marshalled
   # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or 
@@ -32,7 +37,7 @@ class CommandParameters
     :dcm_topic_codes    # array of topic codes (dcm_account_code must be set)
   ]
   attr_accessor *PARAMS
-  attr_accessor :errors
+  attr_accessor :command_type, :account  # These are only required for validation, and are not (or shouldn't be) persisted
 
   # This is not persisted anywhere.  The getter/setter is used for bi-directional
   # encryption. If this property were in PARAMS, it would be serialized into the 
@@ -58,5 +63,28 @@ class CommandParameters
   # are to be included in serialization.  
   def to_yaml_properties
     to_hash.keys.map{|p| "@#{p}"}
+  end
+
+  private
+
+  def validate_fields
+    command_type.fields.each do |f|
+      errors.add(f, :blank) if self.send(f).blank?
+    end
+  end
+
+  def validate_array_fields
+    command_type.array_fields.each do |f|
+      errors.add(f, :blank) if self.send(f).blank?
+      errors.add(f, "must be an array") unless self.send(f).is_a?(Array)
+    end
+  end
+
+  def validate_dcm_account
+    if command_type.fields.include?(:dcm_account_code) && !account.dcm_account_codes.include?(dcm_account_code.try(:upcase))
+      errors.add(:dcm_account_code, "is not a valid code")
+    elsif command_type.array_fields.include?(:dcm_account_codes) && !dcm_account_codes.map(&:upcase).to_set.subset?(account.dcm_account_codes)
+      errors.add(:dcm_account_codes, "contain one or more invalid account codes")
+    end
   end
 end

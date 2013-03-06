@@ -32,17 +32,13 @@ class CommandType#= Struct.new(:name, :fields, :callable) do
 
   def validate_params(command_params, account)
     command_params = CommandParameters.new(command_params) unless command_params.is_a?(CommandParameters)
-    invalid_fields = fields.select{|f| command_params.send(f).blank?}
-    invalid_fields.concat(array_fields.select{|f| !command_params.send(f).is_a?(Array)})
-    if fields.include?(:dcm_account_code) && !account.dcm_account_codes.include?(command_params.dcm_account_code.try(:upcase))
-      invalid_fields << :dcm_account_code
-    elsif array_fields.include?(:dcm_account_codes) && !command_params.dcm_account_codes.map(&:upcase).to_set.subset?(account.dcm_account_codes)
-      invalid_fields << :dcm_account_codes
-    end
-    invalid_fields.uniq
+    command_params.command_type = self
+    command_params.account = account
+    command_params.valid?
+    command_params.errors
   end
 end
 
 CommandType.create(:dcm_unsubscribe, [], [:dcm_account_codes],                       ->(params){ DcmUnsubscribeWorker.perform_async(params.to_hash) })
-CommandType.create(:dcm_subscribe,   [:dcm_account_code], [:dcm_topic_codes],      ->(params){ DcmSubscribeWorker.perform_async(params.to_hash) })
+CommandType.create(:dcm_subscribe,   [:dcm_account_code], [:dcm_topic_codes],        ->(params){ DcmSubscribeWorker.perform_async(params.to_hash) })
 CommandType.create(:forward,         [:http_method, :username, :password, :url], [], ->(params){ ForwardWorker.perform_async(params.to_hash) })

@@ -44,7 +44,7 @@ class Command < ActiveRecord::Base
     if !CommandType[self.command_type]
       errors.add(:command_type, 'is invalid')
     elsif (cmd_errors = CommandType[self.command_type].validate_params(params, self.account)).any?
-      errors.add(:params, "has invalid #{self.command_type} parameters: #{cmd_errors.join(', ')}")
+      errors.add(:params, "has invalid #{self.command_type} parameters: #{cmd_errors.full_messages.join(', ')}")
     end
     errors.empty?
   end

@@ -1,6 +1,4 @@
-require File.expand_path('../../../app/concerns/mass_assignment', __FILE__)
-require File.expand_path('../../../app/models/command_parameters', __FILE__)
-require File.expand_path('../../little_spec_helper', __FILE__)
+require File.expand_path('../../spec_helper', __FILE__)
 
 describe CommandParameters do
   let(:params) do
@@ -9,7 +7,22 @@ describe CommandParameters do
     end
   end
 
+  let(:command_type) do
+    stub(:fields => [:dcm_account_code, :username], :array_fields => [:dcm_topic_codes], :name => :test_command_type)
+  end
+
+  let(:account) do
+    stub(:dcm_account_codes => ["AB"])
+  end
+
   let(:command_parameters) { CommandParameters.new(params)}
+
+  let(:empty_parameters) do
+    c = CommandParameters.new
+    c.command_type = command_type
+    c.account      = account
+    c
+  end
 
   it "should convert to hash correctly" do
     hash = command_parameters.to_hash
@@ -31,4 +44,20 @@ describe CommandParameters do
     # nil stuff should not override existing properties
     command_parameters.sms_body.should eq("sms_body value")
   end
+
+  it "should validate empty parameters" do
+    empty_parameters.should be_invalid
+    empty_parameters.errors[:username].should eq(["can't be blank"])
+    empty_parameters.errors[:dcm_topic_codes].should include("can't be blank")
+    empty_parameters.errors[:dcm_topic_codes].should include("must be an array")
+    empty_parameters.username = :foo
+    empty_parameters.dcm_account_code = "AB"
+    empty_parameters.dcm_topic_codes = [:foo]
+    
+    empty_parameters.valid?
+    puts empty_parameters.errors.full_messages
+    empty_parameters.should be_valid
+
+  end
+
 end
