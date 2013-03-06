@@ -1,8 +1,6 @@
 require 'typhoeus/adapters/faraday'
 module Service
   class ForwardService
-    include MassAssignment
-
     attr_accessor :logger
 
     def post(url, username, password, body)

@@ -55,7 +55,6 @@ describe CommandParameters do
     empty_parameters.dcm_topic_codes = [:foo]
     
     empty_parameters.valid?
-    puts empty_parameters.errors.full_messages
     empty_parameters.should be_valid
 
   end

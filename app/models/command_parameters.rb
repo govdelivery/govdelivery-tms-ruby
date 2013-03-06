@@ -37,12 +37,16 @@ class CommandParameters
     :dcm_topic_codes    # array of topic codes (dcm_account_code must be set)
   ]
   attr_accessor *PARAMS
-  attr_accessor :command_type, :account  # These are only required for validation, and are not (or shouldn't be) persisted
+  attr_accessible *PARAMS
+
+  # These are only required for validation, and are not (or shouldn't be) persisted or mass-assigned
+  attr_accessor :command_type, :account  
 
   # This is not persisted anywhere.  The getter/setter is used for bi-directional
   # encryption. If this property were in PARAMS, it would be serialized into the 
   # database, which is exactly what we don't want. 
   attr_encrypted :password, :encode => true, :key => "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
+  attr_accessible :password
 
   def merge!(params)
     assign!(params.to_hash)
@@ -80,10 +84,18 @@ class CommandParameters
     end
   end
 
+  def valid_account_codes?(account, codes=dcm_account_codes)
+    (codes || []).map(&:upcase).to_set.subset?(account.dcm_account_codes.to_set)
+  end
+
+  def valid_account_code?(account)
+    valid_account_codes?(account, [self.dcm_account_code].compact)
+  end
+
   def validate_dcm_account
-    if command_type.fields.include?(:dcm_account_code) && !account.dcm_account_codes.include?(dcm_account_code.try(:upcase))
+    if command_type.fields.include?(:dcm_account_code) && !valid_account_code?(account)
       errors.add(:dcm_account_code, "is not a valid code")
-    elsif command_type.array_fields.include?(:dcm_account_codes) && !dcm_account_codes.map(&:upcase).to_set.subset?(account.dcm_account_codes)
+    elsif command_type.array_fields.include?(:dcm_account_codes) && !valid_account_codes?(account)
       errors.add(:dcm_account_codes, "contain one or more invalid account codes")
     end
   end

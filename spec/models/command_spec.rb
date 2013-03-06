@@ -42,7 +42,7 @@ describe Command do
     specify { subject.name.to_s.should_not == subject.command_type.to_s }
   end
 
-  context 'when command params are missing' do
+  context 'when command params are invalid' do
     before do
       subject.command_type = :dcm_subscribe
       subject.params = {'dcm_topic_codes' => 'THIS, SHOULD BE AN ARRAY'}
@@ -50,6 +50,16 @@ describe Command do
     it 'should show a proper error' do
       subject.valid?.should be_false
       subject.errors['params'].length.should be > 0 # this is tested in further detail in command parameters spec.
+    end
+  end
+
+  context 'when params are a Hash' do
+    before do
+      subject.command_type = :dcm_subscribe
+      subject.params = {'dcm_topic_codes' => ['THIS, SHOULD BE AN ARRAY'], 'dcm_account_code' => 'foo'}
+    end
+    it 'should cast to CommandParameters safely' do
+      subject.save!
     end
   end
 
