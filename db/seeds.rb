@@ -79,6 +79,12 @@ if Rails.env.development?
   kw.save!
   kw.add_command!(:params => CommandParameters.new(:dcm_account_code => "ACME", :dcm_topic_codes => ['ANTRHAX']), :command_type => :dcm_subscribe)
 
+  # Respond to "DONKEY" with "hee-haw!"
+  kw = Keyword.new(:name => "DONKEY", :response_text => "hee-haw!")
+  kw.account = omg
+  kw.vendor = omg.sms_vendor
+  kw.save!
+  
   # Make the product user (admin)
   user = User.find_or_create_by_email(:email => "product@govdelivery.com", :password => "retek01!")
   user.account = omg

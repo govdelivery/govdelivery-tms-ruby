@@ -1,5 +1,5 @@
 object @keyword
-attributes :name, :created_at, :updated_at
+attributes :name, :response_text, :created_at, :updated_at
 if @keyword
   unless @keyword.errors.empty?
     node(:errors) { |keyword| keyword.errors }

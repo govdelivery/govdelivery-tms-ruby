@@ -21,6 +21,7 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
   def on_keyword(params, keyword)
     ->(*args) do 
       execute_keyword_commands(params, keyword, args)
+      keyword.response_text
     end
   end
 
@@ -32,8 +33,7 @@ SmsReceiver = Struct.new(:vendor, :stop_text, :help_text) do
   def execute_keyword_commands(params, keyword, sms_tokens)
     params.sms_tokens = sms_tokens
     vendor.receive_message!(:from => params.from, :to=>params.to, :body => params.sms_body, :stop? => false)
-    keyword.execute_commands(params)
-    nil
+    keyword.execute_commands(params) 
   end
 
   def do_help(params)

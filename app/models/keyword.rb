@@ -1,5 +1,5 @@
 class Keyword < ActiveRecord::Base
-  attr_accessible :name
+  attr_accessible :name, :response_text
 
   # for at least one of our vendors (twilio) we need to support stop, quit, cancel, and unsubscribe
   # http://www.twilio.com/help/faq/sms/does-twilio-support-stop-block-and-cancel-aka-sms-filtering
@@ -13,6 +13,7 @@ class Keyword < ActiveRecord::Base
   validates_length_of :name, :maximum => 160
   validates_uniqueness_of :name, :scope => "account_id"
   validate :name_not_reserved
+  validates_length_of :response_text, :maximum => 160
 
   class << self
     def stop?(text)

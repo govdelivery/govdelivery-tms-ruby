@@ -21,9 +21,11 @@ describe Keyword do
     end
   end
 
-  context "when name is too long" do
-    before { subject.name = 'A'*161 }
-    specify { subject.should be_invalid }
+  [:name, :response_text].each do |field|
+    context "when #{field} is too long" do
+      before { subject.send("#{field}=", 'A'*161) }
+      specify { subject.should be_invalid }
+    end
   end
 
   context "with duplicate name" do

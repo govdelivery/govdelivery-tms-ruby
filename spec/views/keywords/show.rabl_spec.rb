@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path('../../../spec_helper', __FILE__)
 
 describe 'keywords/show.rabl' do
   let(:keyword) do
@@ -7,6 +7,7 @@ describe 'keywords/show.rabl' do
          :id => 22,
          :class => Keyword,
          :name => 'Test',
+         :response_text => 'GovAwesome',
          :errors => [],
          :persisted? => true)
   end
@@ -16,7 +17,7 @@ describe 'keywords/show.rabl' do
     assign(:keyword, keyword)
     render
     rendered.should be_json_for(keyword).
-                      with_attributes(:name).
+                      with_attributes(:name, :response_text).
                       with_timestamps.
                       with_links('self' => keyword_path(keyword),
                                  'commands' => keyword_commands_path(keyword))
@@ -28,7 +29,7 @@ describe 'keywords/show.rabl' do
     keyword.stubs(:persisted?).returns(false)
     render
     rendered.should be_json_for(keyword).
-                      with_attributes(:name).
+                      with_attributes(:name, :response_text).
                       with_timestamps.
                       with_links(:self => keywords_path)
   end
