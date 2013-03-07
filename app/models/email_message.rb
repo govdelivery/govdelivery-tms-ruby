@@ -1,7 +1,7 @@
 class EmailMessage < ActiveRecord::Base
   include Message
 
-  attr_accessible :subject, :body, :from_name
+  attr_accessible :subject, :body, :from_name, :open_tracking_enabled, :click_tracking_enabled
 
   validates :body, presence: true
   validates :subject, presence: true, length: {maximum: 400}
@@ -22,6 +22,16 @@ class EmailMessage < ActiveRecord::Base
 
   def recipients_who_opened
     recipients_with(:opens)
+  end
+
+  def open_tracking_enabled=(val)
+    val = val.nil? ? true : val
+    super val
+  end
+
+  def click_tracking_enabled=(val)
+    val = val.nil? ? true : val
+    super val
   end
 
   protected

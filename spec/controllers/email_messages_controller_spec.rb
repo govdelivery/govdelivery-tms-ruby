@@ -8,6 +8,8 @@ describe EmailMessagesController do
     3.times.collect do |i|
       m = EmailMessage.new(:body => "#{"A"*40} #{i}",
                            :subject => 'n/a',
+                           :click_tracking_enabled => true, 
+                           :open_tracking_enabled => false,
                            :recipients_attributes => [{:email => "800BUNNIES"}])
       m.created_at = i.days.ago
     end
@@ -22,5 +24,5 @@ describe EmailMessagesController do
 
   it_should_have_a_pageable_index
 
-  it_should_show_with_attributes(:body, :subject, :from_name)
+  it_should_show_with_attributes(:body, :subject, :from_name, :click_tracking_enabled, :open_tracking_enabled)
 end

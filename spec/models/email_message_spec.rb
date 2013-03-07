@@ -4,9 +4,24 @@ describe EmailMessage do
   let(:vendor) { create_email_vendor }
   let(:account) { vendor.accounts.create(:name => 'name', :from_address=>create_from_address) }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:email) { user.email_messages.build(:body => 'longggg body', :subject => 'specs before tests') }
+  let(:email) { user.email_messages.build(
+    :body => 'longggg body', 
+    :subject => 'specs before tests', 
+    :open_tracking_enabled => true, 
+    :click_tracking_enabled => true
+  ) }
   subject { email }
 
+  context "with nil tracking flags" do
+    it 'should interpret them as true' do
+      email.open_tracking_enabled = nil
+      email.click_tracking_enabled = nil
+      email.save!
+      email.reload
+      email.open_tracking_enabled.should be_true
+      email.click_tracking_enabled.should be_true
+    end
+  end
   context "with all attributes" do
     it { should be_valid }
     it 'should set the account' do

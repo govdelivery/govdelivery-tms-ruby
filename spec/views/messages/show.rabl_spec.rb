@@ -39,6 +39,8 @@ describe 'messages/show.rabl' do
          :created_at => Time.now,
          :persisted? => true,
          :status => 'new',
+         :open_tracking_enabled => true,
+         :click_tracking_enabled => false,
          :errors => []
     )
   end
@@ -71,10 +73,10 @@ describe 'messages/show.rabl' do
   it 'should work with an email message' do
     Rabl::Engine.any_instance.stubs(:controller_name).returns('email_messages')
     assign(:message, email_message)
-    assign(:content_attributes, [:from_name, :subject, :body])
+    assign(:content_attributes, [:from_name, :subject, :body, :open_tracking_enabled, :click_tracking_enabled])
     render
     rendered.should be_json_for(email_message).
-                      with_attributes(:from_name, :subject, :body, :status).
+                      with_attributes(:from_name, :subject, :body, :status, :open_tracking_enabled, :click_tracking_enabled).
                       with_timestamps(:created_at).
                       with_links('self' => email_path(email_message),
                                  'recipients' => email_recipients_path(email_message),

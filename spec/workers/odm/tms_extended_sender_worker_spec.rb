@@ -12,7 +12,9 @@ if defined?(JRUBY_VERSION)
     let(:email_message) do
       msg = account.email_messages.new({'body' => 'msg body',
                                         'subject' => 'msg subject',
-                                        'from_name' => 'Emailing Cat'})
+                                        'from_name' => 'Emailing Cat',
+                                        'open_tracking_enabled' => false,
+                                        'click_tracking_enabled' => true})
       msg.expects(:sending!).with('dummy_id')
       msg.stubs('recipients').returns(recipients)
       msg
