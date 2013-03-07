@@ -1,17 +1,17 @@
 require 'set'
 
-class CommandType#= Struct.new(:name, :fields, :callable) do
-  attr_accessor :name, :fields, :callable, :array_fields
+class CommandType
+  attr_accessor :name, :string_fields, :callable, :array_fields
 
-  def initialize(name, fields, array_fields, callable)
+  def initialize(name, string_fields, array_fields, callable)
     self.name = name
-    self.fields = fields
+    self.string_fields = string_fields
     self.array_fields = array_fields
     self.callable = callable
   end
 
   def all_fields
-    fields + array_fields
+    string_fields + array_fields
   end
 
   ALL = HashWithIndifferentAccess.new

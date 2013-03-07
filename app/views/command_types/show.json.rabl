@@ -1,2 +1,2 @@
 object @command_type
-attributes :name, :fields
+attributes :name, :string_fields, :array_fields

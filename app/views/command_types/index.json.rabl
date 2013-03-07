@@ -1,2 +1,2 @@
 collection @command_types
-attributes :name, :fields
+attributes :name, :string_fields, :array_fields

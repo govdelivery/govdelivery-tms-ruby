@@ -8,7 +8,7 @@ describe CommandParameters do
   end
 
   let(:command_type) do
-    stub(:fields => [:dcm_account_code, :username], :array_fields => [:dcm_topic_codes], :name => :test_command_type)
+    stub(:string_fields => [:dcm_account_code, :username], :array_fields => [:dcm_topic_codes], :name => :test_command_type)
   end
 
   let(:account) do

@@ -14,7 +14,7 @@ class CommandParameters
   include MassAssignment
   include ActiveModel::Validations
 
-  validate :validate_fields
+  validate :validate_string_fields
   validate :validate_array_fields
   validate :validate_dcm_account
 
@@ -71,8 +71,8 @@ class CommandParameters
 
   private
 
-  def validate_fields
-    command_type.fields.each do |f|
+  def validate_string_fields
+    command_type.string_fields.each do |f|
       errors.add(f, :blank) if self.send(f).blank?
     end
   end
@@ -93,7 +93,7 @@ class CommandParameters
   end
 
   def validate_dcm_account
-    if command_type.fields.include?(:dcm_account_code) && !valid_account_code?(account)
+    if command_type.string_fields.include?(:dcm_account_code) && !valid_account_code?(account)
       errors.add(:dcm_account_code, "is not a valid code")
     elsif command_type.array_fields.include?(:dcm_account_codes) && !valid_account_codes?(account)
       errors.add(:dcm_account_codes, "contain one or more invalid account codes")
