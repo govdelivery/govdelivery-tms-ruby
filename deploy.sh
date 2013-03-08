@@ -84,14 +84,14 @@ while [ $# -gt 0 ]; do
 	    ;;
 	-e|--environment)
 	    case $2 in
-		POC|poc)
-		    ENV="poc"
+		POC*|poc*)
+		    ENV="$2"
 		    ;;
-		QC|qc)
-		    ENV="qc"
+		QC*|qc*)
+		    ENV="$2"
 		    ;;
-		STG|stg)
-		    ENV="stg"
+		STG*|stg*)
+		    ENV="$2"
 		    ;;
 		*)
 		    echo "Unknown Environment: $2"
@@ -104,7 +104,7 @@ while [ $# -gt 0 ]; do
 	    usage;
 	    exit 0;
 	    ;;
-	-T|-d|-v|-y)
+	-T|-d|-v|-y|-f|-hh)
 	    CTRL_ARGS="${CTRL_ARGS} ${1}"        ## add to control args
 	    shift;
 	    BUILD_URL="http://www.google.com"    ## Set BUILD_URL to something that will return 200
