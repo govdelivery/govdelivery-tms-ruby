@@ -53,7 +53,7 @@ class RecipientsController < ApplicationController
   end
 
   def set_email_recipient_attributes
-    @content_attributes = [:email]
+    @content_attributes = [:email, :macros]
   end
 
 end

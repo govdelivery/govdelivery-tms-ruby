@@ -6,10 +6,11 @@ describe EmailMessagesController do
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:messages) do
     3.times.collect do |i|
-      m = EmailMessage.new(:body => "#{"A"*40} #{i}",
+      m = EmailMessage.new(:body => "#{"A"*40} #{i} [[happy]]",
                            :subject => 'n/a',
                            :click_tracking_enabled => true, 
                            :open_tracking_enabled => false,
+                           :macros => {"happy" => "doggies"},
                            :recipients_attributes => [{:email => "800BUNNIES"}])
       m.created_at = i.days.ago
     end
@@ -24,5 +25,5 @@ describe EmailMessagesController do
 
   it_should_have_a_pageable_index
 
-  it_should_show_with_attributes(:body, :subject, :from_name, :click_tracking_enabled, :open_tracking_enabled)
+  it_should_show_with_attributes(:body, :subject, :from_name, :click_tracking_enabled, :open_tracking_enabled, :macros)
 end

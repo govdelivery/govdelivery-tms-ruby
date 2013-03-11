@@ -53,20 +53,21 @@ describe 'recipients/show.rabl' do
            :sent_at => Time.now,
            :error_message => nil,
            :completed_at => Time.now,
+           :macros => {"name" => "Henry Hankson"},
            :valid? => true)
     end
 
 
     before do
       assign(:recipient, recipient)
-      assign(:content_attributes, [:email])
+      assign(:content_attributes, [:email, :macros])
       controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "recipients", :email_id => message.id.to_s}, :script_name => "")
       render
     end
     it 'should have one item' do
       rendered.should be_json_for(recipient).
                         with_timestamps(:created_at, :completed_at).
-                        with_attributes(:status, :email).
+                        with_attributes(:status, :email, :macros).
                         with_links('email_message' => email_path(22), 'self' => email_recipient_path(22, 11))
     end
   end

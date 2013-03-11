@@ -1,5 +1,6 @@
 class EmailMessage < ActiveRecord::Base
   include Message
+  include Personalized
 
   attr_accessible :subject, :body, :from_name, :open_tracking_enabled, :click_tracking_enabled
 
@@ -8,7 +9,6 @@ class EmailMessage < ActiveRecord::Base
 
   delegate :from_email, :to => :account
   delegate :from_email, :to => :account
-
 
   def sending!(ack)
     self.ack=ack

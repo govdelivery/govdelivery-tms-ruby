@@ -14,7 +14,7 @@ describe RecipientsController do
   end
   let(:email_message) { user.email_messages.create(:subject => "subs", :from_name => 'dude', :body => 'hi') }
   let(:email_recipients) do
-    3.times.map { |i| email_message.recipients.build(:email => "dude#{i}@sink.govdelivery.com") }
+    3.times.map { |i| email_message.recipients.build(:email => "dude#{i}@sink.govdelivery.com", :macros =>{"foo" => "paper"}) }
   end
 
   before do
@@ -33,7 +33,7 @@ describe RecipientsController do
         get type, :email_id => 1, :format => :json
         response.response_code.should == 200
         assigns(:page).should eq(1)
-        assigns(:content_attributes).should match_array([:email])
+        assigns(:content_attributes).should match_array([:email, :macros])
         response.headers['Link'].should =~ /next/
         response.headers['Link'].should =~ /last/ 
       end
@@ -69,7 +69,7 @@ describe RecipientsController do
       get :index, :email_id => 1, :format => :json
       response.response_code.should == 200
       assigns(:page).should eq(1)
-      assigns(:content_attributes).should match_array([:email])
+      assigns(:content_attributes).should match_array([:email, :macros])
       response.headers['Link'].should =~ /next/
       response.headers['Link'].should =~ /last/
     end

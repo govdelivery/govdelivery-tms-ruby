@@ -37,7 +37,6 @@ module Message
       recipient = recipients.build(r.merge(:vendor => self.vendor))
       recipient.skip_message_validation=true
       recipient.save
-      recipients << recipient
       recipients.reset if i % 10 == 0
     end
   end
