@@ -41,7 +41,7 @@ Xact::Application.configure do
 
   # Use a different cache store in production
 
-  config.redis_url = 'redis://poc-redis-master.visi.gdi:6379'
+  config.redis_url = 'redis://poc-redis1.tops.gdi:6379'
   config.cache_store = :redis_store, config.redis_url
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
