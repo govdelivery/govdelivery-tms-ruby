@@ -1,1 +1,1 @@
-rvm use jruby@xact --create
+rvm use @xact --create
