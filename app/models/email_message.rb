@@ -34,6 +34,14 @@ class EmailMessage < ActiveRecord::Base
     super val
   end
 
+  def odm_record_designator
+    'email::recipient_id'.tap do |s|
+      unless macros.blank?
+        s << "::" << macros.keys.sort.join("::")
+      end
+    end
+  end
+
   protected
 
   def recipients_with(type)

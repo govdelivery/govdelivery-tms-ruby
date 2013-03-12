@@ -8,7 +8,12 @@ describe EmailMessage do
     :body => 'longggg body', 
     :subject => 'specs before tests', 
     :open_tracking_enabled => true, 
-    :click_tracking_enabled => true
+    :click_tracking_enabled => true,
+    :macros => {
+      'macro1' => 'foo', 
+      'macro2' => 'bar',
+      'first' => 'bazeliefooga'
+    }
   ) }
   subject { email }
 
@@ -27,7 +32,11 @@ describe EmailMessage do
     it 'should set the account' do
       account.should_not be_nil
     end
-
+    it 'should have a record designator for odm' do
+      subject.odm_record_designator.should eq('email::recipient_id::first::macro1::macro2')
+      subject.macros = {}
+      subject.odm_record_designator.should eq('email::recipient_id')
+    end
     context 'and saved' do
       before { email.save! }
       it 'should be able to create recipients' do

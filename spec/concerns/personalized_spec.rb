@@ -16,7 +16,10 @@ class ImportantMessage
 end
 
 describe Personalized do
-  let(:model) { ImportantMessage.new }
-  
-  
+  subject { ImportantMessage.new }
+  context 'translating macros' do
+    it 'should work' do
+      subject.to_odm(:body).should eq('##injections## here and ##FLUBBER## there [pea] ugly manhole covers')
+    end
+  end
 end

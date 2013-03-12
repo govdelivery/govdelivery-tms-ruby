@@ -1,7 +1,7 @@
 class EmailRecipient < ActiveRecord::Base
   include Recipient
   include Personalized
-  
+
   attr_accessible :email
   validates_presence_of :message, :unless => :skip_message_validation
   validates :email, :presence => true, length: {maximum: 256}
@@ -9,8 +9,16 @@ class EmailRecipient < ActiveRecord::Base
   has_many :email_recipient_clicks
   has_many :email_recipient_opens
 
-  def to_odm
-    "#{self.email}::#{self.id}"
+  def to_odm(defaults={})
+    record = "#{self.email}::#{self.id}"
+    defaults.merge(self.macros).tap do |hsh|
+      unless hsh.empty?
+        hsh.keys.sort.each do |k|
+          record << "::#{hsh[k]}"
+        end
+      end
+    end
+    record
   end
 
   def sent!(completed_at)
