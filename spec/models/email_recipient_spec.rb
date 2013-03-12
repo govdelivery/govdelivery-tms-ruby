@@ -33,10 +33,11 @@ describe EmailRecipient do
         subject.save!
       end
       it 'should have the correct ODM record designator' do
-        subject.to_odm.should eq("hi@man.com::#{subject.id}::five_value::one_value::two_value")
-        
+        subject.to_odm('five' => nil, 'one' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::five_value::one_value::two_value")
+        # remove one from default hash
+        subject.to_odm('five' => nil, 'two' => nil).should        eq("hi@man.com::#{subject.id}::five_value::two_value")
         # merging in defaults 
-        subject.to_odm({'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::five_value::one_value::seven_value::two_value")
+        subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::one_value::seven_value")
       end
     end
     context 'that is sent' do

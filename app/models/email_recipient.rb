@@ -9,12 +9,22 @@ class EmailRecipient < ActiveRecord::Base
   has_many :email_recipient_clicks
   has_many :email_recipient_opens
 
+  ##
+  # Convert this recipient into a record string for sending to ODM. 
+  #
+  # Macros for this recipient that are not present in the default hash (at the message level)
+  # will be discarded - otherwise, they would invalidate the
+  # record designator, which is build at the message level
+  # 
+  # @param defaults [Hash] the default macros - i.e. self.message.macros
+  # @return [String]
+  #
   def to_odm(defaults={})
     record = "#{self.email}::#{self.id}"
     defaults.merge(self.macros).tap do |hsh|
       unless hsh.empty?
         hsh.keys.sort.each do |k|
-          record << "::#{hsh[k]}"
+          record << "::#{hsh[k]}" if defaults.has_key?(k)
         end
       end
     end
