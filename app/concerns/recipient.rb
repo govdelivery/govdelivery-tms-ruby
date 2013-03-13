@@ -29,8 +29,8 @@ module Recipient
     update_status!(RecipientStatus::SENT, ack, completed_at: date_sent)
   end
 
-  def failed!(ack=nil, error_message=nil)
-    update_status!(RecipientStatus::FAILED, ack, error_message: error_message)
+  def failed!(ack=nil, error_message=nil, completed_at=nil)
+    update_status!(RecipientStatus::FAILED, ack, error_message: error_message, completed_at: completed_at)
   end
 
   def canceled!(ack, *args)

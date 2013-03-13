@@ -28,9 +28,9 @@ module Odm
     def update_recipient(recipient, delivery_event)
       sent_at = Time.at(delivery_event.at.to_gregorian_calendar.time.time/1000)
       if delivery_event.delivered?
-        recipient.sent!(sent_at)
+        recipient.sent!(nil, sent_at)
       else
-        recipient.failed!(sent_at)
+        recipient.failed!(nil, nil, sent_at)
       end
     end
   end

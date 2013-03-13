@@ -31,7 +31,7 @@ describe VoiceMessage do
     end
     context "with invalid recipient" do
       before { message.create_recipients([{:phone => nil}]) }
-      specify { message.recipients.first.should_not be_valid }
+      specify { message.recipients.count.should == 0  }
     end
 
     context "with valid recipient" do

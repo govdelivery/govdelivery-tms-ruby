@@ -32,12 +32,36 @@ module Message
     vendor.worker.constantize
   end
 
+  def recipient_class
+    self.class.table_name.gsub(/MESSAGES/i, 'RECIPIENTS').classify.constantize
+  end
+
+  ##
+  # Create recipients for this message in batch. Note that this method 
+  # does not return the created recipients.
+  #
+  # @param recipient_params [Array of Hashes]
+  # @return recipient_params
+  # 
   def create_recipients(recipient_params=[])
+    klass = recipient_class
     recipient_params.each_with_index do |r, i|
-      recipient = recipients.build(r.merge(:vendor => self.vendor))
+      # not using a relation here to avoid holding references and leaking
+      recipient = klass.new(r.merge(:vendor => self.vendor, :message_id => self.id))
       recipient.skip_message_validation=true
       recipient.save
-      recipients.reset if i % 10 == 0
+    end
+  end
+
+  # The number of seconds it took to build the recipient list for this
+  # message
+  def recipient_build_time
+    if recipients.count > 1
+      first = recipients.reorder("created_at asc") .select("created_at").first.created_at
+      last  = recipients.reorder("created_at desc").select("created_at").first.created_at
+      (last - first)
+    else
+      0.0
     end
   end
 

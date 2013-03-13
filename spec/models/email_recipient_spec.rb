@@ -42,12 +42,13 @@ describe EmailRecipient do
     end
     context 'that is sent' do
       before do
-        subject.sent!(Time.now)
+        subject.sent!(nil, Time.now)
       end
       it 'should update the record' do
         subject.reload
         subject.vendor.should_not be_nil
         subject.completed_at.should_not be_nil
+        subject.ack.should be_nil
         subject.status.should eq(RecipientStatus::SENT)
       end
       it 'should save clicks' do

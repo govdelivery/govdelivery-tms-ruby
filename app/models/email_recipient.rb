@@ -31,14 +31,6 @@ class EmailRecipient < ActiveRecord::Base
     record
   end
 
-  def sent!(completed_at)
-    update_status!(RecipientStatus::SENT, nil, completed_at: completed_at)
-  end
-
-  def failed!(completed_at)
-    update_status!(RecipientStatus::FAILED, nil, completed_at: completed_at)
-  end
-
   # Record a click on a URL for this recipient / email combination
   def clicked!(url, date)
     email_recipient_clicks.build.tap do |erc|

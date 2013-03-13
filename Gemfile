@@ -40,6 +40,7 @@ group :development, :test do
   gem 'guard-rspec'
   platforms :ruby do
     gem 'sqlite3'
+    gem 'pry-debugger'
   end
   gem 'pry'
 end
