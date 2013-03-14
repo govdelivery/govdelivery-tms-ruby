@@ -99,5 +99,8 @@ module Xact
       password: 'retek01!',
       api_root: 'http://localhost:3000'
     }
+
+    config.twilio_polling_enabled = true
+    config.odm_polling_enabled = true
   end
 end
