@@ -41,7 +41,7 @@ Xact::Application.configure do
 
   # Use a different cache store in production
 
-  config.redis_url = 'redis://stg-redis-master.visi.gdi:6379'
+  config.redis_url = 'redis://stg-xactredis-master-ep.tops.gdi:6379'
   config.cache_store = :redis_store, config.redis_url
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
@@ -76,7 +76,7 @@ Xact::Application.configure do
     api_root: 'https://stage-api.govdelivery.com' 
   }
 
-  config.odm_host = "http://stg-tms1.visi.gdi:65080"
+  config.odm_host = "http://stg-odm1-ep.tops.gdi:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'xact'
   config.odm_password = 'Eish8sai2Heofereekae5ohmiyeijiN'
