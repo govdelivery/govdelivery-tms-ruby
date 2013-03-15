@@ -1,4 +1,4 @@
-if Rails.configuration.twilio.polling_enabled && $servlet_context
+if Rails.configuration.twilio_polling_enabled && $servlet_context
   module Scheduler
     class ScheduleTwilioSmsPoll < TrinidadScheduler.Cron Rails.configuration.twilio_sms_poll_crontab
       def run
