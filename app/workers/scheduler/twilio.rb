@@ -1,5 +1,3 @@
-return unless $servlet_context
-
 module Scheduler
   class ScheduleTwilioSmsPoll < TrinidadScheduler.Cron Rails.configuration.twilio_sms_poll_crontab
     def run
@@ -14,6 +12,5 @@ module Scheduler
       Twilio::SmsPollingWorker.perform_async
     end
   end
-
-end
+end if $servlet_context
 

@@ -1,5 +1,3 @@
-return unless $servlet_context
-
 module Scheduler
   class ScheduleMessageCompletionCheck < TrinidadScheduler.Cron Rails.configuration.message_completion_crontab
     def run
@@ -7,4 +5,4 @@ module Scheduler
       CheckMessagesForCompletion.perform_async
     end
   end
-end
+end if $servlet_context

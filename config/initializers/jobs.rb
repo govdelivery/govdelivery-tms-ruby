@@ -1,7 +1,6 @@
 if $servlet_context.blank?
   puts "Not running inside Tomcat; jobs in app/workers/scheduler won't run"
 else
-
   require 'app/workers/scheduler/schedules'
 
   if Rails.configuration.odm_polling_enabled

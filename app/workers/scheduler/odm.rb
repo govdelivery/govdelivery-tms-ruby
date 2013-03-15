@@ -1,5 +1,3 @@
-return unless $servlet_context
-
 module Scheduler
   class ScheduleTmsStats < TrinidadScheduler.Cron Rails.configuration.odm_stats_crontab
     def run
@@ -21,4 +19,4 @@ module Scheduler
       Odm::TmsExtendedClicksWorker.perform_async
     end
   end
-end
+end if $servlet_context
