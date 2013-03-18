@@ -24,41 +24,32 @@ class ForwardWorker
     self.options = CommandParameters.new(opts)
     logger.info("Performing Forward for #{options}")
 
-    http_method  = options.http_method.downcase
-    action       = options.url
-    username     = options.username
-    password     = options.password
-    sms_body     = options.sms_body
-    from         = options.from
-    callback_url = options.callback_url
-    self.account = Account.find(options.account_id)
-    
-    # Send the message to the external service.  
-    forward_response = forward_service.send(http_method, action, username, password, {:from => from, :sms_body => sms_body}).body.strip
-
-    # Build an SMS message with the response of the previous HTTP call. 
-    message = build_message(forward_response)
+    # Send the message to the external service.
+    message = command.process_response(account, options, forward_response)
     
     # Send a text back to the user via twilio
-    sms_service.deliver!(message, callback_url)
+    sms_service.deliver!(message, options.callback_url) if message
   end
 
   def forward_service
     @forward_service ||= Service::ForwardService.new
   end
 
-  def build_message(short_body)
-    message = account.sms_messages.new(:body => short_body)
-    # User is out of context for this message, as there is no current user - the 
-    # incoming controller request was from a handset (not a client's app)
-    message.recipients.build(:phone => options.from, :vendor => account.sms_vendor)
-    message.save!
-    message
-  end
-
   def sms_service
     return @sms_service if @sms_service
     client = Service::TwilioClient::Sms.new(self.account.sms_vendor.username, self.account.sms_vendor.password)
     @sms_service = Service::TwilioMessageService.new(client)
+  end
+
+  def account
+    @account ||= Account.find(options.account_id)
+  end
+
+  def command
+    @command ||= Command.find(options.command_id)
+  end
+
+  def forward_response
+    forward_service.send(options.http_method.downcase, options.url, options.username, options.password, {:from => options.from, :sms_body => options.sms_body})
   end
 end

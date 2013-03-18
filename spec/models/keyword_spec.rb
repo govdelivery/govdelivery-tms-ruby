@@ -72,10 +72,26 @@ describe Keyword do
   end
 
   describe '#add_command!' do
+    let(:command){stub('Command', call: true)}
+    let(:command_params){CommandParameters.new}
+
     it 'creates a command' do
       expect{subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]), :command_type => :dcm_unsubscribe)}.to change{Command.count}.by 1
     end
+
+    describe '#execute_commands' do
+      before do
+        command_params.expects(:command_id=).with(subject.id)
+        subject.expects(:commands).returns([command])
+        subject.stubs(:event_handler).returns(true)
+      end
+      it 'should set account_id and command_id' do
+        subject.execute_commands(command_params)
+      end
+    end
   end
+
+
 
   describe 'stop?' do
     %w(stop quit STOP QUIT sToP qUiT cancel unsubscribe).each do |stop|

@@ -12,7 +12,7 @@ class KeywordCommandsController < ApplicationController
   end
 
   def create
-    @command = @keyword.commands.new(params[:command]).tap{|c| c.account = @account }
+    @command = @keyword.commands.new(params[:command]).tap { |c| c.account = @account }
     @command.save
     respond_with(@command)
   end

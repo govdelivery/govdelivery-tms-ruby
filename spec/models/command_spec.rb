@@ -33,12 +33,12 @@ describe Command do
   end
 
   context "when name is missing" do
-    before { subject.name = nil; subject.save }
+    before { subject.name = nil; subject.save! }
     specify { subject.name.to_s.should == subject.command_type.to_s }
   end
 
   context "when name is NOT missing" do
-    before { subject.save }
+    before { subject.save! }
     specify { subject.name.to_s.should_not == subject.command_type.to_s }
   end
 
@@ -63,13 +63,13 @@ describe Command do
     end
   end
 
-  context "call" do
+  context "invoke!" do
     before do
       # Command should combine its own (persisted) params with the incoming params, convert them to a 
       # hash, and pass them to the worker invocation
-      expected = CommandParameters.new(:from => "+122222", :dcm_account_codes => ["foo"]).to_hash
-      DcmUnsubscribeWorker.expects(:perform_async).with(expected)
+      @expected = CommandParameters.new(:from => "+122222", :dcm_account_codes => ["foo"]).to_hash
+      CommandType[subject.command_type].expects(:invoke!).with(@expected)
     end
-    specify { subject.call(CommandParameters.new(:from => "+122222")) }
+    specify { subject.call(@expected) }
   end
 end

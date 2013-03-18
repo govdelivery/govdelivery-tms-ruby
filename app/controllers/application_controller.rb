@@ -5,6 +5,7 @@ class ApplicationController < ActionController::API
 
   before_filter :authenticate_user!
   before_filter :set_default_format
+  before_filter :set_page, :only => :index
 
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
 
@@ -47,5 +48,11 @@ class ApplicationController < ActionController::API
     end
 
     links.collect { |k, v| %Q|<#{v}>; rel="#{k}",| }.join("")
+  end
+
+  def respond_with(*resources, &block)
+    #binding.pry
+    set_link_header(resources.first) if resources.first.respond_to?(:total_pages)
+    super
   end
 end

@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
   attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :from_address, :dcm_account_codes
 
   has_many :users
+  has_many :commands
   belongs_to :voice_vendor
   belongs_to :sms_vendor
   belongs_to :email_vendor

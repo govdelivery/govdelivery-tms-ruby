@@ -6,6 +6,7 @@ class Keyword < ActiveRecord::Base
   STOP_WORDS = %w(stop quit unsubscribe cancel)
   RESERVED_KEYWORDS = STOP_WORDS + ['help']
 
+  has_many :inbound_messages, inverse_of: :keyword
   belongs_to :vendor, :class_name=>'SmsVendor'
   belongs_to :account
   belongs_to :event_handler, :dependent => :destroy
@@ -26,11 +27,14 @@ class Keyword < ActiveRecord::Base
   end
 
   def add_command!(params)
-    commands.new(params).tap{|c| c.account = self.account}.save!
+    cmd = commands.new(params).tap{|c| c.account = self.account}
+    cmd.save!
+    cmd
   end
 
   def execute_commands(params=CommandParameters.new)
     params.account_id = self.account_id
+    params.command_id = self.id
     commands.each{|a| a.call(params)} if event_handler
   end
 

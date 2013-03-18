@@ -4,23 +4,42 @@ require 'spec_helper'
 describe ForwardWorker do
   let(:vendor) { create_sms_vendor }
   let(:account) { vendor.accounts.create(:name => 'name') }
-  let(:options) { {:url => "url", 
-                   :http_method => "post", 
-                   :username => nil, 
-                   :password => nil, 
-                   :from => "333", 
-                   :sms_body => "sms body", 
+  let(:options) { {:url => "url",
+                   :http_method => "post",
+                   :username => nil,
+                   :password => nil,
+                   :from => "333",
+                   :sms_body => "sms body",
                    :account_id => account.id,
+                   :command_id => 11,
                    :callback_url => "http://localhost"} }
 
-  subject { ForwardWorker.new }
+  let(:message) { stub('SmsMessage') }
+  let(:forward_response) { stub('faraday http response', :body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY") }
+  let(:command) { stub('Command') }
+
+  subject do
+    fw = ForwardWorker.new
+    fw.forward_service = mock('forward_service')
+    fw.sms_service=mock('sms_service')
+    fw
+  end
 
   it 'should perform happily' do
-    forward_response = mock('forward service', :body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY")
-    subject.forward_service = mock
+    subject.stubs(:command).returns(command)
     subject.forward_service.expects(:post).with("url", nil, nil, {:from => "333", :sms_body => "sms body"}).returns(forward_response)
-    subject.sms_service = mock('sms_service')
-    subject.sms_service.expects(:deliver!).with(instance_of(SmsMessage), options[:callback_url])
+    command.expects(:process_response).with(instance_of(Account), instance_of(CommandParameters), forward_response).returns(message)
+    subject.sms_service.expects(:deliver!).with(message, options[:callback_url])
+
+    subject.perform(options)
+  end
+
+  it 'should not send a message if there isn\'t one' do
+    subject.stubs(:command).returns(command)
+    subject.forward_service.expects(:post).with("url", nil, nil, {:from => "333", :sms_body => "sms body"}).returns(forward_response)
+    command.expects(:process_response).with(instance_of(Account), instance_of(CommandParameters), forward_response).returns(nil)
+    subject.sms_service.expects(:deliver!).never
+
     subject.perform(options)
   end
 end

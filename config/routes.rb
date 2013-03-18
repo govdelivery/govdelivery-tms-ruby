@@ -18,7 +18,10 @@ Xact::Application.routes.draw do
   end
 
   resources(:keywords, :only => [:index, :show, :create, :update, :destroy]) do
-    resources(:commands, :only => [:index, :show, :create, :update, :destroy], :controller => :keyword_commands)
+    resources(:commands, :only => [:index, :show, :create, :update, :destroy], :controller => :keyword_commands) do
+      pageable
+      resources :actions, only: [:index, :show], controller: :command_actions
+    end
   end
 
   scope :messages, :path => 'messages' do
@@ -26,7 +29,7 @@ Xact::Application.routes.draw do
       pageable
       resources(:recipients, :only => [:index, :show]) do
         pageable
-        collection do 
+        collection do
           get :clicked
           get :opened
         end
@@ -51,6 +54,7 @@ Xact::Application.routes.draw do
   scope :inbound, :path => 'inbound', :as => 'inbound' do
     resources(:sms, :only => [:index, :show], :controller => :inbound_messages) do
       pageable
+      resources :command_actions, only: [:index, :show]
     end
   end
 

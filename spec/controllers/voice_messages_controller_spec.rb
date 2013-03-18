@@ -20,7 +20,7 @@ describe VoiceMessagesController do
 
   it_should_create_a_message({:play_url => 'http://com.com/'})
 
-  it_should_have_a_pageable_index
+  it_should_have_a_pageable_index(:messages)
 
   it_should_show_with_attributes(:play_url)
 end

@@ -24,8 +24,9 @@ class SmsVendor < ActiveRecord::Base
   end
 
   def receive_message!(options)
-    self.inbound_messages.create!(options.except(:stop?))
+    msg = self.inbound_messages.create!(options.except(:stop?))
     stop!(options[:from]) if options[:stop?]
+    msg
   end
 
   private

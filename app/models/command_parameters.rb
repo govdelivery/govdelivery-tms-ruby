@@ -34,7 +34,9 @@ class CommandParameters
     :http_method,
     :dcm_account_codes, # an array of codes, used for unsubscribing only
     :dcm_account_code,  # a single account code, used for subscribing to topics
-    :dcm_topic_codes    # array of topic codes (dcm_account_code must be set)
+    :dcm_topic_codes,   # array of topic codes (dcm_account_code must be set)
+    :inbound_message_id,# inbound SMS message id (for recording actions)
+    :command_id         # initiating command id
   ]
   attr_accessor *PARAMS
   attr_accessible *PARAMS

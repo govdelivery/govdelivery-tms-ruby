@@ -1,6 +1,5 @@
 class MessagesController < ApplicationController
   before_filter :find_user
-  before_filter :set_page, :only => :index
   before_filter :set_scope
   before_filter :set_attr
 

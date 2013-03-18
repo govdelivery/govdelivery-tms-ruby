@@ -25,26 +25,30 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
   end
 end
 
-def it_should_have_a_pageable_index
+def it_should_have_a_pageable_index(resource, parent_class=User)
   describe "index" do
-
     before do
-      messages.stubs(:total_pages).returns(5)
-      User.any_instance.expects(model.to_s.tableize).returns(stub(:page => messages))
+      self.send(resource).stubs(:total_pages).returns(5)
+      @params = block_given? ? yield(self) : {}
+
+      pageable = stub('pageable', :page => self.send(resource))
+      pageable.stubs(:includes).returns(pageable)
+      parent_class.any_instance.expects(model.to_s.tableize).returns(pageable)
     end
     it "should work on the first page" do
-      messages.stubs(:current_page).returns(1)
-      messages.stubs(:first_page?).returns(true)
-      messages.stubs(:last_page?).returns(false)
-      get :index, :format => :json
+      self.send(resource).stubs(:current_page).returns(1)
+      self.send(resource).stubs(:first_page?).returns(true)
+      self.send(resource).stubs(:last_page?).returns(false)
+      get :index, {:format => :json}.merge!(@params)
       response.response_code.should == 200
     end
 
     it "should have all links" do
-      messages.stubs(:current_page).returns(2)
-      messages.stubs(:first_page?).returns(false)
-      messages.stubs(:last_page?).returns(false)
-      get :index, :page => 2
+      r = self.send(resource)
+      r.stubs(:current_page).returns(2)
+      r.stubs(:first_page?).returns(false)
+      r.stubs(:last_page?).returns(false)
+      get :index, {:page => 2}.merge!(@params)
       response.headers['Link'].should =~ /first/
       response.headers['Link'].should =~ /prev/
       response.headers['Link'].should =~ /next/
@@ -52,10 +56,11 @@ def it_should_have_a_pageable_index
     end
 
     it "should have prev and first links" do
-      messages.stubs(:current_page).returns(5)
-      messages.stubs(:first_page?).returns(false)
-      messages.stubs(:last_page?).returns(true)
-      get :index, :page => 5
+      r = self.send(resource)
+      r.stubs(:current_page).returns(5)
+      r.stubs(:first_page?).returns(false)
+      r.stubs(:last_page?).returns(true)
+      get :index, {:page => 5}.merge!(@params)
       response.headers['Link'].should =~ /first/
       response.headers['Link'].should =~ /prev/
       response.headers['Link'].should_not =~ /next/

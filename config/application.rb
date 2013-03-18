@@ -100,7 +100,7 @@ module Xact
       api_root: 'http://localhost:3000'
     }
 
-    config.twilio_polling_enabled = true
-    config.odm_polling_enabled = true
+    config.twilio_polling_enabled = false
+    config.odm_polling_enabled = false
   end
 end

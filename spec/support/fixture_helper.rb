@@ -26,7 +26,7 @@ module FixtureHelper
   end
 
   def create_account(attrs={})
-    Account.new({:name => "ACME"}.merge(attrs)).tap do |a|
+    Account.new({:name => "ACME", dcm_account_codes: ['ACME']}.merge(attrs)).tap do |a|
       a.build_from_address({from_email: 'hey@dude.test'})
       a.save!
     end

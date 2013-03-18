@@ -23,7 +23,7 @@ describe EmailMessagesController do
 
   it_should_create_a_message({:body => 'A short body'})
 
-  it_should_have_a_pageable_index
+  it_should_have_a_pageable_index(:messages)
 
   it_should_show_with_attributes(:body, :subject, :from_name, :click_tracking_enabled, :open_tracking_enabled, :macros)
 end
