@@ -64,6 +64,9 @@ module Xact
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
+    # This is only used to write urls 
+    config.protocol = 'https'
+
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore

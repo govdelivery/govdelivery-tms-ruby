@@ -9,6 +9,11 @@ class ApplicationController < ActionController::API
 
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
 
+  # URL helper methods will use this set of options as defaults 
+  def default_url_options
+    {:protocol => Rails.configuration.protocol}
+  end
+
   protected
 
   def set_default_format
