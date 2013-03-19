@@ -16,4 +16,3 @@ class CreateCommandActions < ActiveRecord::Migration
     end
   end
 end
-            c
