@@ -31,6 +31,24 @@ describe SmsVendor do
     end
   end
 
+  describe 'a phone number with non-numberic stuff in it' do
+    it 'should normalize phone' do
+      vendor.from = '(612) 657 8309'
+      vendor.save!
+      vendor.from.should eq('+16126578309')
+    end
+    it 'should normalize phone with country code' do
+      vendor.from = '+1 (612) 657 8309'
+      vendor.save!
+      vendor.from.should eq('+16126578309')
+    end
+    it 'should leave short code alone' do
+      vendor.from = '468311'
+      vendor.save!
+      vendor.from.should eq('468311')
+    end
+  end
+
   describe '#create_keyword!' do
     it 'creates a keyword' do
       expect { vendor.create_keyword!(:account => account, :name => 'foobar') }.to change { vendor.keywords.count }.by 1

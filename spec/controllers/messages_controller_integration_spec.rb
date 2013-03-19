@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe 'MessageControllers' do
   render_views
   let(:user) {
-    voice_vendor = VoiceVendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') 
-    sms_vendor = SmsVendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') 
+    voice_vendor = create_voice_vendor
+    sms_vendor = create_sms_vendor
     account = Account.create!(:voice_vendor => voice_vendor, :sms_vendor => sms_vendor, :name => 'name')
     account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop")
   }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe KeywordCommandsController do
-  let(:vendor)  { SmsVendor.create(:name => 'name', :username => 'username', :password => 'secret', :from => 'from', :worker => 'LoopbackMessageWorker') }
+  let(:vendor)  { create_sms_vendor(:name => 'name', :username => 'username', :password => 'secret', :worker => 'LoopbackMessageWorker') }
   let(:account) { vendor.accounts.create! :name=> "HELLO ACCOUNT" }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:keyword) { k=account.keywords.new(:name => "HI").tap{|k| k.vendor = vendor}; k.save!; k }

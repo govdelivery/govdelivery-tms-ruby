@@ -18,7 +18,7 @@ class TwilioRequestsController < ApplicationController
   end
 
   def find_vendor
-    SmsVendor.find_by_username!(params['AccountSid'])
+    SmsVendor.find_by_username_and_from_phone!(params['AccountSid'], params['To'])
   end
 
   def callback_url

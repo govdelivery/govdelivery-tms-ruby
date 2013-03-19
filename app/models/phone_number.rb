@@ -15,6 +15,14 @@ PhoneNumber = Struct.new(:number) do
     end
   end
 
+  def e164_or_short
+    if number.length == 6 #it's a short code
+      number.gsub(/[^\d\+]/, '')
+    else
+      '+' + formatted
+    end
+  end
+
   private
 
   def formatted

@@ -73,14 +73,13 @@ describe TwilioRequestsController do
   end
 
   def twilio_request_params(body)
-    account_id = vendor.username
     @sid ||= ('0'*34)
     @sid.succ!
     {:format =>"xml" ,
       'SmsSid'=>@sid,
-      'AccountSid'=>account_id,
-      'From'=>'+15551112222',
-      'To'=>'',
+      'AccountSid'=>vendor.username,
+      'From'=>'+15551113333',
+      'To'=>vendor.from_phone,
       'Body'=>body
     }
   end
