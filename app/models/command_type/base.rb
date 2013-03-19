@@ -15,8 +15,8 @@ module CommandType
       "#{CommandType::DcmSubscribe.name.demodulize}Worker".constantize.perform_async(params.to_hash)
     end
 
-    def handle_response!(*args)
-      raise NotImplementedError.new("You must implement handle_response!")
+    def process_response(account, params, http_response)
+      log_action!(params, http_response)
     end
 
     def all_fields
@@ -29,6 +29,16 @@ module CommandType
       command_params.account = account
       command_params.valid?
       command_params.errors
+    end
+
+    protected
+
+    def log_action!(params, http_response)
+      CommandAction.create!(inbound_message_id: params.inbound_message_id,
+                            command_id: params.command_id,
+                            http_response_code: http_response.code,
+                            http_response_type: http_response.headers['Content-Type'],
+                            http_body: http_response.body)
     end
   end
 

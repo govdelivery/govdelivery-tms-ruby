@@ -25,7 +25,7 @@ describe 'command_actions/show.rabl' do
                       with_attributes(:http_response_code, :http_content_type, :http_body).
                       with_timestamps(:created_at).
                       with_links('self' => inbound_sms_command_action_path(command_action.inbound_message_id, command_action.id),
-                                 'inbound_sms' => inbound_sms_path(command_action.inbound_message_id),
+                                 'inbound_sms_message' => inbound_sms_path(command_action.inbound_message_id),
                                  'command' => keyword_command_path(command_action.command.keyword_id, command_action.command_id))
   end
 

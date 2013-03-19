@@ -21,8 +21,9 @@ gem 'faraday'
 gem 'faraday_middleware'
 gem 'dcm_client'
 gem 'enumify'
+gem "strip_attributes"
 gem 'attr_encrypted'
-gem 'activerecord-oracle_enhanced-adapter'
+gem 'activerecord-oracle_enhanced-adapter', '=1.4.1.4'
 
 platforms :ruby do
   gem 'ruby-oci8'

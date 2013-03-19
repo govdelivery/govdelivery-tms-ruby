@@ -7,16 +7,8 @@ module CommandType
     end
 
     def process_response(account, params, http_response)
-      cr = CommandAction.create!(inbound_message_id: params.inbound_message_id,
-                                   command_id: params.command_id,
-                                   http_response_code: http_response.code,
-                                   http_response_type: http_response.headers['Content-Type'],
-                                   http_body: body(http_response.body))
-      build_message(account, params.from, http_response.body.strip) if cr.http_content_type=='text/plain'
-    end
-
-    def body(_body)
-      _body.length > 500 ? nil : _body.strip
+      cr = super
+      build_message(account, params.from, cr.http_body) if cr.plaintext_body?
     end
 
     def build_message(account, from, short_body)
