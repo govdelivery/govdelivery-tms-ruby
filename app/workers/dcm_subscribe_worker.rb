@@ -18,10 +18,9 @@ class DcmSubscribeWorker
       logger.info("Performing DCM subscribe for #{options}")
 
       client = DCMClient::Client.new(Xact::Application.config.dcm)
-
       self.http_response = DcmSubscribeCommand.new(client).call(options.from, options.dcm_account_code, options.dcm_topic_codes, options.sms_tokens)
 
-    rescue DCMClient::Error::UnprocessableEntity => e
+    rescue DCMClient::Error::UnprocessableEntity, DCMClient::Error::NotFound => e
       # don't raise exception, so no retry
       logger.error "message: #{e.message}\nresponse: #{e.response.inspect}"
       self.http_response = e.response

@@ -56,7 +56,6 @@ class ApplicationController < ActionController::API
   end
 
   def respond_with(*resources, &block)
-    #binding.pry
     set_link_header(resources.first) if resources.first.respond_to?(:total_pages)
     super
   end

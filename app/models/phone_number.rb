@@ -15,9 +15,13 @@ PhoneNumber = Struct.new(:number) do
     end
   end
 
+  # 468311 => 468311
+  # (444) 333-2222 => +14443332222
   def e164_or_short
+    return number if number.blank?
+    number.gsub!(/[^\d\+]/, '')
     if number.length == 6 #it's a short code
-      number.gsub(/[^\d\+]/, '')
+      number
     else
       '+' + formatted
     end

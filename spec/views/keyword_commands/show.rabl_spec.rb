@@ -13,6 +13,7 @@ describe 'keyword_commands/show.rabl' do
          updated_at: 1.days.ago,
          keyword_id: 101,
          errors: [],
+         command_actions: [1],
          :persisted? => true
     )
   end

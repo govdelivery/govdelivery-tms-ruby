@@ -30,10 +30,18 @@ describe DcmSubscribeWorker do
     subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
   end
 
-  it 'ignores UnprocessableEntity errors' do
+  it 'ignores 422s' do
     subscribe_command.expects(:call)
     .with(phone_number, account_code, topic_codes, subscribe_args)
     .raises(DCMClient::Error::UnprocessableEntity.new("foo", stub('http_response', code: 422)))
+
+    subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
+  end
+
+  it 'ignores 404s' do
+    subscribe_command.expects(:call)
+    .with(phone_number, account_code, topic_codes, subscribe_args)
+    .raises(DCMClient::Error::NotFound.new("foo", stub('http_response', code: 404)))
 
     subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
   end
