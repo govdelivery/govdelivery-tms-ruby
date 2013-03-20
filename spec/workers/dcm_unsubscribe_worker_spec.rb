@@ -2,10 +2,10 @@ require 'spec_helper'
 describe DcmUnsubscribeWorker do
   let(:config) { {:username => "foo", :password => "bar", :api_root => "http://example.com"} }
   let(:client) { mock('dcm_client') }
-  let(:response_not_found){stub(code: 404)}
+  let(:response_not_found){ {code: 404} }
   let(:command) { mock('Command', process_response: nil) }
   let(:account) { stub('account', id: 100, to_param: 100) }
-  let(:http_response) { stub(code: 200) }
+  let(:http_response) { {code: 200} }
 
   subject do
     w = DcmUnsubscribeWorker.new

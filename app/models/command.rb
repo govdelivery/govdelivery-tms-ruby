@@ -1,6 +1,7 @@
 class Command < ActiveRecord::Base
   belongs_to :account
   belongs_to :event_handler
+  delegate :keyword, to: :event_handler, allow_nil: true
   serialize :params, CommandParameters
 
   attr_accessible :command_type, :name, :params

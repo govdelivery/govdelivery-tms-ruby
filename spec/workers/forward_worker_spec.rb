@@ -15,7 +15,7 @@ describe ForwardWorker do
                    :callback_url => "http://localhost"} }
 
   let(:message) { stub('SmsMessage') }
-  let(:forward_response) { stub('faraday http response', :body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY") }
+  let(:forward_response) { {:body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY"} }
   let(:command) { stub('Command') }
 
   subject do

@@ -36,9 +36,9 @@ module CommandType
     def log_action!(params, http_response)
       CommandAction.create!(inbound_message_id: params.inbound_message_id,
                             command_id: params.command_id,
-                            http_response_code: http_response.code,
-                            http_response_type: http_response.headers['Content-Type'],
-                            http_body: http_response.body)
+                            http_response_code: http_response[:status],
+                            http_content_type: http_response[:headers]['Content-Type'],
+                            http_body: http_response[:body])
     end
   end
 

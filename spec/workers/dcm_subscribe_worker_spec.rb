@@ -25,7 +25,7 @@ describe DcmSubscribeWorker do
   end
 
   it 'passes options to the subscribe command' do
-    subscribe_command.expects(:call).with(phone_number, account_code, topic_codes, subscribe_args).returns(stub('http_response', code: 200))
+    subscribe_command.expects(:call).with(phone_number, account_code, topic_codes, subscribe_args).returns({code: 200})
 
     subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
   end
@@ -33,7 +33,7 @@ describe DcmSubscribeWorker do
   it 'ignores 422s' do
     subscribe_command.expects(:call)
     .with(phone_number, account_code, topic_codes, subscribe_args)
-    .raises(DCMClient::Error::UnprocessableEntity.new("foo", stub('http_response', code: 422)))
+    .raises(DCMClient::Error::UnprocessableEntity.new("foo", {code: 422}))
 
     subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
   end
@@ -41,7 +41,7 @@ describe DcmSubscribeWorker do
   it 'ignores 404s' do
     subscribe_command.expects(:call)
     .with(phone_number, account_code, topic_codes, subscribe_args)
-    .raises(DCMClient::Error::NotFound.new("foo", stub('http_response', code: 404)))
+    .raises(DCMClient::Error::NotFound.new("foo", {code: 404}))
 
     subject.perform({:dcm_account_code => account_code, :from => phone_number, :dcm_topic_codes => topic_codes, :sms_tokens => subscribe_args})
   end

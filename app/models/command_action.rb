@@ -14,7 +14,7 @@ class CommandAction < ActiveRecord::Base
   scope :successes, where("http_response_code BETWEEN 200 AND 299")
 
   def plaintext_body?
-    self.http_content_type=='text/plain' && !self.http_body.blank?
+    self.http_content_type=~/text\/plain/ && !self.http_body.blank?
   end
 
   protected

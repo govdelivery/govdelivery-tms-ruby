@@ -36,7 +36,7 @@ class DcmUnsubscribeWorker
         self.exception = e
         e.response
       end
-    end.max_by(&:code)
+    end.max_by{|k| k[:status]}
 
     super
   ensure

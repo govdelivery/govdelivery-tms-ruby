@@ -6,11 +6,11 @@ describe 'command_actions/show.rabl' do
          id: 1,
          inbound_message_id: 2,
          command_id: 1,
-         command: stub(keyword_id: 3),
+         command: stub(keyword_id: 3, keyword: stub(id: 3)),
          http_body: 'http body',
          http_response_code: 200,
          http_content_type: 'text/plain',
-         created_at: Time.now.beginning_of_day
+         created_at: Time.now.beginning_of_day,
     )
   end
 
