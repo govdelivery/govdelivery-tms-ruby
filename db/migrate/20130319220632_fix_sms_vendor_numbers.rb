@@ -1,3 +1,5 @@
+Object.send(:remove_const, :Vendor)
+require 'vendor'
 class FixSmsVendorNumbers < ActiveRecord::Migration
   def change
     SmsVendor.find_each do |v|
