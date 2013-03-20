@@ -1,4 +1,6 @@
-Object.send(:remove_const, :Vendor)
+if defined?(Vendor)
+  Object.send(:remove_const, :Vendor)
+end
 require 'vendor'
 class FixSmsVendorNumbers < ActiveRecord::Migration
   def change
