@@ -5,8 +5,12 @@ class CreateAccount
   def run_from_options(argv)
     parse_options(argv)
     boot_rails
-
-    create_account(@options)
+    
+    if(@options[:list])
+      list_accounts
+    else
+      create_account(@options)
+    end
 
   end
 
@@ -23,11 +27,18 @@ Usage:
   #{__FILE__} [options]
 
 Examples: 
+
+  List All Accounts
+    #{__FILE__} -l
+
   Create Account
     #{__FILE__} -n "INSURE SC Test Account" -t 10025 -d "TOR_TEST,FOO"
     
 Options:
 USAGE
+      opts.on("-l", "--list", "List All Accounts") do |p|
+        @options[:list] = p
+      end
       opts.on("-n", "--name Account Name") do |p|
         @options[:account_name] = p.to_s
       end
@@ -62,6 +73,22 @@ USAGE
     a.save
 
     puts "Created Account id: " + a.id.to_s 
+
+  end
+
+  def list_accounts
+
+    puts "Account.all\n";
+    Account.all.each { |a|
+      puts "\tid: " + a.id.to_s + "\n"
+      puts "\tname: " + a.name + "\n"
+      puts "\tsms vendor: " + a.sms_vendor_id.to_s + "\n"
+      puts "\tvoice vendor: " + a.voice_vendor_id.to_s + "\n"
+      puts "\temail vendor: " + a.email_vendor_id.to_s + "\n"
+      print "\tdcm accounts: " 
+      a.dcm_account_codes.each { |d| print d + "," }
+      puts "\n\n"
+    }
 
   end
 

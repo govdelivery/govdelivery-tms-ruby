@@ -5,7 +5,9 @@ class CreateVendor
   def run_from_options(argv)
     parse_options(argv)
     boot_rails
-    if(@options[:vendor_type] == "SmsVendor")
+    if(@options[:list])
+      list_vendors()
+    elsif(@options[:vendor_type] == "SmsVendor")
       create_sms_vendor(@options)
     elsif(@options[:vendor_type] == "VoiceVendor")
       create_voice_vendor(@options)
@@ -29,6 +31,10 @@ Usage:
   #{__FILE__} [options]
 
 Examples: 
+
+  List All Vendors
+    #{__FILE__} -l
+
   Create Sms Vendor
     #{__FILE__} -t SmsVendor -n "INSURE Short Code" -u "ACcc41a7e742457806f26d91a1ea19de9f" -p "331b3a44b5067a3c02013a6cfaa18b1c" -f "467873" -w "TwilioMessageWorker" -h "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." -s "You are opted out from Medicare Alerts. No more messages will be sent. Reply HELP for help or Help@govdelivery.com. Msg&Data rates may apply."
     
@@ -40,6 +46,9 @@ Examples:
 
 Options:
 USAGE
+      opts.on("-l", "--list", "List all Vendors") do |p|
+        @options[:list] = p
+      end
       opts.on("-t", "--type Vendor Type") do |p|
         @options[:vendor_type] = p.to_s
       end
@@ -131,9 +140,32 @@ USAGE
 
   end
 
-  def search_vendor(vendor_type)
-    v = CreateVendor.find(vendor_type)
-    puts "Vendor id: " + vendor_type.to_s + " has name: " + v.name.to_s
+  def list_vendors
+
+    puts "SmsVendor.all\n";
+    SmsVendor.all.each { |v| 
+      puts "\tid: " + v.id.to_s + "\n" 
+      puts "\tname: " + v.name + "\n" 
+      puts "\tfrom_phone: " + v.from_phone.to_s + "\n" 
+      puts "\n"
+    }
+
+    puts "VoiceVendor.all\n";
+    VoiceVendor.all.each { |v| 
+      puts "\tid: " + v.id.to_s + "\n" 
+      puts "\tname: " + v.name + "\n" 
+      puts "\tfrom_phone: " + v.from_phone.to_s + "\n" 
+      puts "\n"
+    }
+
+    puts "EmailVendor.all\n";
+    EmailVendor.all.each { |v| 
+      puts "\tid: " + v.id.to_s + "\n" 
+      puts "\tname: " + v.name + "\n" 
+      puts "\tworker: " + v.worker.to_s + "\n" 
+      puts "\n"
+    }
+
   end
 
 end

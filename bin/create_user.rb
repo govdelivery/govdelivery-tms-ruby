@@ -6,7 +6,11 @@ class CreateUser
     parse_options(argv)
     boot_rails
 
-    create_account(@options)
+    if(@options[:list])
+      list_users
+    else
+      create_account(@options)
+    end
 
   end
 
@@ -23,11 +27,18 @@ Usage:
   #{__FILE__} [options]
 
 Examples: 
+  
+  List All Users
+    #{__FILE__} -l
+
   Create User
     #{__FILE__} -a 10024 -e "insure@evotest.govdelivery.com" -p "fysucrestondoko" -s 0
     
 Options:
 USAGE
+      opts.on("-l", "--list", "List Users") do |p|
+        @options[:list] = p.to_s
+      end
       opts.on("-a", "--name Account ID") do |p|
         @options[:user_account_id] = p.to_s
       end
@@ -68,6 +79,19 @@ USAGE
     end
 
   end
+
+  def list_users
+
+    puts "User.all\n";
+    User.all.each { |u|
+      puts "\tid: " + u.id.to_s + "\n"
+      puts "\temail: " + u.email + "\n"
+      puts "\taccount_id: " + u.account_id.to_s + "\n"
+      puts "\n"
+    }
+
+  end
+
 
 end
 
