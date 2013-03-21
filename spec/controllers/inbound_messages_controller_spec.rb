@@ -26,9 +26,7 @@ describe InboundMessagesController do
     end
     before do
       results.stubs(:total_pages).returns(5)
-      SmsVendor.any_instance
-        .expects(:inbound_messages)
-        .returns(stub(:page => results))
+      controller.stubs(:finder).returns(stub(:page => results))
     end
     it "should work on the first page" do
       results.stubs(:current_page).returns(1)
