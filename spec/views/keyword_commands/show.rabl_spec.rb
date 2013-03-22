@@ -30,6 +30,7 @@ describe 'keyword_commands/show.rabl' do
                       with_attributes(:name, :command_type).
                       with_objects(:params).
                       with_links('self' => keyword_command_path(keyword, command),
+                                 'keyword' => keyword_path(keyword),
                                  'command_actions' => keyword_command_actions_path(keyword, command)
                     )
   end
@@ -40,7 +41,8 @@ describe 'keyword_commands/show.rabl' do
     rendered.should be_json_for(command).
                       with_attributes(:name, :command_type).
                       with_objects(:params).
-                      with_links('self' => keyword_commands_path(keyword)).
+                      with_links('self' => keyword_commands_path(keyword),
+                                 'keyword' => keyword_path(keyword)).
                       with_errors
   end
 

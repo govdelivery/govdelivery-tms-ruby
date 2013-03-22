@@ -74,13 +74,13 @@ class CommandParameters
   private
 
   def validate_string_fields
-    command_type.string_fields.each do |f|
+    command_type.required_string_fields.each do |f|
       errors.add(f, :blank) if self.send(f).blank?
     end
   end
 
   def validate_array_fields
-    command_type.array_fields.each do |f|
+    command_type.required_array_fields.each do |f|
       errors.add(f, :blank) if self.send(f).blank?
       errors.add(f, "must be an array") unless self.send(f).is_a?(Array)
     end
@@ -95,9 +95,9 @@ class CommandParameters
   end
 
   def validate_dcm_account
-    if command_type.string_fields.include?(:dcm_account_code) && !valid_account_code?(account)
+    if command_type.required_string_fields.include?(:dcm_account_code) && !valid_account_code?(account)
       errors.add(:dcm_account_code, "is not a valid code")
-    elsif command_type.array_fields.include?(:dcm_account_codes) && !valid_account_codes?(account)
+    elsif command_type.required_array_fields.include?(:dcm_account_codes) && !valid_account_codes?(account)
       errors.add(:dcm_account_codes, "contain one or more invalid account codes")
     end
   end

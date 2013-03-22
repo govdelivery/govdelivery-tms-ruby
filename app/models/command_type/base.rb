@@ -2,6 +2,9 @@ module CommandType
   class Base
     attr_accessor :string_fields, :array_fields
 
+    alias :required_string_fields :string_fields
+    alias :required_array_fields :array_fields
+
     def initialize(string_fields, array_fields)
       self.string_fields = string_fields
       self.array_fields = array_fields

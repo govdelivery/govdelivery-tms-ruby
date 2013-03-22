@@ -1,7 +1,7 @@
 object @keyword
 attributes :name, :response_text, :created_at, :updated_at
-if @keyword
-  unless @keyword.errors.empty?
+if root_object
+  unless root_object.errors.empty?
     node(:errors) { |keyword| keyword.errors }
   end
   node(:_links) do |k|

@@ -6,6 +6,10 @@ module CommandType
       super(STRING_FIELDS.dup, [])
     end
 
+    def required_string_fields
+      [:http_method, :url]
+    end
+
     def process_response(account, params, http_response)
       cr = super
       build_message(account, params.from, cr.http_body) if cr.plaintext_body?
