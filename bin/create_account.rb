@@ -36,22 +36,22 @@ Examples:
     
 Options:
 USAGE
-      opts.on("-l", "--list", "List All Accounts") do |p|
+      opts.on("-l", "--list", "List Accounts") do |p|
         @options[:list] = p
       end
-      opts.on("-n", "--name Account Name") do |p|
+      opts.on("-n", "--name ACCOUNTNAME") do |p|
         @options[:account_name] = p.to_s
       end
-      opts.on("-v", "--voice_vendor Voice Vendor") do |p|
+      opts.on("-v", "--voice_vendor VOICEVENDOR") do |p|
         @options[:account_voice_vendor] = p
       end
-      opts.on("-t", "--sms_vendor Sms Vendor") do |p|
+      opts.on("-t", "--sms_vendor SMSVENDOR") do |p|
         @options[:account_sms_vendor] = p
       end
-      opts.on("-e", "--email_vendor Email Vendor") do |p|
+      opts.on("-e", "--email_vendor EMAILVENDOR") do |p|
         @options[:account_email_vendor] = p
       end
-      opts.on("-d", "--dcm_account_codes DCM Account Codes") do |p|
+      opts.on("-d", "--dcm_account_codes ACCOUNTCODES") do |p|
         @options[:dcm_account_codes] = p.split(/,/)
       end
     end.parse!(argv)
@@ -72,7 +72,18 @@ USAGE
 
     a.save
 
-    puts "Created Account id: " + a.id.to_s 
+    if(a.id)
+      puts "Created Account id: " + a.id.to_s 
+    else
+      puts "Cannot create account with: \n"
+      puts "\tname: " + @options[:account_name].to_s
+      puts "\tsms vendor: " + @options[:account_sms_vendor].to_s
+      puts "\tvoice vendor: " + @options[:account_voice_vendor].to_s
+      puts "\temail vendor: " + @options[:account_email_vendor].to_s
+      print "\tdcm accounts: " 
+      @options[:dcm_account_codes].each { |d| print d + "," }
+      puts "\n"
+    end
 
   end
 
