@@ -100,7 +100,7 @@ module Xact
     config.dcm = {
       username: 'product@govdelivery.com',
       password: 'retek01!',
-      api_root: 'http://localhost:3000'
+      api_root: 'http://evolution.local'
     }
 
     config.twilio_polling_enabled = false

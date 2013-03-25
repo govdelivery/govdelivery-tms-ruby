@@ -8,7 +8,7 @@ describe Service::ForwardService do
   let(:url) { "http://www.foo.com/a/sub/dir" }
 
   it 'should post the parameters' do
-    req = mock("request object")
+    req = stub("request object", headers: {})
     req.expects(:body=).with(body)
     post = mock("post object")
     post.expects(:post).with(url).yields(req)
@@ -17,7 +17,7 @@ describe Service::ForwardService do
   end
 
   it 'should get the parameters' do
-    req = mock("request object")
+    req = stub("request object", headers: {})
     req.expects(:params=).with(body)
     get = mock("get object")
     get.expects(:get).with(url).yields(req)

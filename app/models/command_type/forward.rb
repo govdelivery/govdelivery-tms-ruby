@@ -12,7 +12,7 @@ module CommandType
 
     def process_response(account, params, http_response)
       cr = super
-      build_message(account, params.from, cr.http_body) if cr.plaintext_body?
+      build_message(account, params.from, cr.response_body) if cr.plaintext_body?
     end
 
     def build_message(account, from, short_body)

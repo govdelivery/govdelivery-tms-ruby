@@ -9,16 +9,15 @@ require 'command_worker'
 #   from     => The SMS phone number of the incoming SMS message
 #
 # The response content type is expected to be text/plain, and the response body will be sent back 
-# to the user (after being truncated to 160 characters).  If a non-200 response status is recieved, 
-# the application will ignore the response body and will re-attempt the service request later.  
+# to the user (after being truncated to 160 characters).
+#
+# Unlike other commands, if a non-200 response status is received, we don't retry.
 class ForwardWorker
   include Workers::CommandWorker
 
-  attr_writer :sms_service
+  sidekiq_options retry: false
 
-  # Retry for up to ~ 20 days (see https://github.com/mperham/sidekiq/wiki/Error-Handling)
-  # That should get us through a long outage on the remote end.
-  sidekiq_options retry: 25
+  attr_writer :sms_service
 
   def perform(opts)
     logger.info("Performing Forward for #{options}")
@@ -35,7 +34,23 @@ class ForwardWorker
   end
 
   def http_response
-    @http_response ||= http_service.send(options.http_method.downcase, options.url, options.username, options.password, {:from => options.from, :sms_body => options.sms_body})
+    begin
+      return @http_response if @http_response
+      @http_response = http_service.send(options.http_method.downcase, options.url, options.username, options.password, {:from => options.from, :sms_body => options.sms_body})
+      if @http_response.status == 0
+        raise Faraday::Error::ConnectionFailed.new(nil, body: "Couldn't connect to #{@http_response.env[:url].to_s}", headers: {})
+      end
+    rescue Faraday::Error::ConnectionFailed, Faraday::Error::TimeoutError => e
+      # these are network problems, they could happen because of a bad command but we should probably know about them
+      # in case e.g. our network is having issues
+      self.exception = e
+      @http_response = OpenStruct.new(e.response)
+    rescue Faraday::Error::ClientError => e
+      # anything that isn't potentially a network problem is marked as a failure without reraising
+      @http_response = OpenStruct.new(e.response)
+    ensure
+      return @http_response
+    end
   end
 
   def sms_service

@@ -2,11 +2,14 @@ require 'spec_helper'
 
 describe CommandType::Forward do
   let(:account) { stub_everything('account', sms_messages: stub(:new => SmsMessage.new)) }
-  let(:command_action) { CommandAction.new(http_content_type: 'text/plain',
-                                           http_body: "ATLANTA IS FULL OF ZOMBIES, STAY AWAY") }
-  let(:http_response) { {:body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY",
-                         :status => 200,
-                         :headers => {'Content-Type' => 'text/plain'}} }
+  let(:command_action) { stub('CommandAction',
+                              content_type: 'text/plain',
+                              response_body: "ATLANTA IS FULL OF ZOMBIES, STAY AWAY",
+                              plaintext_body?: true,
+                              save!: true) }
+  let(:http_response) { OpenStruct.new(:body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY",
+                                       :status => 200,
+                                       :headers => {'Content-Type' => 'text/plain'}) }
   let(:command_params) do
     CommandParameters.new(:url => "url",
                           :http_method => "post",
@@ -22,11 +25,7 @@ describe CommandType::Forward do
   subject { CommandType::Forward.new }
 
   before do
-    CommandAction.expects(:create!).with(inbound_message_id: command_params.inbound_message_id,
-                                         command_id: command_params.command_id,
-                                         http_response_code: http_response[:status],
-                                         http_content_type: http_response[:headers]['Content-Type'],
-                                         http_body: http_response[:body]).returns(command_action)
+    stub_command_action_create!(command_params, http_response, command_action)
   end
 
   it 'creates a command response and sms message' do

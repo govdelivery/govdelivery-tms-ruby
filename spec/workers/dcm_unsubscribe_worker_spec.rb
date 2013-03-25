@@ -5,7 +5,7 @@ describe DcmUnsubscribeWorker do
   let(:response_not_found){ {code: 404} }
   let(:command) { mock('Command', process_response: nil) }
   let(:account) { stub('account', id: 100, to_param: 100) }
-  let(:http_response) { {code: 200} }
+  let(:http_response) { stub(status: 200) }
 
   subject do
     w = DcmUnsubscribeWorker.new

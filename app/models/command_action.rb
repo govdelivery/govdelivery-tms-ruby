@@ -1,26 +1,28 @@
 class CommandAction < ActiveRecord::Base
-  attr_accessible :command_id, :inbound_message_id, :http_response_code, :http_content_type, :http_body
+  attr_accessible :command_id, :inbound_message_id, :status, :content_type, :response_body
   strip_attributes
 
   belongs_to :command
   belongs_to :inbound_message
   validates :inbound_message, presence: true
-  validates :http_response_code, presence: true
-  validates :http_content_type, presence: true
 
   before_validation :trim_body, on: :create
-  after_create :update_inbound_message
+  after_save :update_inbound_message
 
-  scope :successes, where("http_response_code BETWEEN 200 AND 299")
+  scope :successes, where("status BETWEEN 200 AND 299")
 
   def plaintext_body?
-    self.http_content_type=~/text\/plain/ && !self.http_body.blank?
+    success? && self.content_type=~/text\/plain/ && !self.response_body.blank?
+  end
+
+  def success?
+    (200..299).include?(status)
   end
 
   protected
 
   def trim_body
-    self.http_body = nil if http_body && http_body.length > 500
+    self.response_body = nil if response_body && response_body.length > 500
   end
 
   def update_inbound_message

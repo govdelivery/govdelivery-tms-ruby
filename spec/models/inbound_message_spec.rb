@@ -55,8 +55,8 @@ describe InboundMessage do
     context 'and then updated' do
       before do
         command.command_actions.create!(inbound_message_id: inbound_message.id,
-                                        http_response_code: 200,
-                                        http_content_type: 'text/html')
+                                        status: 200,
+                                        content_type: 'text/html')
       end
       it 'should be in progress' do
         inbound_message.reload.command_status.should eq(:pending)
@@ -65,8 +65,8 @@ describe InboundMessage do
       context 'and then completed' do
         before do
           command.command_actions.create!(inbound_message_id: inbound_message.id,
-                                          http_response_code: 204,
-                                          http_content_type: 'text/html')
+                                          status: 204,
+                                          content_type: 'text/html')
         end
         it 'should be complete' do
           inbound_message.reload.command_status.should eq(:success)

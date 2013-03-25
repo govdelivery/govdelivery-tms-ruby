@@ -15,7 +15,8 @@ describe ForwardWorker do
                    :callback_url => "http://localhost"} }
 
   let(:message) { stub('SmsMessage') }
-  let(:forward_response) { {:body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY"} }
+  let(:forward_response) { stub(status: 200, body: "ATLANTA IS FULL OF ZOMBIES, STAY AWAY") }
+  let(:invalid_response) { stub(status: 0, env: {url: 'http://whaaaat'}) }
   let(:command) { stub('Command') }
 
   subject do
@@ -41,5 +42,15 @@ describe ForwardWorker do
     subject.sms_service.expects(:deliver!).never
 
     subject.perform(options)
+  end
+
+  it 'should record a failure if we get a response without a status' do
+    subject.stubs(:command).returns(command)
+    subject.http_service.expects(:post).with("url", nil, nil, {:from => "333", :sms_body => "sms body"}).returns(invalid_response)
+    command.expects(:process_response).with(instance_of(Account), instance_of(CommandParameters), instance_of(OpenStruct)).returns(nil)
+    subject.sms_service.expects(:deliver!).never
+
+    subject.perform(options)
+    subject.exception.should_not be_nil
   end
 end

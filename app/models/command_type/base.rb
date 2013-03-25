@@ -15,7 +15,7 @@ module CommandType
     end
 
     def invoke!(params)
-      "#{CommandType::DcmSubscribe.name.demodulize}Worker".constantize.perform_async(params.to_hash)
+      "#{self.class.name.demodulize}Worker".constantize.perform_async(params.to_hash)
     end
 
     def process_response(account, params, http_response)
@@ -37,11 +37,14 @@ module CommandType
     protected
 
     def log_action!(params, http_response)
-      CommandAction.create!(inbound_message_id: params.inbound_message_id,
-                            command_id: params.command_id,
-                            http_response_code: http_response[:status],
-                            http_content_type: http_response[:headers]['Content-Type'],
-                            http_body: http_response[:body])
+      ca = CommandAction.find_or_initialize_by_inbound_message_id_and_command_id(
+        inbound_message_id: params.inbound_message_id,
+        command_id: params.command_id,
+        status: http_response.status,
+        content_type: http_response.headers['Content-Type'],
+        response_body: http_response.body)
+      ca.save!
+      ca
     end
   end
 

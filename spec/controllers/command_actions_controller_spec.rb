@@ -37,9 +37,9 @@ describe CommandActionsController do
            inbound_message_id: 200+i,
            command_id: 300+i,
            command: stub(keyword_id: 400+i),
-           http_body: 'http body',
-           http_response_code: 200,
-           http_content_type: 'text/plain',
+           response_body: 'http body',
+           status: 200,
+           content_type: 'text/plain',
            created_at: i.days.ago
       )
     end
@@ -49,9 +49,9 @@ describe CommandActionsController do
     {
       inbound_message_id: inbound_message.id,
       command_id: command.id,
-      http_body: 'http body',
-      http_response_code: 200,
-      http_content_type: 'text/plain'
+      response_body: 'http body',
+      status: 200,
+      content_type: 'text/plain',
     }
   end
 

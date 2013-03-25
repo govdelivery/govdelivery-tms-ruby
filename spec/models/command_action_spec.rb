@@ -21,15 +21,15 @@ describe CommandAction do
     subject {
       CommandAction.create!(inbound_message_id: inbound_message.id,
                             command_id: command.id,
-                            http_response_code: '404',
-                            http_content_type: 'text/plain; charset=utf-8',
-                            http_body: 'body')
+                            status: '201',
+                            content_type: 'text/plain; charset=utf-8',
+                            response_body: 'body')
     }
 
     it { should be_valid }
     it { subject.plaintext_body?.should be_true }
     it 'should be false if body is nil' do
-      subject.http_body=nil
+      subject.response_body=nil
       subject.plaintext_body?.should be_false
     end
   end
@@ -38,9 +38,9 @@ describe CommandAction do
     subject {
       CommandAction.create!(inbound_message_id: inbound_message.id,
                             command_id: command.id,
-                            http_response_code: '404',
-                            http_content_type: 'text/html; charset=utf-8',
-                            http_body: 'body')
+                            status: '404',
+                            content_type: 'text/plain; charset=utf-8',
+                            response_body: 'body')
     }
 
     it { should be_valid }
