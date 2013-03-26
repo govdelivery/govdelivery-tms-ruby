@@ -10,9 +10,9 @@ twilio_voice_sender = VoiceVendor.find_or_create_by_name!(:name => 'Twilio Voice
                                                           :from => Rails.configuration.twilio_number)
 sms_loopback = SmsVendor.find_or_create_by_name!(:name => 'Loopback SMS Sender',
                                                  :worker => 'LoopbackSmsWorker',
-                                                 :username => 'dont care',
+                                                 :username => Rails.configuration.twilio_username,
                                                  :password => 'dont care',
-                                                 :from => '1555111222')
+                                                 :from => '+15551112222')
 voice_loopback = VoiceVendor.find_or_create_by_name!(:name => 'Loopback Voice Sender',
                                                      :worker => 'LoopbackVoiceWorker',
                                                      :username => 'dont care',
@@ -27,7 +27,7 @@ email_loopback = EmailVendor.find_or_create_by_name!(
     :name => 'Email Loopback Sender',
     :worker => 'LoopbackEmailWorker')
 
-if Rails.env.development?
+if Rails.env.development? || Rails.env.ci?
   from_address = FromAddress.find_or_create_by_from_email!(:from_email=>'tms_dev@evotest.govdelivery.com')
 
   #
