@@ -37,14 +37,12 @@ module CommandType
     protected
 
     def log_action!(params, http_response)
-      ca = CommandAction.find_or_initialize_by_inbound_message_id_and_command_id(
+      CommandAction.where(
         inbound_message_id: params.inbound_message_id,
-        command_id: params.command_id,
+        command_id: params.command_id).first_or_create!(
         status: http_response.status,
         content_type: http_response.headers['Content-Type'],
         response_body: http_response.body)
-      ca.save!
-      ca
     end
   end
 
