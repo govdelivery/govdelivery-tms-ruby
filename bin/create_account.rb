@@ -31,8 +31,11 @@ Examples:
   List All Accounts
     #{__FILE__} -l
 
-  Create Account
+  Create Account with SMS vendor
     #{__FILE__} -n "INSURE SC Test Account" -t 10025 -d "TOR_TEST,FOO"
+
+  Create Account with Email vendor
+    #{__FILE__} -n "Email Test Account" -e 10025 -f "test@evotest.govdelivery.com"
     
 Options:
 USAGE
@@ -50,6 +53,9 @@ USAGE
       end
       opts.on("-e", "--email_vendor EMAILVENDOR") do |p|
         @options[:account_email_vendor] = p
+      end
+      opts.on("-f", "--from_address [FROMADDRESS]") do |p|
+        @options[:account_from_address] = p
       end
       opts.on("-d", "--dcm_account_codes ACCOUNTCODES") do |p|
         @options[:dcm_account_codes] = p.split(/,/)
@@ -69,8 +75,16 @@ USAGE
     a.sms_vendor_id = @options[:account_sms_vendor]
     a.email_vendor_id = @options[:account_email_vendor]
     a.dcm_account_codes = @options[:dcm_account_codes]
-
-    a.save
+    
+    if(@options[:account_from_address])
+      # this only sets the from_email, which is the default for the other values if they are not present
+      f = FromAddress.new
+      f.from_email = @options[:account_from_address]
+      a.from_address = f
+      a.save
+    else
+      a.save
+    end
 
     if(a.id)
       puts "Created Account id: " + a.id.to_s 
@@ -80,6 +94,7 @@ USAGE
       puts "\tsms vendor: " + @options[:account_sms_vendor].to_s
       puts "\tvoice vendor: " + @options[:account_voice_vendor].to_s
       puts "\temail vendor: " + @options[:account_email_vendor].to_s
+      puts "\tfrom address: " + @options[:account_from_address].to_s
       print "\tdcm accounts: " 
       @options[:dcm_account_codes].each { |d| print d + "," }
       puts "\n"
@@ -96,6 +111,9 @@ USAGE
       puts "\tsms vendor: " + a.sms_vendor_id.to_s + "\n"
       puts "\tvoice vendor: " + a.voice_vendor_id.to_s + "\n"
       puts "\temail vendor: " + a.email_vendor_id.to_s + "\n"
+      if(a.email_vendor_id) 
+        puts "\tfrom email: " + a.from_address.from_email.to_s + "\n" 
+      end
       print "\tdcm accounts: " 
       a.dcm_account_codes.each { |d| print d + "," }
       puts "\n\n"
