@@ -6,7 +6,7 @@ Xact::Application.configure do
   config.consider_all_requests_local = true
   config.action_controller.perform_caching = true
 
-  config.redis_url = 'redis://qc-redis-master.visi.gdi:6379'
+  config.redis_url = 'redis://it-buildbox1.office.gdi:6379'
   config.cache_store = :redis_store, config.redis_url
 
   config.action_mailer.raise_delivery_errors = false
