@@ -10,12 +10,12 @@ twilio_voice_sender = VoiceVendor.find_or_create_by_name!(:name => 'Twilio Voice
                                                           :from => Rails.configuration.twilio_number)
 sms_loopback = SmsVendor.find_or_create_by_name!(:name => 'Loopback SMS Sender',
                                                  :worker => 'LoopbackSmsWorker',
-                                                 :username => Rails.configuration.twilio_username,
+                                                 :username => 'sms_loopback_username',
                                                  :password => 'dont care',
                                                  :from => '+15551112222')
 voice_loopback = VoiceVendor.find_or_create_by_name!(:name => 'Loopback Voice Sender',
                                                      :worker => 'LoopbackVoiceWorker',
-                                                     :username => 'dont care',
+                                                     :username => 'voice_loopback_username',
                                                      :password => 'dont care',
                                                      :from => '1555111222')
 

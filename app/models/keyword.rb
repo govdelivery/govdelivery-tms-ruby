@@ -34,7 +34,6 @@ class Keyword < ActiveRecord::Base
 
   def execute_commands(params=CommandParameters.new)
     params.account_id = self.account_id
-    params.command_id = self.id
     commands.each{|a| a.call(params)} if event_handler
   end
 

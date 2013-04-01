@@ -1,5 +1,5 @@
 object @message
-attributes :from, :to, :body, :command_status, :created_at
+attributes :from, :to, :body, :command_status, :keyword_response, :created_at
 
 node('_links') { |m|
   hsh = {:self => url_for(:controller => 'inbound_messages', :action => 'show', :id => m.id)}

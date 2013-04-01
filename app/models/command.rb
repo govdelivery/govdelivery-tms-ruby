@@ -17,6 +17,7 @@ class Command < ActiveRecord::Base
 
   # Execute this command with the provided options, merging in the commands "params" column.
   def call(command_parameters=CommandParameters.new)
+    command_parameters.command_id = self.id
     command_parameters.merge!(self.params)
     command_strategy.invoke!(command_parameters)
   end

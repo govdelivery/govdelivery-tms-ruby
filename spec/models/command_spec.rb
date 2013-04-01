@@ -67,7 +67,8 @@ describe Command do
     before do
       # Command should combine its own (persisted) params with the incoming params, convert them to a 
       # hash, and pass them to the worker invocation
-      @expected = CommandParameters.new(:from => "+122222", :dcm_account_codes => ["foo"]).to_hash
+      @expected = CommandParameters.new(:from => "+122222", :dcm_account_codes => ["foo"])
+      @expected.expects(:command_id=)
       CommandType[subject.command_type].expects(:invoke!).with(@expected)
     end
     specify { subject.call(@expected) }

@@ -81,7 +81,6 @@ describe Keyword do
 
     describe '#execute_commands' do
       before do
-        command_params.expects(:command_id=).with(subject.id)
         subject.expects(:commands).returns([command])
         subject.stubs(:event_handler).returns(true)
       end
