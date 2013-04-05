@@ -7,8 +7,6 @@ module Odm
       EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor) }
     end
 
-    protected
-
     def process_vendor(vendor)
       events = Service::Odm::EventService.click_events(vendor)
       events.each do |event|
