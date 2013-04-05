@@ -28,6 +28,7 @@ module Odm
 
       message.recipients.find_each { |recipient| msg.to << recipient.to_odm(macros) }
       ack = odm.send_message(credentials(message.vendor), msg)
+      logger.debug("Sent EmailMessage #{message.to_param} (account #{account.name}, admin #{message.user_id}) to ODM")
       message.sending!(ack)
     end
   end
