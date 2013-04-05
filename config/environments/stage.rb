@@ -80,7 +80,7 @@ Xact::Application.configure do
     api_root: 'https://stage-api.govdelivery.com' 
   }
 
-  config.odm_polling_enabled = false
+  config.odm_polling_enabled = true
   config.odm_host = "http://stg-odm1-ep.tops.gdi:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'xact'
