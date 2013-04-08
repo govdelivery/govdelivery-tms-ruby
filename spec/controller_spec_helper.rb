@@ -1,7 +1,7 @@
 def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
   describe "#create with a valid sms message" do
     before do
-      model.any_instance.expects(:save).returns(true)
+      model.any_instance.expects(:save_with_async_recipients).returns(true)
       model.any_instance.stubs(:new_record?).returns(false)
 
       worker.expects(:perform_async).with(anything).returns(true)
@@ -14,7 +14,7 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
 
   describe "#create with an invalid sms message" do
     before do
-      model.any_instance.expects(:save).returns(false)
+      model.any_instance.expects(:save_with_async_recipients).returns(false)
       model.any_instance.stubs(:new_record?).returns(true)
       post :create, :message => message_opts, :format => :json
     end

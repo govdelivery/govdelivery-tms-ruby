@@ -17,7 +17,8 @@ module Message
     validates_presence_of :account
     before_validation :set_account_from_user
 
-    attr_accessible :recipients_attributes
+    attr_accessor :async_recipients
+    attr_accessible :recipients_attributes, :async_recipients
 
     scope :incomplete, where("#{self.quoted_table_name}.status != ? ", Status::COMPLETED)
     has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id', :order => "#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC"
@@ -34,6 +35,14 @@ module Message
 
   def recipient_class
     self.class.table_name.gsub(/MESSAGES/i, 'RECIPIENTS').classify.constantize
+  end
+
+  def save_with_async_recipients
+    if self.valid? && has_valid_async_recipients?
+      save
+    else
+      return false
+    end
   end
 
   ##
@@ -98,6 +107,14 @@ module Message
   end
 
   protected
+
+  def has_valid_async_recipients?
+    return false unless async_recipients.is_a?(Array)
+    async_recipients.delete_if{|attrs| !attrs.is_a?(Hash)}
+    return true if async_recipients.any?{|attrs| self.recipients.build(attrs).valid?}
+    errors.add(:recipients, 'must contain at least one valid recipient')
+    return false
+  end
 
   def set_account_from_user
     self.account ||= self.user.account if user

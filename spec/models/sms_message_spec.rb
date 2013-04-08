@@ -29,6 +29,31 @@ describe SmsMessage do
       before { message.body = "A"*161 }
       it { should_not be_valid }
     end
+
+    context 'when recipients list is empty' do
+      before { message.async_recipients = []}
+      it 'should be invalid' do
+        subject.save_with_async_recipients.should eq(false)
+        subject.errors.get(:recipients).should eq(['must contain at least one valid recipient'])
+      end
+    end
+
+    context 'when recipients list is garbage' do
+      before { message.async_recipients = ['dude']}
+      it 'should be invalid' do
+        subject.save_with_async_recipients.should eq(false)
+        subject.errors.get(:recipients).should eq(['must contain at least one valid recipient'])
+        subject.async_recipients.should eq([])
+      end
+    end
+
+    context 'when recipients list is valid' do
+      before { message.async_recipients = [{:phone=>'+16125015456'}]}
+      it 'should be invalid' do
+        subject.save_with_async_recipients.should eq(true)
+        subject.async_recipients.should eq([{:phone=>'+16125015456'}])
+      end
+    end
   end
 
   context 'a message with valid recipients attributes' do

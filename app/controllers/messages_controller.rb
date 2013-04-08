@@ -20,11 +20,10 @@ class MessagesController < ApplicationController
   end
 
   def create
-    recipients = params[:message].delete(:recipients) if params[:message]
+    params[:message][:async_recipients] = params[:message].delete(:recipients) if params[:message]
     @message = @message_scope.build(params[:message])
-    if @message.save
-      Rails.cache.write(CreateRecipientsWorker.job_key(@message.id), 1)
-      CreateRecipientsWorker.perform_async({:recipients => recipients,
+    if @message.save_with_async_recipients
+      CreateRecipientsWorker.perform_async({:recipients => @message.async_recipients,
                                                    :klass => @message.class.name,
                                                    :message_id => @message.id,
                                                    :send_options => send_options})
