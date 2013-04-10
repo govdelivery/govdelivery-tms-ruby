@@ -21,7 +21,13 @@ module Message
     attr_accessible :recipients_attributes, :async_recipients
 
     scope :incomplete, where("#{self.quoted_table_name}.status != ? ", Status::COMPLETED)
-    has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id', :order => "#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC"
+    has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id', :order => "#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC" do
+      def build_without_message(attrs)
+        recipient = build(attrs)
+        recipient.skip_message_validation = true
+        recipient
+      end
+    end
     accepts_nested_attributes_for :recipients
   end
 
@@ -109,9 +115,11 @@ module Message
   protected
 
   def has_valid_async_recipients?
-    return false unless async_recipients.is_a?(Array)
-    async_recipients.delete_if{|attrs| !attrs.is_a?(Hash)}
-    return true if async_recipients.any?{|attrs| self.recipients.build(attrs).valid?}
+    if async_recipients && async_recipients.is_a?(Array)
+      async_recipients.delete_if { |attrs| !attrs.is_a?(Hash) }
+      #if the first 500 recipients are all invalid, let's just assume things are broken
+      return true if async_recipients[0, 500].any? { |attrs| self.recipients.build_without_message(attrs).valid? }
+    end
     errors.add(:recipients, 'must contain at least one valid recipient')
     return false
   end
