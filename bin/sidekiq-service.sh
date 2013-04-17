@@ -1,6 +1,15 @@
 #!/bin/bash
-# chkconfig: 235 30 80
+# chkconfig: 2345 98 02
 # description: Sidekiq Ruby Background Job Proccessing
+
+### BEGIN INIT INFO
+# Provides: Sidekiq
+# Required-Start: 
+# Defalt-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Description: Sidekiq Ruby Background Job Proccessing
+### END INIT INFO
+
 
 # Source function library.
 . /etc/rc.d/init.d/functions || exit 5

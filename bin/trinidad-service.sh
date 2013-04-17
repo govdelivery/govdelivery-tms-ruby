@@ -1,6 +1,15 @@
 #!/bin/bash
-# chkconfig: 235 30 80
+# chkconfig: 2345 98 02
 # description: Trinidad Tomcat JRuby Server
+
+### BEGIN INIT INFO
+# Provides: Trinidad
+# Required-Start: 
+# Defalt-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Description: Trinidad Tomcat JRuby Server
+### END INIT INFO
+
 
 # Source function library.
 . /etc/rc.d/init.d/functions || exit 5
