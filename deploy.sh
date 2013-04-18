@@ -93,6 +93,15 @@ while [ $# -gt 0 ]; do
 		STG*|stg*)
 		    ENV="$2"
 		    ;;
+		PROD*|prod*)
+		    ENV="$2"
+		    echo -n "Are you sure you want to deploy to ${ENV}? (y/n) "
+		    read x
+		    if [[ "$x" != "y" && "$x" != "yes" ]]; then
+			echo "ABORTING..."
+			exit 20
+		    fi
+		    ;;
 		*)
 		    echo "Unknown Environment: $2"
 		    exit 2;
