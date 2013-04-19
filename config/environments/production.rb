@@ -40,7 +40,9 @@ Xact::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
   # Use a different cache store in production
-  # config.cache_store = :mem_cache_store
+
+  config.redis_url = 'redis://prod-xactredis-master-ep.tops.gdi:6379'
+  config.cache_store = :redis_store, config.redis_url
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -65,19 +67,18 @@ Xact::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.redis_url = 'redis://prod-redis-master.visi.gdi:6379'
-  config.cache_store = :redis_store, config.redis_url
 
   config.sidekiq[:server][:url] = "#{config.redis_url}/1"
   config.sidekiq[:client][:url] = "#{config.redis_url}/1"
 
   config.dcm = {
-    username: '',
+    username: 'xact-api@govdelivery.com',
     password: '',
     api_root: 'https://api.govdelivery.com'
   }
 
-  config.odm_host = "http://prod-tms1.visi.gdi:65080"
+  config.odm_polling_enabled = true
+  config.odm_host = "http://prod-odm1-ep.tops.gdi:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'gd3'
   config.odm_password = 'R0WG38piNv5NRK0DT8mq04fU'
