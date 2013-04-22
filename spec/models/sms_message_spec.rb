@@ -52,6 +52,7 @@ describe SmsMessage do
       it 'should be invalid' do
         subject.save_with_async_recipients.should eq(true)
         subject.async_recipients.should eq([{:phone=>'+16125015456'}])
+        subject.recipients.should == []
       end
     end
   end

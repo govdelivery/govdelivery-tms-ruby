@@ -44,11 +44,7 @@ module Message
   end
 
   def save_with_async_recipients
-    if self.valid? && has_valid_async_recipients?
-      save
-    else
-      return false
-    end
+    self.valid? && has_valid_async_recipients? ? save : false
   end
 
   ##
@@ -118,7 +114,11 @@ module Message
     if async_recipients && async_recipients.is_a?(Array)
       async_recipients.delete_if { |attrs| !attrs.is_a?(Hash) }
       #if the first 500 recipients are all invalid, let's just assume things are broken
-      return true if async_recipients[0, 500].any? { |attrs| self.recipients.build_without_message(attrs).valid? }
+      begin
+        return true if async_recipients[0, 500].any? { |attrs| self.recipients.build_without_message(attrs).valid? }
+      ensure
+        self.recipients.clear
+      end
     end
     errors.add(:recipients, 'must contain at least one valid recipient')
     return false
