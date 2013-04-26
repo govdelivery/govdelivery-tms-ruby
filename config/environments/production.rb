@@ -76,7 +76,7 @@ Xact::Application.configure do
 
   config.dcm = {
     username: 'xact-api@govdelivery.com',
-    password: '',
+    password: 'BV&f3dS3^PRntHeT&0xekwko%4nJo#PO',
     api_root: 'https://api.govdelivery.com'
   }
 
