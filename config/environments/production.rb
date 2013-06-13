@@ -81,7 +81,7 @@ Xact::Application.configure do
   }
 
   config.odm_polling_enabled = true
-  config.odm_host = "http://prod-odm1-ep.tops.gdi:65080"
+  config.odm_host = "https://tms.govdelivery.com:65081"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'xact'
   config.odm_password = 'phystondusonujocrazendehifreri'
