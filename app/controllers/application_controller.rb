@@ -16,7 +16,8 @@ class ApplicationController < ActionController::API
   end
 
   protected
-
+  
+  ##
   # Pull the X-AUTH-TOKEN header out of the request and put
   # it in the params hash.
   def extract_token_header
@@ -25,11 +26,19 @@ class ApplicationController < ActionController::API
     end
   end
 
+  ## 
+  # Our authentication routine will: 
+  # 1. try to log in using a provided auth_token. If the auth token is invalid
+  #    the service will return a 401. 
+  # 2. if no auth token is given, try to log in with basic auth.
+  #
   def authenticate
     # try to login with auth token
     if params[:auth_token].present?
-      @user = User.with_token(params[:auth_token])
-      sign_in @user if @user
+      unless @user = User.with_token(params[:auth_token])
+        render_not_authorized && return
+      end
+      sign_in @user
 
     # auth token not found... fall back to http basic auth
     else
@@ -43,6 +52,10 @@ class ApplicationController < ActionController::API
 
   def render_not_found
     render :json=>'{}', :status => :not_found
+  end
+
+  def render_not_authorized
+    render :json => '{}', :status => :unauthorized
   end
 
   def find_user

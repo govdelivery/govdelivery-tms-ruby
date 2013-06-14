@@ -40,5 +40,16 @@ describe ApplicationController do
       response.response_code.should eq(200)
       controller.current_user.should eq(user)
     end
+
+    describe "incorrectly" do
+      before do 
+        request.env['X-AUTH-TOKEN'] = user.authentication_token.succ
+      end
+
+      it "should return the correct response code when token is wrong" do
+        get :index
+        response.response_code.should eq(401)
+      end
+    end
   end
 end
