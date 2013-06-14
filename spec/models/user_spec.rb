@@ -24,4 +24,8 @@ describe User do
     before { subject.account = nil }
     specify { subject.valid?.should == false }
   end
+
+  it "should find users by token" do
+    User.with_token(user.authentication_token).should eq(user)
+  end
 end

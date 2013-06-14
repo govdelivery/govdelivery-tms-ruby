@@ -1,5 +1,5 @@
 class TwilioStatusCallbacksController < ApplicationController
-  skip_before_filter :authenticate_user!
+  skip_before_filter :authenticate
   before_filter :get_status, :find_recipient
   respond_to :xml
 

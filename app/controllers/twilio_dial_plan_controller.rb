@@ -1,5 +1,5 @@
 class TwilioDialPlanController < ApplicationController
-  skip_before_filter :authenticate_user!
+  skip_before_filter :authenticate
   before_filter :find_recipient
   respond_to :xml
 

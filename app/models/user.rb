@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  devise :database_authenticatable, :validatable
+  devise :database_authenticatable, :validatable, :token_authenticatable
 
   attr_accessible :email, :password
 
@@ -17,7 +17,8 @@ class User < ActiveRecord::Base
   has_many :account_voice_messages, :through => :account, :source => VoiceMessage.table_name
 
   before_validation :downcase_email
-
+  before_save :ensure_authentication_token
+  
   delegate :vendors, :to => :account
   delegate :sms_vendor, :to => :account
   delegate :voice_vendor, :to => :account
@@ -26,6 +27,10 @@ class User < ActiveRecord::Base
     User.find_by_email(email.downcase) if email
   end
 
+  def self.with_token(token)
+    self.find_by_authentication_token(token)
+  end
+  
   private
   def downcase_email
     self.email.downcase! if self.email

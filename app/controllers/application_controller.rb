@@ -2,8 +2,9 @@ class ApplicationController < ActionController::API
   include ActionController::MimeResponds
   respond_to :json
   self.responder = RablResponder
+  prepend_before_filter :extract_token_header
 
-  before_filter :authenticate_user!
+  before_filter :authenticate
   before_filter :set_default_format
   before_filter :set_page, :only => :index
 
@@ -15,6 +16,26 @@ class ApplicationController < ActionController::API
   end
 
   protected
+
+  # Pull the X-AUTH-TOKEN header out of the request and put
+  # it in the params hash.
+  def extract_token_header
+    if request.headers['X-AUTH-TOKEN']
+      params.merge!({:auth_token => request.headers['X-AUTH-TOKEN']})
+    end
+  end
+
+  def authenticate
+    # try to login with auth token
+    if params[:auth_token].present?
+      @user = User.with_token(params[:auth_token])
+      sign_in @user if @user
+
+    # auth token not found... fall back to http basic auth
+    else
+      authenticate_user! # devise method
+    end
+  end
 
   def set_default_format
     request.format = :json unless params[:format]

@@ -1,5 +1,5 @@
 class TwilioRequestsController < ApplicationController
-  skip_before_filter :authenticate_user!
+  skip_before_filter :authenticate
   respond_to :xml
 
   def create

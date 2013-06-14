@@ -7,7 +7,7 @@ Xact::Application.routes.draw do
   end
 
 
-  devise_for :users, :skip => :all
+  devise_for :users, :skip => :all, :token_authentication_key => 'auth_token'
 
   # call this to add pagination to your controller
   # e.g.
