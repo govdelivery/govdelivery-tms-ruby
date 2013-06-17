@@ -8,6 +8,7 @@ describe User do
 
   context "when valid" do
     specify { subject.valid?.should == true }
+    specify { subject.authentication_tokens.count.should == 1 }
   end
   
   context "when email is empty" do
@@ -26,6 +27,6 @@ describe User do
   end
 
   it "should find users by token" do
-    User.with_token(user.authentication_token).should eq(user)
+    User.with_token(user.authentication_tokens.first.token).should eq(user)
   end
 end

@@ -33,17 +33,7 @@ class ApplicationController < ActionController::API
   # 2. if no auth token is given, try to log in with basic auth.
   #
   def authenticate
-    # try to login with auth token
-    if params[:auth_token].present?
-      unless @user = User.with_token(params[:auth_token])
-        render_not_authorized && return
-      end
-      sign_in @user
-
-    # auth token not found... fall back to http basic auth
-    else
-      authenticate_user! # devise method
-    end
+    authenticate_user! # devise method
   end
 
   def set_default_format

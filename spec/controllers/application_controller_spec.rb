@@ -30,9 +30,10 @@ describe ApplicationController do
     let(:vendor) { create_sms_vendor }
     let(:account) { vendor.accounts.create(:name => 'name') }
     let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+    let(:auth_token) { user.authentication_tokens.first.token }
 
     before do 
-      request.env['X-AUTH-TOKEN'] = user.authentication_token
+      request.env['X-AUTH-TOKEN'] = auth_token
     end
 
     it "should log a user in with that auth token" do
@@ -43,7 +44,7 @@ describe ApplicationController do
 
     describe "incorrectly" do
       before do 
-        request.env['X-AUTH-TOKEN'] = user.authentication_token.succ
+        request.env['X-AUTH-TOKEN'] = auth_token.succ
       end
 
       it "should return the correct response code when token is wrong" do
