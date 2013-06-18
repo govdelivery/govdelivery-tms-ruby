@@ -12,6 +12,12 @@ namespace :db do
     sms_v = omg.sms_vendor
     voice_v = omg.voice_vendor
 
+    filename = "#{ENV['XACT_HOME']}/token.txt"
+    puts "putting token in #{filename}"
+    File.open(filename, 'w') do |f|
+      f.puts u.authentication_tokens.first.token
+    end
+    
     sms_r = SmsRecipient.new
     sms_m = SmsMessage.new
     voice_m = VoiceMessage.new
