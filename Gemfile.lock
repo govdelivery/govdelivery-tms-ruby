@@ -125,6 +125,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.7.1)
     multipart-post (1.2.0)
+    newrelic_rpm (3.6.4.122)
     orm_adapter (0.4.0)
     phony (1.9.0)
     phony_rails (0.2.0)
@@ -296,6 +297,7 @@ DEPENDENCIES
   kaminari
   log4r
   mocha
+  newrelic_rpm
   phony
   phony_rails
   pry
