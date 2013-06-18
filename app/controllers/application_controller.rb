@@ -1,4 +1,14 @@
+#
+# Get newrelic controller instrumentation working with rails-api
+# https://github.com/rails-api/rails-api/issues/34
+#
+require "new_relic/agent/instrumentation/rails3/action_controller"
+require "new_relic/agent/instrumentation/rails3/errors"
+
 class ApplicationController < ActionController::API
+  include NewRelic::Agent::Instrumentation::ControllerInstrumentation
+  include NewRelic::Agent::Instrumentation::Rails3::ActionController
+  include NewRelic::Agent::Instrumentation::Rails3::Errors
   include ActionController::MimeResponds
   respond_to :json
   self.responder = RablResponder
