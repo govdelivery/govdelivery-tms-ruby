@@ -1,3 +1,5 @@
+require 'fileutils'
+
 namespace :db do
 
   desc 'Seed database for testing. This creates and saves the mock data for the xact_rest_tests_followup'
@@ -12,7 +14,8 @@ namespace :db do
     sms_v = omg.sms_vendor
     voice_v = omg.voice_vendor
 
-    filename = "#{ENV['XACT_HOME']}/token.txt"
+    FileUtils.mkdir_p '/tmp/xact_smoke_test/'
+    filename = "/tmp/xact_smoke_test/token.txt"
     puts "putting token in #{filename}"
     File.open(filename, 'w') do |f|
       f.puts u.authentication_tokens.first.token
