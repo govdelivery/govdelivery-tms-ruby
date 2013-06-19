@@ -67,8 +67,8 @@ module Message
   # The number of seconds it took to build the recipient list for this
   # message
   def recipient_build_time
-    if recipients.count > 1
-      first = recipients.reorder("created_at asc") .select("created_at").first.created_at
+    if recipients.count > 0
+      first = self.created_at
       last  = recipients.reorder("created_at desc").select("created_at").first.created_at
       (last - first)
     else
