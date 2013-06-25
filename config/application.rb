@@ -105,5 +105,6 @@ module Xact
 
     config.twilio_polling_enabled = false
     config.odm_polling_enabled = false
+    config.colorize_logging = false
   end
 end

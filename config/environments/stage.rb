@@ -90,4 +90,5 @@ Xact::Application.configure do
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
   config.public_callback = true  
+  config.threadsafe!
 end

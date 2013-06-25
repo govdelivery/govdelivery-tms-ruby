@@ -21,16 +21,21 @@ development:
   database: tstm-scan.visi.gdi:1521/dev_evo_tsms
   username: [user]_sdev
   password: abcd1234
-
+  pool: 10
+  checkout_timeout: 10
+  
 test:
   adapter: oracle_enhanced
   database: tstm-scan.visi.gdi:1521/dev_evo_tsms
   username: [user]_stst
   password: abcd1234
-
+  pool: 10
+  checkout_timeout: 10
 
 stage:
   adapter: oracle_enhanced
   database: tstm-scan.visi.gdi:1521/estg
   username: xact
   password: b4h16mrt
+  pool: 10
+  checkout_timeout: 10
