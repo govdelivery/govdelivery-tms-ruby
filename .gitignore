@@ -22,3 +22,4 @@
 .jbundler/classpath.rb
 /ext/java/**/*
 build/**/*
+config/newrelic.yml
