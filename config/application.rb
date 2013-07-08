@@ -106,5 +106,8 @@ module Xact
     config.twilio_polling_enabled = false
     config.odm_polling_enabled = false
     config.colorize_logging = false
+
+    # override Rack exception application handling of exception status codes
+    config.exceptions_app = self.routes
   end
 end

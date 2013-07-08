@@ -64,4 +64,8 @@ Xact::Application.routes.draw do
   post 'twilio_requests' => 'twilio_requests#create'
   post 'twilio_status_callbacks' => 'twilio_status_callbacks#create'
   post 'twiml' => 'twilio_dial_plan#show', :defaults => {:format => 'xml'}
+
+  %w( 400 401 403 404 405 406 422 500).each do |code|
+    get code, :to => "errors#show", :code => code
+  end
 end
