@@ -1,9 +1,6 @@
 source "http://buildbox.office.gdi:6789"
 source 'https://rubygems.org'
 
-#ruby=jruby-1.7.2
-#ruby-gemset=xact
-
 gem 'rails'
 gem 'rails-api'
 gem 'redis-rails'
