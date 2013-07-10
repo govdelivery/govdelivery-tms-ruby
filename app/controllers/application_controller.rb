@@ -14,19 +14,19 @@ class ApplicationController < ActionController::API
   self.responder = RablResponder
   prepend_before_filter :extract_token_header
 
-  before_filter :authenticate
   before_filter :set_default_format
+  before_filter :authenticate
   before_filter :set_page, :only => :index
 
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
 
-  # URL helper methods will use this set of options as defaults 
+  # URL helper methods will use this set of options as defaults
   def default_url_options
     {:protocol => Rails.configuration.protocol}
   end
 
   protected
-  
+
   ##
   # Pull the X-AUTH-TOKEN header out of the request and put
   # it in the params hash.
@@ -36,12 +36,16 @@ class ApplicationController < ActionController::API
     end
   end
 
-  ## 
-  # Our authentication routine will: 
+  ##
+  # Our authentication routine will:
   # 1. try to log in using a provided auth_token. If the auth token is invalid
-  #    the service will return a 401. 
+  #    the service will return a 401.
   # 2. if no auth token is given, try to log in with basic auth.
   #
+  # NOTE:
+  # authenticate must follow set_default_format to avoid java.lang.NullPointerException
+  # at org.apache.tomcat.util.http.parser.HttpParser.parseMediaType
+  # this happens when auth_token is invalid
   def authenticate
     authenticate_user! # devise method
   end
