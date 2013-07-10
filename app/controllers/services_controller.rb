@@ -2,7 +2,7 @@ class ServicesController < ApplicationController
   before_filter :find_user
 
   # root routing does not work as advertised. it should only allow GET
-  before_filter ->(c){ render(json: ["only GET method allowed"], status: 400) and return unless request.method == "GET" }
+  before_filter ->(c){ render_405 unless request.method == "GET" }
 
   def index
     @services = { :self => root_path }
@@ -21,5 +21,12 @@ class ServicesController < ApplicationController
     if @account.voice_vendor
       @services[:voice_messages] = voice_index_path
     end
+  end
+  
+  private
+  
+  def render_405
+    response['Allow'] = 'GET'
+    render(json: ["only GET method allowed"], status: 405) and return
   end
 end

@@ -13,7 +13,8 @@ describe ServicesController do
   it "should not allow any method other than GET" do
     sign_in user
     post :index
-    response.response_code.should == 400
+    response.headers.should include('Allow' => 'GET')
+    response.response_code.should == 405
   end
 
 end
