@@ -65,8 +65,9 @@ describe EmailRecipient do
 
     context 'that is FAILED' do
       it 'should have an error_message' do
-        subject.failed!( :ack, :error_message, (sent_at = Time.now))
-        subject.error_message.should eq :error_message
+        failed_recipiend = subject.dup
+        failed_recipiend.failed!( :ack, :error_message, (sent_at = Time.now))
+        failed_recipiend.error_message.should eq :error_message
       end
     end
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 if defined?(JRUBY_VERSION)
-  java_import org.joda.time.DateTime
+
   describe Odm::TmsExtendedStatisticsWorker do
     before do
       subject.stubs(:sent_at).returns(Time.now)
@@ -26,8 +26,9 @@ if defined?(JRUBY_VERSION)
     end
 
     it 'askes delivery_event for sent_at' do
+      java_import org.joda.time.DateTime
       subject.unstub(:sent_at)
-      subject.sent_at(stub('delivery_event', at: DateTime.now )).should be_kind_of(Time)
+      subject.sent_at(stub('delivery_event', at: org.joda.time.DateTime.now )).should be_kind_of(Time)
     end
     
     it 'should pass error_message to recipient.failed!() if delivered is false' do
