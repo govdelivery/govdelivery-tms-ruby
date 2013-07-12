@@ -70,6 +70,18 @@ describe 'recipients/show.rabl' do
                         with_attributes(:status, :email, :macros).
                         with_links('email_message' => email_path(22), 'self' => email_recipient_path(22, 11))
     end
-  end
 
+    it 'should not have an error_message' do
+      json_data = ActiveSupport::JSON.decode(rendered)
+      json_data.should_not have_key(:error_message)
+    end
+
+    context 'with an error message' do
+      it 'should have an error_message if present' do
+        assign(:recipient, recipient.tap{|r| r.stubs(:error_message).returns('oops')})
+        json_data = ActiveSupport::JSON.decode(render)
+        json_data.should include('error_message' => 'oops')
+      end
+    end
+  end
 end

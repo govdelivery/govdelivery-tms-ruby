@@ -16,12 +16,17 @@ module Odm
       end
     end
 
+    def sent_at delivery_event
+      Time.at(delivery_event.at.to_gregorian_calendar.time.time/1000)
+    end
+
     def update_recipient(recipient, delivery_event)
-      sent_at = Time.at(delivery_event.at.to_gregorian_calendar.time.time/1000)
       if delivery_event.delivered?
-        recipient.sent!(nil, sent_at)
+        recipient.sent!(nil, sent_at(delivery_event))
       else
-        recipient.failed!(nil, nil, sent_at)
+        # error messages are stored on the value of a delivery_event, just 'cause
+        #                 ack, error_message, completed_at
+        recipient.failed!(nil, delivery_event.value, sent_at(delivery_event))
       end
     end
 

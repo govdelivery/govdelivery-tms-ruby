@@ -62,6 +62,12 @@ describe EmailRecipient do
         subject.email_recipient_opens.count.should == 1
       end
     end
+
+    context 'that is FAILED' do
+      it 'should have an error_message' do
+        subject.failed!( :ack, :error_message, (sent_at = Time.now))
+        subject.error_message.should eq :error_message
+      end
+    end
   end
 end
-
