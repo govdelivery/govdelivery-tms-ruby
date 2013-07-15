@@ -20,8 +20,8 @@ require 'spec_helper'
 
 describe CommandActionsController do
 
-  let(:vendor) { create_sms_vendor }
-  let(:account) { create_account(sms_vendor: vendor) }
+  let(:vendor) { create(:sms_vendor) }
+  let(:account) { create(:account, sms_vendor: vendor) }
   let(:inbound_message) { vendor.inbound_messages.create!(body: 'body', from: 'from', vendor: vendor) }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:keyword) { k=account.keywords.new(:name => "HI").tap { |k| k.vendor = vendor }; k.save!; k }

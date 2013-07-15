@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SmsRecipient do
   subject {
-    v = create_sms_vendor
+    v = create(:sms_vendor)
     m = SmsMessage.new(:body => 'short body')
     a = Account.create(:name => 'account', :sms_vendor => v)
     u = User.create(:email => 'admin@get-endorsed-by-bens-mom.com', :password => 'retek01!')

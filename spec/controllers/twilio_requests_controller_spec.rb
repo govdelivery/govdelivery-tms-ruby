@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe TwilioRequestsController, '#create' do
-  let(:vendor) { create_sms_vendor }
+  let(:vendor) { create(:sms_vendor) }
   let(:response_text) { 'a response!' }
 
   it 'should error on an incorrect AccountSid' do

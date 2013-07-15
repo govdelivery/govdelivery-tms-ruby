@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe TwilioStatusCallbacksController do
-  let(:vendor) { create_sms_vendor(:help_text => 'Help me!') }
+  let(:vendor) { create(:sms_vendor, :help_text => 'Help me!') }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:message) { account.sms_messages.create(:body => 'Look out') }

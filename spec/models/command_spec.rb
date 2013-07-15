@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Command do
-  let(:vendor){create_sms_vendor}
-  let(:account){create_account(sms_vendor: vendor, :dcm_account_codes=>['foo'])}
+  let(:vendor){create(:sms_vendor)}
+  let(:account){create(:account, sms_vendor: vendor, :dcm_account_codes=>['foo'])}
   let(:dcm_subscribe_command) {
     Command.new(:name => "FOO", :command_type => :dcm_subscribe, :params => CommandParameters.new(:dcm_account_code => ["foo"], :dcm_topic_codes=>['XXX'])).tap{|c| c.account = account }
   }

@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe VoiceMessagesController do
 
-  let(:voice_vendor) { create_voice_vendor }
+  let(:voice_vendor) { create(:voice_vendor) }
   let(:account) { voice_vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:model){VoiceMessage}

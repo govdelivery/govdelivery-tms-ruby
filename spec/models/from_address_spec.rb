@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe FromAddress do
-  let(:vendor) { create_email_vendor }
+  let(:vendor) { create(:email_vendor) }
   let(:account) { vendor.accounts.create(:name => 'name') }
 
   context 'with account and all addresses' do

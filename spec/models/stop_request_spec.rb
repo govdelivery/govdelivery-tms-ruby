@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe StopRequest do
-  let(:vendor) { create_sms_vendor }
+  let(:vendor) { create(:sms_vendor) }
   let(:stop_request) { vendor.stop_requests.build(:phone => "+16666666666") }
   let(:dup_stop_request) { vendor.stop_requests.build(:phone => "+16666666666") }
 

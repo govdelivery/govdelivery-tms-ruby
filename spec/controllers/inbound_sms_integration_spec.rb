@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe TwilioRequestsController do
-  let(:vendor) { create_sms_vendor(:help_text => 'Help me!') }
-  let(:account) { create_account(:sms_vendor => vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
+  let(:vendor) { create(:sms_vendor, :help_text => 'Help me!') }
+  let(:account) { create(:account, :sms_vendor => vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
 
   describe '#create with "STOP"' do
     let(:params) { twilio_request_params('STOP') }

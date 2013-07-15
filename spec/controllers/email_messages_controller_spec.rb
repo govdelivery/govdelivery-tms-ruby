@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe EmailMessagesController do
-  let(:vendor) { create_email_vendor(:worker => Odm::TMS_EXTENDED_WORKER) }
-  let(:account) { vendor.accounts.create(:name => 'name', :from_address=>create_from_address) }
+  let(:vendor) { create(:email_vendor, worker: Odm::TMS_EXTENDED_WORKER) }
+  let(:account) { vendor.accounts.create(name: 'name', from_address: create(:from_address)) }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:messages) do
     3.times.collect do |i|

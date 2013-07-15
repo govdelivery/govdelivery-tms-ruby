@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe InboundMessage do
-  let(:vendor) { create_sms_vendor }
+  let(:vendor) { create(:sms_vendor) }
   let(:account) { account = vendor.accounts.create!(:name => 'name') }
   let(:keyword) { k=account.keywords.new(:name => "HI").tap { |k| k.vendor = vendor }; k.save!; k }
   let(:command) { c = keyword.add_command!(:command_type => :forward,

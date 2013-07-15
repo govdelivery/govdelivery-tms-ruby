@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe EmailMessage do
-  let(:vendor) { create_email_vendor }
-  let(:account) { vendor.accounts.create(:name => 'name', :from_address=>create_from_address) }
+  let(:vendor) { create(:email_vendor) }
+  let(:account) { vendor.accounts.create(name: 'name', from_address: create(:from_address)) }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:email) { user.email_messages.build(
     :body => 'longggg body', 

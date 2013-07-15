@@ -12,7 +12,7 @@ describe ApplicationController do
   end
 
   describe "raising an ActiveRecord::RecordNotFound" do
-    let(:vendor) { create_sms_vendor }
+    let(:vendor) { create(:sms_vendor) }
     let(:account) { vendor.accounts.create(:name => 'name') }
     let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
     before do
@@ -27,7 +27,7 @@ describe ApplicationController do
 
 
   describe "using the X-AUTH-TOKEN header" do
-    let(:vendor) { create_sms_vendor }
+    let(:vendor) { create(:sms_vendor) }
     let(:account) { vendor.accounts.create(:name => 'name') }
     let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
     let(:auth_token) { user.authentication_tokens.first.token }

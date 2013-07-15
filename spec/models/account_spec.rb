@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Account do
   let(:from_address) { FromAddress.create!(from_email: 'hey@dude.test') }
-  let(:email_vendor) { create_email_vendor }
-  let(:sms_vendor) { create_sms_vendor }
+  let(:email_vendor) { create(:email_vendor) }
+  let(:sms_vendor) { create(:sms_vendor) }
 
   context 'with SMS vendor' do
     subject {

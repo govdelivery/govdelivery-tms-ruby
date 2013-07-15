@@ -5,7 +5,7 @@ def do_create_sms
 end
 
 describe SmsMessagesController do
-  let(:vendor) { create_sms_vendor }
+  let(:vendor) { create(:sms_vendor) }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:model){SmsMessage}

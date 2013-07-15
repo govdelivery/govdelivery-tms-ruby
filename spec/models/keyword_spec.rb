@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Keyword do
   subject {
-    vendor = create_sms_vendor
+    vendor = create(:sms_vendor)
     account = vendor.accounts.create!(:name => 'name', :dcm_account_codes=>["ACME","VANDELAY"])
     keyword = Keyword.new(:name =>'HELPME')
     keyword.account= account

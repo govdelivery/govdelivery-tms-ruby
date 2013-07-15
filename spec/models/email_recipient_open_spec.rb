@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe EmailRecipientOpen do
-  let(:vendor) { create_email_vendor }
-  let(:account) { create_account(email_vendor: vendor) }
+  let(:vendor) { create(:email_vendor) }
+  let(:account) { create(:account, email_vendor: vendor) }
 
   let(:email_message) { 
     EmailMessage.new(:body => 'short body', :subject => 'fuuu').tap do |em|

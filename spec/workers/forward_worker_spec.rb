@@ -2,7 +2,7 @@ require File.expand_path("../../little_spec_helper", __FILE__)
 require 'spec_helper'
 
 describe ForwardWorker do
-  let(:vendor) { create_sms_vendor }
+  let(:vendor) { create(:sms_vendor) }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:options) { {:url => "url",
                    :http_method => "post",

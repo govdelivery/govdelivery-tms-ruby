@@ -1,6 +1,7 @@
 source "http://buildbox.office.gdi:6789"
 source 'https://rubygems.org'
 
+
 gem 'rails'
 gem 'rails-api'
 gem 'redis-rails'
@@ -39,20 +40,27 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'factory_girl_rails'
   gem 'json_spec'
   gem 'guard-rspec'
   platforms :ruby do
     gem 'sqlite3'
-    gem 'pry-debugger'
+    gem 'pry-debugger', require: 'pry'
   end
-  gem 'pry'
+  gem 'pry', require: 'pry'
 end
 
 group :development do
-  gem 'rails-erd'
+  gem 'rails-erd'  
 end
 
 group :test do
   gem 'mocha', :require => false
-  gem 'tms_client', :git => 'https://github.com/govdelivery/tms_client.git'
+  gem 'tms_client', :git => 'https://github.com/govdelivery/tms_client.git', :ref => '73ede269bb71' # work needed to update
+end
+
+platforms :ruby do
+  group :development, :test do
+    gem 'zeus'
+  end
 end

@@ -32,6 +32,3 @@ module FixtureHelper
     end
   end
 end
-RSpec.configure do |config|
-  config.include FixtureHelper
-end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe KeywordsController do
   let(:account) { vendor.accounts.create(:name => 'name') }
-  let(:vendor) { create_sms_vendor }
+  let(:vendor) { create(:sms_vendor) }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:attrs) { {'name' => "GOVD", 'response_text' => "GovAwesome!"} }
   let(:keywords) { [stub(:name => "HI" )]}

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe SmsVendor do
-  let(:vendor) { create_sms_vendor }
-  let(:account) { create_account(sms_vendor: vendor) }
+  let(:vendor) { create(:sms_vendor) }
+  let(:account) { create(:account, sms_vendor: vendor) }
   let(:from) { '+12223334444' }
   subject { vendor }
 

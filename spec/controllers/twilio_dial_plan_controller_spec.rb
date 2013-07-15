@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe TwilioDialPlanController do
-  let(:vendor) { create_voice_vendor }
+  let(:vendor) { create(:voice_vendor) }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:message) { account.voice_messages.create(:play_url => "http://mom.com/voice.wav") }

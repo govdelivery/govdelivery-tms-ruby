@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe VoiceMessage do
-  let(:vendor) { create_voice_vendor(:worker=>'TwilioVoiceWorker') }
+  let(:vendor) { create(:voice_vendor, worker: 'TwilioVoiceWorker') }
   let(:account) { account = vendor.accounts.create!(:name => 'name') }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
 
