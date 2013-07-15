@@ -93,8 +93,12 @@ USAGE
     v.stop_text = @options[:vendor_stop_text]
 
     v.save
-
-    puts "Created SmsVendor id: " + v.id.to_s 
+    
+    if(v.errors)
+	puts v.errors.messages
+    else
+        puts "Created SmsVendor id: " + v.id.to_s 
+    end
 
   end
 
@@ -109,15 +113,10 @@ USAGE
 
     v.save
 
-    if(v.id)
-      puts "Created VoiceVendor id: " + v.id.to_s 
+    if(v.errors)
+	puts v.errors.messages
     else
-      puts "Cannot create voice vendor with: \n"
-      puts "\tvendor_name: " + @options[:vendor_name].to_s
-      puts "\tusername: " + @options[:vendor_username].to_s
-      puts "\tpassword: " + @options[:vendor_password].to_s
-      puts "\tfrom_phone: " + @options[:vendor_from].to_s
-      puts "\tworker: " + @options[:vendor_worker].to_s
+        puts "Created VoiceVendor id: " + v.id.to_s 
     end
 
   end
@@ -130,12 +129,10 @@ USAGE
 
     v.save
 
-    if(v.id)
-      puts "Created EmailVendor id: " + v.id.to_s 
+    if(v.errors)
+	puts v.errors.messages
     else
-      puts "Cannot create voice vendor with: \n"
-      puts "\tvendor_name: " + @options[:vendor_name].to_s
-      puts "\tworker: " + @options[:vendor_worker].to_s
+      puts "Created EmailVendor id: " + v.id.to_s 
     end
 
   end

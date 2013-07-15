@@ -68,14 +68,10 @@ USAGE
 
     u.save
 
-    if(u.id)
-      puts "Created User id: " + u.id.to_s 
+    if(u.errors)
+      puts u.errors.messages
     else
-      puts "Cannot create user with: \n"
-      puts "\taccount_id: " + @options[:user_account_id].to_s
-      puts "\temail: " + @options[:user_email].to_s
-      puts "\tpassword: " + @options[:user_password].to_s
-      puts "\tadmin: " + @options[:user_admin].to_s
+      puts "Created User id: " + u.id.to_s 
     end
 
   end

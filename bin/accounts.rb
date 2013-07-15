@@ -86,18 +86,10 @@ USAGE
       a.save
     end
 
-    if(a.id)
-      puts "Created Account id: " + a.id.to_s 
+    if(a.errors)
+      puts a.errors.messages
     else
-      puts "Cannot create account with: \n"
-      puts "\tname: " + @options[:account_name].to_s
-      puts "\tsms vendor: " + @options[:account_sms_vendor].to_s
-      puts "\tvoice vendor: " + @options[:account_voice_vendor].to_s
-      puts "\temail vendor: " + @options[:account_email_vendor].to_s
-      puts "\tfrom address: " + @options[:account_from_address].to_s
-      print "\tdcm accounts: " 
-      @options[:dcm_account_codes].each { |d| print d + "," }
-      puts "\n"
+      puts "Created Account id: " + a.id.to_s 
     end
 
   end
