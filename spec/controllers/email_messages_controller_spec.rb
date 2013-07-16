@@ -21,12 +21,6 @@ describe EmailMessagesController do
     sign_in user
   end
 
-  it "should accept a body and a subject " do
-    post :create, :message => {body: 'this', subject: 'that', recipients: [{email: 'someone@somewhere.com'}]}, :format => :json
-    assigns(:message).errors.size.should == 0
-    response.response_code.should == 201
-  end
-
   it_should_have_a_pageable_index(:messages)
 
   it_should_show_with_attributes(:body, :subject, :from_name, :click_tracking_enabled, :open_tracking_enabled, :macros)
