@@ -64,3 +64,9 @@ platforms :ruby do
     gem 'zeus'
   end
 end
+
+platforms :ruby do
+  group :development, :test do
+    gem 'zeus'
+  end
+end
