@@ -11,7 +11,7 @@ class CheckMessagesForCompletion
   end
 
   def do_completion_check(klass)
-    klass.incomplete.find_each do |message|
+    klass.sending.find_each do |message|
       logger.debug("Checking completion status for message #{message.class.name} #{message.id}")
       message.check_complete!
     end

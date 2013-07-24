@@ -20,7 +20,8 @@ module Message
     attr_accessor :async_recipients
     attr_accessible :recipients_attributes, :async_recipients
 
-    scope :incomplete, where("#{self.quoted_table_name}.status != ? ", Status::COMPLETED)
+    scope :sending, where("#{self.quoted_table_name}.status = ? ", Status::SENDING)
+
     has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id', :order => "#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC" do
       def build_without_message(attrs)
         recipient = build(attrs)
