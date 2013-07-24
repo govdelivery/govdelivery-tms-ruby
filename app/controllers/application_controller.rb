@@ -19,6 +19,7 @@ class ApplicationController < ActionController::API
   before_filter :set_page, :only => :index
 
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
+  rescue_from MultiJson::LoadError, :with => :render_malformed_json
 
   # URL helper methods will use this set of options as defaults
   def default_url_options
@@ -60,6 +61,10 @@ class ApplicationController < ActionController::API
 
   def render_not_authorized
     render :json => '{}', :status => :unauthorized
+  end
+
+  def render_malformed_json
+    render :json => {error: "Something went wrong parsing your request JSON"}, :status => :bad_request
   end
 
   def find_user

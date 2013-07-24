@@ -206,6 +206,8 @@ GEM
       redis-store (~> 1.1.0)
     redis-store (1.1.3)
       redis (>= 2.2.0)
+    request_exception_handler (0.4)
+      actionpack (>= 2.1)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -311,6 +313,7 @@ DEPENDENCIES
   rails-api
   rails-erd
   redis-rails
+  request_exception_handler
   rspec-rails
   ruby-oci8
   sidekiq
