@@ -27,6 +27,7 @@ gem 'attr_encrypted'
 gem 'activerecord-oracle_enhanced-adapter', '=1.4.1.4'
 gem 'valid_email'
 gem 'newrelic_rpm'
+#gem 'request_exception_handler'
 
 platforms :ruby do
   gem 'ruby-oci8'
