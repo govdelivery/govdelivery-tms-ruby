@@ -1,4 +1,5 @@
 require 'bundler/setup'
+require 'yaml'
 
 Trinidad.configure do |config|
   ##
