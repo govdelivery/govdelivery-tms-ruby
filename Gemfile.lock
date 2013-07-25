@@ -266,12 +266,7 @@ GEM
     trinidad (1.4.4)
       jruby-rack (>= 1.1.10)
       trinidad_jars (>= 1.1.0)
-    trinidad_dbpool (0.4.3)
-      trinidad_jars (>= 1.2.0)
     trinidad_jars (1.2.2)
-    trinidad_oracle_dbpool_extension (0.3.0)
-      trinidad_dbpool
-      trinidad_dbpool
     trinidad_scheduler_extension (0.1.2)
       trinidad_jars
     twilio-ruby (3.9.0)
@@ -330,7 +325,6 @@ DEPENDENCIES
   strip_attributes
   tms_client!
   trinidad
-  trinidad_oracle_dbpool_extension
   trinidad_scheduler_extension
   twilio-ruby
   typhoeus
