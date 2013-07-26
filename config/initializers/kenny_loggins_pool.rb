@@ -56,10 +56,12 @@ module ActiveRecord
               log("-- open transactions:          #{c.open_transactions}")
               log("-- in use:                     #{c.in_use}")
               log("-- raw connection:             #{c.raw_connection}")
-              log("-- raw connection usable?      #{c.raw_connection.usable?}")
-              log("-- raw connection properties   #{c.raw_connection.properties.inspect}")
-              log("-- raw connection pingDatabase #{c.raw_connection.pingDatabase}")
-              log("------ (see http://docs.oracle.com/cd/E18283_01/appdev.112/e13995/oracle/jdbc/OracleConnection.html)")
+              if(defined? $servlet_context)
+                log("-- raw connection usable?      #{c.raw_connection.usable?}")
+                log("-- raw connection properties   #{c.raw_connection.properties.inspect}")
+                log("-- raw connection pingDatabase #{c.raw_connection.pingDatabase}")
+                log("------ (see http://docs.oracle.com/cd/E18283_01/appdev.112/e13995/oracle/jdbc/OracleConnection.html)")
+              end
               c.lease
             end
 
