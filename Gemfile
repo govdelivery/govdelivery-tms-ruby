@@ -25,7 +25,6 @@ gem 'enumify'
 gem "strip_attributes"
 gem 'attr_encrypted'
 gem 'activerecord-oracle_enhanced-adapter', '=1.4.1.4'
-gem 'trinidad_oracle_dbpool_extension'
 gem 'valid_email'
 gem 'newrelic_rpm'
 gem 'request_exception_handler'
@@ -37,6 +36,7 @@ end
 platforms :jruby do
   gem 'trinidad', :require => nil
   gem 'trinidad_scheduler_extension'
+  gem 'trinidad_oracle_dbpool_extension'
 end
 
 group :development, :test do
