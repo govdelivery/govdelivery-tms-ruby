@@ -2,6 +2,7 @@ source "http://buildbox.office.gdi:6789"
 source 'https://rubygems.org'
 
 
+gem 'sinatra', :require => nil
 gem 'rails'
 gem 'rails-api'
 gem 'redis-rails'
@@ -16,7 +17,6 @@ gem 'devise'
 gem 'phony'
 gem 'phony_rails'
 gem 'slim'
-gem 'sinatra', :require => nil
 gem 'typhoeus'
 gem 'faraday'
 gem 'faraday_middleware'
@@ -34,7 +34,6 @@ platforms :ruby do
 end
 
 platforms :jruby do
-  gem 'jbundler'
   gem 'trinidad', :require => nil
   gem 'trinidad_scheduler_extension'
 end
@@ -45,8 +44,10 @@ group :development, :test do
   gem 'json_spec'
   gem 'guard-rspec'
   platforms :ruby do
-    gem 'sqlite3'
     gem 'pry-debugger', require: 'pry'
+  end
+  platforms :jruby do
+    gem 'jbundler'
   end
   gem 'pry', require: 'pry'
 end
