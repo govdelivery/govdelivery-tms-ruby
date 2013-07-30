@@ -1,0 +1,34 @@
+---
+<%
+  configuration = YAML.load_file('config/database.yml')[(ENV['RAILS_ENV'] || 'development')]
+  database      = configuration["database"]
+  username      = configuration["username"]
+  password      = configuration["password"]
+%>
+jruby_min_runtimes: 1
+jruby_max_runtimes: 1
+extensions:
+  scheduler:
+    # trinidad_scheduler_extension
+  oracle_dbpool:
+    # this should be the same as what is in database.yml
+    jndi: jdbc/xact
+    # expected to be 'host.gdi:port/service_name'
+    url: jdbc:oracle:thin:@//<%=database%>
+    username: <%=username%>
+    password: <%=password%>
+    maxActive: 10
+    maxIdle: -1
+    maxWait: 10000
+    testOnBorrow: true
+    testOnReturn: true
+    validationQuery: SELECT 1 FROM dual
+    accessToUnderlyingConnectionAllowed: true
+http:
+  # incoming trafffc in deployed envs comes via ajp (except from nagios)
+  acceptCount: 5
+  maxThreads: 1
+ajp:
+  backlog: 100
+  connectionTimeout: 600
+  maxThreads: 10
