@@ -25,6 +25,7 @@ gem 'enumify'
 gem "strip_attributes"
 gem 'attr_encrypted'
 gem 'activerecord-oracle_enhanced-adapter', '=1.4.1.4'
+gem 'trinidad_oracle_dbpool_extension'
 gem 'valid_email'
 gem 'newrelic_rpm'
 gem 'request_exception_handler'
