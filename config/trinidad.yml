@@ -30,5 +30,4 @@ http:
   maxThreads: 1
 ajp:
   backlog: 100
-  connectionTimeout: 600
   maxThreads: 10
