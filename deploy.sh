@@ -61,9 +61,9 @@ while [ $# -gt 0 ]; do
 	    shift;
 	    ;;
 	deploy)
-	    actions[${#actions[@]}]="stop-sidekiq"   ## push on end of actions
+#	    actions[${#actions[@]}]="stop-sidekiq"   ## push on end of actions
 	    actions[${#actions[@]}]="$1"             ## push on end of actions
-	    actions[${#actions[@]}]="start-sidekiq"  ## push on end of actions
+#	    actions[${#actions[@]}]="start-sidekiq"  ## push on end of actions
 	    shift;
 	    ;;
 	migrate-db-pre|migrate-db-post)
