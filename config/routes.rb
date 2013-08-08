@@ -6,7 +6,6 @@ Xact::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-
   devise_for :users, :skip => :all, :token_authentication_key => 'auth_token'
 
   # call this to add pagination to your controller
@@ -15,6 +14,14 @@ Xact::Application.routes.draw do
   # paged_messages GET    /messages/page/:page(.:format)                        messages#index
   def pageable
     get 'page/:page', :action => :index, :on => :collection
+  end
+
+  resources(:accounts, only: []) do
+    resources(:users, only: []) do
+      resources(:tokens, only: [:index, :create, :show, :destroy]) do
+        pageable
+      end
+    end
   end
 
   resources(:keywords, :only => [:index, :show, :create, :update, :destroy]) do
