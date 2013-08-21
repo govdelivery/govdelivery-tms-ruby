@@ -61,9 +61,7 @@ while [ $# -gt 0 ]; do
 	    shift;
 	    ;;
 	deploy)
-#	    actions[${#actions[@]}]="stop-sidekiq"   ## push on end of actions
 	    actions[${#actions[@]}]="$1"             ## push on end of actions
-#	    actions[${#actions[@]}]="start-sidekiq"  ## push on end of actions
 	    shift;
 	    ;;
 	migrate-db-pre|migrate-db-post)
@@ -129,3 +127,21 @@ if [[ ${#actions} != 0 ]]; then
     
     ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
 fi;
+
+
+
+## This section is temperary until Stage and Production have seperate Trinidad and Sidekiq servers
+case "${ENV}" in
+    qc*|QC*|int*|INT*)
+	echo
+	echo "================= sidekiq deploy for ${ENV}"
+	echo "${actions[@]}" | grep -q deploy && {
+	    CMD="/var/repo/scripts/release/ruby-release-sidekiq.sh ${CTRL_ARGS} -e ${ENV} -a ${APP}"
+	    
+	    echo
+	    echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
+	    
+	    ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
+	}
+	;;
+esac
