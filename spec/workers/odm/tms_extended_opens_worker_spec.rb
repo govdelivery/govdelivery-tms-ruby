@@ -29,9 +29,26 @@ if defined?(JRUBY_VERSION)
       subject.perform
     end
 
-    it 'should not rescue exceptions from service' do
+    it 'should not bury exceptions from service' do
       Service::Odm::EventService.expects(:open_events).raises Java::ComSunXmlWsWsdlParser::InaccessibleWSDLException.new []
-      expect { subject.perform }.to raise_error(Java::ComSunXmlWsWsdlParser::InaccessibleWSDLException)
+
+      exception_check(subject, "0 counts of InaccessibleWSDLException.\n")
+    end
+
+    context 'odm throws error' do
+      let (:service)  { mock('Service::Odm::EventService') }
+
+      it 'should catch Throwable and throw Ruby Exception' do
+        Service::Odm::EventService.expects(:open_events).with(@vendor).raises(Java::java::lang::Exception.new("hello Exception"))
+  
+        exception_check(subject, "hello Exception")
+      end
+
+      it 'should catch TMSFault and throw Ruby Exception' do
+        Service::Odm::EventService.expects(:open_events).with(@vendor).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new("hello TMSFault", nil))
+
+        exception_check(subject, "ODM Error: hello TMSFault")
+      end
     end
   end
 end

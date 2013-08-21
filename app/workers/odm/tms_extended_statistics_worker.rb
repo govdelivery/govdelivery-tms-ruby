@@ -4,8 +4,9 @@ module Odm
     sidekiq_options unique: true, retry: false
 
     def perform(*args)
-      raise NotImplementedError.new("#{self.class.name} requires JRuby") unless self.class.jruby?
-      EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor) }
+      super do
+        EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor) }
+      end
     end
 
     def process_vendor(vendor)

@@ -36,5 +36,30 @@ if defined?(JRUBY_VERSION)
       worker.update_recipient(mock('recipient', failed!: anything),
                               mock('delivery_event', delivered?: false, value: 'oops'))
     end
+
+    context 'odm throws error' do
+      let (:service)  { mock('Service::Odm::EventService') }
+
+      before do
+        worker.service = service
+        # mock database fetch of email vendors
+        vendor = stub('email_vendor')
+        find_each = mock
+        find_each.expects(:find_each).yields(vendor)
+        EmailVendor.expects(:tms_extended).returns(find_each)
+      end
+
+      it 'should catch Throwable and throw Ruby Exception' do
+        service.expects(:delivery_events).raises(Java::java::lang::Exception.new("hello Exception"))
+  
+        exception_check(worker, "hello Exception")
+      end
+
+      it 'should catch TMSFault and throw Ruby Exception' do
+        service.expects(:delivery_events).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new("hello TMSFault", nil))
+
+        exception_check(worker, "ODM Error: hello TMSFault")
+      end
+    end
   end
 end

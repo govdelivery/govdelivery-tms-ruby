@@ -45,7 +45,7 @@ Xact::Application.configure do
   config.twilio_number = '+16514336311'
 
   # qc ODM
-  config.odm_host = "http://qc-tms1.visi.gdi:65080"
+  config.odm_host = "http://localhost:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'govdelivery'
   config.odm_password = 'g0vdelivery'

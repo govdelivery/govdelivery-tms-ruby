@@ -1,8 +1,10 @@
 require 'spec_helper'
+
 if defined?(JRUBY_VERSION)
   java_import com.govdelivery.tms.tmsextended.ExtendedMessage
 
   describe Odm::TmsExtendedSenderWorker do
+    let(:worker) { Odm::TmsExtendedSenderWorker.new }
     let(:odm_vendor) { create(:email_vendor, worker: 'LoopbackMessageWorker') }
     let(:account) { odm_vendor.accounts.create!(name: 'name', from_address: create(:from_address)) }
     let(:recipients) do
@@ -17,7 +19,6 @@ if defined?(JRUBY_VERSION)
                                         'open_tracking_enabled' => false,
                                         'click_tracking_enabled' => true,
                                         'macros' => {'macro1' => 'foo', 'macro2' => 'bar'}})
-      msg.expects(:sending!).with('dummy_id')
       msg.stubs('recipients').returns(recipients)
       msg
     end
@@ -37,25 +38,45 @@ if defined?(JRUBY_VERSION)
         m.stubs(:to).returns([])
       end
     }
+    let (:params) do
+       p ={'message_id' => 11, 'account_id' => account.id}
+       p
+    end
+    let (:odm_v2) { mock(' Odm::TmsExtendedSenderWorker::ODMv2') }
+    let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)}
 
 
     context 'a very happy send' do
-      let(:worker) { Odm::TmsExtendedSenderWorker.new }
-
       it 'should work' do
+        email_message.expects(:sending!).with('dummy_id')
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
-        params = {'message_id' => 11,
-                  'account_id' => account.id}
-        odm_v2 = mock(' Odm::TmsExtendedSenderWorker::ODMv2')
         odm_v2.expects(:send_message).returns('dummy_id')
-
-        odm_service = stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)
         Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
 
         worker.perform(params)
       end
     end
 
+    context 'odm throws error' do
+
+      it 'should catch Throwable and throw Ruby Exception' do
+        ExtendedMessage.expects(:new).returns(extended_message)
+        EmailMessage.expects(:find).with(11).returns(email_message)
+        Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
+        odm_v2.expects(:send_message).raises(Java::java::lang::Exception.new("hello Exception"))
+  
+        exception_check(worker, "hello Exception", params)
+      end
+
+      it 'should catch TMSFault and throw Ruby Exception' do
+        ExtendedMessage.expects(:new).returns(extended_message)
+        EmailMessage.expects(:find).with(11).returns(email_message)
+        Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
+        odm_v2.expects(:send_message).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new("hello TMSFault", nil))
+
+        exception_check(worker, "ODM Error: hello TMSFault", params)
+      end
+    end
   end
 end

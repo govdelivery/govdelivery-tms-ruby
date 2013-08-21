@@ -6,7 +6,7 @@ default=Xact::Application.config.sidekiq[:default]
 
 Sidekiq.configure_server do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:server])
-  config.options[:concurrency] = 10
+  config.options[:concurrency] = 2
 end
 
 # Running in passenger - connect after fork

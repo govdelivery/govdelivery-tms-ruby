@@ -10,6 +10,18 @@ module Odm
       defined?(JRUBY_VERSION)
     end
 
+    def perform(*options)
+      raise NotImplementedError.new("#{self.class.name} requires JRuby") unless self.class.jruby?
+
+      begin
+        yield
+      rescue Java::ComGovdeliveryTmsTmsextended::TMSFault => fault
+        raise "ODM Error: #{fault.message}"
+      rescue Java::java::lang::Throwable => throwable
+        raise "#{throwable.get_message}"
+      end
+    end
+
     if jruby?
       require 'lib/tms_extended.jar'
       java_import java.net.URL

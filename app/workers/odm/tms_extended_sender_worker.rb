@@ -2,11 +2,12 @@ require 'base'
 
 module Odm
   class TmsExtendedSenderWorker < Odm::TmsExtendedWorker
-    sidekiq_options retry: false
+    sidekiq_options :retry => false
 
     def perform(options)
-      raise NotImplementedError.new("#{self.class.name} requires JRuby") unless self.class.jruby?
-      deliver(EmailMessage.find(options['message_id']))
+      super do
+        deliver(EmailMessage.find(options['message_id']))
+      end
     end
 
     def deliver(message)
@@ -34,5 +35,4 @@ module Odm
       message.sending!(ack)
     end
   end
-
 end

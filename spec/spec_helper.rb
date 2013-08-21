@@ -28,3 +28,21 @@ def stub_command_action_create!(command_params, http_response, command_action)
     inbound_message_id: command_params.inbound_message_id,
     command_id: command_params.command_id).returns(mock_relation)
 end
+
+def exception_check(worker, expected_message, params=nil)
+  begin
+    if params
+      worker.perform(params)
+    else
+      worker.perform
+    end
+  rescue Java::java::lang::Throwable  => jt
+    java_exception_raised = false
+  rescue Exception => rex
+    ruby_exception_raised = true
+    rex.message.should eq(expected_message)
+  end
+
+  java_exception_raised.should be_false
+  ruby_exception_raised.should be_true
+end
