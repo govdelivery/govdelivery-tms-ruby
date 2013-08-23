@@ -31,3 +31,4 @@ http:
 ajp:
   backlog: 100
   maxThreads: 10
+  port: 8009
