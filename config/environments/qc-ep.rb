@@ -67,9 +67,9 @@ Xact::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.twilio_username = 'ACcc41a7e742457806f26d91a1ea19de9f'
-  config.twilio_password = '331b3a44b5067a3c02013a6cfaa18b1c'
-  config.twilio_number   = '+16514336311'
+  config.twilio_username = 'APba7ea1124013d8b18f3f2f15e55842bd'
+  config.twilio_password = '88e3775ad71e487c7c90b848a55a5c88'
+  config.twilio_number   = '+19138719228'
 
   config.sidekiq[:server][:url] = "#{config.redis_url}/1"
   config.sidekiq[:client][:url] = "#{config.redis_url}/1"
