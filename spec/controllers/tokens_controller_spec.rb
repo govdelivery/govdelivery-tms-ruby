@@ -32,7 +32,7 @@ describe TokensController do
     id = token.id
     get :destroy, account_id: account.id, user_id: user.id, id: id
     user.authentication_tokens.find_by_id(id).should be_nil
-    puts user.authentication_tokens.count
-    puts user.valid?
+    assert_equal 0, user.authentication_tokens.count
+    assert user.valid?
   end
 end
