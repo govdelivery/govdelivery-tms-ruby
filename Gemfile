@@ -3,8 +3,9 @@ source 'https://rubygems.org'
 
 
 gem 'sinatra', :require => nil
-gem 'rails'
+gem 'rails', '~>3.2.13'
 gem 'rails-api'
+gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
 gem 'redis-rails'
 gem 'sidekiq'
 gem 'sidekiq-failures'
@@ -45,6 +46,7 @@ group :development, :test do
   gem 'json_spec'
   gem 'guard-rspec'
   platforms :ruby do
+    gem 'zeus'
     gem 'pry-debugger', require: 'pry'
   end
   platforms :jruby do
@@ -60,16 +62,4 @@ end
 group :test do
   gem 'mocha', :require => false
   gem 'tms_client', :git => 'https://github.com/govdelivery/tms_client.git', :ref => '73ede269bb71' # work needed to update
-end
-
-platforms :ruby do
-  group :development, :test do
-    gem 'zeus'
-  end
-end
-
-platforms :ruby do
-  group :development, :test do
-    gem 'zeus'
-  end
 end
