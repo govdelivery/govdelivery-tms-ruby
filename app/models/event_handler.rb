@@ -6,5 +6,5 @@ class EventHandler < ActiveRecord::Base
 
   # These are optional, but at least one should be present
   has_one :keyword, :dependent => :destroy
-  has_one :account, :dependent => :destroy
+  has_one :account
 end
