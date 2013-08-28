@@ -2,7 +2,7 @@
 #
 
 APP="xact"
-ENV="stg-ep"
+ENV="qc-ep"
 
 CTRL_USER="evodeploy";
 CTRL_SERVER="prod-deploy1.visi.gdi"
