@@ -30,6 +30,6 @@ http:
   acceptCount: 5
   maxThreads: 1
 ajp:
-  backlog: 100
-  maxThreads: 10
+  maxThreads: 50
   port: 8009
+  connectionTimeout: 60000
