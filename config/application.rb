@@ -43,7 +43,7 @@ module Xact
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :auth_token]
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
@@ -101,7 +101,7 @@ module Xact
     config.dcm = {
       username: 'product@govdelivery.com',
       password: 'retek01!',
-      api_root: 'http://evolution.local'
+      api_root: 'http://evolution.local:3001'
     }
 
     config.twilio_polling_enabled = false
