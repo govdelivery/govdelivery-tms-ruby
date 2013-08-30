@@ -24,11 +24,12 @@ describe Account do
 
     context "calling stop" do
       it 'should call commands' do
+        command_params = mock(:account_id= => true )
         subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :command_type => :dcm_unsubscribe)
         from = "123123123"
         Keyword.any_instance.expects(:execute_commands).never
-        Command.any_instance.expects(:call).with(:from => from)
-        subject.stop(:from => from)
+        Command.any_instance.expects(:call).with(command_params)
+        subject.stop(command_params)
       end
     end
   end

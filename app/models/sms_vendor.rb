@@ -24,18 +24,13 @@ class SmsVendor < ActiveRecord::Base
   end
 
   def receive_message!(options)
-    msg = self.inbound_messages.create!(options.except(:stop?))
-    stop!(options[:from]) if options[:stop?]
-    msg
+    inbound_messages.create!(options)
   end
 
-  private
-
-  def stop!(from)
+  def stop!(command_parameters)
     # we need to maintain a blacklist at the vendor (i.e. short-code) level
-    stop_request = stop_requests.find_or_create_by_phone(from)
-    stop_request.save!
+    stop_requests.create(phone: command_parameters.from)
     # ...and we need to execute account-specific stop commands
-    accounts.each { |a| a.stop(:from => from) }
+    accounts.each { |a| a.stop(command_parameters) }
   end
 end

@@ -15,9 +15,7 @@ class DcmUnsubscribeWorker
   # options: {"from"=>"+14445556666", "params"=>"ACME,VANDELAY"}
   #
   def perform(opts)
-    logger.info("Performing DCM unsubscribe for #{options.to_s}")
-
-    self.options = CommandParameters.new(opts)
+    self.options = opts
 
     client = DCMClient::Client.new(Xact::Application.config.dcm)
     number = PhoneNumber.new(options.from).dcm

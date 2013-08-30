@@ -20,9 +20,7 @@ class ForwardWorker
   attr_writer :sms_service
 
   def perform(opts)
-    logger.info("Performing Forward for #{options}")
-
-    self.options = CommandParameters.new(opts)
+    self.options = opts
     message = super
 
     # Send a text back to the user via twilio

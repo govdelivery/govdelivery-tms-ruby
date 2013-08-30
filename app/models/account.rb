@@ -37,8 +37,9 @@ class Account < ActiveRecord::Base
     !!self.send("#{feature}_vendor")
   end
 
-  def stop(params={})
-    stop_handler.commands.each { |a| a.call(params) } if stop_handler
+  def stop(command_parameters)
+    command_parameters.account_id = self.id
+    stop_handler.commands.each { |a| a.call(command_parameters) } if stop_handler
   end
 
   protected

@@ -65,17 +65,14 @@ describe SmsVendor do
       vendor.stubs(:accounts).returns([])
       expect { vendor.receive_message!(:from => from, :body => 'msg') }.to change { vendor.inbound_messages.count }.by 1
     end
+  end
 
-    it 'calls stop on accounts when :stop? => true' do
-      vendor.expects(:accounts).returns([account])
-      account.expects(:stop).with(:from => from)
-      vendor.receive_message!(:from => from, :body => 'msg', :stop? => true)
-    end
-
-    it 'blacklists number when :stop? => true' do
-      vendor.stubs(:accounts).returns([])
+  describe '#stop!' do
+    it 'creates a stop request and calls stop on all accounts' do
+      command_params = CommandParameters.new(from: '+15552223323')
+      vendor.stubs(:accounts).returns([mock('account1', stop: true), mock('account1', stop: true)])
       expect {
-        vendor.receive_message!(:from => from, :body => 'msg', :stop? => true)
+        vendor.stop!(command_params)
       }.to change { vendor.stop_requests.count }.by 1
     end
   end

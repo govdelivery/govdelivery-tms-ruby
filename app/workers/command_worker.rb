@@ -6,10 +6,16 @@ module Workers
     end
 
     module InstanceMethods
-      attr_accessor :options, :http_service, :http_response, :exception
+      attr_accessor :http_service, :http_response, :exception
+      attr_reader :options
 
       def perform(opts)
         command.process_response(self.account, self.options, self.http_response)
+      end
+
+      def options=(opts)
+        @options = CommandParameters.new(opts)
+        logger.info("Invoking #{self.class.name} for #{self.options.to_hash.inspect}")
       end
 
       def account

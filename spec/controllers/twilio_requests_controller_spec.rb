@@ -11,7 +11,7 @@ describe TwilioRequestsController, '#create' do
   end
 
   it 'uses an SmsReceiver to get the response text' do
-    sms_receiver = mock('sms me!', :respond_to_sms! => response_text, :keywords= => nil)
+    sms_receiver = mock('sms me!', :respond_to_sms! => response_text)
     SmsReceiver.expects(:new).returns(sms_receiver)
     SmsVendor.expects(:find_by_username_and_from_phone!).with(vendor.username, vendor.from_phone).returns(vendor)
 

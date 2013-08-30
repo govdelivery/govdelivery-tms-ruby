@@ -11,8 +11,7 @@ class TwilioRequestsController < ApplicationController
   def twilio_request_response
     vendor = find_vendor
     command_params = CommandParameters.new(:sms_body => params['Body'], :to => params['To'], :from => params['From'], :callback_url => callback_url)
-    sms_receiver = SmsReceiver.new(vendor, vendor.stop_text, vendor.help_text)
-    sms_receiver.keywords = vendor.keywords
+    sms_receiver = SmsReceiver.new(vendor)
     response_text = sms_receiver.respond_to_sms!(command_params)
     @response = View::TwilioRequestResponse.new(vendor, response_text)
   end

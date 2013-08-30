@@ -14,8 +14,7 @@ class DcmSubscribeWorker
   #
   def perform(opts)
     begin
-      self.options = CommandParameters.new(opts)
-      logger.info("Performing DCM subscribe for #{options}")
+      self.options = opts
 
       client = DCMClient::Client.new(Xact::Application.config.dcm)
       self.http_response = DcmSubscribeCommand.new(client).call(options.from, options.dcm_account_code, options.dcm_topic_codes, options.sms_tokens)
