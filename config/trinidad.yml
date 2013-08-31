@@ -32,4 +32,4 @@ http:
 ajp:
   maxThreads: 50
   port: 8009
-  connectionTimeout: 60000
+  connectionTimeout: 600000
