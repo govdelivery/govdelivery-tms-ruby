@@ -34,6 +34,6 @@ http:
   acceptCount: 5
   maxThreads: 1
 ajp:
-  maxThreads: 50
+  maxThreads: 15
   port: 8009
   connectionTimeout: 600000
