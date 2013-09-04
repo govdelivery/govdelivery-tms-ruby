@@ -19,11 +19,15 @@ extensions:
     username: <%=username%>
     password: <%=password%>
     maxActive: 10
+    minIdle: 0
+    minEvictableIdleTimeMillis: 10000
     maxIdle: -1
     maxWait: 10000
     testOnBorrow: true
-    testOnReturn: false
+    removeAbandoned: true
+    logAbandoned: true
     validationQuery: SELECT 1 FROM dual
+    validationInterval: 30000
     accessToUnderlyingConnectionAllowed: true
 http:
   # incoming trafffc in deployed envs comes via ajp (except from nagios)
