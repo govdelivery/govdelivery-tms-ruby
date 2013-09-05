@@ -12,6 +12,7 @@ extensions:
   scheduler:
     # trinidad_scheduler_extension
   oracle_dbpool:
+    initSQL: SELECT 2 FROM DUAL
     # this should be the same as what is in database.yml
     jndi: jdbc/xact
     # expected to be 'host.gdi:port/service_name'
@@ -25,8 +26,8 @@ extensions:
     timeBetweenEvictionRunsMillis: 5000
     maxWait: 10000
     removeAbandoned: true
-    #removeAbandonedTimeout: 60
-    suspectTimeout: 60
+    suspectTimeout: 30
+    removeAbandonedTimeout: 60
     logAbandoned: true
     #testOnBorrow: true
     #validationQuery: SELECT 1 FROM dual
