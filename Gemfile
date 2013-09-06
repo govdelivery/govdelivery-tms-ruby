@@ -38,6 +38,7 @@ platforms :jruby do
   gem 'trinidad', :require => nil
   gem 'trinidad_scheduler_extension'
   gem 'trinidad_oracle_dbpool_extension'
+  gem 'trinidad_valve_extension'
 end
 
 group :development, :test do

@@ -11,6 +11,10 @@ address: 0.0.0.0
 extensions:
   scheduler:
     # trinidad_scheduler_extension
+  valves:
+    StuckThreadDetectionValve:
+      className: org.apache.catalina.valves.StuckThreadDetectionValve
+      threshold: 60
   oracle_dbpool:
     initSQL: SELECT 2 FROM DUAL
     # this should be the same as what is in database.yml
@@ -19,25 +23,24 @@ extensions:
     url: jdbc:oracle:thin:@//<%=database%>
     username: <%=username%>
     password: <%=password%>
-    maxActive: 10
-    minIdle: 0
-    maxIdle: 5
-    minEvictableIdleTimeMillis: 5000
-    timeBetweenEvictionRunsMillis: 5000
+    maxActive: 20
+    minIdle: 5
+    maxIdle: 15
+    minEvictableIdleTimeMillis: 30000
+    timeBetweenEvictionRunsMillis: 30000
     maxWait: 10000
-    removeAbandoned: true
     suspectTimeout: 30
     removeAbandonedTimeout: 60
     logAbandoned: true
-    #testOnBorrow: true
-    #validationQuery: SELECT 1 FROM dual
-    #validationInterval: 30000
+    testOnBorrow: true
+    validationQuery: SELECT 1 FROM dual
+    validationInterval: 60000
     accessToUnderlyingConnectionAllowed: true
 http:
-  # incoming trafffc in deployed envs comes via ajp (except from nagios)
+  # incoming traffic in deployed envs comes via ajp (except from nagios)
   acceptCount: 5
   maxThreads: 1
 ajp:
-  maxThreads: 15
+  maxThreads: 100
   port: 8009
   connectionTimeout: 600000
