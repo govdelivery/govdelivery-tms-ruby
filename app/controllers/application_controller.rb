@@ -48,7 +48,7 @@ class ApplicationController < ActionController::API
   # at org.apache.tomcat.util.http.parser.HttpParser.parseMediaType
   # this happens when auth_token is invalid
   def authenticate
-    authenticate_user! # devise method
+    authenticate_user!
   end
 
   def set_default_format
@@ -56,7 +56,7 @@ class ApplicationController < ActionController::API
   end
 
   def render_not_found
-    render :json=>'{}', :status => :not_found
+    render :json => '{}', :status => :not_found
   end
 
   def render_not_authorized

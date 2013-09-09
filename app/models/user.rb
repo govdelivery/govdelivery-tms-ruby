@@ -20,13 +20,21 @@ class User < ActiveRecord::Base
 
   before_validation :downcase_email
   before_save :ensure_authentication_token
-  
+
   delegate :vendors, :to => :account
   delegate :sms_vendor, :to => :account
   delegate :voice_vendor, :to => :account
 
   def self.with_token(token)
-    User.find(:first, :joins => :authentication_tokens, :conditions => ["authentication_tokens.token = ?", token])  
+    User.find(:first, :joins => :authentication_tokens, :conditions => ["authentication_tokens.token = ?", token])
+  end
+
+  def to_s
+    self.email.downcase
+  end
+
+  def after_database_authentication
+    logger.info("logged in as #{self.to_s}")
   end
 
   private
