@@ -77,7 +77,7 @@ Xact::Application.configure do
   config.dcm = {
     username: 'xact-api@govdelivery.com',
     password: "let's do Ortega Bombs",
-    api_root: 'https://stage-api.govdelivery.com' 
+    api_root: 'https://stage-api-dc2.govdelivery.com'
   }
 
   config.odm_polling_enabled = true
