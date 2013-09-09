@@ -11,10 +11,6 @@ address: 0.0.0.0
 extensions:
   scheduler:
     # trinidad_scheduler_extension
-  valves:
-    StuckThreadDetectionValve:
-      className: org.apache.catalina.valves.StuckThreadDetectionValve
-      threshold: 60
   oracle_dbpool:
     initSQL: SELECT 2 FROM DUAL
     # this should be the same as what is in database.yml
