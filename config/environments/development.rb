@@ -54,4 +54,7 @@ Xact::Application.configure do
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
   config.public_callback = false
+
+  # run in threadsafe mode if we're in a servlet container
+  config.threadsafe! if $servlet_context
 end
