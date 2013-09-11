@@ -18,7 +18,7 @@ class TokensController < ApplicationController
 
   def show
     u=User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
-    t=u.authentication_tokens.find(params[:id]).token
+    t=u.authentication_tokens.find(params[:id])
     render json: TokenView.new(t).render
   end
 

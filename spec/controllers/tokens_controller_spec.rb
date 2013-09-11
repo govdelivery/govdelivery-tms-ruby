@@ -27,6 +27,12 @@ describe TokensController do
     JSON.parse(response.body)['tokens'].map{|h| h['token']}.to_set.should eq(expected.to_set)
   end
 
+  it 'shows a token' do
+    token = user.authentication_tokens.first
+    get :show, account_id: account.id, user_id: user.id, id: token.id
+    response.response_code.should eq(200)
+  end
+
   it 'deletes a token' do
     token = user.authentication_tokens.first
     id = token.id
