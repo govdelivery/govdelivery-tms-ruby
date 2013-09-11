@@ -233,8 +233,8 @@ GEM
       json
       redis (>= 3.0.4)
       redis-namespace
-    sidekiq-failures (0.2.1)
-      sidekiq (>= 2.2.1)
+    sidekiq-failures (0.2.2)
+      sidekiq (>= 2.9.0)
     sidekiq-unique-jobs (2.6.7)
       sidekiq (~> 2.6)
     sinatra (1.4.3)
