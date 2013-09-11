@@ -3,6 +3,11 @@ module Workers
     def self.included(base)
       base.send(:include, Workers::Base)
       base.send(:include, InstanceMethods)
+
+      base.sidekiq_retries_exhausted do |msg|
+        logger.warn "Sidekiq job failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
+      end
+
     end
 
     module InstanceMethods
