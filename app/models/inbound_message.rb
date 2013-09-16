@@ -25,6 +25,19 @@ class InboundMessage < ActiveRecord::Base
     self.save!
   end
 
+  #
+  # This method will return false if one or more inbound messages precede this message
+  # by a configurable time threshold and contain the same information.  This is 
+  # intended to prevent infinite loops caused by auto-response messages.
+  #
+  def actionable?
+    threshold = (self.created_at - Xact::Application.config.auto_response_threshold.minutes).to_datetime
+    self.class.where("created_at >= ?", threshold).
+               where(:body => self.body).
+               where(:caller_phone => self.caller_phone).
+               where("id <> ?", self.id).count == 0
+  end
+
   protected
 
   def set_response_status

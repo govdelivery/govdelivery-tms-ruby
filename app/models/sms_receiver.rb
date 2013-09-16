@@ -37,8 +37,10 @@ SmsReceiver = Struct.new(:vendor) do
 
   def record_inbound_message!(params, attributes={})
     inbound_msg = vendor.receive_message!({from: params.from, to: params.to, body: params.sms_body}.merge!(attributes))
-    params.inbound_message_id = inbound_msg.id
-    yield if block_given?
-    inbound_msg.keyword_response
+    if inbound_msg.actionable?
+      params.inbound_message_id = inbound_msg.id
+      yield if block_given?
+      inbound_msg.keyword_response
+    end
   end
 end

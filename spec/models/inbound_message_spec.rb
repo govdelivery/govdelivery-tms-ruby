@@ -76,4 +76,41 @@ describe InboundMessage do
     end
   end
 
+  context "auto-responses" do
+    before do
+      inbound_message_with_response
+    end
+
+    it 'should not be actionable' do
+      inbound_message_with_response.actionable?.should eq(true)
+
+      dup_inbound_message =  InboundMessage.create!(vendor: inbound_message_with_response.vendor,
+                                body: inbound_message_with_response.body,
+                                from: inbound_message_with_response.from,
+                                keyword_response: inbound_message_with_response.keyword_response)
+
+      dup_inbound_message.actionable?.should eq(false)
+
+      # The body should be the same...
+      dup_inbound_message.body = dup_inbound_message.body * 2
+      dup_inbound_message.actionable?.should eq(true)
+
+      # The from (i.e. caller_phone) should be the same...
+      dup_inbound_message.reload
+      dup_inbound_message.actionable?.should eq(false)
+      dup_inbound_message.from = dup_inbound_message.from * 2
+      dup_inbound_message.actionable?.should eq(true)
+
+      # The created time should be within a configured window...
+      dup_inbound_message.reload
+      dup_inbound_message.actionable?.should eq(false)
+      dup_inbound_message.created_at = (dup_inbound_message.created_at + 
+                                       Xact::Application.config.auto_response_threshold.minutes + 
+                                       1.minute).to_datetime
+      
+      dup_inbound_message.actionable?.should eq(true)
+    end
+  end
+
+
 end

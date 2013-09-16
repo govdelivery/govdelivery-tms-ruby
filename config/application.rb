@@ -110,5 +110,13 @@ module Xact
 
     # override Rack exception application handling of exception status codes
     config.exceptions_app = self.routes
+
+    # Threshold (in minutes) under which multiple inbound messages from a 
+    # user will be ignored.  This is to prevent auto-response messages 
+    # (as sometimes issued from handsets while people are driving) from entering an infinite
+    # loop.  The corresponding configuration for this value in 
+    # DCM is "twilio_requests_timeout."  Here it is named differently,
+    # as this is not a vendor-specific behavior.
+    config.auto_response_threshold = 5
   end
 end

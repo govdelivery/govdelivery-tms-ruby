@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SmsReceiver, '#respond_to_sms!' do
-  let(:inbound_message) { stub('InboundMessage', id: 111, keyword_response: 'stub response') }
+  let(:inbound_message) { stub('InboundMessage', id: 111, keyword_response: 'stub response', actionable?: true) }
   let(:friendly_vendor) { stub_everything('I am a vendor. Call anything on me!',
                                           :'receive_message!' => inbound_message,
                                           stop_text: 'you should stop now',
@@ -53,6 +53,21 @@ describe SmsReceiver, '#respond_to_sms!' do
       friendly_vendor.stubs(:keywords).returns([kw])
 
       subject.respond_to_sms!(command_parameters).should eq('stub response')
+    end
+
+    it "returns nil and does not call keyword's #execute_commands method if not actionable" do
+      kw = stub('keyword')
+      kw.stubs(:name).returns('kwname')
+      kw.stubs(:response_text).returns('hee haw')
+      kw.stubs(:account_id).returns(239423)
+      command_parameters.expects(:sms_tokens=).with(['foo@bar.com'])
+      # stuff that shouldn't happen
+      command_parameters.expects(:inbound_message_id=).with(111).never
+      kw.expects(:execute_commands).with(command_parameters).never
+      friendly_vendor.stubs(:keywords).returns([kw])
+
+      inbound_message.expects(:actionable?).returns(false)
+      subject.respond_to_sms!(command_parameters).should eq(nil)
     end
 
     it 'returns nil for keyword dispatches when response_text is nil' do
