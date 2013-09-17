@@ -1,13 +1,13 @@
 source "http://buildbox.office.gdi:6789"
 source 'https://rubygems.org'
-
+source "http://ed5779be:de10e893@www.mikeperham.com/rubygems/"
 
 gem 'sinatra', :require => nil
 gem 'rails', '~>3.2.13'
 gem 'rails-api'
 gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
 gem 'redis-rails'
-gem 'sidekiq'
+gem 'sidekiq-pro'
 gem 'sidekiq-failures'
 gem 'sidekiq-unique-jobs'
 gem 'twilio-ruby'

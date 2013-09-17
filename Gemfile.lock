@@ -11,6 +11,7 @@ GIT
 GEM
   remote: http://buildbox.office.gdi:6789/
   remote: https://rubygems.org/
+  remote: http://ed5779be:de10e893@www.mikeperham.com/rubygems/
   specs:
     actionmailer (3.2.14)
       actionpack (= 3.2.14)
@@ -235,6 +236,8 @@ GEM
       redis-namespace
     sidekiq-failures (0.2.2)
       sidekiq (>= 2.9.0)
+    sidekiq-pro (1.2.3)
+      sidekiq (>= 2.14.0)
     sidekiq-unique-jobs (2.6.7)
       sidekiq (~> 2.6)
     sinatra (1.4.3)
@@ -320,8 +323,8 @@ DEPENDENCIES
   request_exception_handler
   rspec-rails
   ruby-oci8
-  sidekiq
   sidekiq-failures
+  sidekiq-pro
   sidekiq-unique-jobs
   sinatra
   slim
