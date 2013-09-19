@@ -32,6 +32,15 @@ test:
   pool: 10
   checkout_timeout: 10
 
+qc:
+  <%='jndi: jdbc/xact' if defined?($servlet_context) %>  # let tomcat manage the connection pool
+  adapter:  oracle_enhanced
+  database: tstm-scan.visi.gdi:1521/qc_evo_xact
+  username: xact
+  password: m5us83hv
+  pool: 10
+  checkout_timeout: 15
+
 stage:
   adapter: oracle_enhanced
   database: tstm-scan.visi.gdi:1521/estg
