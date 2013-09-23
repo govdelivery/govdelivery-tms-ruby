@@ -31,8 +31,14 @@ class KeywordBundle
   end
 
   def stop_action
-    ->(params) do
-      vendor.stop!(params)
+    if a=detected_account
+      ->(params) do
+        a.stop!(params)
+      end
+    else
+      ->(params) do
+        vendor.stop!(params)
+      end
     end
   end
 
@@ -62,10 +68,24 @@ class KeywordBundle
   # this sms body
   #
   def account_keywords
-    if prefix = sms_prefixes.where("lower(prefix) = ?", first_word(sms_body)).first
-      prefix.account.keywords
-    else
+    if (a = detected_account).nil? 
       []
+    else
+      a.keywords 
+    end
+  end
+
+  # the SmsPrefix model that matches the input, or nil
+  def detected_prefix
+    sms_prefixes.where("lower(prefix) = ?", first_word(sms_body)).first
+  end
+
+  # The account that matches this input (if prefix is detected), or nil
+  def detected_account
+    if prefix = detected_prefix
+      prefix.account
+    else
+      nil
     end
   end
 

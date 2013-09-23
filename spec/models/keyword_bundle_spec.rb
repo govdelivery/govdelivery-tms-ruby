@@ -5,9 +5,29 @@ describe KeywordBundle do
   let(:shared_vendor) { create(:shared_sms_vendor) }
   let(:account_with_shared_vendor1) { create(:account, sms_vendor: shared_vendor) }
   let(:account_with_shared_vendor2) { create(:account, sms_vendor: shared_vendor) }
+  let(:prefix) { account_with_shared_vendor1.sms_prefixes.first.prefix }
 
   describe '#stop_action' do
-    
+    it "should return vendor stop when not shared" do
+      k = KeywordBundle.new(exclusive_vendor, 'STOP')
+      account_with_shared_vendor2.expects(:stop!).never
+      account_with_shared_vendor1.expects(:stop!).never
+      exclusive_vendor.expects(:stop!).with(:params)
+      k.stop_action.call(:params)
+    end
+    it "should return vendor stop when shared but account not detected" do
+      k = KeywordBundle.new(shared_vendor, 'FOO STOP')
+      account_with_shared_vendor2.expects(:stop!).never
+      account_with_shared_vendor1.expects(:stop!).never
+      shared_vendor.expects(:stop!).with(:params)
+      k.stop_action.call(:params)
+    end
+    it "should return account stop when shared and account is detected" do
+      k = KeywordBundle.new(shared_vendor, "#{prefix} STOP")
+      shared_vendor.expects(:stop!).never
+      Account.any_instance.expects(:stop!).with(:params)
+      k.stop_action.call(:params)
+    end
   end
   
   describe '#prefixed_keywords' do
@@ -36,13 +56,11 @@ describe KeywordBundle do
 
   describe '#body_without_prefix' do
     it 'returns sms body without prefix' do
-      prefix = account_with_shared_vendor1.sms_prefixes.first.prefix
       sms_body = "#{prefix.capitalize} GOLLY"
       KeywordBundle.new(shared_vendor, sms_body).body_without_prefix.should eq("GOLLY")
     end
 
     it 'returns sms body without prefix when sms body has leading spaces' do
-      prefix = account_with_shared_vendor1.sms_prefixes.first.prefix
       sms_body = "    #{prefix.capitalize} GOLLY"
       KeywordBundle.new(shared_vendor, sms_body).body_without_prefix.should eq("GOLLY")
     end
