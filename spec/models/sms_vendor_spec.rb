@@ -10,7 +10,7 @@ describe SmsVendor do
     it { vendor.valid?.should == true }
   end
 
-  [:name, :username, :password, :help_text, :stop_text, :from].each do |field|
+  [:name, :username, :password, :help_text, :stop_text, :from, :shared].each do |field|
     describe "when #{field} is empty" do
       before { vendor.send("#{field}=", nil) }
       it { vendor.valid?.should == false }

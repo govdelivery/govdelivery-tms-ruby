@@ -73,6 +73,9 @@ USAGE
       opts.on("-s", "--stop_text Vendor Stop Text") do |p|
         @options[:vendor_stop_text] = p.to_s
       end
+      opts.on("-a", "--shared", "Indicate if this SMS vendor is shared or exclusive.  If you pass this argument, the SMS vendor will be shared.") do |p|
+        @options[:shared] = true
+      end
 
     end.parse!(argv)
   end
@@ -91,6 +94,7 @@ USAGE
     v.worker = @options[:vendor_worker]
     v.help_text = @options[:vendor_help_text]
     v.stop_text = @options[:vendor_stop_text]
+    v.shared = @options[:shared]
 
     v.save
     
@@ -144,6 +148,7 @@ USAGE
       puts "\tid: " + v.id.to_s + "\n" 
       puts "\tname: " + v.name + "\n" 
       puts "\tfrom_phone: " + v.from_phone.to_s + "\n" 
+      puts "\tshared: " + v.shared.to_s + "\n"
       puts "\n"
     }
 

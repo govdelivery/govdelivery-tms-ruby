@@ -1,24 +1,44 @@
-SmsReceiver = Struct.new(:vendor) do
-  attr_writer :parser
-  delegate :stop_text, :help_text, :keywords, to: :vendor
+SmsReceiver = Struct.new(:vendor, :command_parameters) do
+  attr_writer :parser, :bundle
+  delegate :stop_text, :help_text, :stop_action, :keywords, :body_without_prefix, to: :bundle
 
   # === Arguments
   #
-  # +params+ - A CommandParameter instance
+  # +command_parameters+ - A CommandParameter instance
   #
-  def respond_to_sms!(command_parameters)
-    parser.call(command_parameters.sms_body, command_dispatch_hash(command_parameters))
+  def respond_to_sms!
+    parser.call(command_parameters.sms_body, command_dispatch_hash)
+  end
+
+  def bundle
+    @bundle ||= KeywordBundle.new(vendor, command_parameters.sms_body)
   end
 
   private
 
-  def command_dispatch_hash(params)
-    keywords.reduce({
-                      'stop' => -> { record_inbound_message!(params, keyword_response: stop_text) { vendor.stop!(params) } },
-                      'help' => -> { record_inbound_message!(params, keyword_response: help_text) }
-                    }) { |memo, keyword| memo.merge!(keyword.name => on_keyword(params, keyword)) }
+  ##
+  # combine all elements of 'keywords' into a single hash
+  # where the keys are keyword names and the values are
+  # keyword procs that can be called.
+  #
+  def command_dispatch_hash
+    keywords.reduce(stop_and_help) do |memo, keyword| 
+      # memo is the keyword hash {keyword.name => keyword_proc}
+      memo.merge!(keyword.name => on_keyword(command_parameters, keyword))
+    end
   end
 
+  def stop_and_help
+    {
+      'stop' => -> { record_inbound_message!(command_parameters, keyword_response: stop_text) { stop_action.call(command_parameters) } },
+      'help' => -> { record_inbound_message!(command_parameters, keyword_response: help_text) }
+    }
+  end
+
+  ##
+  # Return a proc encapsulating the action that needs to be taken
+  # when the keyword has been matched
+  #
   def on_keyword(params, keyword)
     ->(*args) do
       params.sms_tokens = args
@@ -30,14 +50,14 @@ SmsReceiver = Struct.new(:vendor) do
 
   def parser
     @parser ||= lambda { |body, dispatch|
-      p = InboundSmsParser.new(body)
+      p = InboundSmsParser.new(body_without_prefix)
       p.dispatch!(dispatch)
     }
   end
 
   def record_inbound_message!(params, attributes={})
     inbound_msg = vendor.receive_message!({from: params.from, to: params.to, body: params.sms_body}.merge!(attributes))
-    if inbound_msg.actionable?
+    if inbound_msg.actionable? # a simple throttle check
       params.inbound_message_id = inbound_msg.id
       yield if block_given?
       inbound_msg.keyword_response

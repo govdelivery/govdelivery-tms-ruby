@@ -9,6 +9,7 @@ module FixtureHelper
       :username => 'username',
       :password => 'secret',
       :from=>'+15555555555',
+      :shared => false,
       :worker => 'LoopbackMessageWorker'}.merge(attrs))
   end
 

@@ -1,7 +1,7 @@
 FactoryGirl.define do
 
   trait :vendor do
-    name 'name'
+    sequence(:name) {|n| "name#{n}" }
     worker 'LoopbackMessageWorker'
   end
 
@@ -13,6 +13,14 @@ FactoryGirl.define do
     username 'username'
     password 'secret'
     from '+15555555555'
+    shared false
+  end
+
+  factory :shared_sms_vendor, class: SmsVendor, traits: [:vendor] do
+    username 'username'
+    password 'secret'
+    from '+15555555555'
+    shared true
   end
 
   factory :voice_vendor, traits: [:vendor] do
