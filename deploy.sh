@@ -61,10 +61,14 @@ while [ $# -gt 0 ]; do
 	    shift;
 	    ;;
 	deploy)
-	    actions[${#actions[@]}]="$1"             ## push on end of actions
+	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
 	    ;;
 	migrate-db-pre|migrate-db-post)
+	    actions[${#actions[@]}]="$1"         ## push on end of actions
+	    shift;
+	    ;;
+	promote)
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
 	    ;;
@@ -111,7 +115,7 @@ done
 
 
 ### If no action specified, set default
-if [[ ${#actions} == 0 ]]; then 
+if [[ ${#actions[@]} == 0 ]]; then 
     echo "Executing Default Remote Actions: ${DEFAULT_ACTIONS[@]}"
     actions="${DEFAULT_ACTIONS[@]}"
 fi;
