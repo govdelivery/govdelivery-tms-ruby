@@ -28,6 +28,9 @@ usage () {
     echo "  restart-SERVICE  restart SERVICE"
     echo "  status-SERVICE   check status of SERVICE"
     echo
+    echo "Information:"                                                                                                                             
+    echo "  version          display the version on each host"
+    echo
     echo "Deployment Actions:"
     echo "  checkout         checkout the code (create tarball on prod-deploy1)"
     echo "  extract          extract the code  (extract tarball to target NFS share, create softlinks, bundle install)"
@@ -49,6 +52,10 @@ while [ $# -gt 0 ]; do
 	    shift
 	    ;;
 	status-*|start-*|stop-*|restart-*)
+	    actions[${#actions[@]}]="$1"         ## push on end of actions
+	    shift
+	    ;;
+	version)
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift
 	    ;;
