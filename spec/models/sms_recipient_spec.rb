@@ -54,3 +54,35 @@ describe SmsRecipient do
     end
   end
 end
+
+describe SmsRecipient, 'blacklist scopes' do
+  let(:sms_vendor)  { create(:shared_sms_vendor) }
+  let(:account)     { create(:account, sms_vendor: sms_vendor) }
+  let(:sms_message) { create(:sms_message, account: account) }
+
+  before do
+    # vendor-wide blacklist
+    sms_message.recipients.create!(phone: "+16123089081", vendor: sms_vendor)
+    create(:stop_request, vendor: sms_vendor, phone: "+16123089081", account_id: nil)
+
+    # account-specific blacklist
+    sms_message.recipients.create!(phone: "+16123089082", vendor: sms_vendor)
+    create(:stop_request, vendor: sms_vendor, phone: "+16123089082", account_id: account.id)
+
+    # wrong account id - should not be blacklisted
+    sms_message.recipients.create!(phone: "+16123089083", vendor: sms_vendor)
+    create(:stop_request, vendor: sms_vendor, phone: "+16123089083", account_id: 123)
+  end
+
+  it 'should get account_blacklisted' do
+    scope = sms_message.recipients.account_blacklisted(sms_vendor.id, account.id)
+    scope.count.should eq(2)
+    scope.map(&:phone).sort.should eq(["+16123089081","+16123089082"])
+  end
+
+  it 'should get not_account_blacklisted' do
+    scope = sms_message.recipients.not_account_blacklisted(sms_vendor.id, account.id)
+    scope.count.should eq(1)
+    scope.map(&:phone).should eq(["+16123089083"])
+  end
+end

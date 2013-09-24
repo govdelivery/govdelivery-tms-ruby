@@ -2,7 +2,10 @@ require 'spec_helper'
 
 describe SmsMessage do
   let(:vendor) { create(:sms_vendor) }
+  let(:shared_vendor) { create(:shared_sms_vendor) }
   let(:account) { account = vendor.accounts.create!(:name => 'name') }
+  let(:shared_account) { create(:account, sms_vendor: shared_vendor) }
+  let(:other_shared_account) { create(:account, sms_vendor: shared_vendor) }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
 
   context "when short body is empty" do
@@ -61,11 +64,46 @@ describe SmsMessage do
     let(:message) { account.sms_messages.build(:body => "A"*160, :recipients_attributes => [{:phone => "6515551212"}]) }
     it { message.should be_valid }
     it { message.should have(1).recipients }
-    it {message.worker.should eq(LoopbackMessageWorker) }
+    it { message.worker.should eq(LoopbackMessageWorker) }
+  end
+
+  context 'a message on a shared vendor with blacklisted and legit recips' do
+    let(:shared_message) do
+      shared_account.sms_messages.create!(
+        :body => "FOOO", 
+        :recipients_attributes => [{:phone => "6515551212", :vendor => shared_vendor}, 
+                                   {:phone => "6515551215", :vendor => shared_vendor}, 
+                                   {:phone => "6515551218", :vendor => shared_vendor}])
+    end
+
+    before do
+      # should be filtered out because it is account-specific stop request
+      shared_vendor.stop_requests.create!(:phone => '+16515551212', :account => shared_account)
+
+      # should be filtered out because it is vendor-wide stop request
+      shared_vendor.stop_requests.create!(:phone => '+16515551215')
+
+      # should NOT be filtered out because stop request has account id of other account 
+      shared_vendor.stop_requests.create!(:phone => '+16515551218', :account => other_shared_account)
+    end
+
+    it 'should remove the right recipients' do
+      shared_message.blacklisted_recipients.count.should eq(2)
+      shared_message.sendable_recipients.count.should eq(1)
+      shared_message.process_blacklist!
+      shared_message.recipients.find_by_phone('6515551212').status.should eq(RecipientStatus::BLACKLISTED)
+      shared_message.recipients.find_by_phone('6515551215').status.should eq(RecipientStatus::BLACKLISTED)
+      shared_message.recipients.find_by_phone('6515551218').status.should eq(RecipientStatus::NEW)
+    end
   end
 
   context 'a message with blacklisted and legitimate recipients' do
-    let(:message) { account.sms_messages.create!(:body => "A"*160, :recipients_attributes => [{:phone => "6515551212"}, {:phone => "6515551215"}]) }
+    let(:message) { 
+      create(:sms_message, 
+        account: account, 
+        body: "A"*160, 
+        recipients_attributes: [{:phone => "6515551212", :vendor => vendor}, {:phone => "6515551215", :vendor => vendor}]) 
+    }
     before do
       vendor.stop_requests.create!(:phone => "+16515551212")
     end

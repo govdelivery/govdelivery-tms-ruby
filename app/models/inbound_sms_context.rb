@@ -4,7 +4,7 @@
 # based on the state of the vendor and the enclosed
 # accounts' prefixes. 
 #
-class KeywordBundle
+class InboundSmsContext
   attr_accessor :vendor, :sms_body
   delegate :shared?, :keywords, :sms_prefixes, :to => :vendor
 
@@ -43,11 +43,11 @@ class KeywordBundle
   end
 
   def stop_text
-    vendor.stop_text
+    (detected_account || vendor).stop_text
   end
 
   def help_text
-    vendor.help_text
+    (detected_account || vendor).help_text
   end
 
   private

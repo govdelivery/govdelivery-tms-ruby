@@ -3,7 +3,8 @@ describe TwilioMessageWorker do
   let(:sms_vendor) { create(:sms_vendor, :worker => 'TwilioMessageWorker') }
   let(:account) { account = sms_vendor.accounts.create!(:name => 'name') }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { account.sms_messages.create!(:body => 'hello, message worker!', :recipients_attributes => [{:phone => "5554443333", :vendor => sms_vendor}]) }
+  let(:message) { account.sms_messages.create!(:body => 'hello, message worker!', 
+    :recipients_attributes => [{:phone => "5554443333", :vendor => sms_vendor}]) }
 
   #need to add recipient stubs and verify recipients are modified correctly
   context 'a very happy send' do

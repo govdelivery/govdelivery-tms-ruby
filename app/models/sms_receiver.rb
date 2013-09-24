@@ -1,6 +1,6 @@
 SmsReceiver = Struct.new(:vendor, :command_parameters) do
-  attr_writer :parser, :bundle
-  delegate :stop_text, :help_text, :stop_action, :keywords, :body_without_prefix, to: :bundle
+  attr_writer :parser, :inbound_sms_context
+  delegate :stop_text, :help_text, :stop_action, :keywords, :body_without_prefix, to: :inbound_sms_context
 
   # === Arguments
   #
@@ -10,8 +10,8 @@ SmsReceiver = Struct.new(:vendor, :command_parameters) do
     parser.call(command_parameters.sms_body, command_dispatch_hash)
   end
 
-  def bundle
-    @bundle ||= KeywordBundle.new(vendor, command_parameters.sms_body)
+  def inbound_sms_context
+    @inbound_sms_context ||= InboundSmsContext.new(vendor, command_parameters.sms_body)
   end
 
   private
@@ -57,7 +57,7 @@ SmsReceiver = Struct.new(:vendor, :command_parameters) do
 
   def record_inbound_message!(params, attributes={})
     inbound_msg = vendor.receive_message!({from: params.from, to: params.to, body: params.sms_body}.merge!(attributes))
-    if inbound_msg.actionable? # a simple throttle check
+    unless inbound_msg.ignored? # a simple throttle check
       params.inbound_message_id = inbound_msg.id
       yield if block_given?
       inbound_msg.keyword_response

@@ -1,7 +1,7 @@
 class InboundMessage < ActiveRecord::Base
   belongs_to :vendor, inverse_of: :inbound_messages, class_name: 'SmsVendor'
   belongs_to :keyword, inverse_of: :inbound_messages
-  enum :command_status, [:no_action, :pending, :failure, :success]
+  enum :command_status, [:no_action, :pending, :failure, :success, :ignored]
 
   attr_accessible :body, :from, :vendor, :to, :keyword, :keyword_response
   validates_presence_of :body, :from, :vendor
@@ -11,6 +11,7 @@ class InboundMessage < ActiveRecord::Base
   has_many :command_actions, dependent: :delete_all
 
   before_validation :set_response_status, :on => :create
+  before_create :see_if_this_should_be_ignored
 
   def check_status!
     return unless keyword
@@ -31,14 +32,31 @@ class InboundMessage < ActiveRecord::Base
   # intended to prevent infinite loops caused by auto-response messages.
   #
   def actionable?
-    threshold = (self.created_at - Xact::Application.config.auto_response_threshold.minutes).to_datetime
+    compare_date = self.created_at || DateTime.now
+    threshold = (compare_date - Xact::Application.config.auto_response_threshold.minutes).to_datetime
     self.class.where("created_at >= ?", threshold).
                where(:body => self.body).
                where(:caller_phone => self.caller_phone).
                where("id <> ?", self.id).count == 0
   end
 
+  ## 
+  # I'm just doing this because Ben and Tyler are forcing me to
+  # ~ Billy, 9/23/2013 (help me)
+  #
+  def ignore!
+    self.command_status = :ignored
+    self.save!
+  end
+
+
   protected
+
+  def see_if_this_should_be_ignored
+    unless actionable?
+      ignore!
+    end
+  end
 
   def set_response_status
     self.command_status = :no_action

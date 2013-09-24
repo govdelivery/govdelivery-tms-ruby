@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe SmsReceiver, '#respond_to_sms!' do
-  let(:inbound_message) { stub('InboundMessage', id: 111, keyword_response: 'stub response', actionable?: true) }
+  let(:inbound_message) { stub('InboundMessage', id: 111, keyword_response: 'stub response', ignored?: false) }
   let(:friendly_vendor) { stub_everything('I am a vendor. Call anything on me!',
                                           :'receive_message!' => inbound_message) }
-  let(:keyword_bundle) { stub('KeywordBundle', 
+  let(:inbound_sms_context) { stub('InboundSmsContext', 
                               keywords: [],
                               stop_text: 'you should stop now',
                               help_text: 'you have been helped',
                               stop_action: ->(*args) { friendly_vendor.stop!(*args)})}
   let(:command_parameters) { CommandParameters.new(:to => '+5554443334', :from => '+5554443333', :sms_body => 'subscribe foo@bar.com') }
 
-  subject { SmsReceiver.new(friendly_vendor, command_parameters).tap{|s| s.bundle = keyword_bundle} }
+  subject { SmsReceiver.new(friendly_vendor, command_parameters).tap{|s| s.inbound_sms_context = inbound_sms_context} }
 
   describe 'when dispatching on stop' do
     before do
@@ -52,12 +52,12 @@ describe SmsReceiver, '#respond_to_sms!' do
       command_parameters.expects(:sms_tokens=).with(['foo@bar.com'])
       command_parameters.expects(:inbound_message_id=).with(111)
       kw.expects(:execute_commands).with(command_parameters)
-      keyword_bundle.stubs(:keywords).returns([kw])
+      inbound_sms_context.stubs(:keywords).returns([kw])
 
       subject.respond_to_sms!.should eq('stub response')
     end
 
-    it "returns nil and does not call keyword's #execute_commands method if not actionable" do
+    it "returns nil and does not call keyword's #execute_commands method if ignored" do
       kw = stub('keyword')
       kw.stubs(:name).returns('kwname')
       kw.stubs(:response_text).returns('hee haw')
@@ -66,15 +66,15 @@ describe SmsReceiver, '#respond_to_sms!' do
       # stuff that shouldn't happen
       command_parameters.expects(:inbound_message_id=).with(111).never
       kw.expects(:execute_commands).with(command_parameters).never
-      keyword_bundle.stubs(:keywords).returns([kw])
+      inbound_sms_context.stubs(:keywords).returns([kw])
 
-      inbound_message.expects(:actionable?).returns(false)
+      inbound_message.expects(:ignored?).returns(true)
       subject.respond_to_sms!.should eq(nil)
     end
 
     it 'returns nil for keyword dispatches when response_text is nil' do
       kw = mock(:name => 'kwname', :execute_commands => true)
-      keyword_bundle.stubs(:keywords).returns([kw])
+      inbound_sms_context.stubs(:keywords).returns([kw])
       inbound_message.expects(:keyword_response).returns(nil)
       friendly_vendor.expects(:receive_message!).with(:to => command_parameters.to, :from => command_parameters.from, :body => command_parameters.sms_body, :keyword => kw).returns(inbound_message)
 
@@ -83,7 +83,7 @@ describe SmsReceiver, '#respond_to_sms!' do
 
     it 'calls receive_message!' do
       kw=mock(:name => 'kwname', :execute_commands => true)
-      keyword_bundle.stubs(:keywords).returns([kw])
+      inbound_sms_context.stubs(:keywords).returns([kw])
       friendly_vendor.expects(:receive_message!).with(:to => command_parameters.to, :from => command_parameters.from, :body => command_parameters.sms_body, :keyword => kw).returns(inbound_message)
 
       subject.respond_to_sms!
