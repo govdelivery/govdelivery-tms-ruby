@@ -6,7 +6,7 @@
 #
 class InboundSmsContext
   attr_accessor :vendor, :sms_body
-  delegate :shared?, :keywords, :sms_prefixes, :to => :vendor
+  delegate :shared?, :sms_prefixes, :to => :vendor
 
   def initialize(vendor, sms_body)
     self.vendor   = vendor
@@ -18,8 +18,8 @@ class InboundSmsContext
   # this is a shared vendor.  If no match is found, return an empty array.
   # If this is not a shared vendor, return all keywords.
   #
-  def prefixed_keywords
-    shared? ? account_keywords : keywords
+  def keywords
+    shared? ? account_keywords : vendor.keywords
   end
 
   ##

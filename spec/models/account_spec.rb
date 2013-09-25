@@ -6,6 +6,7 @@ describe Account do
   let(:sms_vendor) { create(:sms_vendor) }
   let(:shared_sms_vendor) { create(:shared_sms_vendor) }
 
+
   context 'with shared SMS vendor' do
     subject {
       Account.new(:name => 'name', :sms_vendor => shared_sms_vendor, :dcm_account_codes=> ['ACCOUNT_CODE'])
@@ -49,13 +50,25 @@ describe Account do
     end
 
     context "calling stop!" do
-      it 'should create a stop request and call commands' do
-        command_params = mock(:account_id= => true, :from => "BOBBY")
-        subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :command_type => :dcm_unsubscribe)
-        Command.any_instance.expects(:call).with(command_params)
-        expect {
+      context "with no existing stop requests" do
+        it 'should create a stop request and call commands' do
+          command_params = stub(:account_id= => true, :from => "BOBBY")
+          subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :command_type => :dcm_unsubscribe)
+          Command.any_instance.expects(:call).with(command_params)
+          expect {
+            subject.stop!(command_params)
+          }.to change { subject.stop_requests.count }.by 1
+        end
+      end
+      context 'with existing stop request for this phone' do
+        before do
+          create(:stop_request, account: subject, phone: '8888', vendor: sms_vendor)
+        end
+        it 'should not error' do
+          command_params = mock(:from => "8888")
+          Command.any_instance.expects(:call).never
           subject.stop!(command_params)
-        }.to change { subject.stop_requests.count }.by 1
+        end
       end
     end
   end

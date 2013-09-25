@@ -51,7 +51,7 @@ describe InboundSmsContext do
     end
   end
   
-  describe '#prefixed_keywords' do
+  describe '#keywords' do
     it 'returns a list of keywords relevant to this body' do
       sms_prefix = account_with_shared_vendor1.sms_prefixes.first
       body = "#{sms_prefix.prefix} OMG"
@@ -61,17 +61,17 @@ describe InboundSmsContext do
       ]
       # kw from other acct
       shared_vendor.create_keyword!(:account => account_with_shared_vendor2, :name => "hey")
-      InboundSmsContext.new(shared_vendor, body).prefixed_keywords.should eq(kws)
+      InboundSmsContext.new(shared_vendor, body).keywords.should eq(kws)
     end
 
     it 'returns empty array if no prefix found for shared vendor' do
       body = "NO MATCH OMG" 
       shared_vendor.create_keyword!(:account => account_with_shared_vendor1, :name => "whut")
-      InboundSmsContext.new(shared_vendor, body).prefixed_keywords.should eq([])
+      InboundSmsContext.new(shared_vendor, body).keywords.should eq([])
     end
 
     it 'returns empty array if empty sms body' do
-      InboundSmsContext.new(shared_vendor, '').prefixed_keywords.should eq([])
+      InboundSmsContext.new(shared_vendor, '').keywords.should eq([])
     end
   end
 

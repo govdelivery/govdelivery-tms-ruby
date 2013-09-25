@@ -58,8 +58,10 @@ class Account < ActiveRecord::Base
   def stop!(command_parameters)
     # We need to maintain a blacklist at the account level. 
     # This will prevent sending from a shared vendor.
-    stop_requests.create!(phone: command_parameters.from, vendor: sms_vendor)
-    stop(command_parameters)
+    unless stop_requests.exists?(phone: command_parameters.from, vendor_id: sms_vendor) 
+      stop_requests.create!(phone: command_parameters.from, vendor: sms_vendor)
+      stop(command_parameters)
+    end
   end
 
   protected
