@@ -64,6 +64,13 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def help_text
+    read_attribute(:help_text) || sms_vendor.help_text
+  end
+
+  def stop_text
+    read_attribute(:stop_text) || sms_vendor.stop_text
+  end  
   protected
 
   def normalize_dcm_account_codes
