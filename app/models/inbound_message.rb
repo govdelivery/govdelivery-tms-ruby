@@ -33,11 +33,12 @@ class InboundMessage < ActiveRecord::Base
   #
   def actionable?
     compare_date = self.created_at || DateTime.now
+    table = self.class.arel_table
     threshold = (compare_date - Xact::Application.config.auto_response_threshold.minutes).to_datetime
-    self.class.where("created_at >= ?", threshold).
+    thing = self.class.where("created_at >= ?", threshold).
                where(:body => self.body).
                where(:caller_phone => self.caller_phone).
-               where("id <> ?", self.id).count == 0
+               where(table[:id].not_eq(self.id)).count == 0
   end
 
   ## 
@@ -46,7 +47,7 @@ class InboundMessage < ActiveRecord::Base
   #
   def ignore!
     self.command_status = :ignored
-    self.save!
+    self.save! unless self.new_record?
   end
 
 

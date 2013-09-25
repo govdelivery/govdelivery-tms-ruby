@@ -91,6 +91,12 @@ describe InboundMessage do
 
       dup_inbound_message.actionable?.should eq(false)
 
+      # it shouldn't matter if id is nil
+      old_id = dup_inbound_message.id
+      dup_inbound_message.id = nil
+      dup_inbound_message.actionable?.should eq(false)
+      dup_inbound_message.id = old_id
+
       # The body should be the same...
       dup_inbound_message.body = dup_inbound_message.body * 2
       dup_inbound_message.actionable?.should eq(true)
