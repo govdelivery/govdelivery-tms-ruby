@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   validates_presence_of :account
   validates_presence_of :email
   validates_length_of :email, :maximum => 256
-  validates_uniqueness_of :email
+  validates_uniqueness_of :email, :scope => :account_id
 
   has_many :email_messages, :order => 'email_messages.created_at DESC'
   has_many :account_email_messages, :through => :account, :source => EmailMessage.table_name

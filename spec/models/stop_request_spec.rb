@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe StopRequest do
   let(:vendor) { create(:sms_vendor) }
-  let(:stop_request) { vendor.stop_requests.build(:phone => "+16666666666") }
-  let(:dup_stop_request) { vendor.stop_requests.build(:phone => "+16666666666") }
+  let(:stop_request) { vendor.stop_requests.build(:phone => "+16666666666").tap{|s| s.account_id = 1 }}
+  let(:dup_stop_request) { vendor.stop_requests.build(:phone => "+16666666666").tap{|s| s.account_id = 1 }}
 
   [[:phone, 255]].each do |field, length|
     context "when #{field} is empty" do
@@ -31,7 +31,11 @@ describe StopRequest do
     specify { stop_request.valid?.should == true}
   end
 
-  context "when not unique by phone and vendor" do
+  context "when unique by phone and vendor and account" do
+    before { stop_request.save! ; dup_stop_request.account_id += 1}
+    specify { dup_stop_request.should be_valid }
+  end
+  context "when not unique by phone and vendor and account" do
     before { stop_request.save! }
     specify { dup_stop_request.should be_invalid }
   end

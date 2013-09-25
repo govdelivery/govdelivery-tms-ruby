@@ -4,5 +4,5 @@ class StopRequest < ActiveRecord::Base
   belongs_to :account
   validates_presence_of :phone, :vendor
   validates_length_of :phone, :maximum => 255
-  validates_uniqueness_of :phone, :scope => :vendor_id
+  validates_uniqueness_of :phone, :scope => [:vendor_id, :account_id]
 end
