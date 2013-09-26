@@ -18,6 +18,7 @@ class Keyword < ActiveRecord::Base
 
   class << self
     def stop?(text)
+      # Message is a stop request if it starts with a stop word.
       !!(text =~ /^\s*(#{STOP_WORDS.join("|")})(\s|$)/i)
     end
   end

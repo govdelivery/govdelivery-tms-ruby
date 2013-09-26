@@ -55,6 +55,10 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = false
 
+  # Used for forwarding STOP requests for short codes that are shared between
+  # XACT and DCM (GOV311) - XACT-175
+  config.shared_phone_numbers = ['+16514336311']
+
   # run in threadsafe mode if we're in a servlet container
   config.threadsafe! if $servlet_context
 end

@@ -1,5 +1,6 @@
 class TwilioRequestsController < ApplicationController
   skip_before_filter :authenticate
+  before_filter :dcm_forward!
   respond_to :xml
 
   def create
@@ -21,5 +22,12 @@ class TwilioRequestsController < ApplicationController
 
   def callback_url
     twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
+  end
+
+  private
+
+  # This is a hack and is intended to be temporary.
+  def dcm_forward!
+    ForwardStopsToDcm.forward_async!(params)
   end
 end

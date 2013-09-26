@@ -44,4 +44,9 @@ Xact::Application.configure do
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
   config.public_callback = false  
+
+  # Used for forwarding STOP requests for short codes that are shared between
+  # XACT and DCM (GOV311) - XACT-175
+  config.dcm_urls = []
+  config.shared_phone_numbers = []
 end

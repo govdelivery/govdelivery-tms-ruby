@@ -93,9 +93,13 @@ Xact::Application.configure do
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'xact'
   config.odm_password = 'phystondusonujocrazendehifreri'
-  
+
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
   config.public_callback = true  
+
+  # Used for forwarding STOP requests for short codes that are shared between
+  # XACT and DCM (GOV311) - XACT-175
+  config.shared_phone_numbers = []
 end

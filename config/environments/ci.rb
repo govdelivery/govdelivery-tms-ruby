@@ -49,4 +49,8 @@ Xact::Application.configure do
   config.public_callback = false
 
   config.message_completion_crontab = "*/10 * * * * ?"
+
+  # Used for forwarding STOP requests for short codes that are shared between
+  # XACT and DCM (GOV311) - XACT-175
+  config.shared_phone_numbers = []
 end
