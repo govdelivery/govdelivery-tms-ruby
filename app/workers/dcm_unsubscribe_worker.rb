@@ -17,27 +17,38 @@ class DcmUnsubscribeWorker
   def perform(opts)
     self.options = opts
 
-    client = DCMClient::Client.new(Xact::Application.config.dcm)
-    number = PhoneNumber.new(options.from).dcm
+    Xact::Application.config.dcm.each do |dcm_config|
+      client = DCMClient::Client.new(dcm_config)
+      number = PhoneNumber.new(options.from).dcm
 
-    # take the HTTP response with the highest response code
-    #
-    self.http_response = options.dcm_account_codes.collect do |account_code|
-      begin
-        client.delete_wireless_subscriber(number, account_code)
-      # we don't care if the DCM subscriber doesn't exist
-      rescue DCMClient::Error::NotFound => e
-        e.response
-      # store exception and mark job as failed even though we'll retry it
-      rescue DCMClient::Error => e
-        logger.error e.message
-        self.exception = e
-        e.response
+      # take the HTTP response with the highest response code
+      #
+      options.dcm_account_codes.collect do |account_code|
+        begin
+          self.http_response = client.delete_wireless_subscriber(number, account_code)
+        # we don't care if the DCM subscriber doesn't exist
+        rescue DCMClient::Error::NotFound => e
+          self.http_response = e.response
+        # store exception and mark job as failed even though we'll retry it
+        rescue DCMClient::Error => e
+          logger.error e.message
+          self.exception = e
+          self.http_response = e.response
+        end
       end
-    end.max_by(&:status)
-
+    end
     super
   ensure
     raise self.exception if self.exception
+  end
+
+  ##
+  # If any of the http requests in this batch succeeds, this
+  # worker should report success.
+  #
+  def http_response=(response)
+    if @http_response.nil? || @http_response.status > response.status
+      @http_response = response
+    end
   end
 end

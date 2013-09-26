@@ -21,7 +21,7 @@ gem 'slim'
 gem 'typhoeus'
 gem 'faraday'
 gem 'faraday_middleware'
-gem 'dcm_client'
+gem 'dcm_client', '~>0.1.4'
 gem 'enumify'
 gem "strip_attributes"
 gem 'attr_encrypted'

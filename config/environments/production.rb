@@ -75,11 +75,18 @@ Xact::Application.configure do
   config.sidekiq[:server][:url] = "#{config.redis_url}/1"
   config.sidekiq[:client][:url] = "#{config.redis_url}/1"
 
-  config.dcm = {
-    username: 'xact-api@govdelivery.com',
-    password: 'BV&f3dS3^PRntHeT&0xekwko%4nJo#PO',
-    api_root: 'https://api-dc2.govdelivery.com'
-  }
+  config.dcm = [
+    {
+      username: 'xact-api@govdelivery.com',
+      password: 'BV&f3dS3^PRntHeT&0xekwko%4nJo#PO',
+      api_root: 'https://api-dc2.govdelivery.com'
+    },
+    {
+      username: 'xact-api@govdelivery.com',
+      password: 'BV&f3dS3^PRntHeT&0xekwko%4nJo#PO',
+      api_root: 'https://api.govdelivery.com'
+    }
+  ]
 
   config.odm_polling_enabled = true
   config.odm_host = "https://tms.govdelivery.com:65081"

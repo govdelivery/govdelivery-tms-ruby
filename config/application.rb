@@ -98,11 +98,11 @@ module Xact
       server: {}
     }
 
-    config.dcm = {
+    config.dcm = [{
       username: 'product@govdelivery.com',
       password: 'retek01!',
       api_root: 'http://evolution.local:3001'
-    }
+    }]
 
     config.twilio_polling_enabled = false
     config.odm_polling_enabled = false
