@@ -6,7 +6,7 @@ class ForwardStopsToDcm
   sidekiq_options retry: 25
 
   def self.forward_async!(opts)
-    perform_async(params) if should_forward?(params)
+    perform_async(opts) if should_forward?(opts)
   end
 
   def self.should_forward?(opts)
