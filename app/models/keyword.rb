@@ -12,7 +12,7 @@ class Keyword < ActiveRecord::Base
   belongs_to :event_handler, :dependent => :destroy
   validates_presence_of :name, :account, :vendor
   validates_length_of :name, :maximum => 160
-  validates_uniqueness_of :name, :scope => "account_id"
+  validates_uniqueness_of :name, :scope => [:vendor_id, :account_id]
   validate :name_not_reserved
   validates_length_of :response_text, :maximum => 160
 

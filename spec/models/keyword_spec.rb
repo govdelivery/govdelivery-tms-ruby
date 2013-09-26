@@ -28,13 +28,26 @@ describe Keyword do
     end
   end
 
-  context "with duplicate name" do
+  context "with duplicate name and same vendor" do
+
     before do 
       subject.save!
       @new_keyword = Keyword.new(:name => subject.name)
       @new_keyword.account = subject.account
+      @new_keyword.vendor  = subject.vendor
     end
     specify { @new_keyword.should be_invalid }
+
+    context "and same vendor but different account_id" do
+      before do
+        @new_keyword.account = create(:account, sms_vendor: subject.vendor)
+        @new_keyword.vendor = subject.vendor
+      end
+      specify do 
+        @new_keyword.should be_valid
+        @new_keyword.save! # make sure there is no index preventing this anymore
+      end
+    end
   end
 
   describe '#name=' do
