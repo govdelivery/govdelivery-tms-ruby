@@ -49,7 +49,11 @@ class Keyword < ActiveRecord::Base
   private
 
   def sanitize_name(n)
-    n.try(:downcase).try(:strip)
+    if n
+      n.mb_chars.downcase.strip.to_s
+    else
+      n
+    end
   end
 
   def name_not_reserved

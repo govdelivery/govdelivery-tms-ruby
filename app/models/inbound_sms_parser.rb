@@ -18,7 +18,7 @@ InboundSmsParser = Struct.new(:text) do
   end
 
   def first_token
-    (tokens[0] || '').downcase.strip
+    (tokens[0] || '').mb_chars.downcase.strip.to_s
   end
 
   def stop?

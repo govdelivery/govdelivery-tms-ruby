@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'spec_helper'
 
 describe Keyword do
@@ -54,6 +55,11 @@ describe Keyword do
     it 'downcases the name' do
       subject.name = 'FOOBAR'
       subject.name.should == 'foobar'
+    end
+
+    it 'handles non-ascii' do
+      subject.name = 'SÜSCRÍBÁSÉÑ'
+      subject.name.should == 'süscríbáséñ'
     end
 
     it 'strips whitespace' do

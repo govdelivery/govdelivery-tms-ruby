@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require File.expand_path('../../spec_helper', __FILE__)
 
 describe InboundSmsParser, '#dispatch!' do
@@ -24,11 +25,18 @@ describe InboundSmsParser, '#dispatch!' do
   end
 
   describe 'keywords' do
-    it "should dispatch with variables" do
+    it 'should dispatch with variables' do
       subject.text = " Subscribe  foo@bar.com\n"
       lamb = mock
-      lamb.expects(:call).with("foo@bar.com")
-      subject.dispatch!({'subscribe' => lamb})
+      lamb.expects(:call).with('foo@bar.com')
+      subject.dispatch!('subscribe' => lamb)
+    end
+
+    it 'should dispatch on non-ascii chars' do
+      subject.text = " SÜSCRÍBÁSÉÑ  foo@bar.com\n"
+      lamb = mock
+      lamb.expects(:call).with('foo@bar.com')
+      subject.dispatch!('süscríbáséñ' => lamb)
     end
   end
 
