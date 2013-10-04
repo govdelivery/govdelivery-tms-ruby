@@ -76,7 +76,7 @@ class Account < ActiveRecord::Base
   def normalize_dcm_account_codes
     if dcm_account_codes
       self.dcm_account_codes = dcm_account_codes.to_set unless dcm_account_codes.is_a?(Set)
-      dcm_account_codes.collect!(&:upcase)
+      dcm_account_codes.collect!(&:upcase).collect!(&:strip)
     end
   end
 
