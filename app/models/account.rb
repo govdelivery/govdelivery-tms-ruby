@@ -65,11 +65,11 @@ class Account < ActiveRecord::Base
   end
 
   def help_text
-    read_attribute(:help_text) || sms_vendor.help_text
+    read_attribute(:help_text) || sms_vendor.try(:help_text)
   end
 
   def stop_text
-    read_attribute(:stop_text) || sms_vendor.stop_text
+    read_attribute(:stop_text) || sms_vendor.try(:stop_text)
   end  
   protected
 

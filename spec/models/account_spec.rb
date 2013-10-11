@@ -36,6 +36,10 @@ describe Account do
         before {subject.send("#{item}=", "something")}
         it { subject.send(item).should eq("something")}
       end
+      it 'should return nil without an SmsVendor' do
+        a=Account.new(:name => 'name', :sms_vendor => nil, :dcm_account_codes=> ['ACCOUNT_CODE'])
+        a.send(item).should be_nil
+      end
     end
   end
   context 'with exclusive SMS vendor' do
