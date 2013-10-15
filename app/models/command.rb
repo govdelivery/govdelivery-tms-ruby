@@ -27,7 +27,7 @@ class Command < ActiveRecord::Base
     CommandType[self.command_type]
   end
 
-  # The name of this command's type.                                  s
+  # The name of this command's type.
   def command_type_name
     CommandType[self.command_type].name.to_s
   end
