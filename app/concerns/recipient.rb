@@ -19,6 +19,13 @@ module Recipient
     scope :most_recently_sent, order('sent_at DESC').limit(1)
 
     attr_accessible :message_id, :vendor_id, :vendor
+
+    before_validation :truncate_values
+    validates :error_message, length: {maximum: 512}
+  end
+
+  def truncate_values
+    self.error_message = self.error_message[0..511] if error_message && error_message_changed? && error_message.to_s.length > 512
   end
 
   def sending!(ack, *args)

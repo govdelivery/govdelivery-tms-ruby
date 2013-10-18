@@ -69,6 +69,12 @@ describe EmailRecipient do
         failed_recipiend.failed!( :ack, :error_message, (sent_at = Time.now))
         failed_recipiend.error_message.should eq :error_message
       end
+
+      it 'should truncate a too-long error message' do
+        failed_recipient = subject.dup
+        failed_recipient.failed!(:ack, 'a' * 600, (sent_at = Time.now))
+        failed_recipient.error_message.should eq 'a'*512
+      end
     end
   end
 end
