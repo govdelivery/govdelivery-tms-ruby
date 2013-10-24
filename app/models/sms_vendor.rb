@@ -16,6 +16,7 @@ class SmsVendor < ActiveRecord::Base
   validates_presence_of [:help_text, :stop_text]
   validates_inclusion_of :shared, :in => [true, false]
   validates_length_of [:help_text, :stop_text], :maximum => 160
+  validates_uniqueness_of :from_phone
 
   def create_keyword!(options)
     kw = self.keywords.build

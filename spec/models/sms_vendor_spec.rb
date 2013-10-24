@@ -10,6 +10,12 @@ describe SmsVendor do
     it { vendor.valid?.should == true }
   end
 
+  it 'should not allow duplicate from fields' do
+    v2 = create(:sms_vendor)
+    v2.from_phone = vendor.from_phone
+    v2.should_not be_valid
+  end
+
   [:name, :username, :password, :help_text, :stop_text, :from, :shared].each do |field|
     describe "when #{field} is empty" do
       before { vendor.send("#{field}=", nil) }
