@@ -61,5 +61,5 @@ end
 
 group :test do
   gem 'mocha', :require => false
-  gem 'tms_client', :git => 'https://github.com/govdelivery/tms_client.git', :ref => '73ede269bb71' # work needed to update
+  gem 'tms_client'
 end
