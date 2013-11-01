@@ -1,5 +1,5 @@
 GEM
-  remote: http://buildbox.office.gdi:6789/
+  remote: http://prod-rubygems1-ep.tops.gdi/
   remote: https://rubygems.org/
   remote: http://ed5779be:de10e893@www.mikeperham.com/rubygems/
   specs:

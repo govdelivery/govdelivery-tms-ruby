@@ -1,4 +1,4 @@
-source "http://buildbox.office.gdi:6789"
+source "http://prod-rubygems1-ep.tops.gdi"
 source 'https://rubygems.org'
 source "http://ed5779be:de10e893@www.mikeperham.com/rubygems/"
 
