@@ -2,7 +2,13 @@ require 'base'
 
 class CheckMessagesForCompletion
   include Workers::Base
+  include Sidetiq::Schedulable
+
   sidekiq_options unique: true, retry: false
+
+  recurrence do
+    eval(Rails.configuration.message_completion_crontab)
+  end
 
   def perform(*args)
     [SmsMessage, VoiceMessage, EmailMessage].each do |message_class|

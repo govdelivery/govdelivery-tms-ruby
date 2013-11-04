@@ -9,8 +9,6 @@ jruby_min_runtimes: 1
 jruby_max_runtimes: 1
 address: 0.0.0.0
 extensions:
-  scheduler:
-    # trinidad_scheduler_extension
   oracle_dbpool:
     initSQL: SELECT 2 FROM DUAL
     # this should be the same as what is in database.yml

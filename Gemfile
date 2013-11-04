@@ -10,6 +10,7 @@ gem 'redis-rails'
 gem 'sidekiq-pro'
 gem 'sidekiq-failures'
 gem 'sidekiq-unique-jobs'
+gem 'sidetiq', git: 'https://github.com/tobiassvn/sidetiq.git'
 gem 'twilio-ruby'
 gem 'rabl'
 gem 'kaminari'
@@ -36,7 +37,6 @@ end
 
 platforms :jruby do
   gem 'trinidad', :require => nil
-  gem 'trinidad_scheduler_extension'
   gem 'trinidad_oracle_dbpool_extension'
 end
 
