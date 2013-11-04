@@ -4,9 +4,7 @@ module Twilio
     include StatusPoller
 
     if Rails.configuration.twilio_polling_enabled
-      recurrence do
-        eval(Rails.configuration.twilio_sms_poll_crontab)
-      end
+      recurrence { eval(Rails.configuration.twilio_voice_poll_crontab) }
     end
 
     self.service = Service::TwilioClient::Voice
