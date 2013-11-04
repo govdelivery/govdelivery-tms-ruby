@@ -286,7 +286,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    trinidad (1.4.5)
+    trinidad (1.4.5.1)
       jruby-rack (>= 1.1.13)
       trinidad_jars (>= 1.2.3)
     trinidad_dbpool (0.5.0)
