@@ -20,7 +20,6 @@ module Workers
 
       def options=(opts)
         @options = CommandParameters.new(opts)
-        logger.info("Invoking #{self.class.name} for #{self.options.to_hash.inspect}")
       end
 
       def account
