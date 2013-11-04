@@ -103,8 +103,8 @@ module Xact
       api_root: 'http://evolution.local:3001'
     }]
 
-    config.twilio_polling_enabled = false
-    config.odm_polling_enabled = false
+    config.twilio_polling_enabled = true
+    config.odm_polling_enabled = true
     config.colorize_logging = false
 
     # override Rack exception application handling of exception status codes

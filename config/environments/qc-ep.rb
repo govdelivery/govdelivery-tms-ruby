@@ -80,7 +80,6 @@ Xact::Application.configure do
     api_root: 'https://qc-api.govdelivery.com' 
   }]
 
-  config.odm_polling_enabled = true
   config.odm_host = "https://qc-tms.govdelivery.com:65081"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
   config.odm_username = 'xact'
