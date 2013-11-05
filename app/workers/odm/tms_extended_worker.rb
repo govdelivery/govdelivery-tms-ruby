@@ -23,7 +23,6 @@ module Odm
     end
 
     if jruby?
-      require 'lib/tms_extended.jar'
       java_import java.net.URL
       java_import com.govdelivery.tms.tmsextended.Credentials
       java_import com.govdelivery.tms.tmsextended.ExtendedMessage

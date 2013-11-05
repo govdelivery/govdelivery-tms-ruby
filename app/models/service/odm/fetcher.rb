@@ -2,7 +2,6 @@ module Service
   module Odm
     class Fetcher
       if defined?(JRUBY_VERSION)
-        require 'lib/tms_extended.jar'
         java_import com.govdelivery.tms.tmsextended.ActivityRequest
       end
       # Abstracts making API calls to ODM. 

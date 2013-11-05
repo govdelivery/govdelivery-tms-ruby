@@ -94,7 +94,7 @@ GEM
     ffi (1.9.3)
     ffi (1.9.3-java)
     formatador (0.2.4)
-    guard (2.2.2)
+    guard (2.2.3)
       formatador (>= 0.2.4)
       listen (~> 2.1)
       lumberjack (~> 1.0)
@@ -292,9 +292,8 @@ GEM
     trinidad_dbpool (0.5.0)
       trinidad_jars (>= 1.2.4)
     trinidad_jars (1.2.4)
-    trinidad_oracle_dbpool_extension (0.3.0)
-      trinidad_dbpool
-      trinidad_dbpool
+    trinidad_oracle_dbpool_extension (0.3.0.1)
+      trinidad_dbpool (>= 0.3.0)
     twilio-ruby (3.11.4)
       builder (>= 2.1.2)
       jwt (>= 0.1.2)

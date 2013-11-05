@@ -5,7 +5,6 @@ require 'ostruct'
 module Service
   module Odm
     if defined?(JRUBY_VERSION)
-      require 'lib/tms_extended.jar'
       java_import com.govdelivery.tms.tmsextended.ActivityRequest
     else
       ActivityRequest = Struct.new(:max_results, :sequence)

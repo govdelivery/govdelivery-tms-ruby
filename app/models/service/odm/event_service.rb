@@ -6,7 +6,6 @@ module Service
   module Odm
     class EventService
       if defined?(JRUBY_VERSION)
-        require 'lib/tms_extended.jar'
         java_import java.net.URL
         java_import com.govdelivery.tms.tmsextended.Credentials
         java_import com.govdelivery.tms.tmsextended.ExtendedMessage
