@@ -291,9 +291,9 @@ GEM
       trinidad_jars (>= 1.2.3)
     trinidad_dbpool (0.5.0)
       trinidad_jars (>= 1.2.4)
+    trinidad_generic_dbpool_extension (0.5.0)
+      trinidad_dbpool (>= 0.5.0)
     trinidad_jars (1.2.4)
-    trinidad_oracle_dbpool_extension (0.3.0.1)
-      trinidad_dbpool (>= 0.3.0)
     twilio-ruby (3.11.4)
       builder (>= 2.1.2)
       jwt (>= 0.1.2)
@@ -354,7 +354,7 @@ DEPENDENCIES
   strip_attributes
   tms_client
   trinidad
-  trinidad_oracle_dbpool_extension
+  trinidad_generic_dbpool_extension
   twilio-ruby
   typhoeus
   valid_email

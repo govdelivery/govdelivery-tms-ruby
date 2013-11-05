@@ -9,7 +9,9 @@ jruby_min_runtimes: 1
 jruby_max_runtimes: 1
 address: 0.0.0.0
 extensions:
-  oracle_dbpool:
+  generic_dbpool:
+    driverPath: 'lib/ojdbc6.jar'
+    driverName: 'oracle.jdbc.driver.OracleDriver'
     initSQL: SELECT 2 FROM DUAL
     # this should be the same as what is in database.yml
     jndi: jdbc/xact

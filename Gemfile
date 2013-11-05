@@ -37,7 +37,7 @@ end
 
 platforms :jruby do
   gem 'trinidad', :require => nil
-  gem 'trinidad_oracle_dbpool_extension'
+  gem 'trinidad_generic_dbpool_extension'
 end
 
 group :development, :test do
