@@ -25,6 +25,7 @@ JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPe
 # Source Application settings
 . /etc/sysconfig/${app} || exit 5
 
+pid_dir=$(dirname $pid_file)
 restart_file="${pid_dir}/restart-trinidad.txt"
 
 if [[ -z "$environment" ]]; then
@@ -97,11 +98,10 @@ start () {
     echo "$(date) Starting ${app_name}" >> "${log_file}"
     chown "${user}:${user}" "${log_file}" || exit 5
 
-    pid_dir=$(dirname $pid_file)
     if [[ ! -d $pid_dir ]]; then
-	echo "Creating pid_dir: ${pid_dir}"
-	mkdir "${pid_dir}" || exit 5
-	chown "${user}" "${pid_dir}" || exit 5
+	  echo "Creating pid_dir: ${pid_dir}"
+	  mkdir "${pid_dir}" || exit 5
+	  chown "${user}" "${pid_dir}" || exit 5
     fi
     
     cd "${app_path}" || exit 5
