@@ -25,6 +25,8 @@ JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPe
 # Source Application settings
 . /etc/sysconfig/${app} || exit 5
 
+restart_file="${pid_dir}/restart-trinidad.txt"
+
 if [[ -z "$environment" ]]; then
     echo "no environment set!"
     exit 5
@@ -105,7 +107,7 @@ start () {
     cd "${app_path}" || exit 5
 
     umask 0003;
-    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S \"${app}\" -e \"${environment}\" -p 8080 --monitor \"${pid_dir}/restart.txt\" --ajp >> ${log_file} 2>&1 & echo "'$!'" > \"${pid_file}\"  "
+    su ${user} -s /bin/sh -c "bundle exec jruby ${JMX_ARGS} ${JAVA_ARGS} -S \"${app}\" -e \"${environment}\" -p 8080 --monitor \"${restart_file}\" --ajp >> ${log_file} 2>&1 & echo "'$!'" > \"${pid_file}\"  "
 
     i=60
     RETVAL=1
@@ -173,6 +175,15 @@ stop () {
     return 0
 }
 
+restart () {
+    stop
+    start
+}
+
+reload () {
+    start
+    touch ${restart_file}
+}
 
 
 case "$1" in
@@ -189,12 +200,15 @@ case "$1" in
 	RETVAL=$?
         ;;
   restart)
-        stop
-        start
+        restart
 	RETVAL=$?
         ;;
+  reload)
+         reload
+  	RETVAL=$?
+          ;;
   *)
-        echo $"Usage: $0 {start|stop|restart|status}"
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
         exit 1
 esac
 
