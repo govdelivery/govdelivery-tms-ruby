@@ -48,7 +48,9 @@ class ApplicationController < ActionController::API
   # at org.apache.tomcat.util.http.parser.HttpParser.parseMediaType
   # this happens when auth_token is invalid
   def authenticate
-    authenticate_user!
+    authenticate_user!.tap do 
+      Rails.logger.info("Authenticated user #{current_user.id} #{current_user.email}")
+    end
   end
 
   def set_default_format
