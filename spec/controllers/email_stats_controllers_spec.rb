@@ -4,7 +4,8 @@ require 'spec_helper'
   describe klass do
 
     let(:email_message) {
-      account = create(:sms_vendor).accounts.create!(name: 'name')
+      vendor = create(:sms_vendor)
+      account = create(:account, sms_vendor: vendor, name: 'name')
       user = account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop")
       user.email_messages.create!(subject: "subs", from_name: 'dude', body: 'hi')
     }

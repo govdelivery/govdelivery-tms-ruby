@@ -1,5 +1,5 @@
 def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
-  describe "#create with a valid sms message" do
+  describe "#create with a valid message" do
     before do
       model.any_instance.expects(:save_with_async_recipients).returns(true)
       model.any_instance.stubs(:new_record?).returns(false)
@@ -12,7 +12,7 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
     end
   end
 
-  describe "#create with an invalid sms message" do
+  describe "#create with an invalid message" do
     before do
       model.any_instance.expects(:save_with_async_recipients).returns(false)
       model.any_instance.stubs(:new_record?).returns(true)

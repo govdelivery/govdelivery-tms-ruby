@@ -2,7 +2,17 @@ class EmailMessagesController < MessagesController
   include FeatureChecker
   feature :email
 
-  wrap_parameters :message, :include => [:recipients, :subject, :body, :from_name, :open_tracking_enabled, :click_tracking_enabled, :macros], :format => :json
+  wrap_parameters :message, :include => [
+      :body, 
+      :click_tracking_enabled, 
+      :from_email,
+      :from_name,
+      :macros,
+      :open_tracking_enabled, 
+      :recipients, 
+      :subject, 
+    ], 
+    :format => :json
 
   protected
 
@@ -11,7 +21,7 @@ class EmailMessagesController < MessagesController
   end
 
   def set_attr
-    @content_attributes = [:from_name, :subject, :macros]
+    @content_attributes = [:from_name, :from_email, :subject, :macros]
     @content_attributes.concat([:body, :open_tracking_enabled, :click_tracking_enabled]) unless action_name=='index'
   end
 end

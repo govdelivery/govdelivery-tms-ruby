@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe RecipientsController do
   let(:vendor) { create(:sms_vendor) }
-  let(:account) { vendor.accounts.create(:name => 'name') }
+
+  let(:account) { create(:account, sms_vendor: vendor, name: 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:message) { user.sms_messages.create(:body => "A"*160) }
   let(:voice_message) { user.voice_messages.create(:play_url => "http://your.mom") }

@@ -2,13 +2,17 @@ class EmailMessage < ActiveRecord::Base
   include Message
   include Personalized
 
-  attr_accessible :subject, :body, :from_name, :open_tracking_enabled, :click_tracking_enabled
+  attr_accessible :body, 
+                  :click_tracking_enabled,
+                  :from_email,
+                  :from_name, 
+                  :open_tracking_enabled, 
+                  :subject
 
   validates :body, presence: true
   validates :subject, presence: true, length: {maximum: 400}
 
-  delegate :from_email, :to => :account
-  delegate :from_email, :to => :account
+  before_create :set_from_email
 
   def sending!(ack)
     self.ack=ack
@@ -43,6 +47,12 @@ class EmailMessage < ActiveRecord::Base
   end
 
   protected
+
+  def set_from_email
+    if from_email.nil?
+      self.from_email = account.from_email
+    end
+  end
 
   def recipients_with(type)
     recipients.where(["email_recipients.id in (select distinct(email_recipient_id) from email_recipient_#{type} where email_message_id = ?)", self.id])
