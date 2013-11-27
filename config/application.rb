@@ -5,6 +5,9 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
+# set up logging
+require File.expand_path("../logging", __FILE__)
+
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require(*Rails.groups(:assets => %w(development test)))
@@ -117,5 +120,12 @@ module Xact
     # DCM is "twilio_requests_timeout."  Here it is named differently,
     # as this is not a vendor-specific behavior.
     config.auto_response_threshold = 5
+
+    # Default log level is INFO
+    config.logger = 
+      Rails.logger = 
+      ActiveRecord::Base.logger = 
+        Log4r::Logger['default']
+    Rails.logger.level = Log4r::INFO
   end
 end

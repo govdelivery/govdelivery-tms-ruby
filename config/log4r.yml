@@ -1,7 +1,6 @@
 log4r_config:
   loggers:
     - name      : default
-      level     : INFO
       additive  : 'false'
       trace     : 'true'
       outputters:

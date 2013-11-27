@@ -61,4 +61,6 @@ Xact::Application.configure do
 
   # run in threadsafe mode if we're in a servlet container
   config.threadsafe! if $servlet_context
+
+  Rails.logger.level = Log4r::DEBUG
 end

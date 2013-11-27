@@ -49,4 +49,6 @@ Xact::Application.configure do
   # XACT and DCM (GOV311) - XACT-175
   config.dcm_urls = []
   config.shared_phone_numbers = []
+
+  Rails.logger.level = Log4r::DEBUG
 end
