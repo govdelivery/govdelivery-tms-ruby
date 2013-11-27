@@ -78,17 +78,18 @@ module Xact
     config.redis_url = 'redis://localhost:6379'
 
     # ODM stats jobs
-    # poll every 5 minutes
-    config.odm_stats_interval = "hourly.minute_of_hour(0,5,10,15,20,25,30,35,40,45,50,55)"
+    config.odm_stats_crontab  = "0 */5 * * * ?"
+    config.odm_clicks_crontab = "0 */5 * * * ?"
+    config.odm_opens_crontab = "0 */5 * * * ?"
     config.odm_stats_batch_size = 500
 
     # Messages sent via Twilio that we haven't heard back about should be finalized
-    config.twilio_sms_poll_crontab = 'hourly(4).minute_of_hour(15)'
-    config.twilio_voice_poll_crontab = 'hourly(4).minute_of_hour(45)'
+    config.twilio_sms_poll_crontab = "0 15 */4 * * ?"
+    config.twilio_voice_poll_crontab = "0 45 */4 * * ?"
     config.min_twilio_polling_age = '24.hours'
     config.max_twilio_polling_age = '72.hours'
 
-    config.message_completion_crontab = "hourly.minute_of_hour(0,5,10,15,20,25,30,35,40,45,50,55)"
+    config.message_completion_crontab = "0 */5 * * * ?"
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq = {

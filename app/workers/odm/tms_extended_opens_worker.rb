@@ -1,6 +1,5 @@
 module Odm
   class TmsExtendedOpensWorker < Odm::TmsExtendedWorker
-    include Odm::TmsExtendedPoller
     sidekiq_options unique: true, retry: false
 
     def perform(*args)

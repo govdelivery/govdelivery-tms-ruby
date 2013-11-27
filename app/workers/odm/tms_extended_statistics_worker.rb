@@ -1,6 +1,5 @@
 module Odm
   class TmsExtendedStatisticsWorker < Odm::TmsExtendedWorker
-    include Odm::TmsExtendedPoller
     attr_accessor :service
     sidekiq_options unique: true, retry: false
 
