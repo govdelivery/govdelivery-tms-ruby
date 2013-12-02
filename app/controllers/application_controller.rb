@@ -99,8 +99,10 @@ class ApplicationController < ActionController::API
   end
 
   def respond_with(*resources, &block)
-    set_link_header(resources.first)       if resources.first.respond_to?(:total_pages)
-    log_validation_errors(resources.first) if resources.first.respond_to?(:errors)
+    if record = resources.first
+      set_link_header(resources.first)       if record.respond_to?(:total_pages)
+      log_validation_errors(resources.first) if record.respond_to?(:errors) && !record.errors.empty?
+    end
     super
   end
 
