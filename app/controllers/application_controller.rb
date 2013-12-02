@@ -105,13 +105,16 @@ class ApplicationController < ActionController::API
   end
 
   ##
-  # We don't bang save when using respond_with, so this is the way we get NewRelic
-  # to notice there is a problem. 
+  # We don't bang-save when using respond_with, so this is the way we get NewRelic
+  # to notice there is a problem: give it an exception. 
   #
   def log_validation_errors(r)
     instrument_captured_error(ActiveRecord::RecordInvalid.new(r))
   end
 
+  ## 
+  # log something and tell new relic there was a problem somewhere (XACT-213)
+  #
   def instrument_captured_error(e)
     # http://rdoc.info/github/newrelic/rpm/NewRelic/Agent:notice_error
     Rails.logger.error e.message
