@@ -57,15 +57,13 @@ class ApplicationController < ActionController::API
     request.format = :json unless params[:format]
   end
 
-  def render_not_found
+  def render_not_found(e)
+    instrument_captured_error(e)
     render :json => '{}', :status => :not_found
   end
 
-  def render_not_authorized
-    render :json => '{}', :status => :unauthorized
-  end
-
   def render_malformed_json
+    instrument_captured_error(e)
     render :json => {error: "Something went wrong parsing your request JSON"}, :status => :bad_request
   end
 
@@ -101,7 +99,22 @@ class ApplicationController < ActionController::API
   end
 
   def respond_with(*resources, &block)
-    set_link_header(resources.first) if resources.first.respond_to?(:total_pages)
+    set_link_header(resources.first)       if resources.first.respond_to?(:total_pages)
+    log_validation_errors(resources.first) if resources.first.respond_to?(:errors)
     super
+  end
+
+  ##
+  # We don't bang save when using respond_with, so this is the way we get NewRelic
+  # to notice there is a problem. 
+  #
+  def log_validation_errors(r)
+    instrument_captured_error(ActiveRecord::RecordInvalid.new(r))
+  end
+
+  def instrument_captured_error(e)
+    # http://rdoc.info/github/newrelic/rpm/NewRelic/Agent:notice_error
+    Rails.logger.error e.message
+    NewRelic::Agent.notice_error(e)
   end
 end
