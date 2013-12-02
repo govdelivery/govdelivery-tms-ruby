@@ -10,12 +10,14 @@ class Tokens
     
     if(@options[:list])
       list_tokens
+    elsif(@options[:listall])
+      list_all_tokens
     elsif(@options[:create])
       create_token
     elsif(@options[:delete])
       delete_token
     else
-      raise "You need to specify either --create, --list, or --delete"
+      raise "You need to specify either --create, --list, --list-all, or --delete"
     end
   end
 
@@ -48,8 +50,11 @@ Examples:
     
 Options:
 USAGE
-      opts.on("-l", "--list", "List tokens") do
+      opts.on("-l", "--list", "List tokens (requires --user flag)") do
         @options[:list] = true
+      end
+      opts.on("-a", "--list-all", "List all tokens with users") do
+        @options[:listall] = true
       end
       opts.on("-c", "--create", "Create a token") do
         @options[:create] = true
@@ -61,7 +66,7 @@ USAGE
         @options[:user] = p.to_i
       end
     end.parse!(argv)
-    raise("the --user flag is mandatory!") unless @options[:user]
+    raise("the --user flag is mandatory!") unless @options[:user] || @options[:listall]
   end
     
   def out
@@ -73,6 +78,13 @@ USAGE
     out.puts "Account: #{user.account.name}"
     out.puts "Tokens:"
     out.puts user.authentication_tokens.map(&:token).join("\n")
+  end
+
+  def list_all_tokens
+    out.puts "User".ljust(100) + "Token".ljust(30)
+    AuthenticationToken.joins(:user).order(:created_at).select("users.email, authentication_tokens.token").find_each do |t|
+      out.puts "#{t.email.to_s.ljust(100)}#{t.token.ljust(30)}"
+    end
   end
 
   def create_token
