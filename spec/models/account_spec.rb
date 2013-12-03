@@ -1,11 +1,21 @@
 require 'spec_helper'
 
 describe Account do
-  let(:from_address) { FromAddress.create!(from_email: 'hey@dude.test') }
   let(:email_vendor) { create(:email_vendor) }
   let(:sms_vendor) { create(:sms_vendor) }
   let(:shared_sms_vendor) { create(:shared_sms_vendor) }
 
+  context 'from_email_allowed?' do
+    subject {
+      create(:account, email_vendor: email_vendor)
+    }
+    it 'should work' do
+      subject.from_email_allowed?('randomemail@foo.com').should be_false
+      subject.from_email_allowed?(subject.default_from_address.from_email).should be_true
+      subject.from_email_allowed?(subject.default_from_address.from_email.upcase).should be_true
+      subject.from_email_allowed?(nil).should be_false
+    end
+  end
 
   context 'with shared SMS vendor' do
     subject {
@@ -95,6 +105,11 @@ describe Account do
 
   it 'should require a from address if it had an email vendor' do
     Account.new(name: 'name', email_vendor: email_vendor).should_not be_valid
-    Account.new(name: 'name', from_address: from_address, email_vendor: email_vendor).should be_valid
+    a = Account.new(name: 'name', email_vendor: email_vendor)
+    a.from_addresses.build(:from_email => 'shanty@example.com')
+    a.should_not be_valid
+
+    a.from_addresses.first.is_default = true
+    a.should be_valid
   end
 end

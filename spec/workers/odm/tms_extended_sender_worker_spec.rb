@@ -6,7 +6,7 @@ if defined?(JRUBY_VERSION)
   describe Odm::TmsExtendedSenderWorker do
     let(:worker) { Odm::TmsExtendedSenderWorker.new }
     let(:odm_vendor) { create(:email_vendor, worker: 'LoopbackMessageWorker') }
-    let(:account) { odm_vendor.accounts.create!(name: 'name', from_address: create(:from_address)) }
+    let(:account) { create(:account, :email_vendor => odm_vendor, name: 'name') }
     let(:recipients) do
       s = stub('recipients')
       s.stubs(:find_each).yields(EmailRecipient.new(:email => 'email@sink.govdelivery.com')).then.yields(EmailRecipient.new(:email => 'email2@sink.govdelivery.com'))
@@ -16,6 +16,7 @@ if defined?(JRUBY_VERSION)
       msg = account.email_messages.new({'body' => '[[foo]] msg body',
                                         'subject' => '[[foo]] msg subject',
                                         'from_name' => 'Emailing Cat',
+                                        'from_email' => 'from@cat.com',
                                         'open_tracking_enabled' => false,
                                         'click_tracking_enabled' => true,
                                         'macros' => {'macro1' => 'foo', 'macro2' => 'bar'}})
@@ -27,7 +28,7 @@ if defined?(JRUBY_VERSION)
         m.expects(:subject=).with('##foo## msg subject')
         m.expects(:body=).with('##foo## msg body')
         m.expects(:from_name=).with('Emailing Cat')
-        m.expects(:from_email=).with(account.from_email)
+        m.expects(:from_email=).with(email_message.from_email)
         m.expects(:errors_to_email=).with(account.bounce_email)
         m.expects(:reply_to_email=).with(account.reply_to_email)
         m.expects(:email_column=).with('email')

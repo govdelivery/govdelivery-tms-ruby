@@ -11,8 +11,10 @@ class EmailMessage < ActiveRecord::Base
 
   validates :body, presence: true
   validates :subject, presence: true, length: {maximum: 400}
+  validates :from_email, presence: true
 
-  before_create :set_from_email
+  before_validation :set_from_email
+  validate :from_email_allowed?
 
   def sending!(ack)
     self.ack=ack
@@ -47,6 +49,12 @@ class EmailMessage < ActiveRecord::Base
   end
 
   protected
+
+  def from_email_allowed?
+    unless account.from_email_allowed?(self.from_email)
+      errors.add(:from_email, "is not authorized to send on this account")
+    end
+  end
 
   def set_from_email
     if from_email.nil?

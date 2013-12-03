@@ -17,16 +17,17 @@ class Account < ActiveRecord::Base
   has_many :users
   has_many :voice_messages
 
-  has_one :from_address
+  has_many :from_addresses, :inverse_of => :account
+  has_one :default_from_address, conditions: { is_default: true }, class_name: FromAddress
 
   serialize :dcm_account_codes, Set
-  delegate :from_email, :reply_to_email, :bounce_email, :to => :from_address
+  delegate :from_email, :reply_to_email, :bounce_email, :to => :default_from_address
 
   before_validation :normalize_dcm_account_codes
   before_create :create_stop_handler!
 
   validates :name, presence: true, length: {maximum: 255}
-  validates :from_address, presence: true, :if => '!email_vendor_id.blank?'
+  validate :has_one_default_from_address, :if => '!email_vendor_id.blank?'
   validates :sms_prefixes, length: { minimum: 1, if: :shared_sms_vendor? }
 
   def add_command!(params)
@@ -70,7 +71,12 @@ class Account < ActiveRecord::Base
 
   def stop_text
     read_attribute(:stop_text) || sms_vendor.try(:stop_text)
-  end  
+  end
+
+  def from_email_allowed?(email)
+    !email.nil? && from_addresses.where("lower(from_email) = ?", email.downcase).count == 1
+  end
+
   protected
 
   def normalize_dcm_account_codes
@@ -81,6 +87,17 @@ class Account < ActiveRecord::Base
   end
 
   private
+
+  ##
+  # Accounts with an email vendor are required to have one (default)
+  # from address. This is done as an in-memory validation on purpose - 
+  # so that unsaved, new accounts can get validated, too. 
+  #
+  def has_one_default_from_address
+    unless from_addresses.find_all{|fa| fa.is_default? }.count == 1
+      errors.add(:default_from_address, "cannot be nil")
+    end
+  end
 
   def shared_sms_vendor?
     sms_vendor && sms_vendor.shared?

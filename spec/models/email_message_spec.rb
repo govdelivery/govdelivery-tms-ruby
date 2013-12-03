@@ -2,11 +2,12 @@ require 'spec_helper'
 
 describe EmailMessage do
   let(:vendor) { create(:email_vendor) }
-  let(:account) { vendor.accounts.create(name: 'name', from_address: create(:from_address)) }
+  let(:account) { create(:account, email_vendor: vendor, name: 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:email) { user.email_messages.build(
     :body => 'longggg body', 
     :subject => 'specs before tests', 
+    :from_email => account.from_email,
     :open_tracking_enabled => true, 
     :click_tracking_enabled => true,
     :macros => {
@@ -16,6 +17,16 @@ describe EmailMessage do
     }
   ) }
   subject { email }
+
+  context "with a from_email that is not allowed" do
+    before do
+      Account.any_instance.stubs(:from_email_allowed?).returns(false)
+    end
+    it 'should not be valid' do
+      email.should be_invalid
+      email.errors.get(:from_email).should_not be_empty
+    end
+  end
 
   context "with nil tracking flags" do
     it 'should interpret them as true' do

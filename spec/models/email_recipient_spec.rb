@@ -2,17 +2,14 @@ require 'spec_helper'
 
 describe EmailRecipient do
   let(:macros) { {'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value'} }
+  let(:vendor) { create(:email_vendor) }
+  let(:account) { create(:account, email_vendor: vendor, name: 'account') }
+  let(:email_message) { create(:email_message, account: account) }
+  let(:user) { User.create(:email => 'admin@example.com', :password => 'retek01!').tap{|u| u.account =  account } }
 
   subject {
-    v = create(:email_vendor)
-    m = EmailMessage.new(:body => 'short body', :subject => 'fuuu')
-    m.stubs(:vendor).returns(v)
-    a = create(:account, :email_vendor => v, :name => 'account', :email_vendor => v)
-    u = User.create(:email => 'admin@example.com', :password => 'retek01!')
-    u.account = a
-    m.account = a
-    r = m.recipients.build
-    r.message = m
+    r = email_message.recipients.build
+    r.message = email_message
     r
   }
 

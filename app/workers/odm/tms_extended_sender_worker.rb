@@ -18,7 +18,7 @@ module Odm
       msg.subject = message.to_odm(:subject)
       msg.body = message.to_odm(:body)
       msg.from_name = message.from_name || ''
-      msg.from_email = account.from_email
+      msg.from_email = message.from_email
       msg.errors_to_email = account.bounce_email
       msg.reply_to_email = account.reply_to_email
 
