@@ -79,11 +79,6 @@ Xact::Application.configure do
     {
       username: 'xact-api@govdelivery.com',
       password: "let's do Ortega Bombs",
-      api_root: 'https://int-api-dc2.govdelivery.com' 
-    },
-    {
-      username: 'xact-api@govdelivery.com',
-      password: "let's do Ortega Bombs",
       api_root: 'https://int-api.govdelivery.com' 
     }
   ]

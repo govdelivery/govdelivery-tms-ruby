@@ -79,11 +79,6 @@ Xact::Application.configure do
     {
       username: 'xact-api@govdelivery.com',
       password: 'BV&f3dS3^PRntHeT&0xekwko%4nJo#PO',
-      api_root: 'https://api-dc2.govdelivery.com'
-    },
-    {
-      username: 'xact-api@govdelivery.com',
-      password: 'BV&f3dS3^PRntHeT&0xekwko%4nJo#PO',
       api_root: 'https://api.govdelivery.com'
     }
   ]
