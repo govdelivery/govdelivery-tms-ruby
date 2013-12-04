@@ -61,8 +61,8 @@ class Account < ActiveRecord::Base
     # This will prevent sending from a shared vendor.
     unless stop_requests.exists?(phone: command_parameters.from, vendor_id: sms_vendor) 
       stop_requests.create!(phone: command_parameters.from, vendor: sms_vendor)
-      stop(command_parameters)
     end
+    stop(command_parameters)
   end
 
   def help_text

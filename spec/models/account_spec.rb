@@ -91,13 +91,10 @@ describe Account do
         end
       end
       context 'with existing stop request for this phone' do
-        before do
-          create(:stop_request, account: subject, phone: '8888', vendor: sms_vendor)
-        end
-        it 'should not error' do
-          command_params = mock(:from => "8888")
-          Command.any_instance.expects(:call).never
-          subject.stop!(command_params)
+        it 'should not create another stop request, but should call stop' do
+          subject.expects(:stop_requests).returns(stub(:exists? => true))
+          subject.expects(:stop) # non-bang method should be called. 
+          subject.stop!(mock(:from => "8888"))
         end
       end
     end
