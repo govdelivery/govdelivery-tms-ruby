@@ -140,19 +140,18 @@ if [[ ${#actions} != 0 ]]; then
 fi;
 
 
-
-## This section is temperary until Stage and Production have seperate Trinidad and Sidekiq servers
-case "${ENV}" in
-    qc*|QC*|int*|INT*|stg*|STG*)
-	echo
-	echo "================= sidekiq deploy for ${ENV}"
-	echo "${actions[@]}" | grep -q deploy && {
-	    CMD="/var/repo/scripts/release/ruby-release-sidekiq.sh ${CTRL_ARGS} -e ${ENV} -a ${APP}"
-	    
-	    echo
-	    echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
-	    
-	    ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
-	}
-	;;
-esac
+# ## This section is temperary until Stage and Production have seperate Trinidad and Sidekiq servers
+# case "${ENV}" in
+#     qc*|QC*|int*|INT*|stg*|STG*)
+# 	echo
+# 	echo "================= sidekiq deploy for ${ENV}"
+# 	echo "${actions[@]}" | grep -q deploy && {
+# 	    CMD="/var/repo/scripts/release/ruby-release-sidekiq.sh ${CTRL_ARGS} -e ${ENV} -a ${APP}"
+#	    
+# 	    echo
+# 	    echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
+#	    
+# 	    ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
+# 	}
+# 	;;
+# esac
