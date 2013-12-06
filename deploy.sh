@@ -143,7 +143,7 @@ fi;
 
 ## This section is temperary until Stage and Production have seperate Trinidad and Sidekiq servers
 case "${ENV}" in
-    qc*|QC*|int*|INT*)
+    qc*|QC*|int*|INT*|stg*|STG*)
 	echo
 	echo "================= sidekiq deploy for ${ENV}"
 	echo "${actions[@]}" | grep -q deploy && {
