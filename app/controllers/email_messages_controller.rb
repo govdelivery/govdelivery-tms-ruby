@@ -5,11 +5,13 @@ class EmailMessagesController < MessagesController
   wrap_parameters :message, :include => [
       :body, 
       :click_tracking_enabled, 
+      :errors_to,
       :from_email,
       :from_name,
       :macros,
       :open_tracking_enabled, 
-      :recipients, 
+      :recipients,
+      :reply_to, 
       :subject, 
     ], 
     :format => :json
@@ -22,6 +24,6 @@ class EmailMessagesController < MessagesController
 
   def set_attr
     @content_attributes = [:from_name, :from_email, :subject, :macros]
-    @content_attributes.concat([:body, :open_tracking_enabled, :click_tracking_enabled]) unless action_name=='index'
+    @content_attributes.concat([:body, :errors_to, :reply_to, :open_tracking_enabled, :click_tracking_enabled]) unless action_name=='index'
   end
 end

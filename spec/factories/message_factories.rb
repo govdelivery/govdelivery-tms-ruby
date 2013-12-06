@@ -5,5 +5,6 @@ FactoryGirl.define do
   factory :email_message do
     body "Junk 5 U"
     subject 'Junkity-junk junk junk'
+    account
   end
 end

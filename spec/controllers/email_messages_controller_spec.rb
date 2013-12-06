@@ -11,6 +11,8 @@ describe EmailMessagesController do
           :body => "#{"A"*40} #{i} [[happy]]",
           :subject => 'n/a',
           :from_email => 'duane@everythingsucks.com',
+          :errors_to => 'jeff@everythingsucks.com',
+          :reply_to => 'bob@everythingsucks.com',
           :click_tracking_enabled => true, 
           :open_tracking_enabled => false,
           :macros => {"happy" => "doggies"},
@@ -31,6 +33,8 @@ describe EmailMessagesController do
     :body => "#{"A"*40} [[happy]]",
     :subject => 'n/a',
     :from_email => 'duane@everythingsucks.com',
+    :errors_to => 'jeff@everythingsucks.com',
+    :reply_to => 'bob@everythingsucks.com',
     :click_tracking_enabled => true, 
     :open_tracking_enabled => false,
     :macros => {"happy" => "doggies"},
@@ -39,5 +43,13 @@ describe EmailMessagesController do
 
   it_should_have_a_pageable_index(:messages)
 
-  it_should_show_with_attributes(:body, :subject, :from_name, :from_email, :click_tracking_enabled, :open_tracking_enabled, :macros)
+  it_should_show_with_attributes(:body, 
+                                 :subject, 
+                                 :from_name, 
+                                 :from_email, 
+                                 :errors_to, 
+                                 :reply_to, 
+                                 :click_tracking_enabled, 
+                                 :open_tracking_enabled, 
+                                 :macros)
 end

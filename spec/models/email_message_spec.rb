@@ -18,6 +18,8 @@ describe EmailMessage do
   ) }
   subject { email }
 
+  it_should_validate_as_email :reply_to, :errors_to
+  
   context "with a from_email that is not allowed" do
     before do
       Account.any_instance.stubs(:from_email_allowed?).returns(false)
@@ -88,4 +90,29 @@ describe EmailMessage do
     end
   end
 
+  [:errors_to, :reply_to].each do |field|
+    before do
+      email.account = account
+    end
+    context "#{field} default" do
+      it 'should be account default when nil' do
+        email.send("#{field}=", nil)
+        email.account.expects(field).returns("return")
+        email.send(field).should eq("return")
+      end
+      it 'should be local from_email when nil and account default is nil' do
+        email.send("#{field}=", nil)
+        email.from_email = "from_email"
+        email.account.expects(field).returns(nil)
+        email.send(field).should eq("from_email")
+      end
+    end
+    context "#{field}" do
+      it 'should use local value' do
+        email.send("#{field}=", 'local')
+        email.account.expects(field).never
+        email.send(field).should eq("local")
+      end
+    end
+  end
 end

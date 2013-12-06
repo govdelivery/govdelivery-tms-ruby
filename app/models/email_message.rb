@@ -4,14 +4,18 @@ class EmailMessage < ActiveRecord::Base
 
   attr_accessible :body, 
                   :click_tracking_enabled,
+                  :errors_to,
                   :from_email,
                   :from_name, 
                   :open_tracking_enabled, 
+                  :reply_to,
                   :subject
 
   validates :body, presence: true
   validates :subject, presence: true, length: {maximum: 400}
   validates :from_email, presence: true
+  validates :reply_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
+  validates :errors_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
 
   before_validation :set_from_email
   validate :from_email_allowed?
@@ -40,6 +44,14 @@ class EmailMessage < ActiveRecord::Base
     super val
   end
 
+  def reply_to
+    self[:reply_to] || account.reply_to || self.from_email
+  end
+
+  def errors_to
+    self[:errors_to] || account.errors_to || self.from_email
+  end
+
   def odm_record_designator
     'email::recipient_id'.tap do |s|
       unless macros.blank?
@@ -57,7 +69,7 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def set_from_email
-    if from_email.nil?
+    if from_email.nil? && account
       self.from_email = account.from_email
     end
   end

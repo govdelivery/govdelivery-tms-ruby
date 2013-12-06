@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   has_one :default_from_address, conditions: { is_default: true }, class_name: FromAddress
 
   serialize :dcm_account_codes, Set
-  delegate :from_email, :reply_to_email, :bounce_email, :to => :default_from_address
+  delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, :to => :default_from_address
 
   before_validation :normalize_dcm_account_codes
   before_create :create_stop_handler!
