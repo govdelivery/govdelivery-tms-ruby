@@ -8,6 +8,8 @@ class CreateAccount
     
     if(@options[:list])
       list_accounts
+    elsif(@options[:account_id])
+      display_account(Account.find(@options[:account_id]))
     else
       create_account(@options)
     end
@@ -31,6 +33,9 @@ Examples:
   List All Accounts
     #{__FILE__} -l
 
+  Show An Account 
+    #{__FILE__} -i 123
+
   Create Account with exclusive SMS vendor
     #{__FILE__} -n "INSURE SC Test Account" -t 10025 -d "TOR_TEST,FOO"
 
@@ -45,6 +50,9 @@ USAGE
       opts.on("-l", "--list", "List Accounts") do |p|
         @options[:list] = p
       end
+      opts.on("-i", "--account_id ID", "Database ID of account to display") do |p|
+        @options[:account_id] = p
+      end
       opts.on("-n", "--name ACCOUNTNAME") do |p|
         @options[:account_name] = p.to_s
       end
@@ -57,8 +65,14 @@ USAGE
       opts.on("-e", "--email_vendor EMAILVENDOR", "The database id of the desired email vendor") do |p|
         @options[:account_email_vendor] = p
       end
-      opts.on("-f", "--from_address [FROMADDRESS]") do |p|
+      opts.on("-f", "--from_address [FROMADDRESS]", "The default from address for this account; required if there is an email vendor.") do |p|
         @options[:account_from_address] = p
+      end
+      opts.on("-r", "--reply_to [REPLYTO]", "The default reply-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
+        @options[:account_reply_to] = p
+      end
+      opts.on("-z", "--errors_to [ERRORSTO]", "The default errors-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
+        @options[:account_errors_to] = p
       end
       opts.on("-p", "--help_text [HELP_TEXT]", "Optional, defaults to sms vendor help text") do |p|
         @options[:help_text] = p
@@ -94,51 +108,60 @@ USAGE
     end
 
     if(@options[:account_from_address])
-      # this only sets the from_email, which is the default for the other values if they are not present
-      f = FromAddress.new
-      f.from_email = @options[:account_from_address]
-      a.from_address = f
-      a.save
-    else
-      a.save
+      a.from_addresses.build({
+        :from_email   => @options[:account_from_address],
+        :reply_to     => @options[:account_reply_to],
+        :errors_to    => @options[:account_errors_to],
+        :is_default   => true
+      })
     end
+ 
+    a.save
 
-    if(a.errors)
+    if(!a.errors.empty?)
       puts a.errors.messages
     else
       puts "Created Account id: " + a.id.to_s 
+      display_account(a)
     end
 
   end
 
   def list_accounts
-
-    puts "Account.all\n";
-    Account.all.each { |a|
-      puts "\tid: " + a.id.to_s + "\n"
-      puts "\tname: " + a.name + "\n"
-      puts "\tsms vendor: " + a.sms_vendor_id.to_s + "\n"
-      puts "\tvoice vendor: " + a.voice_vendor_id.to_s + "\n"
-      puts "\temail vendor: " + a.email_vendor_id.to_s + "\n"
-      if(a.help_text)
-        puts "\thelp text: " + a.help_text + "\n"
-      end
-      if(a.stop_text)
-        puts "\tstop text: " + a.stop_text + "\n"
-      end
-      if(a.email_vendor_id) 
-        puts "\tfrom email: " + a.from_address.from_email.to_s + "\n" 
-      end
-      a.sms_prefixes.each do |p|
-        puts "\tsms prefix: " + p.prefix + "\n"
-      end
-      print "\tdcm accounts: " 
-      a.dcm_account_codes.each { |d| print d + "," }
-      puts "\n\n"
-    }
-
+    Account.all.each do |a|
+      display_account(a)
+    end
   end
 
+  def display_account(account)
+    puts "#{account.name}", "-" * 60
+
+    tputs "id:", account.id.to_s
+    tputs "name:", account.name
+    tputs "sms vendor:", account.sms_vendor_id.to_s
+    tputs "voice vendor:", account.voice_vendor_id.to_s
+    tputs "email vendor:", account.email_vendor_id.to_s
+    if(account.help_text)
+      tputs "help text:", account.help_text
+    end
+    if(account.stop_text)
+      tputs "stop text:", account.stop_text
+    end
+    if(account.email_vendor_id) 
+      tputs "default from email:", account.default_from_address.from_email.to_s 
+      tputs "default reply-to:", account.default_from_address.reply_to.to_s
+      tputs "default errors-to:", account.default_from_address.errors_to.to_s
+    end
+    account.sms_prefixes.each do |p|
+      tputs "sms prefix:", p.prefix
+    end
+    tputs "dcm accounts:", account.dcm_account_codes.to_a.join(",")
+    puts ""
+  end
+
+  def tputs(key,value)
+    puts "\t#{key.ljust(30)}#{value}"
+  end
 end
 
 

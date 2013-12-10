@@ -28,8 +28,6 @@ email_loopback = EmailVendor.find_or_create_by_name!(
     :worker => 'LoopbackEmailWorker')
 
 if Rails.env.development? || Rails.env.ci?
-  from_address = FromAddress.find_or_create_by_from_email!(:from_email=>'tms_dev@evotest.govdelivery.com')
-
   #
   # This is just stuff for DEVELOPMENT purposes
   #
@@ -40,20 +38,23 @@ if Rails.env.development? || Rails.env.ci?
 
   omg = if (ENV['USE_TWILIO'] == 'true')
           puts "** using Twilio and ODM senders for default account **"
-          Account.find_or_create_by_name(voice_vendor: twilio_voice_sender,
-                                         sms_vendor: twilio_sms_sender,
-                                         email_vendor: odm_sender,
-                                         name: "OMG",
-                                         from_address: from_address)
+          Account.find_or_initialize_by_name(voice_vendor: twilio_voice_sender,
+                                             sms_vendor:   twilio_sms_sender,
+                                             email_vendor: odm_sender,
+                                             name:         "OMG")
         else
           puts "**  using loopback senders for default account   **"
           puts "** run with USE_TWILIO=true to use Twilio/ODM senders **"
-          Account.find_or_create_by_name(:voice_vendor => voice_loopback,
-                                         :sms_vendor => sms_loopback,
-                                         :email_vendor => email_loopback,
-                                         :name => "OMG",
-                                         from_address: from_address)
+          Account.find_or_initialize_by_name(:voice_vendor => voice_loopback,
+                                             :sms_vendor   => sms_loopback,
+                                             :email_vendor => email_loopback,
+                                             :name         => "OMG")
         end
+  omg.from_addresses.build(:from_email => 'tms_dev@evotest.govdelivery.com', 
+                           :errors_to => 'errors@evotest.govdelivery.com',
+                           :reply_to => 'reply@evotest.govdelivery.com',
+                           :is_default => true)
+  omg.save!
 
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
   omg.dcm_account_codes = Set.new(['ACME', 'VANDELAY'])
@@ -93,12 +94,12 @@ if Rails.env.development? || Rails.env.ci?
 
 elsif Account.count == 0 && User.count ==0
   puts "#{Rails.env} DB looks empty, creating a GovDelivery account."
-  from_address = FromAddress.find_or_create_by_from_email!(:from_email => 'info99@service.govdelivery.com')
-  account= Account.create!(:voice_vendor => twilio_voice_sender,
+  account= Account.new(:voice_vendor => twilio_voice_sender,
                            :sms_vendor => twilio_sms_sender,
                            :email_vendor => odm_sender,
-                           :name => 'GovDelivery',
-                           :from_address => from_address)
+                           :name => 'GovDelivery')
+  account.build_default_from_address(:from_email => 'info99@service.govdelivery.com')
+  account.save!
   user = account.users.create!(:email => "product@evotest.govdelivery.com", :password => "retek01!")
   user.admin = true
   user.save!
