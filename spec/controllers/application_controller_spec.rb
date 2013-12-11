@@ -1,9 +1,13 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ApplicationController do
+  # See rspec-rails for docs on how to use this.  
+  # I think it only supports default route methods. 
   controller do
+    # used to test exception handling
     def show
-      raise ActiveRecord::RecordNotFound
+      raise eval(params[:id])    # ActiveRecord::RecordNotFound
+                                 # MultiJson::LoadError
     end
 
     def index
@@ -11,20 +15,26 @@ describe ApplicationController do
     end
   end
 
-  describe "raising an ActiveRecord::RecordNotFound" do
+  describe "when handling exceptions" do
     let(:vendor) { create(:sms_vendor) }
     let(:account) { vendor.accounts.create(:name => 'name') }
     let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+
     before do
       sign_in user
     end
 
-    it "should 404" do
-      get :show, :id => 1
+    it "should 404 when ActiveRecord::RecordNotFound " do
+      get :show, :id => 'ActiveRecord::RecordNotFound'
       response.response_code.should eq(404)
     end
-  end
 
+    it "should 400 when MultiJson::LoadError" do
+      get :show, :id => 'MultiJson::LoadError'
+      response.response_code.should eq(400)
+      JSON.parse(response.body) # this shouldn't raise
+    end
+  end
 
   describe "using the X-AUTH-TOKEN header" do
     let(:vendor) { create(:sms_vendor) }

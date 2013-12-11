@@ -62,7 +62,7 @@ class ApplicationController < ActionController::API
     render :json => '{}', :status => :not_found
   end
 
-  def render_malformed_json
+  def render_malformed_json(e)
     instrument_captured_error(e)
     render :json => {error: "Something went wrong parsing your request JSON"}, :status => :bad_request
   end
