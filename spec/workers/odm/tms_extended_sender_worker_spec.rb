@@ -14,12 +14,14 @@ if defined?(JRUBY_VERSION)
     end
     let(:email_message) do
       msg = account.email_messages.new({'body' => '[[foo]] msg body',
-                                        'subject' => '[[foo]] msg subject',
-                                        'from_name' => 'Emailing Cat',
-                                        'from_email' => 'from@cat.com',
-                                        'open_tracking_enabled' => false,
+                                        'subject'                => '[[foo]] msg subject',
+                                        'from_name'              => 'Emailing Cat',
+                                        'from_email'             => 'from@cat.com',
+                                        'reply_to'               => 'reply@cat.com',
+                                        'errors_to'              => 'errors@cat.com',
+                                        'open_tracking_enabled'  => false,
                                         'click_tracking_enabled' => true,
-                                        'macros' => {'macro1' => 'foo', 'macro2' => 'bar'}})
+                                        'macros'                 => {'macro1' => 'foo', 'macro2' => 'bar'}})
       msg.stubs('recipients').returns(recipients)
       msg
     end
@@ -29,8 +31,8 @@ if defined?(JRUBY_VERSION)
         m.expects(:body=).with('##foo## msg body')
         m.expects(:from_name=).with('Emailing Cat')
         m.expects(:from_email=).with(email_message.from_email)
-        m.expects(:errors_to_email=).with(account.bounce_email)
-        m.expects(:reply_to_email=).with(account.reply_to_email)
+        m.expects(:errors_to_email=).with(email_message.errors_to)
+        m.expects(:reply_to_email=).with(email_message.reply_to)
         m.expects(:email_column=).with('email')
         m.expects(:recipient_id_column=).with('recipient_id')
         m.expects(:record_designator=).with('email::recipient_id::macro1::macro2')
