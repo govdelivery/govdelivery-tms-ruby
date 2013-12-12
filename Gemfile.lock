@@ -129,7 +129,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.8.2)
     multipart-post (1.2.0)
-    newrelic_rpm (3.6.8.168)
+    newrelic_rpm (3.7.0.177)
     orm_adapter (0.4.0)
     phony (1.9.0)
     phony_rails (0.4.2)
