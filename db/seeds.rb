@@ -1,3 +1,16 @@
+###
+# WARNING
+#
+# Don't try to do this, you will run into all kinds of problems: 
+#
+#   rake db:migrate:full_rebuild db:seed
+#
+# Instead, do this:
+#
+#   rake db:migrate:full_rebuild
+#   rake db:seed
+##
+
 twilio_sms_sender = SmsVendor.find_or_create_by_name!(:name => 'Twilio Sender',
                                                       :worker => 'TwilioMessageWorker',
                                                       :username => Rails.configuration.twilio_username,
@@ -23,6 +36,7 @@ voice_loopback = VoiceVendor.find_or_create_by_name!(:name => 'Loopback Voice Se
 odm_sender = EmailVendor.find_or_create_by_name!(
     :name => 'TMS Extended Sender',
     :worker => Odm::TMS_EXTENDED_WORKER)
+
 email_loopback = EmailVendor.find_or_create_by_name!(
     :name => 'Email Loopback Sender',
     :worker => 'LoopbackEmailWorker')
