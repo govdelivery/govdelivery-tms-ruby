@@ -1,1 +1,0 @@
-jar 'org.jvnet.jax-ws-commons:jaxws-maven-plugin', '2.2'

@@ -30,9 +30,9 @@ if defined?(JRUBY_VERSION)
     end
 
     it 'should not bury exceptions from service' do
-      Service::Odm::EventService.expects(:click_events).raises Java::ComSunXmlWsWsdlParser::InaccessibleWSDLException.new []
+      Service::Odm::EventService.expects(:click_events).raises Java::JavaxXmlWs::WebServiceException.new('it happened')
 
-      exception_check(subject, "0 counts of InaccessibleWSDLException.\n")
+      exception_check(subject, "it happened")
     end
 
     context 'odm throws error' do

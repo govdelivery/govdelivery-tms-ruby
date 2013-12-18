@@ -50,7 +50,7 @@ group :development, :test do
     gem 'pry-debugger', require: 'pry'
   end
   platforms :jruby do
-    gem 'jbundler'
+    gem 'lock_jar'
   end
   gem 'pry', require: 'pry'
 end

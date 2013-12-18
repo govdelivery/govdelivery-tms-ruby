@@ -1,7 +1,9 @@
 if defined?(JRUBY_VERSION) && ['development', nil].include?(ENV['RAILS_ENV'])
 
-  require 'jbundler/lazy'
-  include JBundler::Lazy
+  LockJar.load(resolve: true) do
+    jar 'org.jvnet.jax-ws-commons:jaxws-maven-plugin:2.2'
+  end
+
   require 'ant'
   ant.taskdef(name: "wsimport", classname: "com.sun.tools.ws.ant.WsImport")
 
@@ -24,7 +26,7 @@ if defined?(JRUBY_VERSION) && ['development', nil].include?(ENV['RAILS_ENV'])
                    sourcedestdir: src_dir,
                    destdir: build_dir,
                    xadditionalHeaders: true)
-      ant.javac(:destdir => build_dir, :target=>'1.6') do
+      ant.javac(:destdir => build_dir, :includeantruntime=>false, :target=>'1.6') do
         src { path :location => src_dir }
       end
     end
