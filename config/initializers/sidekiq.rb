@@ -35,7 +35,7 @@ Sidekiq.configure_server do |config|
     # is already in the logger string.
     chain.remove Sidekiq::Middleware::Server::Logging
   end
-  #SidekiqClockworkScheduler.new.async.run
+  SidekiqClockworkScheduler.new.async.run
 end
 
 Sidekiq.configure_client do |config|
