@@ -3,8 +3,12 @@
 # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
 #
 
+Sidekiq::Logging.logger = Rails.logger
+
 # We have workers that enqueue other jobs; need the client stuff everywhere
 require 'sidekiq/pro/reliable_push'
+require './lib/clockwork/clock.rb'
+require './lib/clockwork/sidekiq_clockwork_scheduler.rb'
 
 default=Xact::Application.config.sidekiq[:default]
 
@@ -19,7 +23,6 @@ class Sidekiq::Middleware::Server::LogAllTheThings
   end
 end
 
-Sidekiq::Logging.logger = Rails.logger
 
 Sidekiq.configure_server do |config|
   require 'sidekiq/pro/reliable_fetch'
@@ -32,6 +35,7 @@ Sidekiq.configure_server do |config|
     # is already in the logger string.
     chain.remove Sidekiq::Middleware::Server::Logging
   end
+  #SidekiqClockworkScheduler.new.async.run
 end
 
 Sidekiq.configure_client do |config|

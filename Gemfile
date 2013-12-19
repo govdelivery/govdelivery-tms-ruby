@@ -29,6 +29,7 @@ gem 'activerecord-oracle_enhanced-adapter', '=1.4.1.4'
 gem 'valid_email'
 gem 'newrelic_rpm'
 gem 'request_exception_handler'
+gem 'clockwork'
 
 platforms :ruby do
   gem 'ruby-oci8'
@@ -37,7 +38,6 @@ end
 platforms :jruby do
   gem 'trinidad', :require => nil
   gem 'trinidad_generic_dbpool_extension'
-  gem 'trinidad_scheduler_extension'
 end
 
 group :development, :test do
