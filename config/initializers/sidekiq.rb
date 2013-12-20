@@ -7,7 +7,7 @@ Sidekiq::Logging.logger = Rails.logger
 
 # We have workers that enqueue other jobs; need the client stuff everywhere
 require 'sidekiq/pro/reliable_push'
-require './lib/clockwork/clock.rb'
+require './config/clock.rb'
 require './lib/clockwork/sidekiq_clockwork_scheduler.rb'
 
 default=Xact::Application.config.sidekiq[:default]
