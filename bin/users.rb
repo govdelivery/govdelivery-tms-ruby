@@ -71,7 +71,8 @@ USAGE
     if(u.errors)
       puts u.errors.messages
     else
-      puts "Created User id: " + u.id.to_s 
+      puts "Created user."
+      list_user(u)
     end
 
   end
@@ -79,13 +80,15 @@ USAGE
   def list_users
 
     puts "User.all\n";
-    User.all.each { |u|
-      puts "\tid: " + u.id.to_s + "\n"
-      puts "\temail: " + u.email + "\n"
-      puts "\taccount_id: " + u.account_id.to_s + "\n"
-      puts "\n"
-    }
+    User.all.each { |u| list_user(u) }
+  end
 
+  def list_user(u)
+    puts "\tid: " + u.id.to_s + "\n"
+    puts "\temail: " + u.email + "\n"
+    puts "\taccount_id: " + u.account_id.to_s + "\n"
+    puts "\tauth token: " + (u.authentication_tokens.first.try(:token) || "(n/a)") + "\n"
+    puts "\n"
   end
 
 
