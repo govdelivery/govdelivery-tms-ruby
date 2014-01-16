@@ -19,11 +19,24 @@ class EmailMessagesController < MessagesController
   protected
 
   def set_scope
-    @message_scope = current_user.email_messages
+    @message_scope = if action_name == 'index' 
+      current_user.email_messages_indexed
+    else 
+      current_user.email_messages
+    end
   end
 
   def set_attr
-    @content_attributes = [:from_name, :from_email, :subject, :macros]
-    @content_attributes.concat([:body, :errors_to, :reply_to, :open_tracking_enabled, :click_tracking_enabled]) unless action_name=='index'
+    @content_attributes = [:subject]
+    @content_attributes.concat([
+      :body,
+      :click_tracking_enabled,
+      :errors_to, 
+      :from_email,
+      :from_name,
+      :macros,
+      :open_tracking_enabled, 
+      :reply_to
+      ]) unless action_name=='index'
   end
 end

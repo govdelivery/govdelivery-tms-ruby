@@ -52,9 +52,23 @@ describe EmailMessage do
     end
     context 'and saved' do
       before { email.save! }
+
       it 'should be able to create recipients' do
         rcpt = email.create_recipients([:email => 'tyler@dudes.com'])
         email.recipients.reload.count.should eq(1)
+      end
+
+      it "should select proper columns for list" do
+        result = user.email_messages.indexed.first
+        cols     = [:user_id, :created_at, :status, :subject, :id]
+        not_cols = (EmailMessage.columns.map(&:name).map(&:to_sym) - cols)
+
+        cols.each do |c|
+          assert result.send(c)
+        end
+        not_cols.each do |c|
+          expect { result.send(c) }.to raise_error
+        end
       end
 
       context 'and sending!' do

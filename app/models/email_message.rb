@@ -20,6 +20,9 @@ class EmailMessage < ActiveRecord::Base
   before_validation :set_from_email
   validate :from_email_allowed?
 
+  # This scope is designed to come purely from an index (and avoid hitting the table altogether)
+  scope :indexed, select("id, user_id, created_at, status, subject")
+
   def sending!(ack)
     self.ack=ack
     recipients_sending!

@@ -20,6 +20,7 @@ describe EmailMessagesController do
         }
       )
       m.created_at = i.days.ago
+      m
     end
   end
 
@@ -41,7 +42,7 @@ describe EmailMessagesController do
     :recipients_attributes => [{:email => "800BUNNIES"}]
   })
 
-  it_should_have_a_pageable_index(:messages)
+  it_should_have_a_pageable_index(:messages, User, :email_messages_indexed)
 
   it_should_show_with_attributes(:body, 
                                  :subject, 
@@ -52,4 +53,5 @@ describe EmailMessagesController do
                                  :click_tracking_enabled, 
                                  :open_tracking_enabled, 
                                  :macros)
+ 
 end

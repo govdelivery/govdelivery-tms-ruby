@@ -33,6 +33,10 @@ class User < ActiveRecord::Base
     self.email.downcase
   end
 
+  def email_messages_indexed
+    email_messages.indexed
+  end
+
   def after_database_authentication
     logger.info("logged in as #{self.to_s}")
   end

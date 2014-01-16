@@ -25,15 +25,15 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
   end
 end
 
-def it_should_have_a_pageable_index(resource, parent_class=User)
+def it_should_have_a_pageable_index(resource, parent_class=User, relation=nil)
   describe "index" do
     before do
       self.send(resource).stubs(:total_pages).returns(5)
       @params = block_given? ? yield(self) : {}
-
+      relation ||= model.to_s.tableize
       pageable = stub('pageable', :page => self.send(resource))
       pageable.stubs(:includes).returns(pageable)
-      parent_class.any_instance.expects(model.to_s.tableize).returns(pageable)
+      parent_class.any_instance.expects(relation).returns(pageable)
     end
     it "should work on the first page" do
       self.send(resource).stubs(:current_page).returns(1)
