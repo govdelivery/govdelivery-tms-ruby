@@ -44,8 +44,8 @@ module Odm
       cred
     end
 
-    def with_recipient(event, scope) 
-      logger.info("#{self.class}: handling #{event.inspect}")
+    def with_recipient(event, scope)
+      logger.debug { "#{self.class}: handling #{event.inspect}" }
       if(id=parse_recipient_id(event.recipient_id))
         if(recipient = find_recipient(id, scope))
           yield recipient
