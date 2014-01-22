@@ -41,7 +41,6 @@ module Geckoboard
 
     def write_to_file(outfile, output)
       dir = File.join(Rails.root, 'public', 'custom_reports')
-      FileUtils.mkdir_p(dir)
       File.open(File.join(dir, outfile), 'w') { |file| file.write(output) }
     end
 
