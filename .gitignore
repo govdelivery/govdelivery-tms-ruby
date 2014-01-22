@@ -23,6 +23,7 @@
 /ext/java/**/*
 build/**/*
 config/newrelic.yml
+public/custom_reports/**/*
 
 #rvm or whatever
 .rvmrc
