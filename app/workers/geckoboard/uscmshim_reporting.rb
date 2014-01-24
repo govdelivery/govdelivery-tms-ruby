@@ -22,9 +22,8 @@ module Geckoboard
         map { |period| period.map(&:second).sum }.reverse # today first
 
       counts = data.map { |v| {text: '', value: v} }
-      {item: counts}.to_json
 
-      write_to_file("#{basename}.json", output)
+      write_to_file("#{basename}.json", {item: counts}.to_json)
     end
   end
 end
