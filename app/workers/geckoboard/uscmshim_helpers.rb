@@ -11,7 +11,7 @@ module Geckoboard
     def grouped_by_hour(scope, column, time_range)
       scope.
         where(created_at: time_range).
-        count(group: %Q[trunc(#{scope.quoted_table_name}.#{dbconn.quoted_column_name(column)}, 'HH24')]) # hash with Time objs as keys
+        count(group: %Q[trunc(#{scope.quoted_table_name}.#{dbconn.quote_column_name(column)}, 'HH24')]) # hash with Time objs as keys
     end
 
     def hour_ranges(num_hours)
