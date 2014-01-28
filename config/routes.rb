@@ -1,6 +1,7 @@
 Xact::Application.routes.draw do
 
   require 'sidekiq/web'
+  require 'sidekiq/pro/web'
   constraint = lambda { |request| request.env["warden"].authenticate? and request.env['warden'].user.admin? }
   constraints constraint do
     mount Sidekiq::Web => '/sidekiq'

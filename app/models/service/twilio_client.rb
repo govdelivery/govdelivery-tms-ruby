@@ -7,7 +7,7 @@ module Service
         @delivery = delivery
       end
 
-      def create(message, recipient, callback_url, message_url=nil)
+      def deliver(message, recipient, callback_url, message_url=nil)
         opts = create_options(message, recipient, callback_url, message_url)
         @delivery.create(opts)
       end

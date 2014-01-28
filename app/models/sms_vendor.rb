@@ -36,4 +36,8 @@ class SmsVendor < ActiveRecord::Base
     # ...and we need to execute account-specific stop commands
     accounts.each { |a| a.stop(command_parameters) }
   end
+
+  def delivery_mechanism
+    Service::TwilioClient::Sms.new(username, password)
+  end
 end

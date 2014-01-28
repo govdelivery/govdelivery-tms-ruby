@@ -5,12 +5,15 @@ class TwilioVoiceWorker
 
   def perform(options)
     options.symbolize_keys!
+    message_id = options[:message_id]
     callback_url = options[:callback_url]
+    message_url = options[:message_url]
 
-    if message = VoiceMessage.find(options[:message_id])
+    if message = VoiceMessage.select('id, account_id, play_url').find(message_id)
       logger.info("Send initiated for message_id=#{message.id} and callback_url=#{callback_url}")
-      client = Service::TwilioClient::Voice.new(message.vendor.username, message.vendor.password)
-      Service::TwilioMessageService.new(client).deliver!(message, callback_url, options[:message_url])
+      Service::TwilioMessageService.deliver!(message, callback_url, message_url)
+    else
+      logger.warn("Send failed, unable to find message with id #{message_id}")
     end
   end
 end
