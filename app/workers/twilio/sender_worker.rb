@@ -1,6 +1,7 @@
 module Twilio
   class SenderWorker
     include Workers::Base
+    sidekiq_options retry: false
 
     def perform(options={})
       options.symbolize_keys!

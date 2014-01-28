@@ -14,7 +14,8 @@ module Service
         batch = Sidekiq::Batch.new
         batch.description = "Send #{message.class.name} #{message.id}"
         batch.jobs do
-          message.sendable_recipients.find_each do |recipient|
+          rel = message.sendable_recipients
+          rel.select("#{rel.table_name}.id").find_each do |recipient|
             Twilio::SenderWorker.perform_async(message_class: message.class.name,
                                                callback_url: callback_url,
                                                message_url: message_url,
