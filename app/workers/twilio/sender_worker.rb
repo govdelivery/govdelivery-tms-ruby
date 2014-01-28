@@ -3,6 +3,7 @@ module Twilio
     include Workers::Base
 
     def perform(options={})
+      options.symbolize_keys!
       message = options[:message_class].constantize.find(options[:message_id])
       recipient = message.recipients.find(options[:recipient_id])
       callback_url = options[:callback_url]
