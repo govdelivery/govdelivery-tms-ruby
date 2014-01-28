@@ -12,7 +12,7 @@ module Service
       def do_deliver(message, callback_url, message_url=nil)
         err_count, total, success_count = 0, 0, 0
         batch = Sidekiq::Batch.new
-        batch.description = "#{self.class.name}: sending message #{message.id}"
+        batch.description = "Send #{message.class.name} #{message.id}"
         batch.jobs do
           message.sendable_recipients.find_each do |recipient|
             Twilio::SenderWorker.perform_async(message_class: message.class.name,
