@@ -35,16 +35,26 @@ test:
 qc:
   <%='jndi: jdbc/xact' if defined?($servlet_context) %>  # let tomcat manage the connection pool
   adapter:  oracle_enhanced
-  database: tstm-scan.visi.gdi:1521/qc_evo_xact
+  database: tste-scan.visi.gdi:1521/qc_evo_xact
   username: xact
   password: m5us83hv
   pool: 10
   checkout_timeout: 15
 
+integration:
+  <%='jndi: jdbc/xact' if defined?($servlet_context) %>  # let tomcat manage the connection pool
+  adapter:  oracle_enhanced
+  database: tste-scan.tops.gdi:1521/int_evo_xact
+  username: xact
+  password: bpb53bpk
+  pool: 10
+  checkout_timeout: 15
+
 stage:
+  <%='jndi: jdbc/xact' if defined?($servlet_context) %>  # let tomcat manage the connection pool
+  pool: 10
+  checkout_timeout: 15
   adapter: oracle_enhanced
-  database: tstm-scan.visi.gdi:1521/estg
+  database: tste-scan.tops.gdi:1521/stg_evo_xact
   username: xact
   password: b4h16mrt
-  pool: 10
-  checkout_timeout: 10
