@@ -1,7 +1,13 @@
 module Twilio
   class SenderWorker
     include Workers::Base
-    sidekiq_options retry: false
+    #retry every two minutes for two hours
+    sidekiq_options retry: 60
+    sidekiq_retry_in { 120 }
+
+    sidekiq_retries_exhausted do |msg|
+      logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
+    end
 
     def perform(options={})
       options.symbolize_keys!
@@ -30,10 +36,6 @@ module Twilio
     def complete_recipient!(recipient, status, sid)
       transition = Service::TwilioResponseMapper.recipient_callback(status)
       recipient.send(transition, sid)
-    end
-
-    def logger
-      @logger ||= Sidekiq.logger
     end
   end
 end

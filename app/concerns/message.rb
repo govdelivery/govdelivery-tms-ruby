@@ -70,7 +70,7 @@ module Message
   def recipient_build_time
     if recipients.count > 0
       first = self.created_at
-      last  = recipients.reorder("created_at desc").select("created_at").first.created_at
+      last = recipients.reorder("created_at desc").select("created_at").first.created_at
       (last - first)
     else
       0.0
@@ -86,9 +86,9 @@ module Message
   end
 
   def sending!
-    self.status = Status::SENDING
+    self.status=Status::SENDING
     self.sent_at = Time.now
-    save!
+    save!(validate: false)
   end
 
   def check_complete!
