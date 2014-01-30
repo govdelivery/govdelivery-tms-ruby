@@ -38,8 +38,8 @@ module Sidekiq
           # don't retry this message (for workers that retry by default)
           raise e.cause
         rescue Exception => e
-          raise e unless msg['retry']
-          maybe_retry(worker, msg, queue, e)
+          maybe_retry(worker, msg, queue, e) if msg['retry']
+          raise e
         end
 
         private
