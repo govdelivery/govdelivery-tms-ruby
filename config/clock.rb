@@ -13,6 +13,7 @@ module Clockwork
   end
 
   every(5.minutes, 'CheckMessagesForCompletion')
+  every(5.minutes, 'MarkOldRecipientsAsInconclusive')
 
   if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
     every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')

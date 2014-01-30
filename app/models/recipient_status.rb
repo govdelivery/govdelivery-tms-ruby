@@ -6,6 +6,7 @@ module RecipientStatus
 
   SENT = 'sent'
   FAILED = 'failed'
+  INCONCLUSIVE = 'inconclusive'
   BLACKLISTED = 'blacklisted'
   CANCELED = 'canceled'
 

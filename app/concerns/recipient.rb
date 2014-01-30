@@ -16,6 +16,7 @@ module Recipient
 
     scope :to_send, -> vendor_id { {} }
     scope :incomplete, where(status: RecipientStatus::INCOMPLETE_STATUSES)
+    scope :sending, where(status: RecipientStatus::SENDING)
     scope :most_recently_sent, order('sent_at DESC').limit(1)
 
     attr_accessible :message_id, :vendor_id, :vendor
@@ -26,6 +27,10 @@ module Recipient
 
   def truncate_values
     self.error_message = self.error_message[0..511] if error_message && error_message_changed? && error_message.to_s.length > 512
+  end
+
+  def inconclusive!
+    update_status!(RecipientStatus::INCONCLUSIVE)
   end
 
   def sending!(ack, *args)
