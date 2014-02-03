@@ -29,10 +29,6 @@ module Recipient
     self.error_message = self.error_message[0..511] if error_message && error_message_changed? && error_message.to_s.length > 512
   end
 
-  def inconclusive!
-    update_status!(RecipientStatus::INCONCLUSIVE)
-  end
-
   def sending!(ack, *args)
     update_status!(RecipientStatus::SENDING, ack)
   end
