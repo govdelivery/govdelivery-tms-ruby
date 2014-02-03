@@ -10,7 +10,7 @@ class MarkOldRecipientsAsInconclusive
     end
   end
 
-  def mark_inconclusive!
+  def mark_inconclusive!(expired)
     expired.update_all(
       status: RecipientStatus::INCONCLUSIVE,
       updated_at: Time.now

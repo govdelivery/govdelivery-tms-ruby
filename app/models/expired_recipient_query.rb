@@ -4,7 +4,6 @@ class ExpiredRecipientQuery
 
     vendors = recipient_scope.reflections[:vendor].klass.arel_table
     timeout = vendors[:delivery_timeout] / 24.hours
-    sysdate = Arel.sql('sysdate')
 
     old_enough = Arel::Nodes::LessThan.new(
       recipient_scope.arel_table[:sent_at] + timeout,
