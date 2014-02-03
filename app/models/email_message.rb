@@ -25,7 +25,6 @@ class EmailMessage < ActiveRecord::Base
 
   def sending!(ack)
     self.ack=ack
-    recipients_sending!
     super()
   end
 
