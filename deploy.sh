@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+set -o nounset   # exit on use of unset variables
 
 APP="xact"
 ENV="qc-ep"
@@ -8,12 +8,14 @@ CTRL_USER="evodeploy";
 CTRL_SERVER="prod-deploy1.visi.gdi"
 CTRL_SCRIPT="/var/repo/scripts/release/deployer.rb"
 CTRL_ARGS=""
-DEFAULT_ACTIONS="checkout extract stop-sidekiq deploy start-sidekiq status purge-checkouts purge-extracts"
+YES="false"
+DEFAULT_ACTIONS="checkout extract deploy status purge-checkouts purge-extracts"
 
 usage () {
     echo "USAGE: $0 [options] [actions]"
     echo "options:"
     echo "  -h               Display this message"
+    echo "  -e env           environment to control"
     echo "  -T               Test mode"
     echo "  -d               Pass Debug Mode Flag"
     echo "  -v               Pass Verbose Mode Flag"
@@ -32,7 +34,7 @@ usage () {
     echo "  version          display the version on each host"
     echo
     echo "Deployment Actions:"
-    echo "  checkout         checkout the code (create tarball on prod-deploy1)"
+    echo "  checkout         checkout the code (create tarball on ${CTRL_SERVER})"
     echo "  extract          extract the code  (extract tarball to target NFS share, create softlinks, bundle install)"
     echo "  deploy           deploy the code   (for each server { stop, update symlink, start })"
     echo "  migrate-db-pre   perform the pre-release database migrations (migrate)"
@@ -55,10 +57,6 @@ while [ $# -gt 0 ]; do
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift
 	    ;;
-	version)
-	    actions[${#actions[@]}]="$1"         ## push on end of actions
-	    shift
-	    ;;
 	checkout|purge-checkouts)
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
@@ -68,6 +66,10 @@ while [ $# -gt 0 ]; do
 	    shift;
 	    ;;
 	deploy)
+	    actions[${#actions[@]}]="$1"         ## push on end of actions
+	    shift;
+	    ;;
+	version)
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
 	    ;;
@@ -91,11 +93,13 @@ while [ $# -gt 0 ]; do
 		    ;;
 		PROD*|prod*)
 		    ENV="$2"
-		    echo -n "Are you sure you want to deploy to ${ENV}? (y/n) "
-		    read x
-		    if [[ "$x" != "y" && "$x" != "yes" ]]; then
-			echo "ABORTING..."
-			exit 20
+		    if [[ ! $YES ]]; then
+			echo -n "Are you sure you want to execute against ${ENV}? (y/n) "
+			read x
+			if [[ "$x" != "y" && "$x" != "yes" ]]; then
+			    echo "ABORTING..."
+			    exit 20
+			fi
 		    fi
 		    ;;
 		*)
@@ -109,8 +113,17 @@ while [ $# -gt 0 ]; do
 	    usage;
 	    exit 0;
 	    ;;
-	-T|-d|-v|-y|-f|-hh)
+	-c|--control-server)
+	    CTRL_SERVER="$2"
+	    shift 2;
+	    ;;
+	-T|-d|-v|-f|-hh)
 	    CTRL_ARGS="${CTRL_ARGS} ${1}"        ## add to control args
+	    shift;
+	    ;;
+	-y)
+	    CTRL_ARGS="${CTRL_ARGS} ${1}"        ## add to control args
+	    YES="true"
 	    shift;
 	    ;;
 	*)
@@ -136,22 +149,6 @@ if [[ ${#actions} != 0 ]]; then
     echo
     echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
     
+    ### Call remote deployer script
     ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
 fi;
-
-
-# ## This section is temperary until Stage and Production have seperate Trinidad and Sidekiq servers
-# case "${ENV}" in
-#     qc*|QC*|int*|INT*|stg*|STG*)
-# 	echo
-# 	echo "================= sidekiq deploy for ${ENV}"
-# 	echo "${actions[@]}" | grep -q deploy && {
-# 	    CMD="/var/repo/scripts/release/ruby-release-sidekiq.sh ${CTRL_ARGS} -e ${ENV} -a ${APP}"
-#	    
-# 	    echo
-# 	    echo "== Executing Command: ${CTRL_USER}@${CTRL_SERVER} [${CMD}] =="
-#	    
-# 	    ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
-# 	}
-# 	;;
-# esac
