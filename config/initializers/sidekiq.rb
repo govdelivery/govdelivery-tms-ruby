@@ -28,8 +28,6 @@ end
 
 Sidekiq.configure_server do |config|
   require 'sidekiq/pro/reliable_fetch'
-  require 'sidekiq/middleware/server/retry_jobs'
-  require './lib/sidekiq/retries/server/middleware.rb'
 
   config.redis = default.merge(Xact::Application.config.sidekiq[:server])
   config.options[:concurrency] = 10
@@ -37,12 +35,10 @@ Sidekiq.configure_server do |config|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
     # remove the default logging middleware because it assumes the worker name
     # is already in the logger string.
-    chain.remove Sidekiq::Middleware::Server::Logging
-    chain.insert_before Sidekiq::Middleware::Server::RetryJobs, Sidekiq::Retries::Server::Middleware
-    chain.remove Sidekiq::Middleware::Server::RetryJobs
   end
   SidekiqClockworkScheduler.new.async.run
 end
+
 
 Sidekiq.configure_client do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:client])

@@ -8,6 +8,7 @@ gem 'rails-api'
 gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
 gem 'redis-rails'
 gem 'sidekiq-pro'
+gem 'sidekiq-retries'
 gem 'sidekiq-failures'
 gem 'sidekiq-unique-jobs'
 gem 'twilio-ruby'

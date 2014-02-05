@@ -22,10 +22,10 @@ module Twilio
 
       logger.debug { "Sending message to #{recipient.phone}" }
       response = message.vendor.delivery_mechanism.deliver(message, recipient, callback_url, message_url)
-      logger.info { "Response from Twilio was #{response.inspect}" }
 
       # if completing blows up, don't retry since we'll send the message again
       begin
+        logger.info { "Response from Twilio was #{response.inspect}" }
         complete_recipient!(recipient, response.status, response.sid)
       rescue => e
         raise Sidekiq::Retries::Fail.new(e)

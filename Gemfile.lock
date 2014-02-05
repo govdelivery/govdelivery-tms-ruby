@@ -232,7 +232,7 @@ GEM
       rspec-mocks (~> 2.14.0)
     ruby-graphviz (1.0.9)
     ruby-oci8 (2.1.5)
-    sidekiq (2.17.3)
+    sidekiq (2.17.4)
       celluloid (>= 0.15.2)
       connection_pool (>= 1.0.0)
       json
@@ -242,6 +242,8 @@ GEM
       sidekiq (>= 2.14.0)
     sidekiq-pro (1.4.2)
       sidekiq (>= 2.17.0)
+    sidekiq-retries (0.0.1)
+      sidekiq (~> 2.17)
     sidekiq-unique-jobs (2.7.0)
       mock_redis
       sidekiq (~> 2.6)
@@ -336,6 +338,7 @@ DEPENDENCIES
   ruby-oci8
   sidekiq-failures
   sidekiq-pro
+  sidekiq-retries
   sidekiq-unique-jobs
   sinatra
   slim
