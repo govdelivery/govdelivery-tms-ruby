@@ -68,7 +68,7 @@ describe Twilio::SenderWorker do
           message_class: message.class.name,
           recipient_id: message.recipients.first.id,
           callback_url: 'http://localhost')
-        }.to raise_exception(Sidekiq::Retries::Fail, ex)
+        }.to raise_exception(Sidekiq::Retries::Fail)
       end
     end
 
