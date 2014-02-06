@@ -1,10 +1,10 @@
 module Service
   module TwilioClient
     class Base
-      attr_reader :delivery
+      attr_reader :client, :delivery
 
-      def initialize(delivery)
-        @delivery = delivery
+      def initialize(username, password)
+        @client = Twilio::REST::Client.new(username, password)
       end
 
       def deliver(message, recipient, callback_url, message_url=nil)
@@ -13,14 +13,10 @@ module Service
       end
 
       def last_response_code
-        @delivery.last_response.code.to_i
+        @client.last_response.code.to_i
       end
 
       private
-
-      def twilio_client(username, password)
-        Twilio::REST::Client.new(username, password).account
-      end
 
       def create_options(message, recipient, callback_url, message_url=nil)
         opts = {
@@ -36,12 +32,14 @@ module Service
     end
     class Sms < Base
       def initialize(username, password)
-        super(twilio_client(username, password).sms.messages)
+        super
+        @delivery = client.account.messages.sms
       end
     end
     class Voice < Base
       def initialize(username, password)
-        super(twilio_client(username, password).calls)
+        super
+        @delivery = client.account.calls
       end
     end
   end

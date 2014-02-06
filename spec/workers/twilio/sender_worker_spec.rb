@@ -6,14 +6,15 @@ describe Twilio::SenderWorker do
     let(:account) { voice_vendor.accounts.create!(:name => 'name') }
     let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
     let(:message) { account.voice_messages.create!(:play_url => 'http://localhost/file.mp3', :recipients_attributes => [{:phone => "5554443333", :vendor => voice_vendor}]) }
+    let(:client) { stub }
 
 
     #need to add recipient stubs and verify recipients are modified correctly
     context 'a very happy send' do
       it 'should work' do
-        twilio_calls = mock
-        twilio_calls.expects(:create).returns(OpenStruct.new(:sid => 'abc123', :status => 'completed'))
-        Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+        twilio_calls = mock('calls', create: OpenStruct.new(:sid => 'abc123', :status => 'completed'))
+        client.stubs(:account).returns(stub('calls', calls: twilio_calls))
+        Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
         expect { subject.perform(
           message_id: message.id,
           message_class: message.class.name,
@@ -28,8 +29,9 @@ describe Twilio::SenderWorker do
         it 'should raise an exception' do
           twilio_calls = mock
           twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
-          twilio_calls.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
-          Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+          client.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
+          client.stubs(:account).returns(stub('calls', calls: twilio_calls))
+          Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
           expect { subject.perform(
             message_id: message.id,
             message_class: message.class.name,
@@ -45,8 +47,9 @@ describe Twilio::SenderWorker do
         response = 400
         twilio_calls = mock
         twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
-        twilio_calls.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
-        Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+        client.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
+        client.stubs(:account).returns(stub('calls', calls: twilio_calls))
+        Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
         expect { subject.perform(
           message_id: message.id,
           message_class: message.class.name,
