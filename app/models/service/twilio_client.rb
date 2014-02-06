@@ -12,6 +12,10 @@ module Service
         @delivery.create(opts)
       end
 
+      def last_response_code
+        @delivery.last_response.code.to_i
+      end
+
       private
 
       def twilio_client(username, password)

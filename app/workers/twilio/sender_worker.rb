@@ -1,7 +1,9 @@
 module Twilio
   class SenderWorker
     include Workers::Base
+    #with the default exponential backoff, this will retry for about four hours
     sidekiq_options retry: 10
+    RETRY_CODES = [401, 404, 429, 500]
 
     sidekiq_retries_exhausted do |msg|
       Sidekiq.logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
@@ -21,7 +23,16 @@ module Twilio
       message_url = options[:message_url]
 
       logger.debug { "Sending message to #{recipient.phone}" }
-      response = message.vendor.delivery_mechanism.deliver(message, recipient, callback_url, message_url)
+
+      begin
+        client = message.vendor.delivery_mechanism
+        response = client.deliver(message, recipient, callback_url, message_url)
+      rescue Twilio::REST::RequestError => e
+        raise if RETRY_CODES.include?(client.last_response_code)
+        logger.warn { "Non-retryable error from Twilio (#{message}): #{e.code} - #{e.message}" }
+        recipient.failed!(nil, e.message)
+        return
+      end
 
       # if completing blows up, don't retry since we'll send the message again
       begin

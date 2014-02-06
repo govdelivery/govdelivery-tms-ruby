@@ -23,19 +23,55 @@ describe Twilio::SenderWorker do
       end
     end
 
-    context 'a sad send' do
-      it 'should not work' do
+    [401, 404, 429, 500].each do |response|
+      context "a send that returns a #{response} from Twilio" do
+        it 'should raise an exception' do
+          twilio_calls = mock
+          twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
+          twilio_calls.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
+          Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+          expect { subject.perform(
+            message_id: message.id,
+            message_class: message.class.name,
+            recipient_id: message.recipients.first.id,
+            callback_url: 'http://localhost')
+          }.to raise_exception(Twilio::REST::RequestError, 'error')
+        end
+      end
+    end
+
+    context "a send that returns a 400 from Twilio" do
+      it 'should fail the message but not the job' do
+        response = 400
         twilio_calls = mock
         twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
+        twilio_calls.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
         Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
         expect { subject.perform(
           message_id: message.id,
           message_class: message.class.name,
           recipient_id: message.recipients.first.id,
           callback_url: 'http://localhost')
-        }.to raise_exception(Twilio::REST::RequestError, 'error')
+        }.to change { message.recipients.where(:error_message => 'error').count }.by 1
       end
     end
+
+    context 'a send that succeed but then fails to update the recipient' do
+      it 'should not retry' do
+        twilio_calls = mock
+        twilio_calls.expects(:create).returns(OpenStruct.new(:sid => 'abc123', :status => 'completed'))
+        Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+        ex = RuntimeError.new('this could be anything')
+        subject.expects(:complete_recipient!).raises(ex)
+        expect { subject.perform(
+          message_id: message.id,
+          message_class: message.class.name,
+          recipient_id: message.recipients.first.id,
+          callback_url: 'http://localhost')
+        }.to raise_exception(Sidekiq::Retries::Fail, ex)
+      end
+    end
+
 
     context 'on retries exhausted' do
       it 'should fail with error_message' do
