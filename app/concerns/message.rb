@@ -86,10 +86,13 @@ module Message
   end
 
   def sending!
-    self.status=Status::SENDING
-    self.sent_at = Time.now
-    recipients_sending!
-    save!(validate: false)
+    self.class.transaction do
+      process_blacklist!
+      self.status=Status::SENDING
+      self.sent_at = Time.now
+      save!(validate: false)
+      self.recipients.with_new_status.update_all(status: RecipientStatus::SENDING, sent_at: Time.now)
+    end
   end
 
   def check_complete!
@@ -128,10 +131,6 @@ module Message
 
   def set_account_from_user
     self.account ||= self.user.account if user
-  end
-
-  def recipients_sending!
-    self.recipients.update_all(status: RecipientStatus::SENDING, sent_at: Time.now)
   end
 
   private

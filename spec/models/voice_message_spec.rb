@@ -25,9 +25,13 @@ describe VoiceMessage do
     context "being marked as sending" do
       before do 
         message.create_recipients([{:phone => "4054343424"}])
+        message.expects(:process_blacklist!)
         message.sending!
       end
-      specify { message.recipients.first.sent_at.should_not be_nil }
+      specify do
+        message.recipients.first.status.should eq(RecipientStatus::SENDING)
+        message.recipients.first.status.should_not be_nil
+      end
     end
     context "with invalid recipient" do
       before { message.create_recipients([{:phone => nil}]) }

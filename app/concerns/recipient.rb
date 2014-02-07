@@ -15,6 +15,7 @@ module Recipient
     belongs_to :vendor, :class_name => self.name.gsub('Recipient', 'Vendor')
 
     scope :to_send, -> vendor_id { {} }
+    scope :with_new_status, where(status: RecipientStatus::NEW)
     scope :incomplete, where(status: RecipientStatus::INCOMPLETE_STATUSES)
     scope :sending, where(status: RecipientStatus::SENDING)
     scope :most_recently_sent, order('sent_at DESC').limit(1)

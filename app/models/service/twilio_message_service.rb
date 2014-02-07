@@ -2,9 +2,8 @@ module Service
   class TwilioMessageService
     class << self
       def deliver!(message, callback_url=nil, message_url=nil)
-        message.process_blacklist!
-        do_deliver(message, callback_url, message_url)
         message.sending!
+        do_deliver(message, callback_url, message_url)
       end
 
       private
