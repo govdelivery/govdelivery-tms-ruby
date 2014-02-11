@@ -19,6 +19,7 @@ usage () {
     echo "  -T               Test mode"
     echo "  -d               Pass Debug Mode Flag"
     echo "  -v               Pass Verbose Mode Flag"
+    echo "  --vc-tag TAG     Git tag to checkout"
     echo
     echo "Control Actions:"
     echo "  start            start all services"
@@ -121,6 +122,10 @@ while [ $# -gt 0 ]; do
 	    CTRL_ARGS="${CTRL_ARGS} ${1}"        ## add to control args
 	    shift;
 	    ;;
+  --vc-tag)
+      CTRL_ARGS="${CTRL_ARGS} ${1} ${2}"   ## add to control args
+      shift 2;
+      ;;
 	-y)
 	    CTRL_ARGS="${CTRL_ARGS} ${1}"        ## add to control args
 	    YES="true"
