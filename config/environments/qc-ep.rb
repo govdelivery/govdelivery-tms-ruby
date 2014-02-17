@@ -81,7 +81,7 @@ Xact::Application.configure do
   }]
 
   config.odm_host = "https://qc-tms.govdelivery.com:65081"
-  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended"
+  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
   config.odm_username = 'xact'
   config.odm_password = 'Eish8sai2Heofereekae5ohmiyeijiN'
 
