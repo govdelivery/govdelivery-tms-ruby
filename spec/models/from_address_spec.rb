@@ -6,13 +6,19 @@ describe FromAddress do
 
   it_should_validate_as_email :from_email, :reply_to_email, :bounce_email
 
-  context 'when default' do
+  context 'a valid from address' do
     before do
       account.from_addresses.create(:is_default => true, :from_email => 'one@example.com')
-      account.from_addresses.create(:is_default => true, :from_email => 'two@example.com')
     end
-    it 'should only have one default from address' do
+    it 'should not allow duplicate default addresses' do
+      account.from_addresses.create(:is_default => true, :from_email => 'two@example.com')
       account.from_addresses.where(is_default: true).count.should eq(1)
+    end
+
+    it 'should not allow duplicate from emails' do
+      fa = account.from_addresses.create(:from_email => 'one@example.com')
+      fa.new_record?.should be_true
+      fa.errors[:from_email].should_not be_nil
     end
   end
 
