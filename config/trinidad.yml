@@ -33,7 +33,6 @@ extensions:
     testOnBorrow: true
     validationQuery: SELECT 1 FROM dual
     validationInterval: 60000
-    accessToUnderlyingConnectionAllowed: true
 http:
   # incoming traffic in deployed envs comes via ajp (except from nagios)
   acceptCount: 5
