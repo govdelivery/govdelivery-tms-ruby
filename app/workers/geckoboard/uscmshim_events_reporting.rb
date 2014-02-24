@@ -1,5 +1,6 @@
 module Geckoboard
   class UscmshimEventsReporting
+    include UscmshimHelpers
     include Workers::Base
     #'clicks', 10060, ''"CLICKED_AT"''
     def perform(event_type, account_id, basename)
