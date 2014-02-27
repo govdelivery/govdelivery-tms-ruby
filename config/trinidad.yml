@@ -1,6 +1,7 @@
 ---
 <%
-  configuration = YAML.load_file('config/database.yml')[(ENV['RAILS_ENV'] || 'development')]
+  rails_env = ENV['RAILS_ENV'] || 'development'
+  configuration = YAML.load_file('config/database.yml')[rails_env]
   database      = configuration["database"]
   username      = configuration["username"]
   password      = configuration["password"]
@@ -11,6 +12,7 @@ address: 0.0.0.0
 extensions:
   generic_dbpool:
     factory: org.apache.tomcat.jdbc.pool.DataSourceFactory
+    <%= "jdbcInterceptors: 'ConnectionState;SlowQueryReportJmx(threshold=500,maxQueries=500)'" if ['development', 'qc'].include?(rails_env) %>
     driverPath: 'lib/ojdbc6.jar'
     driverName: 'oracle.jdbc.driver.OracleDriver'
     initSQL: SELECT 2 FROM DUAL
