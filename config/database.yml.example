@@ -18,16 +18,16 @@
 #
 development:
   adapter: oracle_enhanced
-  database: tstm-scan.visi.gdi:1521/dev_evo_tsms
-  username: [user]_sdev
+  database: localhost:1521/XE
+  username: person_xdev
   password: abcd1234
   pool: 10
   checkout_timeout: 10
   
 test:
   adapter: oracle_enhanced
-  database: tstm-scan.visi.gdi:1521/dev_evo_tsms
-  username: [user]_stst
+  database: localhost:1521/XE
+  username: person_xtst
   password: abcd1234
   pool: 10
   checkout_timeout: 10
