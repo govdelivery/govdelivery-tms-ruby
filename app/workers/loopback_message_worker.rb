@@ -5,8 +5,8 @@ class LoopbackMessageWorker
 
   def perform(options)
     if @message
-      @message.sending!
-      @message.sendable_recipients.with_new_status.except(:order).update_all(:status => RecipientStatus::SENT, :completed_at => DateTime.now)
+      @message.sending!('looped_back')
+      @message.sendable_recipients.sending.except(:order).update_all(:status => RecipientStatus::SENT, :completed_at => DateTime.now)
       @message.check_complete!
     else
       logger.warn("Unable to find message: #{options}")
