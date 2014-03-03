@@ -12,7 +12,6 @@ address: 0.0.0.0
 extensions:
   generic_dbpool:
     factory: org.apache.tomcat.jdbc.pool.DataSourceFactory
-    <%- if
     <%= "jdbcInterceptors: 'ConnectionState;SlowQueryReportJmx(threshold=500,maxQueries=500)'" if ['development', 'qc'].include?(rails_env) %>
     driverPath: 'lib/ojdbc6.jar'
     driverName: 'oracle.jdbc.driver.OracleDriver'
