@@ -12,6 +12,7 @@ address: 0.0.0.0
 extensions:
   generic_dbpool:
     factory: org.apache.tomcat.jdbc.pool.DataSourceFactory
+    <%- if
     <%= "jdbcInterceptors: 'ConnectionState;SlowQueryReportJmx(threshold=500,maxQueries=500)'" if ['development', 'qc'].include?(rails_env) %>
     driverPath: 'lib/ojdbc6.jar'
     driverName: 'oracle.jdbc.driver.OracleDriver'
@@ -22,17 +23,20 @@ extensions:
     url: jdbc:oracle:thin:@//<%=database%>
     username: <%=username%>
     password: <%=password%>
-    maxActive: 20
+    initialSize: 10
+    maxActive: 25
+    maxIdle: 10
+    minIdle: 3
     maxAge: 3600000
-    minIdle: 5
-    maxIdle: 15
-    minEvictableIdleTimeMillis: 30000
-    timeBetweenEvictionRunsMillis: 30000
+    minEvictableIdleTimeMillis: 1200000
+    timeBetweenEvictionRunsMillis: 60000
     maxWait: 10000
-    suspectTimeout: 30
-    removeAbandonedTimeout: 60
+    suspectTimeout: 15 #seconds
     logAbandoned: true
-    testOnBorrow: true
+    removeAbandoned: true
+    removeAbandonedTimeout: 60 #seconds
+    testOnBorrow: false
+    testWhileIdle: true
     validationQuery: SELECT 1 FROM dual
     validationInterval: 60000
 http:
