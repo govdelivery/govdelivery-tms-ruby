@@ -22,6 +22,7 @@ extensions:
     url: jdbc:oracle:thin:@//<%=database%>
     username: <%=username%>
     password: <%=password%>
+    fairQueue: true
     initialSize: 10
     maxActive: 25
     maxIdle: 10
@@ -32,10 +33,10 @@ extensions:
     maxWait: 10000
     suspectTimeout: 15 #seconds
     logAbandoned: true
-    removeAbandoned: true
+    removeAbandoned: false
     removeAbandonedTimeout: 60 #seconds
-    testOnBorrow: false
-    testWhileIdle: true
+    testOnBorrow: true
+    testWhileIdle: false
     validationQuery: SELECT 1 FROM dual
     validationInterval: 60000
 http:
