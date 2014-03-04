@@ -77,7 +77,18 @@ module Xact
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
 
-    config.redis_url = 'redis://localhost:6379'
+    redis_config = YAML::load_file(Rails.root.join('config/redis.yml'))[Rails.env]
+    config.cache_store = :redis_store, redis_config['url']
+
+    # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
+    config.sidekiq = {
+      default: {
+        url: "#{redis_config['url']}/#{redis_config['sidekiq_db']}",
+        namespace: redis_config['sidekiq_namespace']
+      },
+      client: {size: 20},
+      server: {}
+    }
 
     # ODM stats jobs fetch content in batches of this size
     config.odm_stats_batch_size = 500
@@ -85,18 +96,6 @@ module Xact
     # Messages sent via Twilio that we haven't heard back about should be finalized
     config.min_twilio_polling_age = '24.hours'
     config.max_twilio_polling_age = '72.hours'
-
-    config.message_completion_crontab = "0 */5 * * * ?"
-
-    # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
-    config.sidekiq = {
-      default: {
-        url: "#{config.redis_url}/1",
-        namespace: 'xact'
-      },
-      client: {size: 1},
-      server: {}
-    }
 
     config.dcm = [{
       username: 'product@govdelivery.com',
@@ -120,9 +119,9 @@ module Xact
     config.auto_response_threshold = 5
 
     # Default log level is INFO
-    config.logger = 
-      Rails.logger = 
-      ActiveRecord::Base.logger = 
+    config.logger =
+      Rails.logger =
+      ActiveRecord::Base.logger =
         Log4r::Logger['default']
     Rails.logger.level = Log4r::INFO
   end

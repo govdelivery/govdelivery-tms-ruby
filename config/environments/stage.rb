@@ -39,11 +39,6 @@ Xact::Application.configure do
   # Use a different logger for distributed setups
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
-  # Use a different cache store in production
-
-  config.redis_url = 'redis://stg-xactredis-master-ep.tops.gdi:6379'
-  config.cache_store = :redis_store, config.redis_url
-
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
@@ -70,9 +65,6 @@ Xact::Application.configure do
   config.twilio_username = 'AC189315456a80a4d1d4f82f4a732ad77e'
   config.twilio_password = '88e3775ad71e487c7c90b848a55a5c88'
   config.twilio_number   = '+12532929228'
-
-  config.sidekiq[:server][:url] = "#{config.redis_url}/1"
-  config.sidekiq[:client][:url] = "#{config.redis_url}/1"
 
   config.dcm = [
     {

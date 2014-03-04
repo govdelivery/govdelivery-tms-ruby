@@ -5,6 +5,7 @@
   database      = configuration["database"]
   username      = configuration["username"]
   password      = configuration["password"]
+  debug = ['development', 'qc'].include?(rails_env)
 %>
 jruby_min_runtimes: 1
 jruby_max_runtimes: 1
@@ -12,7 +13,7 @@ address: 0.0.0.0
 extensions:
   generic_dbpool:
     factory: org.apache.tomcat.jdbc.pool.DataSourceFactory
-    <%= "jdbcInterceptors: 'ConnectionState;SlowQueryReportJmx(threshold=500,maxQueries=500)'" if ['development', 'qc'].include?(rails_env) %>
+    jdbcInterceptors: 'ConnectionState'
     driverPath: 'lib/ojdbc6.jar'
     driverName: 'oracle.jdbc.driver.OracleDriver'
     initSQL: SELECT 2 FROM DUAL
@@ -30,10 +31,10 @@ extensions:
     minEvictableIdleTimeMillis: 1200000
     timeBetweenEvictionRunsMillis: 60000
     maxWait: 10000
-    suspectTimeout: 15 #seconds
-    logAbandoned: true
+    suspectTimeout: <%= debug ? 60 : nil %>
+    logAbandoned: <%= debug.to_s %>
     removeAbandoned: true
-    removeAbandonedTimeout: 60 #seconds
+    removeAbandonedTimeout: 180 #seconds
     testOnBorrow: false
     testWhileIdle: true
     validationQuery: SELECT 1 FROM dual

@@ -1,0 +1,25 @@
+---
+defaults: &defaults
+  url: 'redis://localhost:6379'
+  sidekiq_db: '1'
+  sidekiq_namespace: 'xact'
+development:
+  <<: *defaults
+test:
+  <<: *defaults
+ci:
+  url: 'redis://it-buildbox1.office.gdi:6379'
+  sidekiq_db: '2'
+  <<: *defaults
+qc:
+  url: 'redis://qc-xactredis-master-ep.tops.gdi:6379'
+  <<: *defaults
+integration:
+  url: 'redis://int-xactredis-master-ep.tops.gdi:6379'
+  <<: *defaults
+stage:
+  url: 'redis://stg-xactredis-master-ep.tops.gdi:6379'
+  <<: *defaults
+production:
+  url: 'redis://prod-xactredis-master-ep.tops.gdi:6379'
+  <<: *defaults

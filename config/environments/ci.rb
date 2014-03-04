@@ -7,7 +7,6 @@ Xact::Application.configure do
   config.action_controller.perform_caching = true
 
   config.redis_url = 'redis://it-buildbox1.office.gdi:6379'
-  config.cache_store = :redis_store, config.redis_url
 
   config.action_mailer.raise_delivery_errors = false
 
@@ -34,9 +33,6 @@ Xact::Application.configure do
   config.twilio_password = '331b3a44b5067a3c02013a6cfaa18b1c'
   config.twilio_number = '+15551112222'
 
-  config.sidekiq[:server][:url] = "#{config.redis_url}/2"
-  config.sidekiq[:client][:url] = "#{config.redis_url}/2"
-
   # qc ODM
   config.odm_host = "http://qc-tms1.visi.gdi:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
@@ -47,8 +43,6 @@ Xact::Application.configure do
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
   config.public_callback = false
-
-  config.message_completion_crontab = "*/10 * * * * ?"
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
