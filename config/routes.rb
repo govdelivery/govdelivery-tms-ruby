@@ -66,6 +66,12 @@ Xact::Application.routes.draw do
     end
   end
 
+  namespace :ipaws do
+    resources :event_codes, only: :index
+    resources :categories, only: :index
+    resources :response_types, only: :index
+  end
+
   root :to => 'services#index'
   get 'load_balancer' => 'load_balancer#show'
   get 'command_types' => 'command_types#index'
