@@ -31,7 +31,7 @@ extensions:
     minEvictableIdleTimeMillis: 1200000
     timeBetweenEvictionRunsMillis: 60000
     maxWait: 10000
-    suspectTimeout: <%= debug ? 60 : nil %>
+    suspectTimeout: <%= debug ? 60 : -1 %>
     logAbandoned: <%= debug.to_s %>
     removeAbandoned: true
     removeAbandonedTimeout: 180 #seconds
