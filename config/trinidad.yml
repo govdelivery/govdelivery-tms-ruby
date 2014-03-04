@@ -35,7 +35,7 @@ extensions:
     logAbandoned: <%= debug.to_s %>
     removeAbandoned: true
     removeAbandonedTimeout: 180 #seconds
-    testOnBorrow: false
+    testOnBorrow: true
     testWhileIdle: true
     validationQuery: SELECT 1 FROM dual
     validationInterval: 60000
