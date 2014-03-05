@@ -23,22 +23,23 @@ extensions:
     url: jdbc:oracle:thin:@//<%=database%>
     username: <%=username%>
     password: <%=password%>
-    initialSize: 10
+    initialSize: 25
     maxActive: 25
-    maxIdle: 10
-    minIdle: 3
+    maxIdle: 20
+    minIdle: 5
     maxAge: 3600000
-    minEvictableIdleTimeMillis: 1200000
-    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 30000
+    timeBetweenEvictionRunsMillis: 30000
     maxWait: 10000
-    suspectTimeout: <%= debug ? 60 : -1 %>
+    suspectTimeout: 30
     logAbandoned: <%= debug.to_s %>
     removeAbandoned: true
-    removeAbandonedTimeout: 180 #seconds
+    removeAbandonedTimeout: 60 #seconds
     testOnBorrow: true
     testWhileIdle: true
     validationQuery: SELECT 1 FROM dual
     validationInterval: 60000
+    logValidationErrors: <%= debug.to_s %>
 http:
   # incoming traffic in deployed envs comes via ajp (except from nagios)
   acceptCount: 5
