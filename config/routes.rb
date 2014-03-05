@@ -71,6 +71,7 @@ Xact::Application.routes.draw do
     resources :categories, only: :index
     resources :response_types, only: :index
     resource :acknowledgement, only: :show
+    resource :cog_profile, only: :show
   end
 
   root :to => 'services#index'

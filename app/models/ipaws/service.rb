@@ -10,7 +10,11 @@ module IPAWS
 
     def self.ack?
       # Returns true if successful getAck response received from IPAWS.
-      !!soap_service.try(:getAck);
+      !!soap_service.getAck
+    end
+
+    def self.cog_profile
+      soap_service.getCOGProfile
     end
 
   end
