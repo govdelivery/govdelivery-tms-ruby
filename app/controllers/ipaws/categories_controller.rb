@@ -1,7 +1,10 @@
 module IPAWS
   class CategoriesController < ApplicationController
 
-    respond_to :json
+    include FeatureChecker
+    
+    before_filter :find_user
+    feature :ipaws
 
     def index
       respond_with Category.all

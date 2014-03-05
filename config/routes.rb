@@ -70,6 +70,7 @@ Xact::Application.routes.draw do
     resources :event_codes, only: :index
     resources :categories, only: :index
     resources :response_types, only: :index
+    resource :acknowledgement, only: :show
   end
 
   root :to => 'services#index'
