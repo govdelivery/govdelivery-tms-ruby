@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(:version => 20140304145409) do
     t.string   "errors_to"
   end
 
-  add_index "email_messages", ["user_id", "created_at", "status", "subject", "id"], :name => "em_idx4", :tablespace => "tsms_indx01"
+  add_index "email_messages", ["user_id", "created_at", "status", "subject", "id"], :name => "em_idx3", :tablespace => "tsms_indx01"
 
   create_table "email_recipient_clicks", :force => true do |t|
     t.integer  "email_message_id",                   :precision => 38, :scale => 0, :null => false

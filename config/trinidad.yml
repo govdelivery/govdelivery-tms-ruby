@@ -14,33 +14,36 @@ extensions:
   generic_dbpool:
     jndi: jdbc/xact
     #uncomment to use tomcat-dbcp and disable tomcat-jdbc
-    #pool: dbcp
+    pool: dbcp
     driverPath: 'lib/ojdbc6.jar'
     driverName: 'oracle.jdbc.driver.OracleDriver'
     url: jdbc:oracle:thin:@//<%=database%>
     username: <%=username%>
     password: <%=password%>
-    initialSize: 25
-    maxActive: 25
-    maxIdle: 5
+    initialSize: 10
+    maxActive: 10
+    maxIdle: 10
     minIdle: 5
     minEvictableIdleTimeMillis: 60000
     timeBetweenEvictionRunsMillis: 30000
     maxWait: 10000
     logAbandoned: <%= debug.to_s %>
-    removeAbandonedTimeout: 60 #seconds
-    removeAbandoned: true
+    #removeAbandonedTimeout: 10 #seconds
+    #removeAbandoned: true
     testOnBorrow: true
     testWhileIdle: false
     testOnReturn: true
     validationQuery: SELECT 1 FROM dual
 
+    # **** tomcat-dbcp need this ****
+    accessToUnderlyingConnectionAllowed: true
+
     # **** tomcat-jdbc specific properties ****
     #jdbcInterceptors: 'ConnectionState'
     initSQL: SELECT 2 FROM DUAL
-    suspectTimeout: 30
-    validationInterval: 10000
-    logValidationErrors: <%= debug.to_s %>
+    suspectTimeout: 30 #seconds
+    validationInterval: 60000
+    logValidationErrors: true
     maxAge: 3600000
 http:
   # incoming traffic in deployed envs comes via ajp (except from nagios)
