@@ -21,7 +21,9 @@ describe ServicesController do
       voice_messages: voice_index_path,
       ipaws_event_codes: ipaws_event_codes_path,
       ipaws_categories: ipaws_categories_path,
-      ipaws_response_types: ipaws_response_types_path
+      ipaws_response_types: ipaws_response_types_path,
+      ipaws_acknowledgement: ipaws_acknowledgement_path,
+      ipaws_cog_profile: ipaws_cog_profile_path
     }.stringify_keys
   end
 
