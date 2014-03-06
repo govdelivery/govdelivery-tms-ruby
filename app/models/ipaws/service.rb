@@ -4,6 +4,8 @@ module IPAWS
     # The SOAP service that implements this API.
     class_attribute :soap_service
 
+    # Default to the sample SOAP service.
+    self.soap_service = SampleSoapService.new
     if defined?(java_import)
       # Add import of Java SOAP service here.
     end
@@ -19,3 +21,4 @@ module IPAWS
 
   end
 end
+
