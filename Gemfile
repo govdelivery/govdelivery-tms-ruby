@@ -26,7 +26,7 @@ gem 'dcm_client', '~>0.1.4'
 gem 'enumify'
 gem "strip_attributes"
 gem 'attr_encrypted'
-gem 'activerecord-oracle_enhanced-adapter', '~>1.4.1.8'
+gem 'activerecord-oracle_enhanced-adapter', '=1.4.3.1'
 gem 'valid_email'
 gem 'newrelic_rpm'
 gem 'request_exception_handler'

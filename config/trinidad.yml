@@ -14,7 +14,7 @@ extensions:
   generic_dbpool:
     jndi: jdbc/xact
     #uncomment to use tomcat-dbcp and disable tomcat-jdbc
-    pool: dbcp
+    #pool: dbcp
     driverPath: 'lib/ojdbc6.jar'
     driverName: 'oracle.jdbc.driver.OracleDriver'
     url: jdbc:oracle:thin:@//<%=database%>
@@ -28,8 +28,8 @@ extensions:
     timeBetweenEvictionRunsMillis: 30000
     maxWait: 10000
     logAbandoned: <%= debug.to_s %>
-    #removeAbandonedTimeout: 10 #seconds
-    #removeAbandoned: true
+    removeAbandonedTimeout: 90 #seconds
+    removeAbandoned: true
     testOnBorrow: true
     testWhileIdle: false
     testOnReturn: true
@@ -41,15 +41,12 @@ extensions:
     # **** tomcat-jdbc specific properties ****
     #jdbcInterceptors: 'ConnectionState'
     initSQL: SELECT 2 FROM DUAL
-    suspectTimeout: 30 #seconds
+    suspectTimeout: 45 #seconds
     validationInterval: 60000
     logValidationErrors: true
     maxAge: 3600000
 http:
   # incoming traffic in deployed envs comes via ajp (except from nagios)
-  acceptCount: 5
+  acceptCount: 100
   maxThreads: 1
-ajp:
-  maxThreads: 100
-  port: 8009
-  connectionTimeout: 600000
+
