@@ -19,6 +19,10 @@ module IPAWS
       soap_service.getCOGProfile
     end
 
+    def self.create_alert(attributes)
+      soap_service.postMessage(attributes)
+    end
+
   end
 end
 

@@ -45,5 +45,77 @@ module IPAWS
       }.merge(attributes))
     end
 
+    def postMessage(attributes)
+      id = attributes['identifier'] || attributes[:identifier] || ''
+      if id =~ /error/i
+        postMessageErrorResponse(id)
+      else
+        postMessageResponse(id)
+      end
+    end
+
+    def postMessageResponse(id)
+      { 
+        'identifier' => id,
+        'responses' => [
+          {
+            'CHANNELNAME' => 'CAPEXCH',
+            'STATUSITEMID' => 200,
+            'ERROR' => 'N',
+            'STATUS' => 'Ack'
+          },
+          {
+            'CHANNELNAME' => 'IPAWS',
+            'STATUSITEMID' => 300,
+            'ERROR' => 'N',
+            'STATUS' => 'Ack'
+          },
+          {
+            'CHANNELNAME' => 'CAPEXCH',
+            'STATUSITEMID' => 200,
+            'ERROR' => 'N',
+            'STATUS' => 'Ack'
+          },
+          {
+            'CHANNELNAME' => 'NWEM',
+            'STATUSITEMID' => 400,
+            'ERROR' => 'N',
+            'STATUS' => 'Ack'
+          },
+          {
+            'CHANNELNAME' => 'EAS',
+            'STATUSITEMID' => 500,
+            'ERROR' => 'N',
+            'STATUS' => 'Ack'
+          },
+          {
+            'CHANNELNAME' => 'CMAS',
+            'STATUSITEMID' => 600,
+            'ERROR' => 'N',
+            'STATUS' => 'Ack'
+          },
+          {
+            'STATUSITEMID' => 801,
+            'ERROR' => 'N',
+            'STATUS' => 'message-not-disseminated-as-non-EAS-public'
+          }
+        ]
+      }
+    end
+
+    def postMessageErrorResponse(id)
+      { 
+        'identifier' => id,
+        'responses' => [
+          {
+            'CHANNELNAME' => 'IPAWS',
+            'STATUSITEMID' => 307,
+            'ERROR' => 'Y',
+            'STATUS' => 'reference-element-invalid'
+          }
+        ]
+      }
+    end
+
   end
 end
