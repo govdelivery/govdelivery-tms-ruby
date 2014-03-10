@@ -41,7 +41,7 @@ module IPAWS
               { 'EAS' => 'RWT' }
             ],
           :geoCodes => [{ 'SAME' => '051510' }]
-        }
+        }.stringify_keys
       }.merge(attributes))
     end
 

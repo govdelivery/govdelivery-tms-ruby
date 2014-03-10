@@ -2,16 +2,6 @@ require 'spec_helper'
 
 describe IPAWS::AcknowledgementsController do
 
-  class DummyIPAWSSoapService
-    def getAck
-      true
-    end
-  end
-
-  before do
-    IPAWS::Service.soap_service = DummyIPAWSSoapService.new
-  end
-
   describe "GET show" do
     it 'returns true/false based on IPAWS Service getACK request' do
       user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
