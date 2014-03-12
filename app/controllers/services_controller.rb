@@ -22,7 +22,7 @@ class ServicesController < ApplicationController
       @services[:voice_messages] = voice_index_path
     end
 
-    if @account.ipaws_vendor
+    if @account.ipaws_enabled?
       @services[:ipaws_event_codes] = ipaws_event_codes_path
       @services[:ipaws_categories] = ipaws_categories_path
       @services[:ipaws_response_types] = ipaws_response_types_path

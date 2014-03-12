@@ -1,12 +1,8 @@
 module IPAWS
-  class CogProfilesController < ApplicationController
-
-    include FeatureChecker
-    before_filter :find_user
-    feature :ipaws
+  class CogProfilesController < IPAWS::Controller
 
     def show
-      respond_with IPAWS::Service.cog_profile
+      respond_with ipaws_client.getCOGProfile
     end
 
   end

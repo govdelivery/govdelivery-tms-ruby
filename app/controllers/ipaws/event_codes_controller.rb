@@ -1,10 +1,5 @@
 module IPAWS
-  class EventCodesController < ApplicationController
-
-    include FeatureChecker
-    
-    before_filter :find_user
-    feature :ipaws
+  class EventCodesController < IPAWS::Controller
 
     def index
       respond_with EventCode.all

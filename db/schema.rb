@@ -11,12 +11,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140304145409) do
+ActiveRecord::Schema.define(:version => 20140312180531) do
 
   create_table "accounts", :force => true do |t|
-    t.string   "name",                                                             :null => false
-    t.datetime "created_at",                                                       :null => false
-    t.datetime "updated_at",                                                       :null => false
+    t.string   "name",                                                                                :null => false
+    t.datetime "created_at",                                                                          :null => false
+    t.datetime "updated_at",                                                                          :null => false
     t.integer  "stop_handler_id",                   :precision => 38, :scale => 0
     t.integer  "voice_vendor_id",                   :precision => 38, :scale => 0
     t.integer  "email_vendor_id",                   :precision => 38, :scale => 0
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(:version => 20140304145409) do
     t.string   "dcm_account_codes", :limit => 4000
     t.string   "help_text"
     t.string   "stop_text"
-    t.integer  "ipaws_vendor_id",                   :precision => 38, :scale => 0
+    t.boolean  "ipaws_enabled",                     :precision => 1,  :scale => 0, :default => false, :null => false
   end
 
   create_table "authentication_tokens", :force => true do |t|
@@ -150,11 +150,6 @@ ActiveRecord::Schema.define(:version => 20140304145409) do
     t.integer  "keyword_id",                      :precision => 38, :scale => 0
     t.string   "keyword_response"
     t.string   "command_status",   :limit => 15
-  end
-
-  create_table "ipaws_vendors", :force => true do |t|
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
   end
 
   create_table "keywords", :force => true do |t|

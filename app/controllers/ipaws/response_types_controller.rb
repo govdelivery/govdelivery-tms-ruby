@@ -1,10 +1,5 @@
 module IPAWS
-  class ResponseTypesController < ApplicationController
-
-    include FeatureChecker
-
-    before_filter :find_user
-    feature :ipaws
+  class ResponseTypesController < IPAWS::Controller
 
     def index
       respond_with ResponseType.all

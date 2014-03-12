@@ -4,7 +4,7 @@ describe IPAWS::EventCodesController do
 
   describe "GET index" do
     it 'returns the array of IPAWS event codes' do
-      user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
+      user = create :user, account: create(:account, ipaws_enabled: true)
       sign_in user
       get :index, format: :json
       response.response_code.should == 200
@@ -14,7 +14,7 @@ describe IPAWS::EventCodesController do
     end
 
     it 'responds with 403 (forbidden) if no IPAWS vendor' do
-      user = create :user, account: create(:account, ipaws_vendor: nil)
+      user = create :user, account: create(:account, ipaws_enabled: false)
       sign_in user
       get :index, format: :json
       response.response_code.should == 403

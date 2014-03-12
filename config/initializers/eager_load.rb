@@ -8,4 +8,6 @@ if defined?(JRUBY_VERSION)
   $CLASSPATH << 'lib/tms_extended.jar'
   require 'ipaws.jar'
   $CLASSPATH << 'lib/ipaws.jar'
+
+  java_import com.govdelivery.ipaws.IPAWSClient
 end

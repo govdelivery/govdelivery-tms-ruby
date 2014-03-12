@@ -7,7 +7,6 @@ class Account < ActiveRecord::Base
   belongs_to :sms_vendor
   belongs_to :stop_handler, :class_name => 'EventHandler'
   belongs_to :voice_vendor
-  belongs_to :ipaws_vendor, :class_name => 'IPAWS::Vendor'
 
   has_many :commands
   has_many :email_messages
