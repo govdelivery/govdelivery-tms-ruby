@@ -7,7 +7,9 @@ module IPAWS
     # Default to the sample SOAP service.
     self.soap_service = SampleSoapService.new
     if defined?(java_import)
-      # Add import of Java SOAP service here.
+      # Add java_import of Java SOAP service here.java_import java.util.HashMap;
+      java_import com.govdelivery.ipaws.IPAWSClient
+      self.soap_service = IPAWSClient.new(120082, "IPAWSOPEN_120082")
     end
 
     def self.ack?
