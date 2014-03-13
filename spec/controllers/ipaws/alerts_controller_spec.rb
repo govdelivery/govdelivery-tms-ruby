@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IPAWS::AlertsController do
+describe IPAWS::AlertsController, :jruby do
 
   # These sample responses were derived directly from the IPAWS spec PDF.
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IPAWS::CogProfilesController do
+describe IPAWS::CogProfilesController, :jruby do
 
   let(:sample_cog_profile) do
     {

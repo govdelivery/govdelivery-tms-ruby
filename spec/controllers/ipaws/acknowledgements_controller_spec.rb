@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IPAWS::AcknowledgementsController do
+describe IPAWS::AcknowledgementsController, :jruby do
 
   let(:sample_ack) do
     { 'ACK' => 'PONG' }
