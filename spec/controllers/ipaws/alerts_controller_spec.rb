@@ -4,6 +4,16 @@ if defined? JRUBY_VERSION
 
   describe IPAWS::AlertsController do
 
+    let(:ipaws_credentials) do
+      {
+        ipaws_user_id: 12345,
+        ipaws_cog_id: 'IPAWS_OPEN_12345',
+        ipaws_jks_base64: 'AAAAAAA',
+        ipaws_public_password: 'alligator',
+        ipaws_private_password: ')W*#$*SLDFJK#H$#'
+      }
+    end
+
     # These sample responses were derived directly from the IPAWS spec PDF.
 
     let(:sample_alert) do
@@ -87,7 +97,7 @@ if defined? JRUBY_VERSION
         IPAWSClient.any_instance.stubs(:postMessage).returns(sample_post_message_response)
         user = create :user, account: create(:account, ipaws_enabled: true)
         sign_in user
-        post :create, sample_alert
+        post :create, ipaws_credentials.merge(sample_alert)
         response.response_code.should == 200
         expect(response.body).to be_present
         data = JSON.parse(response.body)
@@ -98,7 +108,7 @@ if defined? JRUBY_VERSION
         IPAWSClient.any_instance.stubs(:postMessage).returns(sample_post_message_error_response)
         user = create :user, account: create(:account, ipaws_enabled: true)
         sign_in user
-        post :create, sample_alert
+        post :create, ipaws_credentials.merge(sample_alert)
         response.response_code.should == 200
         expect(response.body).to be_present
         data = JSON.parse(response.body)
@@ -106,10 +116,20 @@ if defined? JRUBY_VERSION
       end
 
       it 'responds with 403 (forbidden) if no IPAWS vendor' do
+        IPAWSClient.any_instance.stubs(:postMessage).returns(sample_post_message_response)
         user = create :user, account: create(:account, ipaws_enabled: false)
         sign_in user
-        post :create, sample_alert
+        post :create, ipaws_credentials.merge(sample_alert)
         response.response_code.should == 403
+      end
+
+      [:ipaws_user_id, :ipaws_cog_id, :ipaws_jks_base64, :ipaws_public_password, :ipaws_private_password].each do |ipaws_credential|
+        it "response with 400 (Bad Request) if #{ipaws_credential} is missing" do
+          user = create :user, account: create(:account, ipaws_enabled: true)
+          sign_in user
+          post :create, ipaws_credentials.except(ipaws_credential).merge(sample_alert)
+          response.response_code.should == 400
+        end
       end
 
     end

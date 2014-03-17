@@ -4,6 +4,16 @@ if defined? JRUBY_VERSION
 
   describe IPAWS::CogProfilesController do
 
+    let(:ipaws_credentials) do
+      {
+        ipaws_user_id: 12345,
+        ipaws_cog_id: 'IPAWS_OPEN_12345',
+        ipaws_jks_base64: 'AAAAAAA',
+        ipaws_public_password: 'alligator',
+        ipaws_private_password: ')W*#$*SLDFJK#H$#'
+      }
+    end
+
     let(:sample_cog_profile) do
       {
         'cogid' => 999, 
@@ -45,12 +55,15 @@ if defined? JRUBY_VERSION
       }
     end
 
+    before(:each) do
+      IPAWSClient.any_instance.stubs(:getCOGProfile).returns(sample_cog_profile)
+    end
+
     describe "GET show" do
       it 'returns profile based on IPAWS Service getCOGProfile request' do
-        IPAWSClient.any_instance.stubs(:getCOGProfile).returns(sample_cog_profile)
         user = create :user, account: create(:account, ipaws_enabled: true)
         sign_in user
-        get :show, format: :json
+        get :show, { format: :json }.merge(ipaws_credentials)
         response.response_code.should == 200
         expect(response.body).to be_present
         data = JSON.parse(response.body)
@@ -60,8 +73,17 @@ if defined? JRUBY_VERSION
       it 'responds with 403 (forbidden) if no IPAWS vendor' do
         user = create :user, account: create(:account, ipaws_enabled: false)
         sign_in user
-        get :show, format: :json
+        get :show, { format: :json }.merge(ipaws_credentials)
         response.response_code.should == 403
+      end
+
+      [:ipaws_user_id, :ipaws_cog_id, :ipaws_jks_base64, :ipaws_public_password, :ipaws_private_password].each do |ipaws_credential|
+        it "response with 400 (Bad Request) if #{ipaws_credential} is missing" do
+          user = create :user, account: create(:account, ipaws_enabled: true)
+          sign_in user
+          get :show, { format: :json }.merge(ipaws_credentials).except(ipaws_credential)
+          response.response_code.should == 400
+        end
       end
     end
 
