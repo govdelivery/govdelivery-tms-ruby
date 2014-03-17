@@ -7,7 +7,7 @@ module IPAWS
     protected
 
     def ipaws_client
-      IPAWSClient.new(120082, "IPAWSOPEN_120082")
+      IPAWSClient.new(120082, "IPAWSOPEN_120082", "config/IPAWSOPEN_120082.jks", "w0rk#8980", "2670soa#wRn")
     end
 
     private
