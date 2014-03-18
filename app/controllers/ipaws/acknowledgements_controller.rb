@@ -6,7 +6,7 @@ module IPAWS
     feature :ipaws
 
     def show
-      respond_with @account.ipaws_vendor.client.getAck
+      respond_with @account.ipaws_vendor.client.ack
     end
 
   end

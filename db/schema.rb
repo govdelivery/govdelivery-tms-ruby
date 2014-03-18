@@ -153,12 +153,13 @@ ActiveRecord::Schema.define(:version => 20140318161404) do
   end
 
   create_table "ipaws_vendors", :force => true do |t|
-    t.integer  "cog_id",                    :precision => 38, :scale => 0, :null => false
-    t.string   "user_id",                                                  :null => false
-    t.text     "encrypted_public_password",                                :null => false
-    t.binary   "jks",                                                      :null => false
-    t.datetime "created_at",                                               :null => false
-    t.datetime "updated_at",                                               :null => false
+    t.integer  "cog_id",                     :precision => 38, :scale => 0, :null => false
+    t.string   "user_id",                                                   :null => false
+    t.text     "public_password_encrypted",                                 :null => false
+    t.text     "private_password_encrypted",                                :null => false
+    t.binary   "jks",                                                       :null => false
+    t.datetime "created_at",                                                :null => false
+    t.datetime "updated_at",                                                :null => false
   end
 
   create_table "keywords", :force => true do |t|

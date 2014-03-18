@@ -56,7 +56,7 @@ if defined? JRUBY_VERSION
     end
 
     before(:each) do
-      IPAWSClient.any_instance.stubs(:getCOGProfile).returns(sample_cog_profile)
+      IPAWSClient.any_instance.stubs(:cog_profile).returns(sample_cog_profile)
     end
 
     describe "GET show" do

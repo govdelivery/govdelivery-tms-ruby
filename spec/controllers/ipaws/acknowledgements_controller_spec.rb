@@ -19,7 +19,7 @@ if defined? JRUBY_VERSION
     end
 
     before(:each) do
-      IPAWSClient.any_instance.stubs(:getAck).returns(sample_ack)
+      IPAWSClient.any_instance.stubs(:ack).returns(sample_ack)
     end
 
     describe "GET show" do
