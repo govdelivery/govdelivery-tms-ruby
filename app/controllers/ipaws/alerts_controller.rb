@@ -1,8 +1,12 @@
 module IPAWS
-  class AlertsController < IPAWS::Controller
+  class AlertsController < ApplicationController
+
+    include FeatureChecker
+    before_filter :find_user
+    feature :ipaws
 
     def create
-      render json: ipaws_client.postMessage(alert_params)
+      render json: @account.ipaws_vendor.client.postMessage(alert_params)
     end
 
     private

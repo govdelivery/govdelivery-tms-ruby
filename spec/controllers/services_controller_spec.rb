@@ -6,7 +6,7 @@ describe ServicesController do
       sms_vendor: create(:sms_vendor),
       email_vendor: create(:email_vendor),
       voice_vendor: create(:voice_vendor),
-      ipaws_enabled: true
+      ipaws_vendor: create(:ipaws_vendor)
     user = create :user, account: account
     sign_in user
     get :index

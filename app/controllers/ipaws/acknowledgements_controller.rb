@@ -1,8 +1,12 @@
 module IPAWS
-  class AcknowledgementsController < IPAWS::Controller
+  class AcknowledgementsController < ApplicationController
+
+    include FeatureChecker
+    before_filter :find_user
+    feature :ipaws
 
     def show
-      respond_with ipaws_client.getAck
+      respond_with @account.ipaws_vendor.client.getAck
     end
 
   end
