@@ -5,6 +5,8 @@ describe Account do
   let(:sms_vendor) { create(:sms_vendor) }
   let(:shared_sms_vendor) { create(:shared_sms_vendor) }
 
+  it { should belong_to(:ipaws_vendor) }
+
   context 'from_email_allowed?' do
     subject {
       create(:account, email_vendor: email_vendor)

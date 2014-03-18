@@ -31,4 +31,12 @@ FactoryGirl.define do
     password 'secret'
     from '+15555555555'
   end
+
+  factory :ipaws_vendor, class: IPAWS::Vendor do
+    cog_id 1
+    user_id 'IPAWSOPEN_1'
+    public_password 'aligator'
+    private_password '#@)(*$DSKOJFSPO*'
+    jks 'JKS'
+  end
 end

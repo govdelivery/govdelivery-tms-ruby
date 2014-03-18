@@ -131,6 +131,8 @@ GEM
     mock_redis (0.10.0)
     multi_json (1.8.4)
     multipart-post (1.2.0)
+    naether (0.10.1)
+      rjb (~> 1.4.0)
     naether (0.10.1-java)
     newrelic_rpm (3.7.0.177)
     orm_adapter (0.4.0)
@@ -214,6 +216,7 @@ GEM
       redis (>= 2.2.0)
     request_exception_handler (0.4)
       actionpack (>= 2.1)
+    rjb (1.4.9)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -231,6 +234,8 @@ GEM
       rspec-mocks (~> 2.14.0)
     ruby-graphviz (1.0.9)
     ruby-oci8 (2.1.5)
+    shoulda-matchers (2.5.0)
+      activesupport (>= 3.0.0)
     sidekiq (2.17.7)
       celluloid (>= 0.15.2)
       connection_pool (>= 1.0.0)
@@ -336,6 +341,7 @@ DEPENDENCIES
   request_exception_handler
   rspec-rails
   ruby-oci8
+  shoulda-matchers
   sidekiq-failures
   sidekiq-pro
   sidekiq-retries
