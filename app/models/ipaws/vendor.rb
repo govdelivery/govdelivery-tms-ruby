@@ -13,11 +13,21 @@ module IPAWS
     def client(reload=false)
       @client = nil if reload
       @client ||= begin
-        jks_tempfile = Tempfile.new(['ipaws', '.jks'])
-        jks_tempfile.write(jks)
-        jks_tempfile.close
-        IPAWSClient.new(cog_id, user_id, jks_tempfile.path, public_password, private_password)
+        write_jks_file
+        IPAWSClient.new(cog_id, user_id, jks_path, public_password, private_password)
       end
+    end
+
+    def jks_path
+      # Make the path a combination of the cog id and a hash of the jks data.
+      jks_hash = Digest::MD5.hexdigest(jks)
+      File.join Rails.root, 'tmp', "ipaws_#{cog_id}_#{jks_hash}.jks"
+    end
+
+    def write_jks_file
+      path = jks_path
+      FileUtils.mkdir_p File.dirname(path)
+      File.open(path, 'wb') { |f| f.write(jks) } unless File.exists?(path)
     end
 
   end
