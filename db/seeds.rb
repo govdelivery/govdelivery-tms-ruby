@@ -64,10 +64,12 @@ if Rails.env.development? || Rails.env.ci?
                                              :email_vendor => email_loopback,
                                              :name         => "OMG")
         end
-  omg.from_addresses.build(:from_email => 'tms_dev@evotest.govdelivery.com',
+  unless omg.default_from_address
+    omg.from_addresses.build(:from_email => 'tms_dev@evotest.govdelivery.com',
                            :errors_to => 'errors@evotest.govdelivery.com',
                            :reply_to => 'reply@evotest.govdelivery.com',
                            :is_default => true)
+  end
   omg.save!
 
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
