@@ -1,6 +1,10 @@
 module IPAWS
   class Vendor < ActiveRecord::Base
 
+    if defined?(JRUBY_VERSION)
+      java_import com.govdelivery.ipaws.IPAWSClient
+    end
+
     self.table_name = 'ipaws_vendors'
 
     has_many :accounts, foreign_key: :ipaws_vendor_id, inverse_of: :ipaws_vendor
