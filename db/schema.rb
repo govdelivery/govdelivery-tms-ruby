@@ -86,8 +86,8 @@ ActiveRecord::Schema.define(:version => 20140326191925) do
     t.datetime "created_at",                                                        :null => false
   end
 
+  add_index "email_recipient_clicks", ["email_message_id", "email_recipient_id", "id", "clicked_at"], :name => "erc_idx1", :tablespace => "tsms_indx01"
   add_index "email_recipient_clicks", ["email_message_id", "email_recipient_id"], :name => "i922bea928d6001e8d90c6daf89654", :tablespace => "tsms_indx01"
-  add_index "email_recipient_clicks", ["email_recipient_id", "email_message_id", "id", "clicked_at", "url"], :name => "erc_idx1", :tablespace => "tsms_indx01"
 
   create_table "email_recipient_opens", :force => true do |t|
     t.integer  "email_message_id",                  :precision => 38, :scale => 0, :null => false
@@ -98,8 +98,8 @@ ActiveRecord::Schema.define(:version => 20140326191925) do
     t.datetime "created_at",                                                       :null => false
   end
 
+  add_index "email_recipient_opens", ["email_message_id", "email_recipient_id", "id", "opened_at"], :name => "ero_idx1", :tablespace => "tsms_indx01"
   add_index "email_recipient_opens", ["email_message_id", "email_recipient_id"], :name => "i46e4b3758023b96cabd6e28d7f0bc", :tablespace => "tsms_indx01"
-  add_index "email_recipient_opens", ["email_recipient_id", "email_message_id", "id", "opened_at"], :name => "ero_idx1", :tablespace => "tsms_indx01"
 
   create_table "email_recipients", :force => true do |t|
     t.integer  "message_id",                   :precision => 38, :scale => 0,                    :null => false

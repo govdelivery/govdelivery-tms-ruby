@@ -6,8 +6,13 @@ class EmailRecipient < ActiveRecord::Base
   validates_presence_of :message, :unless => :skip_message_validation
   validates :email, :presence => true, length: {maximum: 256}, :email => true
   
-  has_many :email_recipient_clicks
-  has_many :email_recipient_opens
+  ##
+  # The conditions on these scopes add message_id, which is at the front of the index on those tables
+  # (and will become the partition key in the near future). Removing this condition will make 
+  # these relations perform very poorly.
+  #
+  has_many :email_recipient_clicks, :conditions => proc{"email_recipient_clicks.email_message_id = #{self.message_id}"}
+  has_many :email_recipient_opens, :conditions => proc{"email_recipient_opens.email_message_id = #{self.message_id}"}
 
   ##
   # Convert this recipient into a record string for sending to ODM. 
