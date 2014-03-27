@@ -37,4 +37,18 @@ describe EmailRecipientClick do
       it { should be_invalid }
     end
   end
+
+  it "should select proper columns for list" do
+    subject.save!
+    result = email_recipient.email_recipient_clicks.indexed.first
+    cols     = [:email_recipient_id, :email_message_id, :clicked_at, :id, :url]
+    not_cols = (EmailRecipientClick.columns.map(&:name).map(&:to_sym) - cols)
+
+    cols.each do |c|
+      assert result.send(c)
+    end
+    not_cols.each do |c|
+      expect { result.send(c) }.to raise_error
+    end
+  end
 end

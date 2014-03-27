@@ -20,6 +20,6 @@ class EmailStatsController < ApplicationController
   end
 
   def events_for(type, recipient_scope)
-    recipient_scope.send(:"email_recipient_#{type}s")
+    recipient_scope.send(:"email_recipient_#{type}s").indexed
   end
 end

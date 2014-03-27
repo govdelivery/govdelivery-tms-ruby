@@ -37,4 +37,18 @@ describe EmailRecipientOpen do
       it { should be_invalid }
     end
   end
+
+  it "should select proper columns for list" do
+    subject.save!
+    result = email_recipient.email_recipient_opens.indexed.first
+    cols     = [:email_recipient_id, :email_message_id, :opened_at, :id]
+    not_cols = (EmailRecipientOpen.columns.map(&:name).map(&:to_sym) - cols)
+
+    cols.each do |c|
+      assert result.send(c)
+    end
+    not_cols.each do |c|
+      expect { result.send(c) }.to raise_error
+    end
+  end
 end
