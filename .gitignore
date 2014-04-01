@@ -23,8 +23,3 @@
 build/**/*
 config/newrelic.yml
 public/custom_reports/**/*
-
-#rvm or whatever
-.rvmrc
-.ruby-version
-.ruby-gemset
