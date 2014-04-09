@@ -94,7 +94,7 @@ USAGE
     v.worker = @options[:vendor_worker]
     v.help_text = @options[:vendor_help_text]
     v.stop_text = @options[:vendor_stop_text]
-    v.shared = @options[:shared]
+    v.shared = !!@options[:shared]
 
     v.save
     
