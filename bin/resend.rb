@@ -110,7 +110,6 @@ end
 if __FILE__ == $0
   file = File.open(ARGV.first, 'r')
   require File.expand_path("../../config/environment", __FILE__)
-  Rails.logger.level = Logger::DEBUG
   resend = Resend.new
   trap('INT') do
     resend.quit!
