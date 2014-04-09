@@ -52,10 +52,11 @@ group :development, :test do
     gem 'pry-debugger', require: 'pry'
   end
   gem 'pry', require: 'pry'
+  gem 'brakeman'
 end
 
 group :development do
-  gem 'rails-erd'  
+  gem 'rails-erd'
 end
 
 group :test do
