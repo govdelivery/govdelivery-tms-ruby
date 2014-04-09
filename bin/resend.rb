@@ -88,7 +88,7 @@ class Resend
     end
   rescue
     @stdout_logger.debug "Error resending email ##{email_id}: #{$!.message}"
-    @failed_logger.debug "MESSAGE_IDS::#{email_id} #{email.id || 'nil'}\n#{$!.message}\n#{$!.backtrace.join("\n")}"
+    @failed_logger.debug "MESSAGE_IDS::#{email_id} #{email.try(:id) || 'nil'}\n#{$!.message}\n#{$!.backtrace.join("\n")}"
   end
 
   def copy_email(original)
