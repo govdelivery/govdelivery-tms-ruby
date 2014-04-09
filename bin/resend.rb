@@ -101,8 +101,7 @@ class Resend
     email.open_tracking_enabled = original.open_tracking_enabled
     email.click_tracking_enabled = original.click_tracking_enabled
     email.macros = original.macros
-    # email.async_recipients = original.recipients.map { |recipient| recipient.attributes.slice('email') }
-    email.async_recipients = [{ 'email' => 'bleh@sink.govdelivery.com' }]; original.recipients.map { |recipient| recipient.attributes.slice('email') }
+    email.async_recipients = original.recipients.map { |recipient| recipient.attributes.slice('email') }
     email
   end
 
