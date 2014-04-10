@@ -15,8 +15,8 @@ qc:
   <<: *defaults
   url: 'redis://qc-xactredis-master-ep.tops.gdi:6379'
 integration:
-  url: 'redis://int-xactredis-master-ep.tops.gdi:6379'
   <<: *defaults
+  url: 'redis://int-xactredis-master-ep.tops.gdi:6379'
 stage:
   <<: *defaults
   url: 'redis://stg-xactredis-master-ep.tops.gdi:6379'
