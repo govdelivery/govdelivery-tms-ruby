@@ -4,8 +4,6 @@ class Resend
 
   BATCH_SIZE = 100
 
-  USERS = Hash.new { |hash, id| hash[id] = User.find(id.to_i) }
-
   def initialize
     @quit = false
   end
@@ -93,7 +91,7 @@ class Resend
 
   def copy_email(original)
     email = EmailMessage.new
-    email.user = original.user #USERS[original.user_id]
+    email.user = original.user
     email.account = email.user.account 
     email.body = original.body
     email.from_name = original.from_name
