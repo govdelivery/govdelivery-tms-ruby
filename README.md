@@ -8,7 +8,6 @@ Creating a tag
     git tag -a 1.4.0 -m 'creating another release'
     git push origin 1.4.0
 
-
 Deploying
 =========
 
