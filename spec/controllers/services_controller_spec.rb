@@ -23,7 +23,8 @@ describe ServicesController do
       ipaws_categories: ipaws_categories_path,
       ipaws_response_types: ipaws_response_types_path,
       ipaws_acknowledgement: ipaws_acknowledgement_path,
-      ipaws_cog_profile: ipaws_cog_profile_path
+      ipaws_cog_profile: ipaws_cog_profile_path,
+      ipaws_alerts: ipaws_alerts_path
     }.stringify_keys
   end
 
