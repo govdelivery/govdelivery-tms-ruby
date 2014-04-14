@@ -94,7 +94,7 @@ if defined? JRUBY_VERSION
     describe "POST create" do
 
       it 'returns the IPAWS successful response' do
-        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:post_message).returns(sample_post_message_response)
+        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_message_response)
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         post :create, ipaws_credentials.merge(sample_alert)
@@ -105,7 +105,7 @@ if defined? JRUBY_VERSION
       end
 
       it 'returns the IPAWS error response' do
-        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:post_message).returns(sample_post_message_error_response)
+        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_message_error_response)
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         post :create, ipaws_credentials.merge(sample_alert)
@@ -116,7 +116,6 @@ if defined? JRUBY_VERSION
       end
 
       it 'responds with 403 (forbidden) if no IPAWS vendor' do
-        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:post_message).returns(sample_post_message_response)
         user = create :user, account: create(:account, ipaws_vendor: nil)
         sign_in user
         post :create, ipaws_credentials.merge(sample_alert)

@@ -14,6 +14,13 @@ module IPAWS
     attr_encrypted :public_password, attribute: :public_password_encrypted
     attr_encrypted :private_password, attribute: :private_password_encrypted
 
+    delegate :ack, :cog_profile, to: :client
+
+    def post_cap(attributes)
+      # postCAP needs the attributes "sanitized" with as_json to remove symbols.
+      client.postCAP(attributes.as_json)
+    end
+
     def client(reload=false)
       @client = nil if reload
       @client ||= begin
@@ -21,6 +28,8 @@ module IPAWS
         IPAWSClient.new(cog_id, user_id, jks_path, public_password, private_password)
       end
     end
+
+    private
 
     def jks_path
       # Make the path a combination of the cog id and a hash of the jks data.

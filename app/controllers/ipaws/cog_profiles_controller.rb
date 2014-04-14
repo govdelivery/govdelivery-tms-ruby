@@ -6,7 +6,7 @@ module IPAWS
     feature :ipaws
 
     def show
-      respond_with @account.ipaws_vendor.client.cog_profile
+      respond_with @account.ipaws_vendor.cog_profile
     end
 
   end
