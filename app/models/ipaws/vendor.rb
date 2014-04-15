@@ -18,7 +18,7 @@ module IPAWS
 
     def post_cap(attributes)
       # postCAP needs the attributes "sanitized" with as_json to remove symbols.
-      client.postCAP(attributes.as_json)
+      reform_cap_response(client.postCAP(attributes.as_json))
     end
 
     def client(reload=false)
@@ -31,9 +31,21 @@ module IPAWS
 
     private
 
+    def reform_cap_response(cap_response)
+      # The CAP response provided by FEMA is in a strange format:  
+      # 1. The response attributes are not structurally grouped.
+      # 2. The response attributes are not themselves under any sort of key (empty string).
+      if responses = cap_response.delete('')
+        cap_response['responses'] = responses.in_groups_of(4, fill = false).map do |group|
+          group.inject { |response, attributes| response.merge(attributes) }
+        end
+      end
+      cap_response
+    end
+
     def jks_path
       # Make the path a combination of the cog id and a hash of the jks data.
-      jks_hash = Digest::MD5.hexdigest(jks)
+      jks_hash = Digest::MD5.hexdigest(jks.to_s)
       File.join Rails.root, 'tmp', "ipaws_#{cog_id}_#{jks_hash}.jks"
     end
 

@@ -47,4 +47,97 @@ describe IPAWS::Vendor do
     end
   end
 
+  describe '#post_cap' do
+    let(:raw_response) do
+      {
+        "identifier"=>"CAP12-TEST-1397575726",
+        "" => [
+          {"CHANNELNAME"=>"CAPEXCH"},
+          {"STATUSITEMID"=>"200"},
+          {"ERROR"=>"N"},
+          {"STATUS"=>"Ack"},
+          {"CHANNELNAME"=>"CAPEXCH"},
+          {"STATUSITEMID"=>"202"},
+          {"ERROR"=>"N"},
+          {"STATUS"=>"alert-signature-is-valid"},
+          {"CHANNELNAME"=>"IPAWS"},
+          {"STATUSITEMID"=>"300"},
+          {"ERROR"=>"N"},
+          {"STATUS"=>"Ack"},
+          {"CHANNELNAME"=>"NWEM"},
+          {"STATUSITEMID"=>"401"},
+          {"ERROR"=>"N"},
+          {"STATUS"=>"message-not-disseminated-as-NWEM"},
+          {"CHANNELNAME"=>"EAS"},
+          {"STATUSITEMID"=>"501"},
+          {"ERROR"=>"N"},
+          {"STATUS"=>"message-not-disseminated-as-EAS"},
+          {"CHANNELNAME"=>"CMAS"},
+          {"STATUSITEMID"=>"600"},
+          {"ERROR"=>"N"},
+          {"STATUS"=>"Ack"},
+          {"CHANNELNAME"=>"PUBLIC"},
+          {"STATUSITEMID"=>"800"},
+          {"ERROR"=>"N"},
+          {"STATUS"=>"Ack"}
+        ]
+      }
+    end
+    it 'converts symbol keys to strings' do
+      subject.client.expects(:postCAP).with({'key' => 'value'}).returns(raw_response)
+      subject.post_cap({key: 'value'})
+    end
+    it 'groups response attributes in groups of four, and places them under the key \'responses\'' do
+      subject.client.stubs(:postCAP).returns(raw_response)
+      subject.post_cap({}).should == 
+      {
+        "identifier"=>"CAP12-TEST-1397575726",
+        "responses" => [
+          {
+            "CHANNELNAME"=>"CAPEXCH",
+            "STATUSITEMID"=>"200",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          },
+          {
+            "CHANNELNAME"=>"CAPEXCH",
+            "STATUSITEMID"=>"202",
+            "ERROR"=>"N",
+            "STATUS"=>"alert-signature-is-valid"
+          },
+          {
+            "CHANNELNAME"=>"IPAWS",
+            "STATUSITEMID"=>"300",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          },
+          {
+            "CHANNELNAME"=>"NWEM",
+            "STATUSITEMID"=>"401",
+            "ERROR"=>"N",
+            "STATUS"=>"message-not-disseminated-as-NWEM"
+          },
+          {
+            "CHANNELNAME"=>"EAS",
+            "STATUSITEMID"=>"501",
+            "ERROR"=>"N",
+            "STATUS"=>"message-not-disseminated-as-EAS"
+          },
+          {
+            "CHANNELNAME"=>"CMAS",
+            "STATUSITEMID"=>"600",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          },
+          {
+            "CHANNELNAME"=>"PUBLIC",
+            "STATUSITEMID"=>"800",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          }
+        ]
+      }
+    end
+  end
+
 end
