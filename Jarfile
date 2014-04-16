@@ -1,7 +1,7 @@
 local_repo 'vendor/jars'
 jar 'org.jvnet.jax-ws-commons:jaxws-maven-plugin:2.2'
 jar 'com.thoughtworks.xstream:xstream:1.4.7'
-jar 'org.slf4j:slf4j-api:1.6.6'
+jar 'org.slf4j:slf4j-simple:1.7.7'
 jar 'org.apache.ws.security:wss4j:1.6.10'
 local 'lib/ipaws.jar'
 local 'lib/tms_extended.jar'
