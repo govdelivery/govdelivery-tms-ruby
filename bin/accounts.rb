@@ -44,6 +44,9 @@ Examples:
 
   Create Account with Email vendor
     #{__FILE__} -n "Email Test Account" -e 10025 -f "test@evotest.govdelivery.com"
+
+  Create Account with IPAWS vendor
+    #{__FILE__} -n "IPAWS Test Account" -a 10026
     
 Options:
 USAGE
@@ -64,6 +67,9 @@ USAGE
       end
       opts.on("-e", "--email_vendor EMAILVENDOR", "The database id of the desired email vendor") do |p|
         @options[:account_email_vendor] = p
+      end
+      opts.on("-a", "--ipaws_vendor IPAWSVENDOR", "The database id of the desired IPAWS vendor") do |p|
+        @options[:account_ipaws_vendor] = p
       end
       opts.on("-f", "--from_address [FROMADDRESS]", "The default from address for this account; required if there is an email vendor.") do |p|
         @options[:account_from_address] = p
@@ -99,6 +105,7 @@ USAGE
     a.voice_vendor_id = @options[:account_voice_vendor]
     a.sms_vendor_id = @options[:account_sms_vendor]
     a.email_vendor_id = @options[:account_email_vendor]
+    a.ipaws_vendor_id = @options[:account_ipaws_vendor]
     a.dcm_account_codes = @options[:dcm_account_codes]
     a.help_text = @options[:help_text]
     a.stop_text = @options[:stop_text]
@@ -141,6 +148,7 @@ USAGE
     tputs "sms vendor:", account.sms_vendor_id.to_s
     tputs "voice vendor:", account.voice_vendor_id.to_s
     tputs "email vendor:", account.email_vendor_id.to_s
+    tputs "ipaws vendor:", account.ipaws_vendor_id.to_s
     if(account.help_text)
       tputs "help text:", account.help_text
     end

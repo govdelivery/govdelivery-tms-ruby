@@ -13,6 +13,8 @@ class CreateVendor
       create_voice_vendor(@options)
     elsif(@options[:vendor_type] == "EmailVendor")
       create_email_vendor(@options)
+    elsif(@options[:vendor_type] == "IPAWSVendor")
+      create_ipaws_vendor(@options)
     else
       puts "Incorrect Vendor type. see --help"
     end
@@ -42,7 +44,10 @@ Examples:
     #{__FILE__} -t VoiceVendor -n "651-433-6258" -u "ACcc41a7e742457806f26d91a1ea19de9f" -p "331b3a44b5067a3c02013a6cfaa18b1c" -f "651-433-6258" -w "TwilioVoiceWorker" 
 
   Create Email Vendor
-    #{__FILE__} -t EmailVendor -n "ODM" -w "Odm::TmsExtendedSenderWorker" 
+    #{__FILE__} -t EmailVendor -n "ODM" -w "Odm::TmsExtendedSenderWorker"
+
+  Create IPAWS Vendor
+    #{__FILE__} -t IPAWSVendor -c 120082 -u "IPAWSOPEN_120082" -p "w0rk#8980" -r "2670soa#wRn" -j /path/to/file.jks
 
 Options:
 USAGE
@@ -76,6 +81,15 @@ USAGE
       opts.on("-a", "--shared", "Indicate if this SMS vendor is shared or exclusive.  If you pass this argument, the SMS vendor will be shared.") do |p|
         @options[:shared] = true
       end
+      opts.on("-c", "--cog-id IPAWS::Vendor COG ID") do |p|
+        @options[:vendor_cog_id] = p.to_s
+      end
+      opts.on("-r", "--private-password IPAWS::Vendor private password") do |p|
+        @options[:vendor_private_password] = p.to_s
+      end
+      opts.on("-j", "--jks IPAWS::Vendor JKS file") do |p|
+        @options[:vendor_jks_file] = p.to_s
+      end
 
     end.parse!(argv)
   end
@@ -99,9 +113,9 @@ USAGE
     v.save
     
     if(v.errors)
-	puts v.errors.messages
+      puts v.errors.messages
     else
-        puts "Created SmsVendor id: " + v.id.to_s 
+      puts "Created SmsVendor id: " + v.id.to_s 
     end
 
   end
@@ -118,9 +132,9 @@ USAGE
     v.save
 
     if(v.errors)
-	puts v.errors.messages
+      puts v.errors.messages
     else
-        puts "Created VoiceVendor id: " + v.id.to_s 
+      puts "Created VoiceVendor id: " + v.id.to_s 
     end
 
   end
@@ -134,11 +148,25 @@ USAGE
     v.save
 
     if(v.errors)
-	puts v.errors.messages
+      puts v.errors.messages
     else
       puts "Created EmailVendor id: " + v.id.to_s 
     end
 
+  end
+
+  def create_ipaws_vendor(options)
+    v = IPAWS::Vendor.new
+    v.cog_id = options[:vendor_cog_id]
+    v.user_id = options[:vendor_username]
+    v.public_password = options[:vendor_password]
+    v.private_password = options[:vendor_private_password]
+    v.jks = File.binread(options[:vendor_jks_file])
+    if v.save
+      puts "Created IPAWS::Vendor id: #{v.id}"
+    else
+      puts v.errors.full_messages
+    end
   end
 
   def list_vendors
