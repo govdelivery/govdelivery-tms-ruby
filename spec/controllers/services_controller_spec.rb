@@ -24,6 +24,8 @@ describe ServicesController do
       ipaws_response_types: ipaws_response_types_path,
       ipaws_acknowledgement: ipaws_acknowledgement_path,
       ipaws_cog_profile: ipaws_cog_profile_path,
+      ipaws_nwem_authorization: nwem_authorization_ipaws_cog_profile_path,
+      ipaws_nwem_auxilary_data: nwem_auxilary_data_ipaws_cog_profile_path,
       ipaws_alerts: ipaws_alerts_path
     }.stringify_keys
   end
