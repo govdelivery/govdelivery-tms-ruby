@@ -14,11 +14,25 @@ module IPAWS
     attr_encrypted :public_password, attribute: :public_password_encrypted
     attr_encrypted :private_password, attribute: :private_password_encrypted
 
-    delegate :ack, :cog_profile, to: :client
+    def ack
+      client.getAck.as_json
+    end
+
+    def cog_profile
+      client.getCOGProfile.as_json
+    end
 
     def post_cap(attributes)
       # postCAP needs the attributes "sanitized" with as_json to remove symbols.
       reform_cap_response(client.postCAP(attributes.as_json))
+    end
+
+    def nwem_cog_authorization
+      client.isCogAuthorized.as_json
+    end
+
+    def nwem_auxilary_data
+      client.getNWEMAuxData.as_json
     end
 
     def client(reload=false)

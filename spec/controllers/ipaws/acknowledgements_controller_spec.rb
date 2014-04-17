@@ -14,12 +14,12 @@ if defined? JRUBY_VERSION
       }
     end
 
-    let(:sample_ack) do
-      { 'ACK' => 'PONG' }
+    let(:raw_response) do
+      [{"ACK"=>"PONG"}]
     end
 
     before(:each) do
-      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:ack).returns(sample_ack)
+      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:getAck).returns(raw_response)
     end
 
     describe "GET show" do
@@ -30,7 +30,7 @@ if defined? JRUBY_VERSION
         response.response_code.should == 200
         expect(response.body).to be_present
         data = JSON.parse(response.body)
-        expect(data).to be == sample_ack
+        data.should be_present
       end
 
       it 'responds with 403 (forbidden) if no IPAWS vendor' do

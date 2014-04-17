@@ -71,7 +71,10 @@ Xact::Application.routes.draw do
     resources :categories, only: :index
     resources :response_types, only: :index
     resource  :acknowledgement, only: :show
-    resource  :cog_profile, only: :show
+    resource  :cog_profile, only: :show do
+      get :nwem_authorization
+      get :nwem_auxilary_data
+    end
     resources :alerts, only: :create
   end
 

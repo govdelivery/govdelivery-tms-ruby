@@ -28,11 +28,10 @@ if defined? JRUBY_VERSION
       }
     end
 
-    let(:sample_post_message_response) do
-      {
-        "identifier"=>"CAP12-TEST-1397575726",
-        "" => [
-          {"CHANNELNAME"=>"CAPEXCH"},
+    let(:sample_post_cap_response) do
+      [{"identifier"=>"CAP12-TEST-1397743203"},
+       {"subParaListItem"=>
+         [{"CHANNELNAME"=>"CAPEXCH"},
           {"STATUSITEMID"=>"200"},
           {"ERROR"=>"N"},
           {"STATUS"=>"Ack"},
@@ -59,27 +58,22 @@ if defined? JRUBY_VERSION
           {"CHANNELNAME"=>"PUBLIC"},
           {"STATUSITEMID"=>"800"},
           {"ERROR"=>"N"},
-          {"STATUS"=>"Ack"}
-        ]
-      }
+          {"STATUS"=>"Ack"}]}]
     end
 
-    let(:sample_post_message_error_response) do
-      {
-        "identifier"=>"CAP12-TEST-1397575726",
-        "" => [
-          {"CHANNELNAME"=>"IPAWS"},
+    let(:sample_post_cap_error_response) do
+      [{"identifier"=>"CAP12-TEST-1397743203"},
+       {"subParaListItem"=>
+         [{"CHANNELNAME"=>"IPAWS"},
           {"STATUSITEMID"=>"307"},
           {"ERROR"=>"Y"},
-          {"STATUS"=>"reference-element-invalid"}
-        ]
-      }
+          {"STATUS"=>"reference-element-invalid"}]}]
     end
 
     describe "POST create" do
 
       it 'returns the IPAWS successful response' do
-        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_message_response)
+        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_cap_response)
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         post :create, ipaws_credentials.merge(sample_alert)
@@ -89,7 +83,7 @@ if defined? JRUBY_VERSION
       end
 
       it 'returns the IPAWS error response' do
-        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_message_error_response)
+        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_cap_error_response)
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         post :create, ipaws_credentials.merge(sample_alert)

@@ -14,67 +14,34 @@ if defined? JRUBY_VERSION
       }
     end
 
-    let(:sample_cog_profile) do
-      {
-        'cogid' => 999, 
-        'name' => 'IPAWS Training COG', 
-        'description' => 'Operating Group-IPAWS Training', 
-        'categoryName' => 'IPAWS-OPEN', 
-        'organizationName' => 'CIV', 
-        'cogEnabled' => 'Y',
-        'caeAuthorized' => 'N',
-        'caeCmasAuthorized' => 'N',
-        'eanAuthorized' => 'N',
-        'allEventCode' => 'N',
-        'allGeoCode' => 'N',
-        'easAuthorized' => 'N',
-        'cmasAlertAuthorized' => 'N',
-        'cmamTextAuthorized' => 'N',
-        'publicAlertAuthorized' => 'N',
-        'broadcastAuthorized' => 'N',
-        'email' => 'test@email.com',
-        'eventCodes' => [
-          { 'ALL' => 'SVR' },
-          { 'ALL' => 'SVS' },
-          { 'ALL' => 'EVI' },
-          { 'ALL' => 'SPW' },
-          { 'ALL' => 'ADR' },
-          { 'ALL' => 'AVW' },
-          { 'ALL' => 'TOE' },
-          { 'ALL' => 'FFW' },
-          { 'ALL' => 'FRW' },
-          { 'ALL' => 'VOW' },
-          { 'ALL' => 'BZW' },
-          { 'ALL' => 'CDW' },
-          { 'ALL' => 'LAE' },
-          { 'ALL' => 'TOR' },
-          { 'EAS' => 'CAE' },
-          { 'EAS' => 'RWT' } ],
-        'geoCodes' => [
-          { 'SAME' => '051510' } ]
-      }
+    let(:raw_response) do
+      [{"key"=>"value"}]
     end
 
     before(:each) do
-      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:cog_profile).returns(sample_cog_profile)
+      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:getCOGProfile).returns(raw_response)
+      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:isCogAuthorized).returns(raw_response)
+      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:getNWEMAuxData).returns(raw_response)
     end
 
-    describe "GET show" do
-      it 'returns profile based on IPAWS Service getCOGProfile request' do
-        user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
-        sign_in user
-        get :show, { format: :json }.merge(ipaws_credentials)
-        response.response_code.should == 200
-        expect(response.body).to be_present
-        data = JSON.parse(response.body)
-        expect(data).to be == sample_cog_profile
-      end
+    [:show, :nwem_authorization, :nwem_auxilary_data].each do |action|
+      describe "GET #{action}" do
+        it 'returns data from IPAWS/FEMA' do
+          user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
+          sign_in user
+          get action, { format: :json }.merge(ipaws_credentials)
+          response.response_code.should == 200
+          expect(response.body).to be_present
+          data = JSON.parse(response.body)
+          data.should be_present
+        end
 
-      it 'responds with 403 (forbidden) if no IPAWS vendor' do
-        user = create :user, account: create(:account, ipaws_vendor: nil)
-        sign_in user
-        get :show, { format: :json }.merge(ipaws_credentials)
-        response.response_code.should == 403
+        it 'responds with 403 (forbidden) if no IPAWS vendor' do
+          user = create :user, account: create(:account, ipaws_vendor: nil)
+          sign_in user
+          get action, { format: :json }.merge(ipaws_credentials)
+          response.response_code.should == 403
+        end
       end
     end
 
