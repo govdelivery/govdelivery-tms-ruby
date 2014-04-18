@@ -28,8 +28,8 @@ class ServicesController < ApplicationController
       @services[:ipaws_response_types] = ipaws_response_types_path
       @services[:ipaws_acknowledgement] = ipaws_acknowledgement_path
       @services[:ipaws_cog_profile] = ipaws_cog_profile_path
-      @services[:ipaws_nwem_authorization] = nwem_authorization_ipaws_cog_profile_path
-      @services[:ipaws_nwem_auxilary_data] = nwem_auxilary_data_ipaws_cog_profile_path
+      @services[:ipaws_nwem_authorization] = ipaws_nwem_authorization_path
+      @services[:ipaws_nwem_areas] = ipaws_nwem_areas_path
       @services[:ipaws_alerts] = ipaws_alerts_path
     end
   end

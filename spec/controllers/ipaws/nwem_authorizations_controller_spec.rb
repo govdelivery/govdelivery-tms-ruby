@@ -2,7 +2,7 @@ require 'spec_helper'
 
 if defined? JRUBY_VERSION
 
-  describe IPAWS::AcknowledgementsController do
+  describe IPAWS::NwemAuthorizationsController do
 
     let(:ipaws_credentials) do
       {
@@ -15,15 +15,15 @@ if defined? JRUBY_VERSION
     end
 
     let(:ipaws_response) do
-      [{"ACK"=>"PONG"}]
+      [{"cogid"=>"true"}]
     end
 
     before(:each) do
-      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:getAck).returns(ipaws_response)
+      IPAWS::Vendor::IPAWSClient.any_instance.stubs(:isCogAuthorized).returns(ipaws_response)
     end
 
-    describe "GET show" do
-      it 'returns true/false based on IPAWS Service getACK request' do
+    describe "GET :show" do
+      it 'returns data from IPAWS/FEMA' do
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         get :show, { format: :json }.merge(ipaws_credentials)
@@ -39,7 +39,6 @@ if defined? JRUBY_VERSION
         get :show, { format: :json }.merge(ipaws_credentials)
         response.response_code.should == 403
       end
-
     end
 
   end

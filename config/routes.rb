@@ -67,14 +67,15 @@ Xact::Application.routes.draw do
   end
 
   namespace :ipaws do
+    # Static Types
     resources :event_codes, only: :index
     resources :categories, only: :index
     resources :response_types, only: :index
+    # Dynamic Endpoints
     resource  :acknowledgement, only: :show
-    resource  :cog_profile, only: :show do
-      get :nwem_authorization
-      get :nwem_auxilary_data
-    end
+    resource  :cog_profile, only: :show
+    resource  :nwem_authorization, only: :show
+    resources :nwem_areas, only: :index
     resources :alerts, only: :create
   end
 

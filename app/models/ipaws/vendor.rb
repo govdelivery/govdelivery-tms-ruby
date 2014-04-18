@@ -15,24 +15,49 @@ module IPAWS
     attr_encrypted :private_password, attribute: :private_password_encrypted
 
     def ack
-      client.getAck.as_json
+      client.getAck.as_json.first || {}
     end
 
     def cog_profile
-      client.getCOGProfile.as_json
+      # Flatten parameter list into a single hash.
+      client.getCOGProfile.as_json.reduce({}) do |profile, item|
+        if item.key?('eventCodes')
+          profile['eventCodes'] = item['subParaListItem']
+        elsif item.key?('geoCodes')
+          profile['geoCodes'] = item['subParaListItem']
+        else
+          profile.merge!(item)
+        end
+        profile
+      end
     end
 
-    def post_cap(attributes)
+    def post_alert(attributes)
       # postCAP needs the attributes "sanitized" with as_json to remove symbols.
-      reform_cap_response(client.postCAP(attributes.as_json))
+      # The response statuses will be grouped in groups of 4 and merged together.
+      reform_cap_response(client.postCAP(attributes.as_json)).reduce({}) do |response, item|
+        # If the item only has subParaListItem, this is our list of statuses.
+        if item.keys == ['subParaListItem']
+          response['statuses'] = item['subParaListItem'].in_groups_of(4, false).map { |hashes| hashes.inject(&:merge!) }
+        else
+          response.merge!(item)
+        end
+        response
+      end
     end
 
     def nwem_cog_authorization
-      client.isCogAuthorized.as_json
+      client.isCogAuthorized.as_json.first || {}
     end
 
-    def nwem_auxilary_data
-      client.getNWEMAuxData.as_json
+    def nwem_areas
+      # Combines attributes in subParaListItem with root item and flattens into a single hash.
+      client.getNWEMAuxData.as_json.map do |item| 
+        if sub_items = item.delete('subParaListItem')
+          item.merge! sub_items.reduce(&:merge!)
+        end
+        item
+      end
     end
 
     def client(reload=false)

@@ -6,7 +6,7 @@ module IPAWS
     feature :ipaws
 
     def create
-      render json: @account.ipaws_vendor.post_cap(alert_params)
+      render json: @account.ipaws_vendor.post_alert(alert_params)
     end
 
     private

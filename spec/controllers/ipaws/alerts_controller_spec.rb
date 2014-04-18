@@ -16,7 +16,7 @@ if defined? JRUBY_VERSION
 
     # These sample responses were derived directly from the IPAWS spec PDF.
 
-    let(:sample_alert) do
+    let(:ipaws_alert_params) do
       {
         'identifier' => 'CAP12-TEST-11-30-0001',
         'sender' => 'test@open.com',
@@ -28,7 +28,7 @@ if defined? JRUBY_VERSION
       }
     end
 
-    let(:sample_post_cap_response) do
+    let(:ipaws_post_cap_response) do
       [{"identifier"=>"CAP12-TEST-1397743203"},
        {"subParaListItem"=>
          [{"CHANNELNAME"=>"CAPEXCH"},
@@ -61,7 +61,7 @@ if defined? JRUBY_VERSION
           {"STATUS"=>"Ack"}]}]
     end
 
-    let(:sample_post_cap_error_response) do
+    let(:ipaws_post_cap_error_response) do
       [{"identifier"=>"CAP12-TEST-1397743203"},
        {"subParaListItem"=>
          [{"CHANNELNAME"=>"IPAWS"},
@@ -73,20 +73,20 @@ if defined? JRUBY_VERSION
     describe "POST create" do
 
       it 'returns the IPAWS successful response' do
-        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_cap_response)
+        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(ipaws_post_cap_response)
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
-        post :create, ipaws_credentials.merge(sample_alert)
+        post :create, ipaws_credentials.merge(ipaws_alert_params)
         response.response_code.should == 200
         response.body.should be_present
         JSON.parse(response.body).should be_present
       end
 
       it 'returns the IPAWS error response' do
-        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(sample_post_cap_error_response)
+        IPAWS::Vendor::IPAWSClient.any_instance.stubs(:postCAP).returns(ipaws_post_cap_error_response)
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
-        post :create, ipaws_credentials.merge(sample_alert)
+        post :create, ipaws_credentials.merge(ipaws_alert_params)
         response.response_code.should == 200
         response.body.should be_present
         JSON.parse(response.body).should be_present
@@ -95,7 +95,7 @@ if defined? JRUBY_VERSION
       it 'responds with 403 (forbidden) if no IPAWS vendor' do
         user = create :user, account: create(:account, ipaws_vendor: nil)
         sign_in user
-        post :create, ipaws_credentials.merge(sample_alert)
+        post :create, ipaws_credentials.merge(ipaws_alert_params)
         response.response_code.should == 403
       end
 

@@ -48,53 +48,129 @@ describe IPAWS::Vendor do
   end
 
   describe '#ack' do
-    let(:raw_response) do
+    let(:ipaws_response) do
       [{"ACK"=>"PONG"}]
     end
     it 'returns an acknowledgement' do
-      subject.client.stubs(:getAck).returns(raw_response)
-      subject.ack.should == raw_response
+      ipaws_response = [{"ACK"=>"PONG"}]
+      xact_response = { "ACK" => "PONG" }
+      subject.client.stubs(:getAck).returns(ipaws_response)
+      subject.ack.should == xact_response
     end
   end
 
-  describe '#got_profile' do
-    let(:raw_response) do
-      [{"cogid"=>"120082"},
-       {"name"=>"GovDelivery"},
-       {"description"=>"GovDelivery"},
-       {"categoryName"=>"IPAWS-OPEN"},
-       {"organizationName"=>"CIV"},
-       {"cogEnabled"=>"Y"},
-       {"caeAuthorized"=>"Y"},
-       {"caeCmasAuthorized"=>"Y"},
-       {"eanAuthorized"=>"N"},
-       {"allEventCode"=>"N"},
-       {"allGeoCode"=>"N"},
-       {"easAuthorized"=>"Y"},
-       {"cmasAlertAuthorized"=>"Y"},
-       {"cmamTextAuthorized"=>"Y"},
-       {"publicAlertAuthorized"=>"Y"},
-       {"broadcastAuthorized"=>"N"},
-       {"email"=>"joe.bloom@govdelivery.com"},
-       {"subParaListItem"=>
-         [{"ALL"=>"FRW"},
+  describe '#cog_profile' do
+    it 'returns the cog profile, flattened' do
+      ipaws_response = [
+        {"cogid"=>"120082"},
+        {"name"=>"GovDelivery"},
+        {"description"=>"GovDelivery"},
+        {"categoryName"=>"IPAWS-OPEN"},
+        {"organizationName"=>"CIV"},
+        {"cogEnabled"=>"Y"},
+        {"caeAuthorized"=>"Y"},
+        {"caeCmasAuthorized"=>"Y"},
+        {"eanAuthorized"=>"N"},
+        {"allEventCode"=>"N"},
+        {"allGeoCode"=>"N"},
+        {"easAuthorized"=>"Y"},
+        {"cmasAlertAuthorized"=>"Y"},
+        {"cmamTextAuthorized"=>"Y"},
+        {"publicAlertAuthorized"=>"Y"},
+        {"broadcastAuthorized"=>"N"},
+        {"email"=>"joe.bloom@govdelivery.com"},
+        {"eventCodes"=>nil,
+          "subParaListItem"=>[
+          {"ALL"=>"FRW"},
           {"ALL"=>"SVR"},
           {"ALL"=>"SPW"},
           {"ALL"=>"LAE"},
           {"ALL"=>"CAE"},
           {"ALL"=>"WSW"},
-          {"ALL"=>"CEM"}],
-        "eventCodes"=>nil},
-       {"subParaListItem"=>[{"SAME"=>"039035"}], "geoCodes"=>nil}]
+          {"ALL"=>"CEM"}]
+        },
+        {"geoCodes"=>nil, "subParaListItem"=>[{"SAME"=>"039035"}]}
+      ]
+      xact_response = {
+        "cogid"=>"120082",
+        "name"=>"GovDelivery",
+        "description"=>"GovDelivery",
+        "categoryName"=>"IPAWS-OPEN",
+        "organizationName"=>"CIV",
+        "cogEnabled"=>"Y",
+        "caeAuthorized"=>"Y",
+        "caeCmasAuthorized"=>"Y",
+        "eanAuthorized"=>"N",
+        "allEventCode"=>"N",
+        "allGeoCode"=>"N",
+        "easAuthorized"=>"Y",
+        "cmasAlertAuthorized"=>"Y",
+        "cmamTextAuthorized"=>"Y",
+        "publicAlertAuthorized"=>"Y",
+        "broadcastAuthorized"=>"N",
+        "email"=>"joe.bloom@govdelivery.com",
+        "eventCodes" => [
+          {"ALL"=>"FRW"},
+          {"ALL"=>"SVR"},
+          {"ALL"=>"SPW"},
+          {"ALL"=>"LAE"},
+          {"ALL"=>"CAE"},
+          {"ALL"=>"WSW"},
+          {"ALL"=>"CEM"}
+        ],
+        "geoCodes" => [
+          {"SAME"=>"039035"}
+        ]
+      }
+      subject.client.stubs(:getCOGProfile).returns(ipaws_response)
+      subject.cog_profile.should == xact_response
     end
-    it 'returns the cog profile' do
-      subject.client.stubs(:getCOGProfile).returns(raw_response)
-      subject.cog_profile.should == raw_response
+    it 'converts eventCodes or geoCodes to arrays only when present' do
+      ipaws_response = [
+        {"cogid"=>"120082"},
+        {"name"=>"GovDelivery"},
+        {"description"=>"GovDelivery"},
+        {"categoryName"=>"IPAWS-OPEN"},
+        {"organizationName"=>"CIV"},
+        {"cogEnabled"=>"Y"},
+        {"caeAuthorized"=>"Y"},
+        {"caeCmasAuthorized"=>"Y"},
+        {"eanAuthorized"=>"N"},
+        {"allEventCode"=>"Y"},
+        {"allGeoCode"=>"Y"},
+        {"easAuthorized"=>"Y"},
+        {"cmasAlertAuthorized"=>"Y"},
+        {"cmamTextAuthorized"=>"Y"},
+        {"publicAlertAuthorized"=>"Y"},
+        {"broadcastAuthorized"=>"N"},
+        {"email"=>"joe.bloom@govdelivery.com"}
+      ]
+      xact_response = {
+        "cogid"=>"120082",
+        "name"=>"GovDelivery",
+        "description"=>"GovDelivery",
+        "categoryName"=>"IPAWS-OPEN",
+        "organizationName"=>"CIV",
+        "cogEnabled"=>"Y",
+        "caeAuthorized"=>"Y",
+        "caeCmasAuthorized"=>"Y",
+        "eanAuthorized"=>"N",
+        "allEventCode"=>"Y",
+        "allGeoCode"=>"Y",
+        "easAuthorized"=>"Y",
+        "cmasAlertAuthorized"=>"Y",
+        "cmamTextAuthorized"=>"Y",
+        "publicAlertAuthorized"=>"Y",
+        "broadcastAuthorized"=>"N",
+        "email"=>"joe.bloom@govdelivery.com"
+      }
+      subject.client.stubs(:getCOGProfile).returns(ipaws_response)
+      subject.cog_profile.should == xact_response
     end
   end
 
-  describe '#post_cap' do
-    let(:raw_response) do
+  describe '#post_alert' do
+    let(:ipaws_response) do
       [{"identifier"=>"CAP12-TEST-1397743203"},
        {"subParaListItem"=>
          [{"CHANNELNAME"=>"CAPEXCH"},
@@ -126,46 +202,117 @@ describe IPAWS::Vendor do
           {"ERROR"=>"N"},
           {"STATUS"=>"Ack"}]}]
     end
+    let(:xact_response) do
+      {
+        "identifier"=>"CAP12-TEST-1397743203",
+        "statuses"=> [
+          {
+            "CHANNELNAME"=>"CAPEXCH",
+            "STATUSITEMID"=>"200",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          },
+          {
+            "CHANNELNAME"=>"CAPEXCH",
+            "STATUSITEMID"=>"202",
+            "ERROR"=>"N",
+            "STATUS"=>"alert-signature-is-valid"
+          },
+          {
+            "CHANNELNAME"=>"IPAWS",
+            "STATUSITEMID"=>"300",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          },
+          {
+            "CHANNELNAME"=>"NWEM",
+            "STATUSITEMID"=>"401",
+            "ERROR"=>"N",
+            "STATUS"=>"message-not-disseminated-as-NWEM"
+          },
+          {
+            "CHANNELNAME"=>"EAS",
+            "STATUSITEMID"=>"501",
+            "ERROR"=>"N",
+            "STATUS"=>"message-not-disseminated-as-EAS"
+          },
+          {
+            "CHANNELNAME"=>"CMAS",
+            "STATUSITEMID"=>"600",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          },
+          {
+            "CHANNELNAME"=>"PUBLIC",
+            "STATUSITEMID"=>"800",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          }
+        ]
+      }
+    end
     it 'converts symbol keys to strings' do
-      subject.client.expects(:postCAP).with({'key' => 'value'}).returns(raw_response)
-      subject.post_cap({key: 'value'}).should == raw_response
+      subject.client.expects(:postCAP).with({'key' => 'value'}).returns(ipaws_response)
+      subject.post_alert({key: 'value'})
+    end
+    it 'flattens response and groups statuses in groups of 4 with key statuses' do
+      subject.client.stubs(:postCAP).returns(ipaws_response)
+      subject.post_alert({key: 'value'}).should == xact_response
     end
   end
 
   describe '#nwem_cog_authorization' do
-    let(:raw_response) do 
-      [{"cogid"=>"true"}]
-    end
-    it 'returns the raw response from FEMA' do
-      subject.client.stubs(:isCogAuthorized).returns(raw_response)
-      subject.nwem_cog_authorization.should == raw_response
+    it 'returns the status as a single hash' do
+      subject.client.stubs(:isCogAuthorized).returns([{"cogid"=>"true"}])
+      subject.nwem_cog_authorization.should == {"cogid"=>"true"}
     end
   end
 
-  describe '#nwem_auxilary_data' do
-    let(:raw_response) do 
-      [{"subParaListItem"=>
-         [{"countyName"=>"Arlington"},
-          {"geoType"=>"C"},
-          {"stateCd"=>"VA"},
-          {"stateFips"=>"51"},
-          {"stateName"=>"Virginia"},
-          {"zoneCd"=>"054"},
-          {"zoneName"=>"Arlington/Falls Church/Alexandria"}],
-        "countyFipsCd"=>"51013"},
-       {"subParaListItem"=>
-         [{"countyName"=>"City of Alexandria"},
-          {"geoType"=>"C"},
-          {"stateCd"=>"VA"},
-          {"stateFips"=>"51"},
-          {"stateName"=>"Virginia"},
-          {"zoneCd"=>"054"},
-          {"zoneName"=>"Arlington/Falls Church/Alexandria"}],
-        "countyFipsCd"=>"51510"}]
-    end
-    it 'returns the raw response from FEMA' do
-      subject.client.stubs(:getNWEMAuxData).returns(raw_response)
-      subject.nwem_auxilary_data.should == raw_response
+  describe '#nwem_areas' do
+    it 'Flattens each area item from getNWEMAuxData into a single hash' do
+      ipaws_response = 
+        [{"subParaListItem"=>
+           [{"countyName"=>"Arlington"},
+            {"geoType"=>"C"},
+            {"stateCd"=>"VA"},
+            {"stateFips"=>"51"},
+            {"stateName"=>"Virginia"},
+            {"zoneCd"=>"054"},
+            {"zoneName"=>"Arlington/Falls Church/Alexandria"}],
+          "countyFipsCd"=>"51013"},
+         {"subParaListItem"=>
+           [{"countyName"=>"City of Alexandria"},
+            {"geoType"=>"C"},
+            {"stateCd"=>"VA"},
+            {"stateFips"=>"51"},
+            {"stateName"=>"Virginia"},
+            {"zoneCd"=>"054"},
+            {"zoneName"=>"Arlington/Falls Church/Alexandria"}],
+          "countyFipsCd"=>"51510"}]
+      xact_response = [
+        {
+          "countyFipsCd"=>"51013",
+          "countyName"=>"Arlington",
+          "geoType"=>"C",
+          "stateCd"=>"VA",
+          "stateFips"=>"51",
+          "stateName"=>"Virginia",
+          "zoneCd"=>"054",
+          "zoneName"=>"Arlington/Falls Church/Alexandria"
+        },
+        {
+          "countyFipsCd"=>"51510",
+          "countyName"=>"City of Alexandria",
+          "geoType"=>"C",
+          "stateCd"=>"VA",
+          "stateFips"=>"51",
+          "stateName"=>"Virginia",
+          "zoneCd"=>"054",
+          "zoneName"=>"Arlington/Falls Church/Alexandria"
+        }
+      ]
+      subject.client.stubs(:getNWEMAuxData).returns(ipaws_response)
+      subject.nwem_areas.should == xact_response
     end
   end
 
