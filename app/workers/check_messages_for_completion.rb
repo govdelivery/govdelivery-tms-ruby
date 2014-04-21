@@ -5,6 +5,7 @@ class CheckMessagesForCompletion
   sidekiq_options unique: true, retry: false, unique_job_expiration: 240 * 60 # 4 hours
 
   def perform(*args)
+    return
     [SmsMessage, VoiceMessage, EmailMessage].each do |message_class|
       do_completion_check(message_class)
     end
