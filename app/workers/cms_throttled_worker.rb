@@ -3,7 +3,7 @@ require 'base'
 class CmsThrottledWorker
   include Workers::Base
 
-  sidekiq_options retry: false, unique: true
+  sidekiq_options retry: false
 
   def perform(*args)
     from_queue, to_queue = ['queue:cms_throttled', 'queue:default']

@@ -10,5 +10,13 @@
 # $ vi /tmp/x.yml # make your changes
 # $ mv /tmp/x.yml config/throttle_email_sending.yml
 ################################################################################
+
+# NOTE: this is per Sidekiq server!
 messages_per_minute: 100
+
+# Throttle messages that match one or more hashes in the array. For example,
+# the following would match only messages with the subject of "Throttle me!"
+# AND a user_id of 10000:
+#
+# message_matchers: [{"subject": "Throttle me!", "user_id": 10000}]
 message_matchers: []
