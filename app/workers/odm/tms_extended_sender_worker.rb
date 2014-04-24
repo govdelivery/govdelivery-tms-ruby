@@ -2,7 +2,7 @@ require 'base'
 
 module Odm
   class TmsExtendedSenderWorker < Odm::TmsExtendedWorker
-    sidekiq_options :retry => false
+    sidekiq_options :retry => 10
 
     def perform(options)
       super do
