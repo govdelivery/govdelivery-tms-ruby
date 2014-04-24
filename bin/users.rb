@@ -17,23 +17,23 @@ class CreateUser
   def boot_rails
     require File.expand_path("../../config/environment", __FILE__)
   end
-  
+
   def parse_options(argv)
     argv[0] = '--help' unless argv[0]
     @options = {}
     OptionParser.new do |opts|
       opts.banner = <<-USAGE
-Usage: 
+Usage:
   #{__FILE__} [options]
 
-Examples: 
-  
+Examples:
+
   List All Users
     #{__FILE__} -l
 
   Create User
     #{__FILE__} -a 10024 -e "insure@evotest.govdelivery.com" -p "fysucrestondoko" -s 0
-    
+
 Options:
 USAGE
       opts.on("-l", "--list", "List Users") do |p|
@@ -53,13 +53,12 @@ USAGE
       end
     end.parse!(argv)
   end
-    
+
   def out(str)
     puts(str) unless RAILS_ENV == 'test'
   end
 
   def create_account(options)
-
     u = User.new
     u.account_id = @options[:user_account_id]
     u.email = @options[:user_email]
@@ -68,22 +67,20 @@ USAGE
 
     u.save
 
-    if(u.errors)
+    if(u.errors.present?)
       puts u.errors.messages
     else
-      puts "Created user."
-      list_user(u)
+      puts "Created User id: " + u.id.to_s
+      display_user(u)
     end
-
   end
 
   def list_users
-
     puts "User.all\n";
-    User.all.each { |u| list_user(u) }
+    User.all.each { |u| display_user(u) }
   end
 
-  def list_user(u)
+  def display_user(u)
     puts "\tid: " + u.id.to_s + "\n"
     puts "\temail: " + u.email + "\n"
     puts "\taccount_id: " + u.account_id.to_s + "\n"
@@ -99,4 +96,3 @@ end
 if __FILE__ == $0
   CreateUser.new.run_from_options(ARGV)
 end
-
