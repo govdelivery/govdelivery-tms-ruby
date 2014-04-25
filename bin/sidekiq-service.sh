@@ -20,7 +20,7 @@ jmx_port="3020"
 
 JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote.port=${jmx_port} -J-Dcom.sun.management.jmxremote.authenticate=false -J-Dcom.sun.management.jmxremote.ssl=false"
 # JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
-JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPermSize=256m"
+JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPermSize=512m"
 
 
 # Source Application settings
