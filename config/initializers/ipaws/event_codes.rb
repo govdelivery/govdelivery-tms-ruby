@@ -10,7 +10,7 @@ IPAWS::EventCode.all = [
     core_ipaws_profile: true,
     nwem: true,
     eas_and_public: true,
-    cmas: true
+    cmas: false
   ),
   IPAWS::EventCode.new(
     value: 'AVA',
