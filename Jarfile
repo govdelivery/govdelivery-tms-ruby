@@ -1,5 +1,4 @@
 local_repo 'vendor/jars'
-jar 'org.jvnet.jax-ws-commons:jaxws-maven-plugin:2.2'
 jar 'com.thoughtworks.xstream:xstream:1.4.7'
 jar 'org.slf4j:slf4j-simple:1.7.7'
 jar 'org.apache.ws.security:wss4j:1.6.10'

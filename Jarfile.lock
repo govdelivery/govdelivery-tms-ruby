@@ -7,117 +7,31 @@ groups:
     - lib/ipaws.jar
     - lib/tms_extended.jar
     dependencies:
-    - backport-util-concurrent:backport-util-concurrent:jar:3.1
-    - classworlds:classworlds:jar:1.1-alpha-2
-    - com.sun.istack:istack-commons-runtime:jar:2.4
-    - com.sun.xml.bind:jaxb-impl:jar:2.2.5
-    - com.sun.xml.bind:jaxb-xjc:jar:2.2.5
-    - com.sun.xml.messaging.saaj:saaj-impl:jar:1.3.18
-    - com.sun.xml.stream.buffer:streambuffer:jar:1.4
-    - com.sun.xml.txw2:txw2:jar:20110809
-    - com.sun.xml.ws:jaxws-rt:jar:2.2.6
-    - com.sun.xml.ws:jaxws-tools:jar:2.2.6
-    - com.sun.xml.ws:policy:jar:2.3.1
-    - com.sun:tools:jar:1.6.0
     - com.thoughtworks.xstream:xstream:jar:1.4.7
     - commons-logging:commons-logging:jar:1.1.1
-    - javax.activation:activation:jar:1.1
-    - javax.jws:jsr181-api:jar:1.0-MR1
-    - javax.xml.bind:jaxb-api:jar:2.2.4
-    - javax.xml.soap:saaj-api:jar:1.3.4
-    - javax.xml.stream:stax-api:jar:1.0-2
-    - javax.xml.ws:jaxws-api:jar:2.2.8
     - joda-time:joda-time:jar:1.6.2
-    - junit:junit:jar:3.8.1
-    - org.apache.maven.wagon:wagon-provider-api:jar:1.0-beta-6
-    - org.apache.maven:maven-artifact-manager:jar:2.2.1
-    - org.apache.maven:maven-artifact:jar:2.2.1
-    - org.apache.maven:maven-model:jar:2.2.1
-    - org.apache.maven:maven-plugin-api:jar:2.2.1
-    - org.apache.maven:maven-plugin-registry:jar:2.2.1
-    - org.apache.maven:maven-profile:jar:2.2.1
-    - org.apache.maven:maven-project:jar:2.2.1
-    - org.apache.maven:maven-repository-metadata:jar:2.2.1
-    - org.apache.maven:maven-settings:jar:2.2.1
     - org.apache.santuario:xmlsec:jar:1.5.4
     - org.apache.ws.security:wss4j:jar:1.6.10
-    - org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
-    - org.codehaus.plexus:plexus-interpolation:jar:1.11
-    - org.codehaus.plexus:plexus-utils:jar:2.1
-    - org.codehaus.woodstox:stax2-api:jar:3.1.1
-    - org.codehaus.woodstox:woodstox-core-asl:jar:4.1.2
-    - org.glassfish.external:management-api:jar:3.0.0-b012
-    - org.glassfish.gmbal:gmbal-api-only:jar:3.1.0-b001
-    - org.glassfish.ha:ha-api:jar:3.1.8
-    - org.glassfish:javax.annotation:jar:3.1.1
-    - org.jvnet.jax-ws-commons:jaxws-maven-plugin:jar:2.2
-    - org.jvnet.mimepull:mimepull:jar:1.8
-    - org.jvnet.staxex:stax-ex:jar:1.7
     - org.opensaml:opensaml:jar:2.5.1-1
     - org.opensaml:openws:jar:1.4.2-1
     - org.opensaml:xmltooling:jar:1.3.2-1
-    - org.slf4j:slf4j-api:jar:1.6.6
+    - org.slf4j:slf4j-api:jar:1.7.7
     - org.slf4j:slf4j-simple:jar:1.7.7
-    - relaxngDatatype:relaxngDatatype:jar:20020414
     - xmlpull:xmlpull:jar:1.1.3.1
     - xpp3:xpp3_min:jar:1.1.4c
     artifacts:
-    - jar:org.jvnet.jax-ws-commons:jaxws-maven-plugin:jar:2.2:
-        transitive:
-          org.apache.maven:maven-plugin-api:jar:2.2.1: {}
-          com.sun:tools:jar:1.6.0: {}
-          com.sun.xml.ws:jaxws-tools:jar:2.2.6:
-            com.sun.xml.bind:jaxb-xjc:jar:2.2.5: {}
-            com.sun.xml.ws:jaxws-rt:jar:2.2.6:
-              org.codehaus.woodstox:stax2-api:jar:3.1.1: {}
-              org.glassfish.gmbal:gmbal-api-only:jar:3.1.0-b001:
-                org.glassfish.external:management-api:jar:3.0.0-b012: {}
-              org.codehaus.woodstox:woodstox-core-asl:jar:4.1.2: {}
-              org.glassfish.ha:ha-api:jar:3.1.8: {}
-              com.sun.xml.ws:policy:jar:2.3.1:
-                com.sun.xml.txw2:txw2:jar:20110809:
-                  relaxngDatatype:relaxngDatatype:jar:20020414: {}
-                com.sun.istack:istack-commons-runtime:jar:2.4: {}
-              com.sun.xml.messaging.saaj:saaj-impl:jar:1.3.18: {}
-              org.jvnet.staxex:stax-ex:jar:1.7: {}
-              javax.xml.ws:jaxws-api:jar:2.2.8:
-                org.glassfish:javax.annotation:jar:3.1.1: {}
-                javax.jws:jsr181-api:jar:1.0-MR1: {}
-                javax.xml.bind:jaxb-api:jar:2.2.4: {}
-                javax.xml.soap:saaj-api:jar:1.3.4: {}
-              com.sun.xml.bind:jaxb-impl:jar:2.2.5: {}
-              com.sun.xml.stream.buffer:streambuffer:jar:1.4:
-                javax.xml.stream:stax-api:jar:1.0-2: {}
-                javax.activation:activation:jar:1.1: {}
-              org.jvnet.mimepull:mimepull:jar:1.8: {}
-          org.codehaus.plexus:plexus-utils:jar:2.1: {}
-          org.apache.maven:maven-project:jar:2.2.1:
-            org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:
-              junit:junit:jar:3.8.1: {}
-              classworlds:classworlds:jar:1.1-alpha-2: {}
-            org.apache.maven:maven-model:jar:2.2.1: {}
-            org.apache.maven:maven-profile:jar:2.2.1: {}
-            org.apache.maven:maven-artifact-manager:jar:2.2.1:
-              org.apache.maven:maven-repository-metadata:jar:2.2.1: {}
-              org.apache.maven.wagon:wagon-provider-api:jar:1.0-beta-6: {}
-              backport-util-concurrent:backport-util-concurrent:jar:3.1: {}
-            org.apache.maven:maven-artifact:jar:2.2.1: {}
-            org.apache.maven:maven-plugin-registry:jar:2.2.1: {}
-            org.apache.maven:maven-settings:jar:2.2.1: {}
-            org.codehaus.plexus:plexus-interpolation:jar:1.11: {}
     - jar:com.thoughtworks.xstream:xstream:jar:1.4.7:
         transitive:
-          xpp3:xpp3_min:jar:1.1.4c: {}
           xmlpull:xmlpull:jar:1.1.3.1: {}
-    - jar:org.slf4j:slf4j-api:jar:1.6.6:
-        transitive: {}
+          xpp3:xpp3_min:jar:1.1.4c: {}
     - jar:org.slf4j:slf4j-simple:jar:1.7.7:
-        transitive: {}
+        transitive:
+          org.slf4j:slf4j-api:jar:1.7.7: {}
     - jar:org.apache.ws.security:wss4j:jar:1.6.10:
         transitive:
+          commons-logging:commons-logging:jar:1.1.1: {}
           org.apache.santuario:xmlsec:jar:1.5.4: {}
           org.opensaml:opensaml:jar:2.5.1-1:
             org.opensaml:openws:jar:1.4.2-1:
               org.opensaml:xmltooling:jar:1.3.2-1:
                 joda-time:joda-time:jar:1.6.2: {}
-          commons-logging:commons-logging:jar:1.1.1: {}
