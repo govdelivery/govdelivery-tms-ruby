@@ -64,7 +64,7 @@ module IPAWS
       @client = nil if reload
       @client ||= begin
         write_jks_file
-        IPAWSClient.new(cog_id, user_id, jks_path, public_password, private_password)
+        IPAWSClient.new(cog_id, user_id, jks_path, public_password, private_password, Rails.configuration.fema_url)
       end
     end
 

@@ -43,10 +43,10 @@ Xact::Application.configure do
   config.twilio_number = '+16514336311'
 
   # qc ODM
-  config.odm_host = "https://qc-tms.govdelivery.com:65081"
+  config.odm_host = "http://localhost:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
-  config.odm_username = 'xact'
-  config.odm_password = 'Eish8sai2Heofereekae5ohmiyeijiN'
+  config.odm_username = 'gd3'
+  config.odm_password = 'R0WG38piNv5NRK0DT8mq04fU'
   
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
@@ -59,6 +59,8 @@ Xact::Application.configure do
 
   # run in threadsafe mode if we're in a servlet container
   config.threadsafe! if $servlet_context
+
+  config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 
   Rails.logger.level = Log4r::DEBUG
 end

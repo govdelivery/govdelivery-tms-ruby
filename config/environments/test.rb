@@ -50,5 +50,7 @@ Xact::Application.configure do
   config.dcm_urls = []
   config.shared_phone_numbers = []
 
+  config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
+
   Rails.logger.level = Log4r::DEBUG
 end

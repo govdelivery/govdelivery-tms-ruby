@@ -90,4 +90,6 @@ Xact::Application.configure do
   config.shared_phone_numbers = ["468311"]
 
   config.custom_report_account_id = 10060
+
+  config.fema_url = 'https://integration.fema.gov/IPAWS_CAPService/IPAWS'
 end
