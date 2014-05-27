@@ -53,6 +53,7 @@ group :development, :test do
   end
   gem 'pry', require: 'pry'
   gem 'brakeman'
+  gem 'yaml_db'
 end
 
 group :development do

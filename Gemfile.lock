@@ -326,6 +326,7 @@ GEM
       mail
     warden (1.2.3)
       rack (>= 1.0)
+    yaml_db (0.2.3)
     zeus (0.13.3)
       method_source (>= 0.6.7)
 
@@ -379,4 +380,5 @@ DEPENDENCIES
   twilio-ruby
   typhoeus
   valid_email
+  yaml_db
   zeus
