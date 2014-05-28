@@ -1,4 +1,4 @@
-class MoveCommandsToKeywords < ActiveRecord::Migration
+class MoveCommandsToKeywordsAgain < ActiveRecord::Migration
 
 
   def up
