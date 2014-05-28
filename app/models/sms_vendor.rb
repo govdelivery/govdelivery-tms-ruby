@@ -10,6 +10,7 @@ class SmsVendor < ActiveRecord::Base
 
   DEFAULT_HELP_TEXT = "Go to http://bit.ly/govdhelp for help"
   DEFAULT_STOP_TEXT = "You will no longer receive SMS messages."
+  DEFAULT_START_TEXT = "Welcome to GovDelivery SMS Alerts. Msg&data rates may apply. Reply HELP for help, STOP to cancel. http://govdelivery.com/wireless for more help. 5 msg/wk."
   RESERVED_KEYWORDS = %w(stop quit help)
 
   has_many :keywords, :foreign_key => 'vendor_id', :dependent => :destroy
@@ -29,35 +30,6 @@ class SmsVendor < ActiveRecord::Base
   after_save( :create_stop_keyword!, if: ->{ self.stop_keyword.nil?} )
   after_save( :create_help_keyword!, if: ->{ self.help_keyword.nil?} )
   after_save( :create_default_keyword!, if: ->{ self.default_keyword.nil?} )
-
-  # this is a workaround for something funny happening when saving
-  # race condition ? unsure
-  def create_stop_keyword!
-    build_stop_keyword
-    self.stop_keyword.valid?
-    self.stop_keyword.save!
-  end
-
-  def create_help_keyword!
-    build_help_keyword
-    self.help_keyword.valid?
-    self.help_keyword.save!
-  end
-
-  def create_default_keyword!
-    build_default_keyword
-    self.default_keyword.valid?
-    self.default_keyword.save!
-  end
-
-  def create_keyword!(options)
-    kw = self.keywords.build
-    kw.account = options[:account]
-    kw.name = options[:name]
-    kw.save!
-    kw
-  end
-# I think you are more than capable of performing an analysis. I think it would be good for the company to have this process be as transparent as possible.
 
   def create_command!(keyword_name, params)
     keyword = keywords.where(name: keyword_name).first_or_create!
