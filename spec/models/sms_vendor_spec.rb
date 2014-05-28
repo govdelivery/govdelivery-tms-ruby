@@ -57,7 +57,14 @@ describe SmsVendor do
 
   describe '#create_keyword!' do
     it 'creates a keyword' do
-      expect { vendor.create_keyword!(:account => account, :name => 'foobar') }.to change { vendor.keywords.count }.by 1
+      # something is funky about how this test runs: vendor.keywords.count
+      vendor.keywords.count.should eql(3)
+      # vendor.accounts.reload
+      # vendor.accounts.first.keywords.count.should eql(3)
+      vendor.accounts << account #WTF vendor should have this from the factory
+      vendor.accounts.first.keywords.count.should eql(3)
+      expect { vendor.create_keyword!(:account => account, :name => 'foobar2') }.to change { vendor.keywords.count }.by 1
+      vendor.keywords.count.should eql(7) #with the account keywords
     end
 
     it "sets the keyword's vendor to itself" do
@@ -82,4 +89,12 @@ describe SmsVendor do
       }.to change { vendor.stop_requests.count }.by 1
     end
   end
+
+  describe 'special keywords' do
+    subject{ create(:sms_vendor) }
+    its(:stop_keyword){ should be_instance_of(Keywords::VendorStop) }
+    its(:help_keyword){ should be_instance_of(Keywords::VendorHelp) }
+    its(:default_keyword){ should be_instance_of(Keywords::VendorDefault) }
+  end
+
 end

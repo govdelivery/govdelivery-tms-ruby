@@ -1,15 +1,20 @@
 class Command < ActiveRecord::Base
   belongs_to :account
+  belongs_to :keyword
+
+  # TEMPORARY for data migration
   belongs_to :event_handler
-  delegate :keyword, to: :event_handler, allow_nil: true
+
   serialize :params, CommandParameters
 
   attr_accessible :command_type, :name, :params
-  validates_presence_of :account, :command_type
+  validates_presence_of :command_type
+
   validates_length_of :name, :maximum => 255, :allow_nil => true
   validates :params, length: {maximum: 4000}, :allow_nil => true
   before_save :set_name
   validate :validate_command
+  validate :validate_keyword
 
   delegate :process_response, :to => :command_strategy
 
@@ -19,7 +24,7 @@ class Command < ActiveRecord::Base
   def call(command_parameters=CommandParameters.new)
     command_parameters.command_id = self.id
     command_parameters.merge!(self.params)
-    command_strategy.invoke!(command_parameters)
+    command_strategy.perform_async!(command_parameters)
   end
 
   # Grab the executable portion of this command
@@ -52,9 +57,9 @@ class Command < ActiveRecord::Base
     message
   end
 
-  # Copies the name from the command unless it was specified explicitly. 
+  # Copies the name from the command unless it was specified explicitly.
   def set_name
-    if self.name.nil? || (self.command_type_changed? && !self.command_type_was.nil?)
+    if self.name.blank? || (self.command_type_changed? && !self.command_type_was.nil?)
       self.name = command_type_name
     end
   end
@@ -69,4 +74,16 @@ class Command < ActiveRecord::Base
     errors.empty?
   end
 
+  def validate_keyword
+    #ordering is important here
+    if keyword.nil?
+      errors.add(:keyword, 'keyword required')
+    elsif account.nil?
+      if keyword.special?
+        #ok for vendor keyword commands, i.e.: stop, help, deafault
+      else
+        errors.add(:account, 'account required for custom commands')
+      end
+    end
+  end
 end

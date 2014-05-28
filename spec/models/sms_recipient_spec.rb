@@ -57,7 +57,7 @@ end
 
 describe SmsRecipient, 'blacklist scopes' do
   let(:sms_vendor)  { create(:shared_sms_vendor) }
-  let(:account)     { create(:account, sms_vendor: sms_vendor) }
+  let(:account)     { create(:account_with_sms) }
   let(:sms_message) { create(:sms_message, account: account) }
 
   before do

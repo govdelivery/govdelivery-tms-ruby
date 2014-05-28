@@ -16,7 +16,7 @@ describe SmsPrefix do
 
   context "when vendor is empty" do
     let(:sms_prefix) { account.sms_prefixes.build(:prefix => 'FOO') }
-    it "should derive the id from account" do 
+    it "should derive the id from account" do
       sms_prefix.should be_valid # this has to happen for the next line to work (validation routine)
       sms_prefix.sms_vendor_id.should eq(vendor.id)
     end
@@ -31,5 +31,10 @@ describe SmsPrefix do
     end
     it { sms_prefix.should_not be_valid }
   end
-end
 
+  it "should get account_it for prefix" do
+    sms_prefix = account.sms_prefixes.create!(:prefix => 'FOO').tap{|f| f.update_attribute( :sms_vendor, vendor ) }
+    account_id = vendor.sms_prefixes.account_id_for_prefix 'FOO'
+    account_id.should eql(account.id)
+  end
+end

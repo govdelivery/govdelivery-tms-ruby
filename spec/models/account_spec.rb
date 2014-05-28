@@ -20,18 +20,23 @@ describe Account do
   end
 
   context 'with shared SMS vendor' do
-    subject {
-      Account.new(:name => 'name', :sms_vendor => shared_sms_vendor, :dcm_account_codes=> ['ACCOUNT_CODE'])
-    }
+    subject { build(:account_with_sms, :shared) }
 
     context "without prefixes" do
       it { should_not be_valid }
     end
 
     context "with prefixes" do
-      before { subject.sms_prefixes.build(:prefix => 'FOO') }
+      subject { create(:account_with_sms, :shared, prefix: 'other-pirate') }
       it { should be_valid }
-    end    
+      it 'can have multiple prefixes' do
+        subject.save!
+        subject.sms_prefixes.create! prefix: 'name01'
+        subject.sms_prefixes.create! prefix: 'name02'
+        subject.sms_vendor.sms_prefixes.count.should eql( 3 )
+      end
+    end
+
   end
 
   [:help_text, :stop_text].each do |item|
@@ -71,31 +76,43 @@ describe Account do
       it { should_not be_valid }
     end
 
+    context 'creating a command' do
+      it 'can create a command on a keyword on the fly' do
+        account = create(:account_with_sms)
+        command = account.create_command!('fly', params: build(:forward_command_parameters), command_type: 'forward')
+        command.keyword.vendor.should eql(account.sms_vendor)
+      end
+    end
     context "calling stop" do
       it 'should call commands' do
+        account = create(:account_with_sms, dcm_account_codes: ['ACCOUNT_CODE'])
+        account.stop_keyword.should_not be_nil
         command_params = mock(:account_id= => true )
-        subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :command_type => :dcm_unsubscribe)
+        params = CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE'])
+        account.stop_keyword.create_command!(:params => params, :command_type => :dcm_unsubscribe)
         Keyword.any_instance.expects(:execute_commands).never
         Command.any_instance.expects(:call).with(command_params)
-        subject.stop(command_params)
+        account.stop(command_params)
       end
     end
 
     context "calling stop!" do
       context "with no existing stop requests" do
         it 'should create a stop request and call commands' do
+          account = create(:account_with_sms, dcm_account_codes: ['ACCOUNT_CODE'])
           command_params = stub(:account_id= => true, :from => "BOBBY")
-          subject.add_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']), :command_type => :dcm_unsubscribe)
+          account.stop_keyword.create_command!(:params => CommandParameters.new(:dcm_account_codes => ['ACCOUNT_CODE']),
+                                  :command_type => :dcm_unsubscribe)
           Command.any_instance.expects(:call).with(command_params)
           expect {
-            subject.stop!(command_params)
-          }.to change { subject.stop_requests.count }.by 1
+            account.stop!(command_params)
+          }.to change { account.stop_requests.count }.by 1
         end
       end
       context 'with existing stop request for this phone' do
         it 'should not create another stop request, but should call stop' do
           subject.expects(:stop_requests).returns(stub(:exists? => true))
-          subject.expects(:stop) # non-bang method should be called. 
+          subject.expects(:stop) # non-bang method should be called.
           subject.stop!(mock(:from => "8888"))
         end
       end
@@ -110,5 +127,12 @@ describe Account do
 
     a.from_addresses.first.is_default = true
     a.should be_valid
+  end
+
+  describe 'special keywords' do
+    subject{ create(:account_with_sms) }
+    its(:stop_keyword){ should be_instance_of(Keywords::AccountStop) }
+    its(:help_keyword){ should be_instance_of(Keywords::AccountHelp) }
+    its(:default_keyword){ should be_instance_of(Keywords::AccountDefault) }
   end
 end

@@ -4,6 +4,10 @@ class SmsVendor < ActiveRecord::Base
 
   attr_accessible :help_text, :stop_text
 
+  # set default_response_text in order to respond to anything.
+  # it could be set to DEFAULT_HELP_TEXT
+  # it can be set to nil to _not_ respond to anything , like if a forward command is set to respond to anything
+
   DEFAULT_HELP_TEXT = "Go to http://bit.ly/govdhelp for help"
   DEFAULT_STOP_TEXT = "You will no longer receive SMS messages."
   RESERVED_KEYWORDS = %w(stop quit help)
@@ -18,12 +22,46 @@ class SmsVendor < ActiveRecord::Base
   validates_length_of [:help_text, :stop_text], :maximum => 160
   validates_uniqueness_of :from_phone
 
+  has_one :help_keyword,    class_name: Keywords::VendorHelp, :foreign_key => 'vendor_id'
+  has_one :stop_keyword,    class_name: Keywords::VendorStop, :foreign_key => 'vendor_id'
+  has_one :default_keyword, class_name: Keywords::VendorDefault, :foreign_key => 'vendor_id'
+  # this info needs to be kept in the database for configurability and trackability
+  after_save( :create_stop_keyword!, if: ->{ self.stop_keyword.nil?} )
+  after_save( :create_help_keyword!, if: ->{ self.help_keyword.nil?} )
+  after_save( :create_default_keyword!, if: ->{ self.default_keyword.nil?} )
+
+  # this is a workaround for something funny happening when saving
+  # race condition ? unsure
+  def create_stop_keyword!
+    build_stop_keyword
+    self.stop_keyword.valid?
+    self.stop_keyword.save!
+  end
+
+  def create_help_keyword!
+    build_help_keyword
+    self.help_keyword.valid?
+    self.help_keyword.save!
+  end
+
+  def create_default_keyword!
+    build_default_keyword
+    self.default_keyword.valid?
+    self.default_keyword.save!
+  end
+
   def create_keyword!(options)
     kw = self.keywords.build
     kw.account = options[:account]
     kw.name = options[:name]
-    self.save!
+    kw.save!
     kw
+  end
+# I think you are more than capable of performing an analysis. I think it would be good for the company to have this process be as transparent as possible.
+
+  def create_command!(keyword_name, params)
+    keyword = keywords.where(name: keyword_name).first_or_create!
+    keyword.create_command!(params)
   end
 
   def receive_message!(options)

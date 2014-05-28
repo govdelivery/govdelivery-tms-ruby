@@ -3,19 +3,13 @@ require 'spec_helper'
 describe InboundMessage do
   let(:vendor) { create(:sms_vendor) }
   let(:account) { account = vendor.accounts.create!(:name => 'name') }
-  let(:keyword) { k=account.keywords.new(:name => "HI").tap { |k| k.vendor = vendor }; k.save!; k }
-  let(:command) { c = keyword.add_command!(:command_type => :forward,
-                                           :name => "ALLIGATORZ",
-                                           :params => CommandParameters.new(:username => 'foo',
-                                                                            :password => 'foo',
-                                                                            :http_method => 'GET',
-                                                                            :url => 'http://www.mom')) }
-  let(:command2) { c = keyword.add_command!(:command_type => :forward,
-                                            :name => "CROCZZZ",
-                                            :params => CommandParameters.new(:username => 'foo',
-                                                                             :password => 'foo',
-                                                                             :http_method => 'GET',
-                                                                             :url => 'http://www.mom')) }
+  let(:keyword) { create(:custom_keyword, account: account, vendor: vendor, name: 'HI') }
+  let(:command) { keyword.create_command!(command_type: :forward,
+                                          name: "ALLIGATORZ",
+                                          params: build(:forward_command_parameters)) }
+  let(:command2) { keyword.create_command!(command_type: :forward,
+                                           name: "CROCZZZ",
+                                           params: build(:forward_command_parameters)) }
 
   let(:inbound_message) { InboundMessage.create!(vendor: vendor,
                                                  body: 'this is my body',
@@ -110,10 +104,10 @@ describe InboundMessage do
       # The created time should be within a configured window...
       dup_inbound_message.reload
       dup_inbound_message.actionable?.should eq(false)
-      dup_inbound_message.created_at = (dup_inbound_message.created_at + 
-                                       Xact::Application.config.auto_response_threshold.minutes + 
+      dup_inbound_message.created_at = (dup_inbound_message.created_at +
+                                       Xact::Application.config.auto_response_threshold.minutes +
                                        1.minute).to_datetime
-      
+
       dup_inbound_message.actionable?.should eq(true)
     end
   end

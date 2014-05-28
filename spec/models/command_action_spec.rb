@@ -4,8 +4,8 @@ describe CommandAction do
 
   let(:vendor) { create(:sms_vendor) }
   let(:account) { account = vendor.accounts.create!(:name => 'name') }
-  let(:keyword) { k=account.keywords.new(:name => "HI").tap { |k| k.vendor = vendor }; k.save!; k }
-  let(:command) { c = keyword.add_command!(:command_type => :forward,
+  let(:keyword) { create(:custom_keyword, account: account, vendor: vendor, name: 'HI') }
+  let(:command) { keyword.create_command!(:command_type => :forward,
                                            :name => "ALLIGATORZ",
                                            :params => CommandParameters.new(:username => 'foo',
                                                                             :password => 'foo',
