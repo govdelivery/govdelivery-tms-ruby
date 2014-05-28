@@ -14,7 +14,7 @@ Deploying
     ./deploy.sh -e environment (defaults to qc)
 
 
-IPAWS Dev Setup
+IPAWS Setup
 ===============
 
     ./bin/vendors.rb -t IPAWSVendor -c 120082 -u "IPAWSOPEN_120082" -p "w0rk#8980" -r "2670soa#wRn" -j path/to/IPAWSOPEN_120082.jks
@@ -26,3 +26,21 @@ IPAWS Dev Setup
     ./bin/tokens.rb --user 10000 --list
     # => Tokens:
     # => pzpL6p1m16yGqDXc6sBjaazPa1sTxVGq
+
+
+Command Types
+==============
+
+To add a command\_type create a class that responds\_to `process\_response` and calls super within it such as:
+
+    def process_response(account, params, http_response)
+      cr = super
+      build_message(account, params.from, cr.response_body) if cr.plaintext_body?
+    end
+
+Add the class to the directory app/models/command\_type, and registor the class in the app/models/command\_type/base.rb with:
+
+    CommandType[:new_command]
+
+
+Create a worker in app/workers/ by appending "Worker" to the name of the class of the new command_type suchas `NewCommandWorker`
