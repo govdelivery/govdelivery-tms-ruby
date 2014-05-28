@@ -8,7 +8,7 @@ node(:_links) do |m|
   }
 
   # stop and help commands don't have keywords and aren't accessible via the API
-  unless m.command.keyword.nil?
+  unless m.command.keyword.special?
     result[:command] = keyword_command_path(m.command.keyword.id, m.command_id)
   end
 

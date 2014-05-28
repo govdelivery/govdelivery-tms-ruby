@@ -12,7 +12,8 @@ class KeywordCommandsController < ApplicationController
   end
 
   def create
-    @command = @keyword.commands.new(params[:command]).tap { |c| c.account = @account }
+    @command = @keyword.commands.new(params[:command])
+    @command.account = @account
     @command.save
     respond_with(@command)
   end
@@ -27,6 +28,7 @@ class KeywordCommandsController < ApplicationController
   end
 
   private
+
   def find_keyword
     @keyword = @account.keywords.find(params[:keyword_id])
   end

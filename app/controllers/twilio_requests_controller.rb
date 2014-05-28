@@ -1,6 +1,6 @@
 class TwilioRequestsController < ApplicationController
   skip_before_filter :authenticate
-  before_filter :dcm_forward!
+
   respond_to :xml
 
   def create
@@ -11,8 +11,33 @@ class TwilioRequestsController < ApplicationController
 
   def twilio_request_response
     vendor         = find_vendor
-    command_params = CommandParameters.new(:sms_body => params['Body'], :to => params['To'], :from => params['From'], :callback_url => callback_url)
-    response_text  = SmsReceiver.new(vendor, command_params).respond_to_sms!
+    command_parameters = CommandParameters.new(sms_body: params['Body'],
+                                               to:           params['To'],
+                                               from:         params['From'],
+                                               callback_url: callback_url)
+
+
+    #parse it
+    prefix, keyword, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
+
+    #store it
+    inbound_msg = vendor.receive_message!({ from:  command_parameters.from,
+                                            to:    command_parameters.to,
+                                            body:  command_parameters.sms_body,
+                                            keyword: keyword,
+                                            keyword_response: keyword.try(:response_text)})
+
+    # respond to it (now and/or later)
+    if inbound_msg.ignored? # to not respond to auto responses
+      repsonse_text = nil
+    else
+      command_parameters.merge!(account_id: account_id,
+                              sms_tokens: message.split,
+                              inbound_message_id: inbound_msg.id)
+      response_text  = SmsReceiver.respond_to_sms!(keyword, command_parameters)
+    end
+
+    # if response_text is empty, twillio will not send a response
     @response      = View::TwilioRequestResponse.new(vendor, response_text)
   end
 
@@ -24,10 +49,4 @@ class TwilioRequestsController < ApplicationController
     twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
   end
 
-  private
-
-  # This is a hack and is intended to be temporary.
-  def dcm_forward!
-    ForwardStopsToDcm.forward_async!(params)
-  end
 end

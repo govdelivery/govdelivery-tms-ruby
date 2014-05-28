@@ -32,14 +32,14 @@ describe KeywordCommandsController do
       response.response_code.should == 200
     end
   end
-  
+
   context "Creating a command" do
     before do
       Command.any_instance.expects(:save).returns(true)
       Command.any_instance.expects(:new_record?).returns(false)
       post :create, :keyword_id => keyword.id, :command => {
-        :name => "Hello Boston", 
-        :command_type => "dcm_unsubscribe", 
+        :name => "Hello Boston",
+        :command_type => "dcm_unsubscribe",
         :params => {
           :dcm_account_codes => ["ACME"]
         }
@@ -55,8 +55,8 @@ describe KeywordCommandsController do
       Command.any_instance.expects(:save).returns(false)
       Command.any_instance.expects(:new_record?).returns(true)
       post :create, :keyword_id => keyword.id, :command => {
-        :name => "Hello Boston", 
-        :command_type => "dcm_unsubscribe", 
+        :name => "Hello Boston",
+        :command_type => "dcm_unsubscribe",
         :params => {
           :dcm_account_codes => ["ACME"]
         }
@@ -74,7 +74,7 @@ describe KeywordCommandsController do
       commands.first.expects(:valid?).returns(true)
       mock_finder('1')
       put :update, :keyword_id => keyword.id, :id => '1', :command => {
-        :name => "Hello Chicago", 
+        :name => "Hello Chicago",
       }
     end
     it "should work" do
@@ -88,7 +88,7 @@ describe KeywordCommandsController do
       commands.first.expects(:valid?).returns(false)
       mock_finder('1')
       put :update, :keyword_id => keyword.id, :id => '1', :command => {
-        :name => "Hello Chicago", 
+        :name => "Hello Chicago",
       }
     end
     it "should work" do

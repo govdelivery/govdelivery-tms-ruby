@@ -6,7 +6,7 @@ describe 'command_actions/show.rabl' do
          id: 1,
          inbound_message_id: 2,
          command_id: 1,
-         command: stub(keyword_id: 3, keyword: stub(id: 3)),
+         command: stub(keyword_id: 3, keyword: stub(id: 3, special?: false )),
          response_body: 'http body',
          status: 200,
          content_type: 'text/plain',

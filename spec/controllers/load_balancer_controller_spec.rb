@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe LoadBalancerController, "testing status" do
-  before :each do 
+describe LoadBalancerController, "testing status", :tx_off => true do
+  before :each do
     @connection = stub("connection")
     ActiveRecord::Base.stubs(:connection).returns(@connection)
   end
@@ -14,7 +14,7 @@ describe LoadBalancerController, "testing status" do
       response.body.should eq('XACT Donkey Cookies')
     end
   end
-  
+
   describe "a sad GET show" do
     it "should render 500" do
       @connection.expects(:select_one).with('SELECT SYSDATE FROM DUAL').raises(Exception.new("OH GOD"))

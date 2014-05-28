@@ -12,7 +12,7 @@ class CommandActionsController < ApplicationController
   protected
 
   def finder
-    @parent.command_actions.includes(command: {event_handler: :keyword})
+    @parent.command_actions.includes(command: [:keyword])
   end
 
   def find_parent

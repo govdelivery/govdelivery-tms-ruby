@@ -7,7 +7,7 @@ describe 'command_actions/index.rabl' do
            id: 1,
            inbound_message_id: 2,
            command_id: 1,
-           command: stub(keyword_id: 3, keyword: stub(id: 3)),
+           command: stub(keyword_id: 3, keyword: stub(id: 3, special?: false)),
            response_body: 'http body',
            status: 200,
            content_type: 'text/plain',
@@ -15,15 +15,14 @@ describe 'command_actions/index.rabl' do
       )
     end
   end
-  
-  # No keyword id on these
+
   let(:stop_command_actions) do
     5.times.map do |i|
       stub('CommandAction',
            id: 1,
            inbound_message_id: 2,
            command_id: 1,
-           command: stub(keyword_id: nil, keyword: nil),
+           command: stub(keyword_id: 3, keyword: stub(id: 3, special?: true)),
            response_body: 'http body',
            status: 200,
            content_type: 'text/plain',
@@ -47,7 +46,12 @@ describe 'command_actions/index.rabl' do
   context "for stop/help commands" do
     before do
       assign(:command_actions, stop_command_actions)
-      controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "command_actions", :sms_id => 2}, :script_name => "")
+      controller.stubs(:url_options).returns(host: "test.host",
+                                             protocol: "http://",
+                                             _path_segments: {action: "show",
+                                               controller: "command_actions",
+                                               sms_id: 2},
+                                             script_name: "")
       render
       @json = ActiveSupport::JSON.decode(rendered)
     end
