@@ -11,20 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140326191925) do
+ActiveRecord::Schema.define(:version => 20140528135508) do
 
   create_table "accounts", :force => true do |t|
-    t.string   "name",                                                             :null => false
-    t.datetime "created_at",                                                       :null => false
-    t.datetime "updated_at",                                                       :null => false
-    t.integer  "stop_handler_id",                   :precision => 38, :scale => 0
-    t.integer  "voice_vendor_id",                   :precision => 38, :scale => 0
-    t.integer  "email_vendor_id",                   :precision => 38, :scale => 0
-    t.integer  "sms_vendor_id",                     :precision => 38, :scale => 0
-    t.string   "dcm_account_codes", :limit => 4000
+    t.string   "name",                                                                 :null => false
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
+    t.integer  "stop_handler_id",                       :precision => 38, :scale => 0
+    t.integer  "voice_vendor_id",                       :precision => 38, :scale => 0
+    t.integer  "email_vendor_id",                       :precision => 38, :scale => 0
+    t.integer  "sms_vendor_id",                         :precision => 38, :scale => 0
+    t.string   "dcm_account_codes",     :limit => 4000
     t.string   "help_text"
     t.string   "stop_text"
-    t.integer  "ipaws_vendor_id",                   :precision => 38, :scale => 0
+    t.integer  "ipaws_vendor_id",                       :precision => 38, :scale => 0
+    t.string   "default_response_text"
   end
 
   create_table "authentication_tokens", :force => true do |t|
@@ -46,14 +47,17 @@ ActiveRecord::Schema.define(:version => 20140326191925) do
   end
 
   create_table "commands", :force => true do |t|
-    t.integer  "account_id",                       :precision => 38, :scale => 0, :null => false
+    t.integer  "account_id",                       :precision => 38, :scale => 0
     t.string   "name"
     t.string   "params",           :limit => 4000
     t.datetime "created_at",                                                      :null => false
     t.datetime "updated_at",                                                      :null => false
     t.integer  "event_handler_id",                 :precision => 38, :scale => 0
     t.string   "command_type",                                                    :null => false
+    t.integer  "keyword_id",                       :precision => 38, :scale => 0
   end
+
+  add_index "commands", ["keyword_id"], :name => "index_commands_on_keyword_id", :tablespace => "tsms_indx01"
 
   create_table "email_messages", :force => true do |t|
     t.integer  "user_id",                               :precision => 38, :scale => 0
@@ -172,6 +176,7 @@ ActiveRecord::Schema.define(:version => 20140326191925) do
     t.integer  "vendor_id",                       :precision => 38, :scale => 0
     t.integer  "event_handler_id",                :precision => 38, :scale => 0
     t.string   "response_text",    :limit => 160
+    t.string   "type"
   end
 
   add_index "keywords", ["vendor_id", "account_id", "LOWER(\"NAME\")"], :name => "i_key_ven_id_acc_id_low", :unique => true, :tablespace => "tsms_indx01"
@@ -221,17 +226,18 @@ ActiveRecord::Schema.define(:version => 20140326191925) do
   add_index "sms_recipients", ["message_id", "id"], :name => "i_sms_recipients_message_id_id", :tablespace => "tsms_indx01"
 
   create_table "sms_vendors", :force => true do |t|
-    t.string   "name",                                                                                                    :null => false
-    t.string   "username",                                                                                                :null => false
-    t.string   "password",                                                                                                :null => false
-    t.string   "from_phone",                                                                                              :null => false
-    t.string   "worker",                                                                                                  :null => false
-    t.datetime "created_at",                                                                                              :null => false
-    t.datetime "updated_at",                                                                                              :null => false
-    t.string   "help_text",                                       :default => "Go to http://bit.ly/govdhelp for help",    :null => false
-    t.string   "stop_text",                                       :default => "You will no longer receive SMS messages.", :null => false
-    t.boolean  "shared",           :precision => 1,  :scale => 0, :default => false,                                      :null => false
-    t.integer  "delivery_timeout", :precision => 38, :scale => 0
+    t.string   "name",                                                                                                         :null => false
+    t.string   "username",                                                                                                     :null => false
+    t.string   "password",                                                                                                     :null => false
+    t.string   "from_phone",                                                                                                   :null => false
+    t.string   "worker",                                                                                                       :null => false
+    t.datetime "created_at",                                                                                                   :null => false
+    t.datetime "updated_at",                                                                                                   :null => false
+    t.string   "help_text",                                            :default => "Go to http://bit.ly/govdhelp for help",    :null => false
+    t.string   "stop_text",                                            :default => "You will no longer receive SMS messages.", :null => false
+    t.boolean  "shared",                :precision => 1,  :scale => 0, :default => false,                                      :null => false
+    t.integer  "delivery_timeout",      :precision => 38, :scale => 0
+    t.string   "default_response_text"
   end
 
   add_index "sms_vendors", ["from_phone"], :name => "i_sms_vendors_from_phone", :unique => true, :tablespace => "tsms_indx01"
