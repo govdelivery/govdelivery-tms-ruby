@@ -28,7 +28,7 @@ class InboundMessage < ActiveRecord::Base
 
   #
   # This method will return false if one or more inbound messages precede this message
-  # by a configurable time threshold and contain the same information.  This is 
+  # by a configurable time threshold and contain the same information.  This is
   # intended to prevent infinite loops caused by auto-response messages.
   #
   def actionable?
@@ -41,7 +41,7 @@ class InboundMessage < ActiveRecord::Base
                where(table[:id].not_eq(self.id)).count == 0
   end
 
-  ## 
+  ##
   # I'm just doing this because Ben and Tyler are forcing me to
   # ~ Billy, 9/23/2013 (help me)
   #
@@ -49,7 +49,6 @@ class InboundMessage < ActiveRecord::Base
     self.command_status = :ignored
     self.save! unless self.new_record?
   end
-
 
   protected
 
@@ -75,5 +74,3 @@ class InboundMessage < ActiveRecord::Base
     true
   end
 end
-
-

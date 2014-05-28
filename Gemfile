@@ -52,6 +52,7 @@ group :development, :test do
     gem 'pry-debugger', require: 'pry'
   end
   gem 'pry', require: 'pry'
+  gem 'ruby-debug'
   gem 'brakeman'
   gem 'yaml_db'
 end
@@ -65,4 +66,5 @@ group :test do
   gem 'mocha', :require => false
   gem 'tms_client'
   gem 'shoulda-matchers'
+  gem 'database_cleaner'
 end

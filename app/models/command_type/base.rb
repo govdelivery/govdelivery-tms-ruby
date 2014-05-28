@@ -14,12 +14,12 @@ module CommandType
       self.class.name.demodulize.underscore.to_sym
     end
 
-    def invoke!(params)
+    def perform_async!(params)
       "#{self.class.name.demodulize}Worker".constantize.perform_async(params.to_hash)
     end
 
     def process_response(account, params, http_response)
-      log_action!(params, http_response)
+      save_command_action!(params, http_response)
     end
 
     def all_fields
@@ -36,10 +36,11 @@ module CommandType
 
     protected
 
-    def log_action!(params, http_response)
+    def save_command_action!(params, http_response)
       CommandAction.where(
         inbound_message_id: params.inbound_message_id,
-        command_id: params.command_id).first_or_create!(
+        command_id: params.command_id).
+        first_or_create!(
         status: http_response.status,
         content_type: http_response.headers['Content-Type'],
         response_body: http_response.body)
