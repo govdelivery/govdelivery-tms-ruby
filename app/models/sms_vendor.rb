@@ -31,6 +31,15 @@ class SmsVendor < ActiveRecord::Base
   after_save( :create_help_keyword!, if: ->{ self.help_keyword.nil?} )
   after_save( :create_default_keyword!, if: ->{ self.default_keyword.nil?} )
 
+
+  def create_keyword!(options)
+    kw = self.keywords.build
+    kw.account = options[:account]
+    kw.name = options[:name]
+    kw.save!
+    kw
+  end
+
   def create_command!(keyword_name, params)
     keyword = keywords.where(name: keyword_name).first_or_create!
     keyword.create_command!(params)
