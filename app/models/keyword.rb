@@ -13,7 +13,7 @@ class Keyword < ActiveRecord::Base
   #TEMPORARY for data migration:
   belongs_to :event_handler, :dependent => :destroy
 
-
+  scope :custom, where('type is null') # subclasses are 'special'
 
   belongs_to :vendor, :class_name=>'SmsVendor'
   belongs_to :account

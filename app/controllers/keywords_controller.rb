@@ -4,9 +4,9 @@ class KeywordsController < ApplicationController
   before_filter :find_user
   before_filter :find_keyword, :only => [:show, :update, :destroy]
   feature :sms
-  
+
   def index
-    @keywords = @account.keywords
+    @keywords = @account.custom_keywords
   end
 
   def show
@@ -30,6 +30,6 @@ class KeywordsController < ApplicationController
 
   private
   def find_keyword
-    @keyword = @account.keywords.find(params[:id])
+    @keyword = @account.custom_keywords.find(params[:id])
   end
 end

@@ -113,6 +113,10 @@ class Account < ActiveRecord::Base
     !email.nil? && from_addresses.where("lower(from_email) = ?", email.downcase).count == 1
   end
 
+  def custom_keywords
+    keywords.custom
+  end
+
   protected
 
   def normalize_dcm_account_codes
