@@ -157,3 +157,4 @@ if [[ ${#actions} != 0 ]]; then
     ### Call remote deployer script
     ssh -q -tt "${CTRL_USER}@${CTRL_SERVER}" "${CMD}" || { echo 'deploy failed'; exit 1; }
 fi;
+
