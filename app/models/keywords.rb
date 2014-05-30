@@ -31,6 +31,17 @@ module Keywords
     end
   end
 
+  class VendorStart < SpecialKeyword
+
+    def execute_commands(command_parameters)
+      vendor.start!(command_parameters)
+    end
+
+    def default_response_text
+      vendor.start_text
+    end
+  end
+
   class VendorHelp < SpecialKeyword
 
     def execute_commands(command_parameters)

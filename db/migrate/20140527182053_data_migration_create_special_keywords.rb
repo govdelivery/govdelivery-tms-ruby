@@ -7,7 +7,7 @@ class DataMigrationCreateSpecialKeywords < ActiveRecord::Migration
 
   # these are cartesian product queries which feed the insert command
   # so that any special keywords that should exist but don't get inserted
-  # - Jesse
+  # - by Jesse
   def exec_insert_account_keywords username
     execute "insert into #{username}.keywords
   select #{username}.keywords_seq.nextval,

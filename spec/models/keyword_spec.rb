@@ -216,6 +216,16 @@ describe Keyword do
       it { should be_instance_of( Keywords::AccountStop) }
     end
 
+    describe "given a vendor and keyword: 'start' " do
+      subject{ Keyword.get_keyword( 'start', build(:sms_vendor), nil) }
+      it { should be_instance_of( Keywords::VendorStart) }
+    end
+
+    describe "given a vendor and an account keyword: 'start' because there is no AccountStart " do
+      subject{ Keyword.get_keyword( 'start', build(:sms_vendor), @account.id) }
+      it { should be_instance_of( Keywords::AccountDefault) }
+    end
+
     describe "given a vendor and an account and keyword: 'unsubscribe' " do
       subject{ Keyword.get_keyword( 'unsubscribe', build(:sms_vendor), @account.id ) }
       it { should be_instance_of( Keywords::AccountStop) }

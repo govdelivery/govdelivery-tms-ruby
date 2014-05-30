@@ -47,6 +47,8 @@ class Keyword < ActiveRecord::Base
       case
       when STOP_WORDS.include?(keyword_name)
         vendor.stop_keyword
+      when START_WORDS.include?(keyword_name)
+        vendor.start_keyword
       when HELP_WORDS.include?(keyword_name)
         vendor.help_keyword
       when (keyword = vendor.keywords.where(name: keyword_name, account_id: nil).first).present?
