@@ -24,6 +24,7 @@ FactoryGirl.define do
     after(:build) do |vendor,eval|
       vendor.build_help_keyword
       vendor.build_stop_keyword
+      vendor.build_start_keyword
       vendor.build_default_keyword
     end
   end
