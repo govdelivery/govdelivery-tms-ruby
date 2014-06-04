@@ -5,6 +5,7 @@ module CommandType
                       :http_method, 
                       :password, 
                       :sms_body_param_name,
+                      :strip_keyword,
                       :url,
                       :username
                     ].freeze

@@ -28,12 +28,13 @@ class CommandParameters
     :sms_tokens,          # an array of string tokens in the sms_body, sans keyword
     :from,                # phone number of user that sent us sms message
     :to,                  # phone number to which user sent message
-    :username,
-    :encrypted_password,
-    :url,
-    :http_method,
+    :username,            # username for HTTP BASIC auth during forward requests
+    :encrypted_password,  # don't set this directly - setting :password sets this automatically
+    :url,                 # the URL to send a forward request to
+    :http_method,         # GET or POST - method of the forward request
     :from_param_name,     # the name of the phone number variable during forward commands
     :sms_body_param_name, # the name of the sms body variable during forward commands
+    :strip_keyword,       # nil/"true" - remove the keyword from the sms body before forwarding. defaults to false.
     :dcm_account_codes,   # an array of codes, used for unsubscribing only
     :dcm_account_code,    # a single account code, used for subscribing to topics
     :dcm_topic_codes,     # array of topic codes (dcm_account_code must be set)
@@ -60,7 +61,11 @@ class CommandParameters
   # have nil values.  Please don't ever include password in this.  Only encrypted_password is
   # safe.
   def to_hash
-    PARAMS.inject({}) {|hsh, p| hsh.merge(p => self.send(p))}.keep_if{|k,v| v.present? }
+    PARAMS.inject({}) do |hsh, p| 
+      # instance_variable_get is being used to avoid any mutations caused by 
+      # lazy getters (i.e. ones with default values)
+      hsh.merge(p => instance_variable_get("@#{p}"))
+    end.keep_if{|k,v| v.present? }
   end
 
   def to_s

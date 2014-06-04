@@ -34,13 +34,19 @@ class ForwardWorker
   def http_response
     begin
       return @http_response if @http_response
+      
+      # If the command was configured to strip the keyword, we use sms_tokens
+      # (which is an array of tokens in the sms body, minus the detected keyword).  Otherwise, 
+      # we pass along the body unmolested.
+      sms_body = options.strip_keyword ? options.sms_tokens.join(" ") : options.sms_body
+
       @http_response = http_service.send(options.http_method.downcase, 
                                          options.url, 
                                          options.username, 
                                          options.password, 
                                          {
                                            options.from_param_name => options.from, 
-                                           options.sms_body_param_name => options.sms_body
+                                           options.sms_body_param_name => sms_body
                                          })
       if @http_response.status == 0
         raise Faraday::Error::ConnectionFailed.new(nil, 

@@ -10,6 +10,7 @@ describe ForwardWorker do
                    :password => nil,
                    :from => "333",
                    :sms_body => "sms body",
+                   :sms_tokens => ["sms", "body", "tokens"],
                    :account_id => account.id,
                    :command_id => 11,
                    :callback_url => "http://localhost",
@@ -37,6 +38,16 @@ describe ForwardWorker do
     subject.perform(options)
   end
 
+  it 'should send along message without keyword if configured' do
+    subject.stubs(:command).returns(command)
+    subject.http_service.expects(:post).with("url", nil, nil, {"from_param" => "333", "sms_body_d" => "sms body tokens"}).returns(forward_response)
+    command.expects(:process_response).with(instance_of(Account), instance_of(CommandParameters), forward_response).returns(message)
+    subject.sms_service.expects(:deliver!).with(message, options[:callback_url])
+    
+    # if true, we use sms_tokens instead of body, because the former has the keyword stripped off.
+    subject.perform(options.merge(:strip_keyword => true))
+  end
+
   it 'should not send a message if there isn\'t one' do
     subject.stubs(:command).returns(command)
     subject.http_service.expects(:post).with("url", nil, nil, {"from_param" => "333", "sms_body_d" => "sms body"}).returns(forward_response)
@@ -55,4 +66,5 @@ describe ForwardWorker do
     subject.perform(options)
     subject.exception.should_not be_nil
   end
+
 end

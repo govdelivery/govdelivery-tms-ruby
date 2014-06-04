@@ -67,10 +67,12 @@ describe CommandParameters do
     # nil case
     empty_parameters.sms_body_param_name.should eq("sms_body")
     empty_parameters.from_param_name.should eq("from")
+    empty_parameters.strip_keyword.should be_nil
 
     # the parameter has ben set
     command_parameters.sms_body_param_name.should eq("sms_body_param_name value")
     command_parameters.from_param_name.should eq("from_param_name value")
+    command_parameters.strip_keyword.should eq("strip_keyword value")
   end
 
 end
