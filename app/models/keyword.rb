@@ -3,7 +3,7 @@ class Keyword < ActiveRecord::Base
 
   # for at least one of our vendors (twilio) we need to support stop, quit, cancel, and unsubscribe
   # http://www.twilio.com/help/faq/sms/does-twilio-support-stop-block-and-cancel-aka-sms-filtering
-  STOP_WORDS  = %w(stop stopall quit unsubscribe cancel) # we treat stopall and stop the same
+  STOP_WORDS  = %w(stop stopall unsubscribe cancel end quit) # we treat stopall and stop the same
   START_WORDS = %w(start yes)
   HELP_WORDS = %w(help info)
   RESERVED_KEYWORDS = STOP_WORDS + HELP_WORDS
