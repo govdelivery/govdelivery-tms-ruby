@@ -35,7 +35,6 @@ FactoryGirl.define do
     end
   end
 
-  # create via vendor or account
   trait :special do
     skip_create
   end

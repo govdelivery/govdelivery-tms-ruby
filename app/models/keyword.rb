@@ -16,7 +16,7 @@ class Keyword < ActiveRecord::Base
 
   scope :custom, where('type is null') # subclasses are 'special'
 
-  belongs_to :vendor, :class_name=>'SmsVendor'
+  belongs_to :vendor, class_name: 'SmsVendor'
   belongs_to :account
   validates_presence_of :name
   validates_presence_of :vendor

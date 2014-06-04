@@ -3,8 +3,8 @@ require 'spec_helper'
 describe KeywordCommandsController do
   let(:vendor)  { create(:sms_vendor, :name => 'name', :username => 'username', :password => 'secret', :worker => 'LoopbackMessageWorker') }
   let(:account) { vendor.accounts.create! :name=> "HELLO ACCOUNT" }
-  let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:keyword) { k=account.keywords.new(:name => "HI").tap{|k| k.vendor = vendor}; k.save!; k }
+  let(:user)    { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+  let(:keyword) { create(:keyword, vendor: vendor, account: account ) }
   let(:command) { Command.new(:command_type => :dcm_subscribe, :name => "ALLIGATORZ") }
   let(:commands) { [stub(:name => "Hello New York")] }
 
@@ -17,7 +17,7 @@ describe KeywordCommandsController do
       Keyword.any_instance.expects(:commands).returns([stub(:name => "FOO", :params => {:hi => "there"})])
       get :index, :keyword_id => keyword.id, :format => :json
     end
-    it "should work" do
+    it "should render a command" do
       response.response_code.should == 200
     end
   end
@@ -33,26 +33,46 @@ describe KeywordCommandsController do
     end
   end
 
+  def valid_params
+    {
+     :name => "Hello Boston",
+     :command_type => "dcm_unsubscribe",
+     :params => {
+                 :dcm_account_codes => ["ACME"]
+                }
+    }
+  end
+
   context "Creating a command" do
     before do
-      Command.any_instance.expects(:save).returns(true)
+      Command.any_instance.expects(:save!).returns(true)
       Command.any_instance.expects(:new_record?).returns(false)
-      post :create, :keyword_id => keyword.id, :command => {
-        :name => "Hello Boston",
-        :command_type => "dcm_unsubscribe",
-        :params => {
-          :dcm_account_codes => ["ACME"]
-        }
-      }
     end
-    it "should work" do
+
+    it "should create a command with valid params" do
+      post :create, keyword_id: keyword.id, command: valid_params
+      response.response_code.should == 201
+    end
+
+    it "should be able to create a command on the stop keyword" do
+      post :create, keyword_id: 'stop', command: valid_params
+      response.response_code.should == 201
+    end
+
+    it "should be able to create a command on the help keyword" do
+      post :create, keyword_id: 'help', command: valid_params
+      response.response_code.should == 201
+    end
+
+    it "should be able to create a command on the default keyword" do
+      post :create, keyword_id: 'default', command: valid_params
       response.response_code.should == 201
     end
   end
 
   context "Creating an invalid command" do
     before do
-      Command.any_instance.expects(:save).returns(false)
+      Command.any_instance.expects(:save!).returns(false)
       Command.any_instance.expects(:new_record?).returns(true)
       post :create, :keyword_id => keyword.id, :command => {
         :name => "Hello Boston",

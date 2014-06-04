@@ -55,7 +55,10 @@ Here is an example of creating a command on the special keyword "AccountStop" in
                                                     command_type: 'dcm_unsubscribe')
 
 
-
+Commands can be added to Special Keywords with by posting to the paths:
+> /keywords/stop/commands
+> /keywords/help/commands
+> /keywords/default/commands
 
 
 ipaws notes:

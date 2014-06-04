@@ -12,9 +12,7 @@ class KeywordCommandsController < ApplicationController
   end
 
   def create
-    @command = @keyword.commands.new(params[:command])
-    @command.account = @account
-    @command.save
+    @command = @keyword.create_command! params[:command]
     respond_with(@command)
   end
 
@@ -30,7 +28,12 @@ class KeywordCommandsController < ApplicationController
   private
 
   def find_keyword
-    @keyword = @account.keywords.find(params[:keyword_id])
+    @keyword = special_keyword || @account.keywords.find(params[:keyword_id])
+  end
+
+  def special_keyword
+    name = ['stop', 'help','default'].select{ |k| k == params[:keyword_id] }.first
+    @account.send "#{name}_keyword" if name
   end
 
   def find_command
