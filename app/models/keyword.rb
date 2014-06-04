@@ -6,7 +6,7 @@ class Keyword < ActiveRecord::Base
   STOP_WORDS  = %w(stop stopall unsubscribe cancel end quit) # we treat stopall and stop the same
   START_WORDS = %w(start yes)
   HELP_WORDS = %w(help info)
-  RESERVED_KEYWORDS = STOP_WORDS + HELP_WORDS
+  RESERVED_KEYWORDS = STOP_WORDS + START_WORDS + HELP_WORDS
 
   has_many :inbound_messages, inverse_of: :keyword
   has_many :commands
