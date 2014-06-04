@@ -22,21 +22,23 @@ class CommandParameters
   # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or
   # handle the missing method error).
   PARAMS=[
-    :account_id,        # the xact account id corresponding to this command,
-    :callback_url,      # a callback url for the external sms/voice service to call if needed
-    :sms_body,          # the full body string of the incoming sms message
-    :sms_tokens,        # an array of string tokens in the sms_body, sans keyword
-    :from,              # phone number of user that sent us sms message
-    :to,                # phone number to which user sent message
+    :account_id,          # the xact account id corresponding to this command,
+    :callback_url,        # a callback url for the external sms/voice service to call if needed
+    :sms_body,            # the full body string of the incoming sms message
+    :sms_tokens,          # an array of string tokens in the sms_body, sans keyword
+    :from,                # phone number of user that sent us sms message
+    :to,                  # phone number to which user sent message
     :username,
     :encrypted_password,
     :url,
     :http_method,
-    :dcm_account_codes, # an array of codes, used for unsubscribing only
-    :dcm_account_code,  # a single account code, used for subscribing to topics
-    :dcm_topic_codes,   # array of topic codes (dcm_account_code must be set)
-    :inbound_message_id,# inbound SMS message id (for recording actions)
-    :command_id         # initiating command id
+    :from_param_name,     # the name of the phone number variable during forward commands
+    :sms_body_param_name, # the name of the sms body variable during forward commands
+    :dcm_account_codes,   # an array of codes, used for unsubscribing only
+    :dcm_account_code,    # a single account code, used for subscribing to topics
+    :dcm_topic_codes,     # array of topic codes (dcm_account_code must be set)
+    :inbound_message_id,  # inbound SMS message id (for recording actions)
+    :command_id           # initiating command id
   ]
   attr_accessor *PARAMS
   attr_accessible *PARAMS
@@ -69,6 +71,18 @@ class CommandParameters
   # are to be included in serialization.
   def to_yaml_properties
     to_hash.keys.map{|p| "@#{p}"}
+  end
+
+  ##
+  # The name of the sms body variable sent during a forward command
+  def sms_body_param_name
+    @sms_body_param_name ||= "sms_body"
+  end
+
+  ##
+  # The name of the phone number variable sent during a forward command
+  def from_param_name
+    @from_param_name ||= "from"
   end
 
   private

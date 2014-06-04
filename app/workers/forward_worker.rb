@@ -34,9 +34,18 @@ class ForwardWorker
   def http_response
     begin
       return @http_response if @http_response
-      @http_response = http_service.send(options.http_method.downcase, options.url, options.username, options.password, {:from => options.from, :sms_body => options.sms_body})
+      @http_response = http_service.send(options.http_method.downcase, 
+                                         options.url, 
+                                         options.username, 
+                                         options.password, 
+                                         {
+                                           options.from_param_name => options.from, 
+                                           options.sms_body_param_name => options.sms_body
+                                         })
       if @http_response.status == 0
-        raise Faraday::Error::ConnectionFailed.new(nil, body: "Couldn't connect to #{@http_response.env[:url].to_s}", headers: {})
+        raise Faraday::Error::ConnectionFailed.new(nil, 
+          body: "Couldn't connect to #{@http_response.env[:url].to_s}", 
+          headers: {})
       end
     rescue Faraday::Error::ConnectionFailed, Faraday::Error::TimeoutError => e
       # these are network problems, they could happen because of a bad command but we should probably know about them

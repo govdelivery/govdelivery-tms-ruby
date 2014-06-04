@@ -12,7 +12,9 @@ describe ForwardWorker do
                    :sms_body => "sms body",
                    :account_id => account.id,
                    :command_id => 11,
-                   :callback_url => "http://localhost"} }
+                   :callback_url => "http://localhost",
+                   :sms_body_param_name => "sms_body_d",
+                   :from_param_name => "from_param"} }
 
   let(:message) { stub('SmsMessage') }
   let(:forward_response) { stub(status: 200, body: "ATLANTA IS FULL OF ZOMBIES, STAY AWAY") }
@@ -28,7 +30,7 @@ describe ForwardWorker do
 
   it 'should perform happily' do
     subject.stubs(:command).returns(command)
-    subject.http_service.expects(:post).with("url", nil, nil, {:from => "333", :sms_body => "sms body"}).returns(forward_response)
+    subject.http_service.expects(:post).with("url", nil, nil, {"from_param" => "333", "sms_body_d" => "sms body"}).returns(forward_response)
     command.expects(:process_response).with(instance_of(Account), instance_of(CommandParameters), forward_response).returns(message)
     subject.sms_service.expects(:deliver!).with(message, options[:callback_url])
 
@@ -37,7 +39,7 @@ describe ForwardWorker do
 
   it 'should not send a message if there isn\'t one' do
     subject.stubs(:command).returns(command)
-    subject.http_service.expects(:post).with("url", nil, nil, {:from => "333", :sms_body => "sms body"}).returns(forward_response)
+    subject.http_service.expects(:post).with("url", nil, nil, {"from_param" => "333", "sms_body_d" => "sms body"}).returns(forward_response)
     command.expects(:process_response).with(instance_of(Account), instance_of(CommandParameters), forward_response).returns(nil)
     subject.sms_service.expects(:deliver!).never
 
@@ -46,7 +48,7 @@ describe ForwardWorker do
 
   it 'should record a failure if we get a response without a status' do
     subject.stubs(:command).returns(command)
-    subject.http_service.expects(:post).with("url", nil, nil, {:from => "333", :sms_body => "sms body"}).returns(invalid_response)
+    subject.http_service.expects(:post).with("url", nil, nil, {"from_param" => "333", "sms_body_d" => "sms body"}).returns(invalid_response)
     command.expects(:process_response).with(instance_of(Account), instance_of(CommandParameters), instance_of(OpenStruct)).returns(nil)
     subject.sms_service.expects(:deliver!).never
 

@@ -1,13 +1,20 @@
 module CommandType
   class Forward < Base
-    STRING_FIELDS = [:http_method, :username, :password, :url].freeze
+    STRING_FIELDS = [
+                      :from_param_name,
+                      :http_method, 
+                      :password, 
+                      :sms_body_param_name,
+                      :url,
+                      :username
+                    ].freeze
 
     def initialize
       super(STRING_FIELDS.dup, [])
     end
 
     def required_string_fields
-      [:http_method, :url]
+      [:http_method, :url, :sms_body_param_name, :from_param_name]
     end
 
     def process_response(account, params, http_response)

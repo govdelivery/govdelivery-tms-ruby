@@ -19,7 +19,9 @@ describe CommandType::Forward do
                           :sms_body => "sms body",
                           :account_id => account.id,
                           :command_id => 11,
-                          :inbound_message_id => 111)
+                          :inbound_message_id => 111,
+                          :from_param_name => 'uzer',
+                          :sms_body_param_name => 'teh_sms_body')
   end
 
   subject { CommandType::Forward.new }

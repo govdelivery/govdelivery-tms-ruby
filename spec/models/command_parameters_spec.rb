@@ -63,4 +63,14 @@ describe CommandParameters do
 
   end
 
+  it "should have default values for some params" do
+    # nil case
+    empty_parameters.sms_body_param_name.should eq("sms_body")
+    empty_parameters.from_param_name.should eq("from")
+
+    # the parameter has ben set
+    command_parameters.sms_body_param_name.should eq("sms_body_param_name value")
+    command_parameters.from_param_name.should eq("from_param_name value")
+  end
+
 end
