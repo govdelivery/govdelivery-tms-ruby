@@ -5,7 +5,7 @@ describe KeywordsController do
   let(:vendor) { create(:sms_vendor) }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:attrs) { {'name' => "GOVD", 'response_text' => "GovAwesome!"} }
-  let(:keywords) { [stub(:name => "HI" )]}
+  let(:keywords) { [stub(:name => "HI" )] }
   let(:keyword) { mock("keyword") }
 
   before do
@@ -14,7 +14,7 @@ describe KeywordsController do
   
   context "Listing keywords" do
     before do
-      Account.any_instance.expects(:keywords).returns(keywords)
+      Account.any_instance.expects(:custom_keywords).returns(keywords)
     end
     it "should show keywords" do
       get :index
@@ -91,6 +91,6 @@ describe KeywordsController do
   def mock_finder(id)
     find = mock()
     find.expects(:find).with(id).returns(keywords.first)
-    Account.any_instance.expects(:keywords).returns(find)
+    Account.any_instance.expects(:custom_keywords).returns(find)
   end 
 end
