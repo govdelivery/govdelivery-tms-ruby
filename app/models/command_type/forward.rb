@@ -7,6 +7,7 @@ module CommandType
                       :sms_body_param_name,
                       :strip_keyword,
                       :url,
+                      :expected_content_type,
                       :username
                     ].freeze
 
@@ -15,12 +16,18 @@ module CommandType
     end
 
     def required_string_fields
-      [:http_method, :url, :sms_body_param_name, :from_param_name]
+      [:http_method, :url, :sms_body_param_name, :from_param_name, :expected_content_type]
     end
 
     def process_response(account, params, http_response)
-      cr = super
-      build_message(account, params.from, cr.response_body) if cr.plaintext_body?
+      command_action = super
+      # check content type against expected to prevent garbage from going to user
+      if command_action.content_type.include?(params.expected_content_type) && command_action.success?
+        build_message(account, params.from, command_action.response_body)
+      else
+        Rails.logger.warn "ignoring: #{command_action.inspect}"
+        return nil
+      end
     end
 
     def build_message(account, from, short_body)

@@ -44,7 +44,7 @@ describe CommandParameters do
 
     # properties in other_parameters should replace properties in command_parameters
     command_parameters.account_id.should eq(10)
-    
+
     # nil stuff should not override existing properties
     command_parameters.sms_body.should eq("sms_body value")
   end
@@ -57,7 +57,7 @@ describe CommandParameters do
     empty_parameters.username = :foo
     empty_parameters.dcm_account_code = "AB"
     empty_parameters.dcm_topic_codes = [:foo]
-    
+
     empty_parameters.valid?
     empty_parameters.should be_valid
 
@@ -69,10 +69,20 @@ describe CommandParameters do
     empty_parameters.from_param_name.should eq("from")
     empty_parameters.strip_keyword.should be_nil
 
-    # the parameter has ben set
+    # the parameter has been set
     command_parameters.sms_body_param_name.should eq("sms_body_param_name value")
     command_parameters.from_param_name.should eq("from_param_name value")
     command_parameters.strip_keyword.should eq("strip_keyword value")
+  end
+
+  it "should not allow expected_content_type to be application/json" do
+    command_parameters = build(:forward_command_parameters, expected_content_type: 'application/json').tap(&:valid?)
+    command_parameters.errors.should include(:expected_content_type)
+  end
+
+  it "should default expected_content_type to text/plain" do
+    command_parameters = build(:forward_command_parameters, expected_content_type: nil).tap(&:valid?)
+    command_parameters.expected_content_type.should eql('text/plain')
   end
 
 end

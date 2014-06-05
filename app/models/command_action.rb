@@ -11,12 +11,8 @@ class CommandAction < ActiveRecord::Base
 
   scope :successes, where("status BETWEEN 200 AND 299")
 
-  def plaintext_body?
-    success? && self.content_type=~/text\/plain/ && !self.response_body.blank?
-  end
-
   def success?
-    (200..299).include?(status)
+    (200..299).include?(status) && !self.response_body.blank?
   end
 
   protected

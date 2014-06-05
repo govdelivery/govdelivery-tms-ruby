@@ -42,12 +42,12 @@ RSpec.configure do |config|
     namespace: "spec",
     driver: Redis::Connection::Memory}
 
-  Sidekiq.configure_client do |config|
-    config.redis = fakeredis_opts
+  Sidekiq.configure_client do |conf|
+    conf.redis = fakeredis_opts
   end
 
-  Sidekiq.configure_server do |config|
-    config.redis = fakeredis_opts
+  Sidekiq.configure_server do |conf|
+    conf.redis = fakeredis_opts
   end
 
 end

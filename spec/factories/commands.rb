@@ -15,5 +15,10 @@ FactoryGirl.define do
       command_type 'dcm_unsubscribe'
       params factory: :unsubscribe_command_parameters
     end
+
+    factory :forward_command do
+      command_type 'forward'
+      params factory: :forward_command_parameters
+    end
   end
 end

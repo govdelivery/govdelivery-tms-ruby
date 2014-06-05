@@ -4,7 +4,7 @@ FactoryGirl.define do
     skip_create
 
     factory :forward_command_parameters do
-      command_type :forward
+      command_type CommandType[:forward]
       url 'http://somewhere.out.there'
       http_method 'GET'
     end

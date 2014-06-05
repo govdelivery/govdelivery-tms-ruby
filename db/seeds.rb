@@ -1,7 +1,7 @@
 ###
 # WARNING
 #
-# Don't try to do this, you will run into all kinds of problems: 
+# Don't try to do this, you will run into all kinds of problems:
 #
 #   rake db:migrate:full_rebuild db:seed
 #
@@ -102,12 +102,13 @@ if Rails.env.development? || Rails.env.ci?
   kw.account = omg
   kw.vendor = omg.sms_vendor
   kw.save!
-  
+
   # Make the product user (admin)
   user = User.find_or_create_by_email(:email => "product@govdelivery.com", :password => "retek01!")
   user.account = omg
   user.admin = true
   user.save!
+  puts "product's token: #{user.authentication_tokens.first.token}"
 
 elsif Account.count == 0 && User.count ==0
   puts "#{Rails.env} DB looks empty, creating a GovDelivery account."

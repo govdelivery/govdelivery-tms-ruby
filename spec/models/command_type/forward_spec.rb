@@ -32,16 +32,28 @@ describe CommandType::Forward do
 
   it 'creates a command response and sms message' do
     SmsMessage.any_instance.expects(:save!).returns(true)
-    command_action.stubs(:plaintext_body?).returns(true)
+    command_action.stubs(:success?).returns(true)
 
     subject.process_response(account, command_params, http_response)
   end
 
-  it 'will not create an sms message if response type is wrong' do
-    command_action.stubs(:plaintext_body?).returns(false)
+  it 'will not create an sms message if command_action is not successfull' do
+    command_action.stubs(:success?).returns(false)
     subject.expects(:build_message).never
     subject.process_response(account, command_params, http_response)
   end
 
+  it 'will not create an sms message if command_action.content_type does not match expected_content_type' do
+    command_action.stubs(:content_type).returns('something crazy')
+    subject.expects(:build_message).never
+    subject.process_response(account, command_params, http_response)
+  end
+
+  it 'will return an sms message if command_action.content_type matches the expected_content_type' do
+    command_action.stubs(:success?).returns(true)
+    command_action.stubs(:content_type).returns('text/plain')
+    subject.expects(:build_message).once
+    subject.process_response(account, command_params, http_response)
+  end
 
 end

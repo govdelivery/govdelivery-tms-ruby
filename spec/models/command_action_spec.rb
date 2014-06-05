@@ -2,50 +2,36 @@ require 'spec_helper'
 
 describe CommandAction do
 
-  let(:vendor) { create(:sms_vendor) }
-  let(:account) { account = vendor.accounts.create!(:name => 'name') }
-  let(:keyword) { create(:custom_keyword, account: account, vendor: vendor, name: 'HI') }
-  let(:command) { keyword.create_command!(:command_type => :forward,
-                                           :name => "ALLIGATORZ",
-                                           :params => CommandParameters.new(:username => 'foo',
-                                                                            :password => 'foo',
-                                                                            :http_method => 'GET',
-                                                                            :url => 'http://www.mom')) }
-
-  let(:inbound_message) { InboundMessage.create!(vendor: vendor,
-                                                 body: 'this is my body',
-                                                 from: '5551112222',
-                                                 keyword: keyword) }
-
   describe 'a plaintext body' do
-    subject {
-      CommandAction.create!(inbound_message_id: inbound_message.id,
-                            command_id: command.id,
-                            status: '201',
-                            content_type: 'text/plain; charset=utf-8',
-                            response_body: 'body')
-    }
-
+    subject { build(:command_action, content_type:   'text/plain; charset=utf-8',
+                                     response_body:  'something',
+                                     status:         '201' ) }
     it { should be_valid }
-    it { subject.plaintext_body?.should be_true }
-    it 'should be false if body is nil' do
-      subject.response_body=nil
-      subject.plaintext_body?.should be_false
-    end
+    it { subject.success?.should be_true }
   end
 
-  describe 'an html body' do
-    subject {
-      CommandAction.create!(inbound_message_id: inbound_message.id,
-                            command_id: command.id,
-                            status: '404',
-                            content_type: 'text/plain; charset=utf-8',
-                            response_body: 'body')
-    }
-
+  describe 'a blank response body' do
+    subject { build(:command_action, content_type:   'text/plain; charset=utf-8',
+                                     response_body:  '',
+                                     status:         '201' ) }
     it { should be_valid }
-    it { subject.plaintext_body?.should be_false }
+    it { subject.success?.should be_false }
   end
 
+  describe 'a response of NOT FOUND' do
+    subject { build(:command_action, content_type:   'text/plain; charset=utf-8',
+                                     response_body:  'something',
+                                     status:         '404' ) }
+    it { should be_valid }
+    its(:success?) { should be_false }
+  end
+
+  describe 'an html content type' do
+    subject { build(:command_action, content_type:   'text/html; charset=utf-8',
+                                     response_body:  'something',
+                                     status:         '200' ) }
+    it { should be_valid }
+    it(:success?) { should be_true }
+  end
 
 end
