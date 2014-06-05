@@ -24,7 +24,9 @@ class ForwardWorker
     message = super
 
     # Send a text back to the user via twilio
-    sms_service.deliver!(message, options.callback_url) if message
+    Service::TwilioMessageService.deliver!(message, options.callback_url) if message
+    # wtf
+    # sms_service.deliver!(message, options.callback_url) if message
   end
 
   def http_service
