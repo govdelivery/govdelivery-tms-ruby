@@ -2,8 +2,8 @@ module CommandType
   class Forward < Base
     STRING_FIELDS = [
                       :from_param_name,
-                      :http_method, 
-                      :password, 
+                      :http_method,
+                      :password,
                       :sms_body_param_name,
                       :strip_keyword,
                       :url,

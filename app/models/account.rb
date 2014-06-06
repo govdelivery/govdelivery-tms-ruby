@@ -23,36 +23,13 @@ class Account < ActiveRecord::Base
   has_many :from_addresses, :inverse_of => :account
   has_one :default_from_address, conditions: { is_default: true }, class_name: FromAddress
 
-
-
   has_one :stop_keyword,    class_name: Keywords::AccountStop
   has_one :help_keyword,    class_name: Keywords::AccountHelp
   has_one :default_keyword, class_name: Keywords::AccountDefault
   # special keywords need to be kept in the database for configurability and trackability
-  # even non sms accounts get these because who cares
   after_save( :create_stop_keyword!, if: ->{ self.stop_keyword.nil? && self.sms_vendor.present? } )
   after_save( :create_help_keyword!, if: ->{ self.help_keyword.nil? && self.sms_vendor.present? } )
   after_save( :create_default_keyword!, if: ->{ self.default_keyword.nil? && self.sms_vendor.present? } )
-
-  # this is a workaround for something funny happening when saving
-  # race condition ? unsure
-  def create_stop_keyword!
-    build_stop_keyword
-    self.stop_keyword.valid?
-    self.stop_keyword.save!
-  end
-
-  def create_help_keyword!
-    build_help_keyword
-    self.help_keyword.valid?
-    self.help_keyword.save!
-  end
-
-  def create_default_keyword!
-    build_default_keyword
-    self.default_keyword.valid?
-    self.default_keyword.save!
-  end
 
   serialize :dcm_account_codes, Set
   delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, :to => :default_from_address
@@ -95,18 +72,6 @@ class Account < ActiveRecord::Base
       stop_requests.create!(phone: command_parameters.from, vendor: sms_vendor)
     end
     stop(command_parameters)
-  end
-
-  def help_text
-    read_attribute(:help_text) || sms_vendor.try(:help_text)
-  end
-
-  def stop_text
-    read_attribute(:stop_text) || sms_vendor.try(:stop_text)
-  end
-
-  def default_response_text
-    read_attribute(:default_response_text) || sms_vendor.try(:default_response_text)
   end
 
   def from_email_allowed?(email)

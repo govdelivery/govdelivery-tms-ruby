@@ -20,17 +20,17 @@ describe TwilioRequestsController, '#create' do
       SmsVendor.any_instance.expects(:stop!).with(kind_of(CommandParameters))
       post :create, twilio_request_params('STOP', @vendor)
       response.response_code.should eq(201)
-      assigns(:response).response_text.should == @vendor.stop_text
+      assigns(:response).response_text.should == @vendor.stop_keyword.response_text
     end
 
     it "responds to 'HELP' with vendor help text" do
       post :create, twilio_request_params('HELP', @vendor)
       response.response_code.should eq(201)
-      assigns(:response).response_text.should == @vendor.help_text
+      assigns(:response).response_text.should == @vendor.help_keyword.response_text
     end
 
     it "responds to: 'GIBBERISH' with vendor default response text" do
-      @vendor.update_attribute :default_response_text, "turn left"
+      @vendor.default_keyword.update_attribute :response_text, "turn left"
       post :create, twilio_request_params('GIBBERISH', @vendor)
       response.response_code.should eq(201)
       assigns(:response).response_text.should == "turn left"
@@ -58,26 +58,26 @@ describe TwilioRequestsController, '#create' do
         end
       end
 
-      context "an account WITHOUT stop text, help text, or default response text" do
+      context "an account WITHOUT custom stop text, help text, or default response text" do
         it "responds to 'pirate stop' with vendor stop text" do
           post :create, @params.merge('Body' => 'pirate stop')
-          assigns(:response).response_text.should eql(@account.sms_vendor.stop_text)
+          assigns(:response).response_text.should eql( Keywords::DEFAULT_STOP_TEXT )
         end
         it "responds to 'pirate help' with vendor help text" do
           post :create, @params.merge('Body' => 'pirate help')
-          assigns(:response).response_text.should eql(@account.sms_vendor.help_text)
+          assigns(:response).response_text.should eql( Keywords::DEFAULT_HELP_TEXT )
         end
-        it "responds to 'pirate nothin' with account default response text" do
+        it "responds to 'pirate nothin' with account help text" do
           post :create, @params.merge('Body' => 'pirate nothin')
-          assigns(:response).response_text.should eql(@account.sms_vendor.default_response_text)
+          assigns(:response).response_text.should eql( Keywords::DEFAULT_HELP_TEXT )
         end
       end
 
-      context "an account WITH stop text, help text, and default response text" do
+      context "an account WITH custom stop text, help text, and default response text" do
         before :each do
-          @account.stop_text = 'oh sorry'
-          @account.help_text = 'maybe later'
-          @account.default_response_text = 'wat'
+          @account.stop_keyword.update_attribute :response_text, 'oh sorry'
+          @account.help_keyword.update_attribute :response_text, 'maybe later'
+          @account.default_keyword.update_attribute :response_text, 'wat'
           @account.save!
         end
         it "responds to 'pirate stop' with account stop text" do

@@ -16,7 +16,7 @@ describe SmsVendor do
     v2.should_not be_valid
   end
 
-  [:name, :username, :password, :help_text, :stop_text, :from, :shared].each do |field|
+  [:name, :username, :password, :from, :shared].each do |field|
     describe "when #{field} is empty" do
       before { vendor.send("#{field}=", nil) }
       it { vendor.valid?.should == false }
@@ -26,13 +26,6 @@ describe SmsVendor do
   [:name, :username, :password].each do |field|
     describe "when #{field} is too long" do
       before { vendor.send("#{field}=", "W"*257) }
-      it { vendor.valid?.should == false }
-    end
-  end
-
-  [:help_text, :stop_text].each do |field|
-    describe "when #{field} is too long" do
-      before { vendor.send("#{field}=", "W"*161) }
       it { vendor.valid?.should == false }
     end
   end

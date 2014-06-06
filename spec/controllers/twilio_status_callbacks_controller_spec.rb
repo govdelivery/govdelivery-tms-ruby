@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe TwilioStatusCallbacksController do
-  let(:vendor) { create(:sms_vendor, :help_text => 'Help me!') }
+  let(:vendor) { create(:sms_vendor) }
   let(:account) { vendor.accounts.create(:name => 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:message) { account.sms_messages.create(:body => 'Look out') }
@@ -64,7 +64,7 @@ describe TwilioStatusCallbacksController do
       recipient.completed_at.should_not == nil
     end
   end
-  
+
   def twilio_status_callback_params(status, sms_sid=recipient.ack)
     {:format =>"xml" ,
      'SmsSid'=>sms_sid,

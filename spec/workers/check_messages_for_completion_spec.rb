@@ -1,7 +1,8 @@
 require 'spec_helper'
 describe CheckMessagesForCompletion do
 
-  pending 'should use the sending scope of each channel and check the messages for completion' do
+  it 'should use the sending scope of each channel and check the messages for completion' do
+    pending('why is this pending?')
     @msg_stub = stub('Message', id: 100)
     @msg_stub.expects(:check_complete!).times(3)
 

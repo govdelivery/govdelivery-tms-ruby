@@ -16,9 +16,6 @@ FactoryGirl.define do
     password 'secret'
     from { generate(:short_code) }
     shared false
-    stop_text 'goodbye'
-    help_text 'too bad'
-    default_response_text "I don't understand"
 
     # # pretent like a save - optimization
     after(:build) do |vendor,eval|

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe TwilioRequestsController do
-  let(:vendor) { create(:sms_vendor, help_text: 'Help me!') }
+  let(:vendor) { create(:sms_vendor) }
   let(:account) { create(:account, :sms_vendor => vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
 
   describe '#create with "STOP"' do
@@ -12,7 +12,7 @@ describe TwilioRequestsController do
     end
     it 'should respond with stop text' do
       post :create, params
-      assigns(:response).response_text.should == vendor.stop_text
+      assigns(:response).response_text.should == vendor.stop_keyword.response_text
     end
     it 'should persist a stop request' do
       expect{post :create, params}
@@ -38,7 +38,8 @@ describe TwilioRequestsController do
     end
     it 'should respond with default response text' do
       post :create, params
-      assigns(:response).response_text.should == vendor.default_response_text
+      assigns(:response).response_text.should == vendor.default_keyword.response_text
+      assigns(:response).response_text.should_not be_nil
     end
     it 'should persist an inbound message' do
       expect{post :create, params}
@@ -57,7 +58,7 @@ describe TwilioRequestsController do
     end
     it 'should respond with vendor stop text' do
       post :create, params
-      assigns(:response).response_text.should eql(vendor.stop_text)
+      assigns(:response).response_text.should eql(vendor.stop_keyword.response_text)
     end
     it 'should persist an inbound message' do
       expect{post :create, params}.to change{vendor.inbound_messages.count}.by 1

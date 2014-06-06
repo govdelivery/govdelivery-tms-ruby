@@ -1,15 +1,18 @@
 module Keywords
+  DEFAULT_STOP_TEXT = "You will no longer receive SMS messages."
+  DEFAULT_START_TEXT = "Welcome to GovDelivery SMS Alerts. Msg&data rates may apply. Reply HELP for help, STOP to cancel. http://govdelivery.com/wireless for more help. 5 msg/wk."
+  DEFAULT_HELP_TEXT = "Go to http://bit.ly/govdhelp for help"
+
+  # We always want to respond to stop, help and start.
+  # The response text can be overridden at the account or vendor level by storing a value in `response_text`
+  # Account.find(x).default_keyword.upadate_attribute :response_text, "wut"
+  # Account.find(x).stop_keyword.upadate_attribute :response_text, "no way man"
+  # SmsVendor.find(x).start_keyword.upadate_attribute :response_text, "let's get it on"
 
   class SpecialKeyword < Keyword
     self.table_name = 'keywords'
     self.abstract_class = true
     attr_accessible :vendor, :account
-
-    def response_text
-      # we ask for new_record in order to avoid save ordering problems
-      # sometimes the account or vendor are not set yet
-      read_attribute(:response_text) || default_response_text unless new_record?
-    end
 
     def name=(n)
       write_attribute(:name, n) #leave uppercase
@@ -22,44 +25,43 @@ module Keywords
 
   class VendorStop < SpecialKeyword
 
-    def execute_commands(command_parameters)
-      vendor.stop!(command_parameters)
+    def response_text
+      read_attribute(:response_text) || DEFAULT_STOP_TEXT
     end
 
-    def default_response_text
-      vendor.stop_text
+    def execute_commands(command_parameters)
+      vendor.stop!(command_parameters)
     end
   end
 
   class VendorStart < SpecialKeyword
 
-    def execute_commands(command_parameters)
-      vendor.start!(command_parameters)
+    def response_text
+      read_attribute(:response_text) || DEFAULT_START_TEXT
     end
 
-    def default_response_text
-      vendor.start_text
+    def execute_commands(command_parameters)
+      vendor.start!(command_parameters)
     end
   end
 
   class VendorHelp < SpecialKeyword
 
-    def execute_commands(command_parameters)
-      #noop
-      Rails.logger.info("HelpKeyword: #{command_parameters}" )
+    def response_text
+      read_attribute(:response_text) || DEFAULT_HELP_TEXT
     end
 
-    def default_response_text
-      vendor.try(:help_text) # respond_directly
+    def execute_commands(command_parameters)
+      #noop
+      Rails.logger.info("Keywords::VendorHelp: #{command_parameters}" )
     end
   end
 
   class VendorDefault < SpecialKeyword
 
-    def default_response_text
-      #can be nil if a command is meant to respond
-      vendor.default_response_text  #utimate passthrough
-    end
+    # default response text is optional
+    # can be remove if a command will response instead
+    before_create ->{ self.response_text = DEFAULT_HELP_TEXT}
 
     def default?
       true
@@ -68,37 +70,35 @@ module Keywords
 
   class AccountStop < SpecialKeyword
 
-    def execute_commands(command_parameters)
-      account.stop!(command_parameters)
+    def response_text
+      read_attribute(:response_text) || DEFAULT_STOP_TEXT
     end
 
-    def default_response_text
-      account.stop_text
+    def execute_commands(command_parameters)
+      account.stop!(command_parameters)
     end
   end
 
   class AccountHelp < SpecialKeyword
 
-    def execute_commands(command_parameters)
-      #noop
-      Rails.logger.info("HelpKeyword: #{command_parameters}" )
+    def response_text
+      read_attribute(:response_text) || DEFAULT_HELP_TEXT
     end
 
-    def default_response_text
-      account.help_text # respond_directly
+    def execute_commands(command_parameters)
+      #noop
+      Rails.logger.info("Keywords::AccountHelp: #{command_parameters}" )
     end
   end
 
   class AccountDefault < SpecialKeyword
 
-    def default_response_text
-      account.default_response_text #can be nil if a command is meant to respond asynchronously
-    end
+    # default response text is optional
+    # can be remove if a command will response instead
+    before_create ->{ self.response_text = DEFAULT_HELP_TEXT}
 
     def default?
       true
     end
-
   end
-
 end

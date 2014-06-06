@@ -39,26 +39,6 @@ describe Account do
 
   end
 
-  [:help_text, :stop_text].each do |item|
-    context "##{item}" do
-      subject {
-        Account.new(name: 'name', sms_vendor: shared_sms_vendor, dcm_account_codes: ['ACCOUNT_CODE'])
-      }
-
-      context "when nil" do
-        it { subject.send(item).should eq(shared_sms_vendor.send(item)) }
-      end
-
-      context "when not nil" do
-        before {subject.send("#{item}=", "something")}
-        it { subject.send(item).should eq("something")}
-      end
-      it 'should return nil without an SmsVendor' do
-        a=Account.new(name: 'name', sms_vendor: nil, dcm_account_codes: ['ACCOUNT_CODE'])
-        a.send(item).should be_nil
-      end
-    end
-  end
   context 'with exclusive SMS vendor' do
     subject {
       Account.new(name: 'name', sms_vendor: sms_vendor, dcm_account_codes: ['ACCOUNT_CODE'])
