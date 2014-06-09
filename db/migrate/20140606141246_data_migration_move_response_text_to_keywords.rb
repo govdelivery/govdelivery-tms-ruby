@@ -19,7 +19,7 @@ class DataMigrationMoveResponseTextToKeywords < ActiveRecord::Migration
     end
     #custom commands
     Command.all.each do |command|
-      keyword = command.event_handler.keyword
+      keyword = command.event_handler.try(:keyword)
       next unless keyword and puts " #{command.name}"
       puts "#{command.name} => #{keyword.name}"
       keyword.commands << command
