@@ -9,7 +9,7 @@ class SmsPrefix < ActiveRecord::Base
 
 
   def self.account_id_for_prefix prefix
-    where(prefix: prefix).pluck(:account_id).first
+    where(" lower(prefix) = ? ", prefix.downcase).pluck(:account_id).first
   end
 
   private

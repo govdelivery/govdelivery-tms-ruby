@@ -32,9 +32,11 @@ describe SmsPrefix do
     it { sms_prefix.should_not be_valid }
   end
 
-  it "should get account_it for prefix" do
+  it "should get account for prefix with lowercase or uppercase" do
     sms_prefix = account.sms_prefixes.create!(:prefix => 'FOO').tap{|f| f.update_attribute( :sms_vendor, vendor ) }
     account_id = vendor.sms_prefixes.account_id_for_prefix 'FOO'
     account_id.should eql(account.id)
+    account_id2 = vendor.sms_prefixes.account_id_for_prefix 'foo'
+    account_id2.should eql(account.id)
   end
 end

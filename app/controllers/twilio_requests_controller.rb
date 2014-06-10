@@ -19,6 +19,7 @@ class TwilioRequestsController < ApplicationController
 
     #parse it
     prefix, keyword, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
+    Rails.logger.debug "parsed keyword: #{keyword.name}"
 
     #store it
     inbound_msg = vendor.receive_message!({ from:  command_parameters.from,
@@ -29,11 +30,12 @@ class TwilioRequestsController < ApplicationController
 
     # respond to it (now and/or later)
     if inbound_msg.ignored? # to not respond to auto responses
-      repsonse_text = nil
+      Rails.logger.debug "ignoring message: #{inbound_msg.inspect}"
+      response_text = nil
     else
       command_parameters.merge!(account_id: account_id,
-                              sms_tokens: message.split,
-                              inbound_message_id: inbound_msg.id)
+                                sms_tokens: message.split,
+                                inbound_message_id: inbound_msg.id)
       response_text  = SmsReceiver.respond_to_sms!(keyword, command_parameters)
     end
 
