@@ -7,6 +7,7 @@ class DataMigrationMoveResponseTextToKeywords < ActiveRecord::Migration
         account.stop_keyword.update_attribute :response_text, account.read_attribute(:stop_text) if account.stop_keyword.response_text.nil?
         account.help_keyword.update_attribute :response_text, account.read_attribute(:help_text) if account.help_keyword.response_text.nil?
         account.default_keyword.update_attribute :response_text, account.read_attribute(:help_text) if account.default_keyword.response_text.nil?
+        account.default_keyword.update_attribute :response_text, Keywords::DEFAULT_HELP_TEXT if account.default_keyword.response_text.nil?
         account.stop_keyword.commands << account.stop_handler.commands if account.stop_handler if account.stop_keyword.commands.empty?
       end
       SmsVendor.all.each do |sms_vendor|
@@ -15,10 +16,10 @@ class DataMigrationMoveResponseTextToKeywords < ActiveRecord::Migration
         sms_vendor.create_help_keyword! if sms_vendor.help_keyword.nil?
         sms_vendor.create_default_keyword! if sms_vendor.default_keyword.nil?
         sms_vendor.stop_keyword.update_attribute :response_text, sms_vendor.read_attribute(:stop_text) if sms_vendor.stop_keyword.response_text.nil?
+        sms_vendor.start_keyword.update_attribute :response_text, Keywords::DEFAULT_START_TEXT  if sms_vendor.start_keyword.response_text.nil?
         sms_vendor.help_keyword.update_attribute :response_text, sms_vendor.read_attribute(:help_text) if sms_vendor.help_keyword.response_text.nil?
         sms_vendor.default_keyword.update_attribute :response_text, sms_vendor.read_attribute(:help_text)  if sms_vendor.default_keyword.response_text.nil?
-        # start doesn't exist yet
-        # there are no commands to be moved to these keywords
+        sms_vendor.default_keyword.update_attribute :response_text, Keywords::DEFAULT_HELP_TEXT  if sms_vendor.default_keyword.response_text.nil?
       end
       #custom commands
       Command.all.each do |command|
