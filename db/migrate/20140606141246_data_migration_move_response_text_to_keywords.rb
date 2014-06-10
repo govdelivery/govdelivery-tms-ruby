@@ -8,7 +8,12 @@ class DataMigrationMoveResponseTextToKeywords < ActiveRecord::Migration
         account.help_keyword.update_attribute :response_text, account.read_attribute(:help_text) if account.help_keyword.response_text.nil?
         account.default_keyword.update_attribute :response_text, account.read_attribute(:help_text) if account.default_keyword.response_text.nil?
         account.default_keyword.update_attribute :response_text, Keywords::DEFAULT_HELP_TEXT if account.default_keyword.response_text.nil?
-        account.stop_keyword.commands << account.stop_handler.commands if account.stop_handler if account.stop_keyword.commands.empty?
+        # stop_handler -> stop_keyword
+        if account.stop_handler
+          account.stop_handler.commands.each do |command|
+            command.update_attribute :keyword_id, account.stop_keyword.id #to avoid validation errors (there were some in qc)
+          end
+        end
       end
       SmsVendor.all.each do |sms_vendor|
         sms_vendor.create_stop_keyword! if sms_vendor.stop_keyword.nil?
