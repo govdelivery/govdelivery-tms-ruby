@@ -45,8 +45,8 @@ class SmsVendor < ActiveRecord::Base
     accounts.each { |a| a.stop(command_parameters) }
   end
 
-  def start!(from_phone)
-    stop_requests.where(phone: from_phone).delete_all #its ok if it doesn't exist
+  def start!(command_parameters)
+    stop_requests.where(phone: command_parameters.from).delete_all #its ok if it doesn't exist
   end
 
   def delivery_mechanism

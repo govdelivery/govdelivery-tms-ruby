@@ -82,9 +82,10 @@ describe SmsVendor do
   describe '#start!' do
     it 'deletes a stop request' do
       phone ='+15552223323'
+      command_parameters = CommandParameters.new(from: phone)
       vendor.stop_requests.create(phone: phone)
       expect {
-        vendor.start!(phone)
+        vendor.start!(command_parameters)
       }.to change { vendor.stop_requests.count }.by -1
     end
   end
