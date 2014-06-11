@@ -4,10 +4,9 @@ module Keywords
   DEFAULT_HELP_TEXT = "Go to http://bit.ly/govdhelp for help"
 
   # We always want to respond to stop, help and start.
-  # The response text can be overridden at the account or vendor level by storing a value in `response_text`
-  # Account.find(x).default_keyword.upadate_attribute :response_text, "wut"
-  # Account.find(x).stop_keyword.upadate_attribute :response_text, "no way man"
-  # SmsVendor.find(x).start_keyword.upadate_attribute :response_text, "let's get it on"
+  # Account.find(x).default_keyword.update_attribute :response_text, "wut"
+  # Account.find(x).stop_keyword.update_attribute :response_text, "no way man"
+  # SmsVendor.find(x).start_keyword.update_attribute :response_text, "let's get it on"
 
   class SpecialKeyword < Keyword
     self.table_name = 'keywords'
@@ -60,8 +59,8 @@ module Keywords
   class VendorDefault < SpecialKeyword
 
     # default response text is optional
-    # can be remove if a command will response instead
-    before_create ->{ self.response_text = DEFAULT_HELP_TEXT}
+    # can be remove if a command will respond instead
+    before_create ->{ self.response_text = DEFAULT_HELP_TEXT if self.response_text.nil? }
 
     def default?
       true
@@ -94,8 +93,8 @@ module Keywords
   class AccountDefault < SpecialKeyword
 
     # default response text is optional
-    # can be remove if a command will response instead
-    before_create ->{ self.response_text = DEFAULT_HELP_TEXT}
+    # can be remove if a command will respond instead
+    before_create ->{ self.response_text = DEFAULT_HELP_TEXT if self.response_text.nil? }
 
     def default?
       true
