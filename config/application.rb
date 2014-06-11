@@ -116,7 +116,7 @@ module Xact
     # loop.  The corresponding configuration for this value in 
     # DCM is "twilio_requests_timeout."  Here it is named differently,
     # as this is not a vendor-specific behavior.
-    config.auto_response_threshold = 5
+    config.auto_response_threshold = 0.5
 
     # Default log level is INFO
     config.logger =

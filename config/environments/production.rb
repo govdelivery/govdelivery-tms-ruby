@@ -85,11 +85,18 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = true  
 
+  # Threshold (in minutes) under which multiple inbound messages from a 
+  # user will be ignored.  This is to prevent auto-response messages 
+  # (as sometimes issued from handsets while people are driving) from entering an infinite
+  # loop.  The corresponding configuration for this value in 
+  # DCM is "twilio_requests_timeout."  Here it is named differently,
+  # as this is not a vendor-specific behavior.
+  config.auto_response_threshold = 1
+
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = ["468311"]
 
   config.custom_report_account_id = 10060
-
   config.fema_url = 'https://integration.fema.gov/IPAWS_CAPService/IPAWS'
 end
