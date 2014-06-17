@@ -14,10 +14,12 @@ module CommandType
       self.class.name.demodulize.underscore.to_sym
     end
 
+    # new object of this type will call :process_response in the background
     def perform_async!(params)
       "#{self.class.name.demodulize}Worker".constantize.perform_async(params.to_hash)
     end
 
+    # this will get called in the background
     def process_response(account, params, http_response)
       save_command_action!(params, http_response)
     end

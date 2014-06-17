@@ -4,7 +4,7 @@ class InboundMessage < ActiveRecord::Base
   enum :command_status, [:no_action, :pending, :failure, :success, :ignored]
 
   attr_accessible :body, :from, :vendor, :to, :keyword, :keyword_response
-  validates_presence_of :body, :from, :vendor
+  validates_presence_of :body, :from, :vendor, :keyword
   alias_attribute :from, :caller_phone # 'caller_phone' is the database column, as 'from' is a reserved word in Oracle (who knew?)
   alias_attribute :to, :vendor_phone
 
@@ -13,17 +13,16 @@ class InboundMessage < ActiveRecord::Base
   before_validation :set_response_status, :on => :create
   before_create :see_if_this_should_be_ignored
 
-  def check_status!
-    return unless keyword
-    self.command_status = case keyword.commands.count
-                            when command_actions.successes.count
-                              :success
-                            when command_actions.count
-                              :failure
-                            else
-                              :pending
-                          end
-    self.save!
+  def update_status! fail=false
+    if fail
+      update_attribute :command_status, :failure
+    else
+      # failure stays
+      if command_status != :failure && keyword.commands.count == command_actions.count
+        # all have been completed, none have failed
+        update_attribute :command_status, :success
+      end
+    end
   end
 
   #
@@ -60,17 +59,12 @@ class InboundMessage < ActiveRecord::Base
 
   def set_response_status
     self.command_status = :no_action
-    if keyword
-      if !keyword.response_text.blank?
-        self.keyword_response = keyword.response_text
-        self.command_status = :success
-      end
-      if keyword.commands.any?
-        self.command_status = :pending
-      end
-    elsif !keyword_response.blank?
+    if keyword.response_text.present?
+      self.keyword_response = keyword.response_text #track it, it can change
       self.command_status = :success
     end
-    true
+    if keyword.commands.any?
+      self.command_status = :pending
+    end
   end
 end

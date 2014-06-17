@@ -1,8 +1,7 @@
 FactoryGirl.define do
 
   factory :keyword do
-    sequence(:name) {|n| "name#{n}" }
-
+    name { generate(:keyword_name) }
 
     # always build the account first
     factory :account_keyword do

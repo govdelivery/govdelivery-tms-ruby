@@ -19,6 +19,7 @@ module CommandType
       [:http_method, :url, :sms_body_param_name, :from_param_name, :expected_content_type]
     end
 
+    # this will get called in the background
     def process_response(account, params, http_response)
       command_action = super
       # check content type against expected to prevent garbage from going to user

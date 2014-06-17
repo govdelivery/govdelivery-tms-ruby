@@ -1,87 +1,93 @@
 require 'spec_helper'
 
 describe InboundMessage do
-  let(:vendor) { create(:sms_vendor) }
-  let(:account) { account = vendor.accounts.create!(:name => 'name') }
-  let(:keyword) { create(:custom_keyword, account: account, vendor: vendor, name: 'HI') }
-  let(:command) { keyword.create_command!(command_type: :forward,
-                                          name: "ALLIGATORZ",
-                                          params: build(:forward_command_parameters)) }
-  let(:command2) { keyword.create_command!(command_type: :forward,
-                                           name: "CROCZZZ",
-                                           params: build(:forward_command_parameters)) }
 
-  let(:inbound_message) { InboundMessage.create!(vendor: vendor,
-                                                 body: 'this is my body',
-                                                 from: '5551112222',
-                                                 keyword: keyword) }
+  subject { build_stubbed(:inbound_message) }
+  it { should be_valid }
+  it { should validate_presence_of( :body ) }
+  it { should validate_presence_of( :from ) }
+  it { should validate_presence_of( :vendor ) }
+  it { should validate_presence_of( :keyword ) }
 
-  let(:inbound_message_with_response) { InboundMessage.create!(vendor: vendor,
-                                                               body: 'this is my body',
-                                                               from: '5551112222',
-                                                               keyword_response: 'respondzzz') }
-  subject { inbound_message }
-
-  context "when valid" do
-    specify { subject.valid?.should == true }
+  it 'is ignored if not actionable' do
+    subject.expects(:actionable?).returns(false)
+    subject.expects(:save!).returns(true)
+    subject.send(:see_if_this_should_be_ignored)
+    subject.command_status.should eql(:ignored)
   end
 
-  [:body, :from].each do |field|
-    context "when #{field} is empty" do
-      before { subject.send("#{field}=", nil) }
-      specify { subject.valid?.should == false }
+  context 'setting response status' do
+    it 'should be :success if the keyword has no commands and response_text ' do
+      inbound_message = build_stubbed(:inbound_message,
+                                      keyword: build_stubbed(:keyword, commands: [], response_text: 'something'))
+      inbound_message.send :set_response_status
+      inbound_message.command_status.should eql(:success)
     end
-  end
 
-  it 'should be complete if response is supplied' do
-    inbound_message_with_response.command_status.should eq(:success)
-  end
-
-
-  context 'a message saved with a command' do
-    before do
-      command
-      command2
+    it 'should be :pending if the keyword has any commands and response_text ' do
+      inbound_message = build_stubbed(:inbound_message,
+                                      keyword: build_stubbed(:keyword, commands: [build(:forward_command)]))
+      inbound_message.send :set_response_status
+      inbound_message.command_status.should eql(:pending)
     end
-    it 'should be pending' do
-      inbound_message.command_status.should eq(:pending)
+
+    it 'should be :no_action if the keyword has no commands and no response_text ' do
+      inbound_message = build_stubbed(:inbound_message,
+                                      keyword: build_stubbed(:keyword, response_text: nil, commands: []))
+      inbound_message.send :set_response_status
+      inbound_message.command_status.should eql(:no_action)
     end
-    context 'and then updated' do
+
+    context 'updating the pending status' do
       before do
-        command.command_actions.create!(inbound_message_id: inbound_message.id,
-                                        status: 200,
-                                        content_type: 'text/html')
+        @inbound_message = create(:inbound_message,
+                                  keyword: create(:custom_keyword, response_text: nil).
+                                    tap { |k| k.commands << build(:forward_command)}.
+                                    tap { |k| k.commands << build(:forward_command)})
+
       end
-      it 'should be in progress' do
-        inbound_message.reload.command_status.should eq(:pending)
+      it 'should be :pending after one of two commands have completed' do
+        @inbound_message.command_status.should eql(:pending)
+        @inbound_message.command_actions.create! # one of two
+        @inbound_message.update_status!
+        @inbound_message.command_status.should eql(:pending)
       end
 
-      context 'and then completed' do
-        before do
-          command.command_actions.create!(inbound_message_id: inbound_message.id,
-                                          status: 204,
-                                          content_type: 'text/html')
-        end
-        it 'should be complete' do
-          inbound_message.reload.command_status.should eq(:success)
-        end
+      it 'should be :success after two of two commands have completed' do
+        @inbound_message.command_status.should eql(:pending)
+        @inbound_message.command_actions.create! # one of two
+        @inbound_message.command_actions.create! # two of two
+        @inbound_message.update_status!
+        @inbound_message.command_status.should eql(:success)
+      end
+
+      it 'should be :failure if told to fail once' do
+        @inbound_message.command_status.should eql(:pending)
+        @inbound_message.update_status! fail=true
+        @inbound_message.command_status.should eql(:failure)
+        @inbound_message.update_status! fail=false
+        @inbound_message.command_status.should eql(:failure) #still a failure
       end
 
     end
+
   end
 
   context "auto-responses" do
-    before do
-      inbound_message_with_response
+    let(:inbound_message_with_response) do
+      create(:inbound_message,
+             keyword: create(:custom_keyword, response_text: 'respondzzz'),
+             body: 'this is my body',
+             from: '5551112222')
     end
-
+    let(:dup_inbound_message) do
+      create(:inbound_message,
+             keyword: create(:custom_keyword, response_text: 'respondzzz'),
+             body: 'this is my body',
+             from: '5551112222')
+    end
     it 'should not be actionable' do
       inbound_message_with_response.actionable?.should eq(true)
-
-      dup_inbound_message =  InboundMessage.create!(vendor: inbound_message_with_response.vendor,
-                                body: inbound_message_with_response.body,
-                                from: inbound_message_with_response.from,
-                                keyword_response: inbound_message_with_response.keyword_response)
 
       dup_inbound_message.actionable?.should eq(false)
 
@@ -105,8 +111,8 @@ describe InboundMessage do
       dup_inbound_message.reload
       dup_inbound_message.actionable?.should eq(false)
       dup_inbound_message.created_at = (dup_inbound_message.created_at +
-                                       Xact::Application.config.auto_response_threshold.minutes +
-                                       1.minute).to_datetime
+                                        Xact::Application.config.auto_response_threshold.minutes +
+                                        1.minute).to_datetime
 
       dup_inbound_message.actionable?.should eq(true)
     end
