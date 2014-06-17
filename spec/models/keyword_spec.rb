@@ -4,13 +4,17 @@ require 'spec_helper'
 describe Keyword do
   subject { create(:account_keyword) }
 
-  context "when valid" do
-    it  { should be_valid }
-    its(:vendor){ should_not be_nil }
+  context "when name is valid" do
+    its(:errors) { should be_empty }
   end
 
   context "when name is empty" do
     subject{ build(:keyword, name: nil).tap(&:valid?) }
+    its(:errors) { should include(:name) }
+  end
+
+  context "when name has a space" do
+    subject{ build(:keyword, name: "a b").tap(&:valid?) }
     its(:errors) { should include(:name) }
   end
 
@@ -118,6 +122,12 @@ describe Keyword do
           subject.name = "#{name}word"
           subject.should be_valid
         end
+
+        it "does not allow multiword keywords" do
+          subject.name = 'some more words'
+          subject.should_not be_valid
+        end
+
       end
     end
   end

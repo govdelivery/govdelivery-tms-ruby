@@ -22,6 +22,7 @@ class Keyword < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :vendor
   validates_length_of :name, :maximum => 160
+  validates_format_of :name, without: / /, message: 'No spaces allow in keyword name'
   validates_uniqueness_of :name, :scope => [:vendor_id, :account_id]
   validate :name_not_reserved
   validates_length_of :response_text, :maximum => 160
