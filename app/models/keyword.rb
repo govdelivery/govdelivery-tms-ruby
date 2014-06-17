@@ -61,10 +61,6 @@ class Keyword < ActiveRecord::Base
   end
 
 
-  def self.q_name name, account_id
-    where(name: name, account_id: account_id).first
-  end
-
   def self.stop?(text)
     # Message is a stop request if it starts with a stop word.
     !!(text =~ /^\s*(#{STOP_WORDS.join("|")})(\s|$)/i)

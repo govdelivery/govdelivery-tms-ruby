@@ -34,7 +34,7 @@ class SmsVendor < ActiveRecord::Base
     keyword.create_command!(params)
   end
 
-  def receive_message!(options)
+  def create_inbound_message!(options)
     inbound_messages.create!(options)
   end
 

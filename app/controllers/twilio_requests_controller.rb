@@ -22,11 +22,11 @@ class TwilioRequestsController < ApplicationController
     Rails.logger.debug "parsed keyword: #{keyword.name}"
 
     #store it
-    inbound_msg = vendor.receive_message!({ from:  command_parameters.from,
-                                            to:    command_parameters.to,
-                                            body:  command_parameters.sms_body,
-                                            keyword: keyword,
-                                            keyword_response: keyword.try(:response_text)})
+    inbound_msg = vendor.create_inbound_message!({ from:  command_parameters.from,
+                                                   to:    command_parameters.to,
+                                                   body:  command_parameters.sms_body,
+                                                   keyword: keyword,
+                                                   keyword_response: keyword.try(:response_text)})
 
     # respond to it (now and/or later)
     if inbound_msg.ignored? # to not respond to auto responses

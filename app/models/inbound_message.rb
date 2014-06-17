@@ -44,7 +44,7 @@ class InboundMessage < ActiveRecord::Base
   ##
   # I'm just doing this because Ben and Tyler are forcing me to
   # ~ Billy, 9/23/2013 (help me)
-  #
+  # special case to handle auto-response
   def ignore!
     self.command_status = :ignored
     self.save! unless self.new_record?
