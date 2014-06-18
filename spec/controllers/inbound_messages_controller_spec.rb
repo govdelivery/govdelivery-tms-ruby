@@ -2,12 +2,6 @@ require 'spec_helper'
 
 describe InboundMessagesController do
 
-  # This should return the minimal set of attributes required to create a valid
-  # InboundMessage. As you add validations to InboundMessage, be sure to
-  # update the return value of this method accordingly.
-  let(:valid_attributes) { {:vendor => vendor,
-                            :body => 'nice body!',
-                            :from => '12345678'} }
   let(:vendor) { create(:sms_vendor) }
   let(:account){vendor.accounts.create(:name => 'name')}
   let(:user){account.users.create(:email => 'foo@evotest.govdelivery.com',
@@ -19,10 +13,7 @@ describe InboundMessagesController do
 
   describe "GET index" do
     let(:results) do
-      3.times.collect do |i|
-        m = InboundMessage.new(valid_attributes.merge(:body => "body #{i}"))
-        m.created_at = i.days.ago
-      end
+      build_list(:inbound_message, 3, vendor: vendor)
     end
     before do
       results.stubs(:total_pages).returns(5)
@@ -61,7 +52,7 @@ describe InboundMessagesController do
 
   describe "GET show" do
     it "assigns the requested inbound_message as @inbound_message" do
-      inbound_message = InboundMessage.create! valid_attributes
+      inbound_message = create(:inbound_message, vendor: vendor)
       get :show, {:id => inbound_message.to_param}
       response.status.should == 200
     end

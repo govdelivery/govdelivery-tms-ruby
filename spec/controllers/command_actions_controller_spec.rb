@@ -22,7 +22,7 @@ describe CommandActionsController do
 
   let(:vendor) { create(:sms_vendor) }
   let(:account) { create(:account, sms_vendor: vendor) }
-  let(:inbound_message) { vendor.inbound_messages.create!(body: 'body', from: 'from', vendor: vendor) }
+  let(:inbound_message) { vendor.inbound_messages.create!(body: 'body', from: 'from', vendor: vendor, keyword: keyword) }
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:keyword) { k=account.keywords.new(:name => "HI").tap { |k| k.vendor = vendor }; k.save!; k }
   let(:params) { {dcm_account_code: 'ACME', dcm_topic_codes: ['ACME_1', 'ACME_2']} }
