@@ -5,7 +5,7 @@ class DcmSubscribeWorker
 
   # Retry for up to ~ 20 days (see https://github.com/mperham/sidekiq/wiki/Error-Handling)
   # That should get us through a long DCM outage (let's hope that never happens).
-  # 25 is the default, but I want to be explicit so that it its understood that the 
+  # 25 is the default, but I want to be explicit so that it its understood that the
   # number is intentional.
   sidekiq_options retry: 25
 
@@ -15,9 +15,13 @@ class DcmSubscribeWorker
   def perform(opts)
     Xact::Application.config.dcm.each do |config|
       begin
+
+
         self.options = opts
         client = DCMClient::Client.new(config)
-        self.http_response = DcmSubscribeCommand.new(client).call(options.from, options.dcm_account_code, options.dcm_topic_codes, options.sms_tokens)
+        from_number = PhoneNumber.new(options.from).dcm
+        self.http_response = request_subscription(client, from_number,options)
+
 
       rescue DCMClient::Error::UnprocessableEntity, DCMClient::Error::NotFound => e
         # don't raise exception, so no retry
@@ -39,6 +43,21 @@ class DcmSubscribeWorker
     raise self.exception if self.exception
   end
 
+  def request_subscription client, from_number, opts
+    if (email_address = extract_email(opts.sms_tokens || []))
+      # example: subscribe em@il
+      response = client.email_subscribe(email_address, opts.dcm_account_code, opts.dcm_topic_codes)
+    else
+      response = client.wireless_subscribe(from_number, opts.dcm_account_code, opts.dcm_topic_codes)
+    end
+  end
+
+  def extract_email(subscribe_args)
+    if !subscribe_args[0].nil? && subscribe_args[0] =~ /@/
+      subscribe_args[0]
+    end
+  end
+
   ##
   # If any of the http requests in this batch succeeds, this
   # worker should report success.
@@ -49,4 +68,3 @@ class DcmSubscribeWorker
     end
   end
 end
-
