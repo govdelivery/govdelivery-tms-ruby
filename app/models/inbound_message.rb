@@ -60,7 +60,6 @@ class InboundMessage < ActiveRecord::Base
   def set_response_status
     self.command_status = :no_action
     if keyword.response_text.present?
-      self.keyword_response = keyword.response_text #track it, it can change
       self.command_status = :success
     end
     if keyword.commands.any?
