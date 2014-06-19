@@ -17,9 +17,10 @@ class CommandActionsController < ApplicationController
 
   def find_parent
     @parent = if params[:sms_id]
-                current_user.sms_vendor.inbound_messages.find(params[:sms_id])
+                current_user.sms_vendor.inbound_messages.
+                  where(id: params[:sms_id], account_id: current_user.account.id).first!
               elsif params[:command_id]
-                current_user.account.commands.where(id: params[:command_id]).first
+                current_user.account.commands.where(id: params[:command_id]).first!
               end
   end
 
