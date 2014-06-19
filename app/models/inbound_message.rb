@@ -1,5 +1,6 @@
 class InboundMessage < ActiveRecord::Base
   belongs_to :vendor, inverse_of: :inbound_messages, class_name: 'SmsVendor'
+  belongs_to :account #used for scoped reporting, can be blank
   belongs_to :keyword, inverse_of: :inbound_messages
   enum :command_status, [:no_action, :pending, :failure, :success, :ignored]
 

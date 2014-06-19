@@ -118,5 +118,8 @@ describe InboundMessage do
     end
   end
 
-
+  it 'can be scoped to an account' do
+    create_list(:inbound_message, 3, account: (account = create(:account_with_sms)))
+    InboundMessage.where(account_id: account.id).count.should eql(3)
+  end
 end

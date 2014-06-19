@@ -51,10 +51,22 @@ describe InboundMessagesController do
   end
 
   describe "GET show" do
-    it "assigns the requested inbound_message as @inbound_message" do
+    it "assigns the requested inbound_message as @message" do
       inbound_message = create(:inbound_message, vendor: vendor)
       get :show, {:id => inbound_message.to_param}
       response.status.should == 200
+      assigns(:message).should be_present
+    end
+  end
+
+  describe 'index is scoped to account ' do
+    before do
+      create_list(:inbound_message, 3, vendor: vendor, account: account)
+      create_list(:inbound_message, 3, vendor: vendor, account: nil)
+    end
+    it "shows only inbound_messages of the user's account" do
+      get :index
+      assigns(:messages).count.should eql(3) #not 6
     end
   end
 

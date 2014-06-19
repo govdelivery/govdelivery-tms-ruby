@@ -25,6 +25,7 @@ class TwilioRequestsController < ApplicationController
     inbound_msg = vendor.create_inbound_message!({ from:  command_parameters.from,
                                                    to:    command_parameters.to,
                                                    body:  command_parameters.sms_body,
+                                                   account_id: account_id,  #used for scoped reporting, can be blank
                                                    keyword: keyword,
                                                    keyword_response: keyword.try(:response_text)})
 
