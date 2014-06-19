@@ -40,6 +40,8 @@ Xact::Application.routes.draw do
         collection do
           get :clicked
           get :opened
+          get :failed
+          get :sent
         end
         resources(:opens, only: [:index, :show]) do
           pageable
@@ -54,6 +56,10 @@ Xact::Application.routes.draw do
         pageable
         resources(:recipients, :only => [:index, :show]) do
           pageable
+          collection do
+            get :failed
+            get :sent
+          end
         end
       end
     end

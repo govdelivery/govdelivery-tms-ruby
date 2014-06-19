@@ -33,7 +33,7 @@ describe EmailRecipient do
         subject.to_odm('five' => nil, 'one' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::five_value::one_value::two_value")
         # remove one from default hash
         subject.to_odm('five' => nil, 'two' => nil).should        eq("hi@man.com::#{subject.id}::five_value::two_value")
-        # merging in defaults 
+        # merging in defaults
         subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::one_value::seven_value")
       end
     end
@@ -60,17 +60,34 @@ describe EmailRecipient do
       end
     end
 
-    context 'that is FAILED' do
+    context 'status updates' do
       it 'should have an error_message' do
         failed_recipiend = subject.dup
         failed_recipiend.failed!( :ack, :error_message, (sent_at = Time.now))
         failed_recipiend.error_message.should eq :error_message
+        failed_recipiend.status.should eql(RecipientStatus::FAILED)
       end
 
       it 'should truncate a too-long error message' do
         failed_recipient = subject.dup
         failed_recipient.failed!(:ack, 'a' * 600, (sent_at = Time.now))
         failed_recipient.error_message.should eq 'a'*512
+        failed_recipient.status.should eql(RecipientStatus::FAILED)
+      end
+
+      it 'failed scope includes failed status ' do
+        subject.failed!
+        EmailRecipient.failed.should include(subject)
+      end
+
+      it 'failed scope does not include canceled status' do
+        subject.canceled! :ack
+        EmailRecipient.failed.should_not include(subject)
+      end
+
+      it 'sent scope includes sent status' do
+        subject.sent! :ack
+        EmailRecipient.sent.should include(subject)
       end
     end
   end

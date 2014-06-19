@@ -5,22 +5,25 @@ class EmailRecipient < ActiveRecord::Base
   attr_accessible :email
   validates_presence_of :message, :unless => :skip_message_validation
   validates :email, :presence => true, length: {maximum: 256}, :email => true
-  
+
   ##
   # The conditions on these scopes add message_id, which is at the front of the index on those tables
-  # (and will become the partition key in the near future). Removing this condition will make 
+  # (and will become the partition key in the near future). Removing this condition will make
   # these relations perform very poorly.
   #
   has_many :email_recipient_clicks, :conditions => proc{"email_recipient_clicks.email_message_id = #{self.message_id}"}
   has_many :email_recipient_opens, :conditions => proc{"email_recipient_opens.email_message_id = #{self.message_id}"}
 
+  scope :failed, -> { where( status: RecipientStatus::FAILED ) }
+  scope :sent,   -> { where( status: RecipientStatus::SENT ) }
+
   ##
-  # Convert this recipient into a record string for sending to ODM. 
+  # Convert this recipient into a record string for sending to ODM.
   #
   # Macros for this recipient that are not present in the default hash (at the message level)
   # will be discarded - otherwise, they would invalidate the
   # record designator, which is build at the message level
-  # 
+  #
   # @param defaults [Hash] the default macros - i.e. self.message.macros
   # @return [String]
   #

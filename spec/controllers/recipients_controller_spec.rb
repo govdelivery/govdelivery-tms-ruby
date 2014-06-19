@@ -36,8 +36,28 @@ describe RecipientsController do
         assigns(:page).should eq(1)
         assigns(:content_attributes).should match_array([:email, :macros])
         response.headers['Link'].should =~ /next/
-        response.headers['Link'].should =~ /last/ 
+        response.headers['Link'].should =~ /last/
       end
+    end
+  end
+
+  context '#failed' do
+    it 'should show a failed send' do
+      email_recipients.first.failed!
+      get :failed, email_id: email_message.id
+      response.status.should eql(200)
+      assigns(:recipients).count.should eql(1)
+      assigns(:recipients).first.status.should eql('failed')
+    end
+  end
+
+  context '#sent' do
+    it 'should show a successful email send' do
+      email_recipients.first.sent! :ack
+      get :sent, email_id: email_message.id
+      response.status.should eql(200)
+      assigns(:recipients).count.should eql(1)
+      assigns(:recipients).first.status.should eql('sent')
     end
   end
 

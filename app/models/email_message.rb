@@ -2,12 +2,12 @@ class EmailMessage < ActiveRecord::Base
   include Message
   include Personalized
 
-  attr_accessible :body, 
+  attr_accessible :body,
                   :click_tracking_enabled,
                   :errors_to,
                   :from_email,
-                  :from_name, 
-                  :open_tracking_enabled, 
+                  :from_name,
+                  :open_tracking_enabled,
                   :reply_to,
                   :subject
 
@@ -34,6 +34,14 @@ class EmailMessage < ActiveRecord::Base
 
   def recipients_who_opened
     recipients_with(:opens)
+  end
+
+  def recipients_who_failed
+    recipients.failed
+  end
+
+  def recipients_who_sent
+    recipients.sent
   end
 
   def open_tracking_enabled=(val)
