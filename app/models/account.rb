@@ -82,6 +82,15 @@ class Account < ActiveRecord::Base
     keywords.custom
   end
 
+  # some sugar for working with keywords on the console
+  def keywords arg=nil
+    if arg
+      super.where(name: arg).first
+    else
+      super
+    end
+  end
+
   protected
 
   def normalize_dcm_account_codes

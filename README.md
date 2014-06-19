@@ -11,8 +11,8 @@ Creating a tag
 Deploying
 =========
 
-    ./deploy.sh -e environment (defaults to qc)
-
+    ./deploy.sh  (defaults to master and qc)
+    ./deploy.sh -e int-ep --vc-tag 1.4.0
 
 IPAWS Setup
 ===============
@@ -30,40 +30,138 @@ IPAWS Setup
     # => pzpL6p1m16yGqDXc6sBjaazPa1sTxVGq
 
 
-Command Types
-==============
-
-To add a command\_type create a class that responds\_to `process\_response` and calls super within it such as:
-
-    def process_response(account, params, http_response)
-      cr = super
-      build_message(account, params.from, cr.response_body) if cr.plaintext_body?
-    end
-
-Add the class to the directory app/models/command\_type, and registor the class in the app/models/command\_type/base.rb with:
-
-    CommandType[:new_command]
-
-
-Create a worker in app/workers/ by appending "Worker" to the name of the class of the new command_type suchas `NewCommandWorker`
-
-
-Here is an example of creating a command on the special keyword "AccountStop" in the console:
-
-    account = Account.find(x)
-    account.create_command('Keywords::AccountStop', params: {dcm_account_codes: Array(account.dcm_account_codes) },
-                                                    command_type: 'dcm_unsubscribe')
-
-
-Commands can be added to Special Keywords with by posting to the paths:
-> /keywords/stop/commands
-> /keywords/help/commands
-> /keywords/default/commands
-
-
 ipaws notes:
 The zip file we receive will be password encrypted by a windows program called pkzip.
 If on a mac, you will need to install p7zip to unzip this file and retreive the .jks file.
 
     brew install p7zip
     7za x filename.zip
+
+
+Two-Way SMS
+===========
+
+## Special Keywords
+
+-   must be edited in the console
+-   are created automatically
+-   response text can be changed
+-   commands can be added to all keywords including the special
+-   there is no AccountStart keyword
+
+GOV311 is used but any short code of a shared vendor will work
+
+### Keywords:VendorDefault
+
+-   text "gibberish" to GOV311
+-   responds with help text by default
+
+### Keywords::VendorHelp
+
+-   text "help" or "info" to GOV311
+-   responds with help text by default
+
+### Keywords::VendorStop
+
+-   text any of stop,stopall,unsubscribe,cancel,end,quit to GOV311
+-   responds with stop text by default
+-   phone number will be added to vendor's blacklist (stop requests table)
+-   each command on each account's stop keyword (Keywords::AccountStop) will be executed (to remove from dcm)
+
+### Keywords::VendorStart
+
+-   text "start" or "yes" to GOV311
+-   responds with start text by default
+-   phone number will be removed from vendor's blacklist (stop requests table)
+
+### Keywords::AccountDefault
+
+GOV311 is used but any short code of a shared vendor will work
+
+BART is used but any prefix will work
+
+-   text "bart gibberish" to GOV311
+-   text "gibberish" to private short code or number
+-   response with help text by default
+-   the response text should be removed if a forward command is created (only forward command responds)
+
+### Keywords::AccountHelp
+
+-   text "bart help" to GOV311
+-   text "help" to private short code or number
+-   responds with help text by default
+
+### Keywords::AccountStop
+
+-   text "bart stop" to GOV311
+-   text "stop" to private short code or number
+-   requires the addition of commands upon account creation (e.g.: dcm unsubscribe)
+-   see DCM Unsubscribe Command below
+
+## Custom Keywords
+
+### With Plain Response - no command
+
+    account.keywords.create(name: 'hot', response_text: 'tomale')
+
+### With Forward Command
+
+the response from the 3rd party site will be relayed to the phone through twilio
+
+the expected content type can be set, but text/plain is the default
+
+if more than 500 characters, or status code above 299 are returned the action will fail
+
+    account.create_command('hot', command_type: 'forward', params: {url: 'tomale.com', http_method: 'get'})
+    # remember to be sure to remove the repsonse_text
+    account.keywords('hot').update_attribute :response_text, nil
+
+### With DCM Subscribe Command
+
+an email subscription will be created if an email address is given as an
+argument:  "subscribe me@there.com"
+
+a wireless subscription will be created in DCM with no argument
+
+    # must be dcm_account_code SINGULAR!
+    account.create_command('subscribe',
+                           command_type: 'dcm_subscribe', params: {dcm_account_code: 'xyz', dcm_topic_codes: ['abc']} )
+    # if the account has multiple dcm_account_codes create another command to subscribe to both at once
+    account.create_command('subscribe',
+                           command_type: 'dcm_subscribe', params: {dcm_account_code: 'uvw', dcm_topic_codes: ['def']} )
+
+### With DCM Unsubscribe Command
+
+it makes sense to put this command on keyword: "Keywords::AccountStop"
+but it can be put on other custom keywords
+
+it must be created manually for every account
+
+it will delete the subscription from the DCM account
+
+    # must be dcm_account_codes PLURAL!
+    account.create_command!('Keywords::AccountStop',
+                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
+    account.create_command!('désabonner',
+                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
+
+
+Adding a Command Type
+=====================
+
+To add a command type create a class that responds to `process\_response` and calls super within it such as:
+
+    def process_response(account, params, http_response)
+      cr = super
+      build_message(account, params.from, cr.response_body) if cr.plaintext_body?
+    end
+
+Add the class to the directory `app/models/command\_type`, and registor the class in the `app/models/command\_type/base.rb` with:
+
+    CommandType[:new_command]
+
+
+Create a worker in `app/workers/` by appending "Worker" to the name of the class of the new command_type suchas `NewCommandWorker`
+
+The worker should use the CommandParameters that are serialized in the database on command.params combined with parameters from
+the twilio request controller

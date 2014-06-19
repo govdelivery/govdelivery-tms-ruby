@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 describe CommandType::DcmUnsubscribe do
@@ -23,6 +24,15 @@ describe CommandType::DcmUnsubscribe do
   it 'creates a command response and sms message' do
     stub_command_action_create!(command_params, http_response, command_action)
     subject.process_response(account, command_params, http_response)
+  end
+
+  it 'can be created through the account' do
+    account = create(:account_with_sms, dcm_account_codes: ['xyz', 'uvw'])
+    account.create_command!('Keywords::AccountStop',
+                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
+    account.create_command!('désabonner',
+                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
+
   end
 
 end

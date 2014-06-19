@@ -121,4 +121,11 @@ describe Account do
       subject.custom_keywords.should have(1).keywords
     end
   end
+
+  it 'has some sugar for the EN peeps' do
+    account = create(:account_with_sms)
+    account.keywords.create!(name: 'what')
+    account.keywords('what').should be_kind_of(Keyword)
+    account.keywords('what!').should be_nil
+  end
 end

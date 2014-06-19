@@ -40,6 +40,12 @@ describe DcmSubscribeWorker do
       expect{ subject.perform(opts) }.to_not raise_error
     end
 
+    it 'raises other dcm client errors' do
+      opts = build(:subscribe_command_parameters ).to_hash
+      subject.expects(:request_subscription).raises( DCMClient::Error.new('hi') )
+      expect{ subject.perform(opts) }.to raise_error(DCMClient::Error)
+    end
+
     it 'raises other exceptions' do
       opts = build(:subscribe_command_parameters ).to_hash
       subject.expects(:request_subscription).raises( Exception.new('hi') )

@@ -9,7 +9,8 @@ class DcmSubscribeWorker
   # number is intentional.
   sidekiq_options retry: 25
 
-  #
+  # Note: this uses dcm_account_code SINGULAR
+  #       the stop worker uses dcm_account_codes PLURAL
   # options: {"from"=>"+14445556666", "params"=>"ACME:TOPIC_1,TOPIC_2"}
   #
   def perform(opts)
