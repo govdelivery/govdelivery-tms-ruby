@@ -4,7 +4,7 @@ class InboundMessage < ActiveRecord::Base
   belongs_to :keyword, inverse_of: :inbound_messages
   enum :command_status, [:no_action, :pending, :failure, :success, :ignored]
 
-  attr_accessible :body, :from, :vendor, :to, :keyword, :keyword_response
+  attr_accessible :body, :from, :vendor, :to, :keyword, :keyword_response, :account_id
   validates_presence_of :body, :from, :vendor, :keyword
   alias_attribute :from, :caller_phone # 'caller_phone' is the database column, as 'from' is a reserved word in Oracle (who knew?)
   alias_attribute :to, :vendor_phone
