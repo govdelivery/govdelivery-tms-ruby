@@ -9,7 +9,7 @@ class MessagePresenter < SimpleDelegator
 
   def _links
     if @message.new_record?
-      {self: new_link,} #save failed
+      {self: new_link,} #create failed
     else
       {self: self_link,}.
         merge(recipient_action_links).
@@ -19,8 +19,8 @@ class MessagePresenter < SimpleDelegator
 
   def recipient_action_links
     { recipients:        recipients_link,
-      failed_recipients: failed_link,
-      sent_recipients:   sent_link,}
+      failed: failed_link,
+      sent:   sent_link,}
   end
 
   def email_links
