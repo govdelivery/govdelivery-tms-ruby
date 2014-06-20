@@ -60,8 +60,8 @@ describe 'messages/show.rabl' do
                       with_timestamps(:created_at).
                       with_links('self' => sms_path(sms_message),
                                  'recipients' => sms_recipients_path(sms_message),
-                                 'failed_recipients' => failed_sms_recipients_path(sms_message),
-                                 'sent_recipients' => sent_sms_recipients_path(sms_message))
+                                 'failed' => failed_sms_recipients_path(sms_message),
+                                 'sent' => sent_sms_recipients_path(sms_message))
   end
 
   it 'should work with a voice message' do
@@ -74,8 +74,8 @@ describe 'messages/show.rabl' do
                       with_timestamps(:created_at).
                       with_links('self' => voice_path(voice_message),
                                  'recipients' => voice_recipients_path(voice_message),
-                                 'failed_recipients' => failed_voice_recipients_path(voice_message),
-                                 'sent_recipients' => sent_voice_recipients_path(voice_message))
+                                 'failed' => failed_voice_recipients_path(voice_message),
+                                 'sent' => sent_voice_recipients_path(voice_message))
   end
 
   it 'should work with an email message' do
@@ -88,8 +88,8 @@ describe 'messages/show.rabl' do
                       with_timestamps(:created_at).
                       with_links('self' => email_path(email_message),
                                  'recipients' => email_recipients_path(email_message),
-                                 'failed_recipients' => failed_email_recipients_path(email_message),
-                                 'sent_recipients' => sent_email_recipients_path(email_message),
+                                 'failed' => failed_email_recipients_path(email_message),
+                                 'sent' => sent_email_recipients_path(email_message),
                                  'opened' => opened_email_recipients_path(email_message),
                                  'clicked' => clicked_email_recipients_path(email_message))
   end
