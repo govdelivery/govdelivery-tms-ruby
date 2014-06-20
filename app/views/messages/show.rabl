@@ -1,4 +1,4 @@
-object View::MessageLinks.new(@message, self)
+object MessagePresenter.new(@message, self)
 attributes *@content_attributes, :created_at, :status, :_links
 
 if root_object

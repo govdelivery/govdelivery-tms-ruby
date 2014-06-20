@@ -9,7 +9,7 @@ describe 'messages/show.rabl' do
          :body => 'hi',
          :completed_at => Time.now,
          :created_at => Time.now,
-         :persisted? => true,
+         :new_record? => false,
          :status => 'new',
          :errors => []
     )
@@ -22,7 +22,7 @@ describe 'messages/show.rabl' do
          :play_url => 'bomb',
          :completed_at => Time.now,
          :created_at => Time.now,
-         :persisted? => true,
+         :new_record? => false,
          :status => 'new',
          :errors => []
     )
@@ -40,7 +40,7 @@ describe 'messages/show.rabl' do
          :errors_to => 'errors_to@sink.govdelivery.com',
          :completed_at => Time.now,
          :created_at => Time.now,
-         :persisted? => true,
+         :new_record? => false,
          :status => 'new',
          :open_tracking_enabled => true,
          :click_tracking_enabled => false,
@@ -59,7 +59,9 @@ describe 'messages/show.rabl' do
                       with_attributes(:body, :status).
                       with_timestamps(:created_at).
                       with_links('self' => sms_path(sms_message),
-                                 'recipients' => sms_recipients_path(sms_message))
+                                 'recipients' => sms_recipients_path(sms_message),
+                                 'failed_recipients' => failed_sms_recipients_path(sms_message),
+                                 'sent_recipients' => sent_sms_recipients_path(sms_message))
   end
 
   it 'should work with a voice message' do
@@ -71,7 +73,9 @@ describe 'messages/show.rabl' do
                       with_attributes(:play_url, :status).
                       with_timestamps(:created_at).
                       with_links('self' => voice_path(voice_message),
-                                 'recipients' => voice_recipients_path(voice_message))
+                                 'recipients' => voice_recipients_path(voice_message),
+                                 'failed_recipients' => failed_voice_recipients_path(voice_message),
+                                 'sent_recipients' => sent_voice_recipients_path(voice_message))
   end
 
   it 'should work with an email message' do
@@ -84,6 +88,8 @@ describe 'messages/show.rabl' do
                       with_timestamps(:created_at).
                       with_links('self' => email_path(email_message),
                                  'recipients' => email_recipients_path(email_message),
+                                 'failed_recipients' => failed_email_recipients_path(email_message),
+                                 'sent_recipients' => sent_email_recipients_path(email_message),
                                  'opened' => opened_email_recipients_path(email_message),
                                  'clicked' => clicked_email_recipients_path(email_message))
   end

@@ -9,6 +9,8 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
 
+  config.include ActionView::TestCase::Behavior, example_group: {file_path: %r{spec/presenters}}
+
  config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
