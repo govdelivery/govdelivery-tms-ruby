@@ -52,7 +52,7 @@ describe InboundMessagesController do
 
   describe "GET show" do
     it "assigns the requested inbound_message as @message" do
-      inbound_message = create(:inbound_message, vendor: vendor)
+      inbound_message = create(:inbound_message, vendor: vendor, account: account)
       get :show, {:id => inbound_message.to_param}
       response.status.should == 200
       assigns(:message).should be_present
