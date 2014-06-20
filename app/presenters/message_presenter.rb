@@ -18,9 +18,9 @@ class MessagePresenter < SimpleDelegator
   end
 
   def recipient_action_links
-    { recipients:        recipients_link,
+    { recipients: recipients_link,
       failed: failed_link,
-      sent:   sent_link,}
+      sent: sent_link,}
   end
 
   def email_links

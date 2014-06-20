@@ -116,6 +116,23 @@ if more than 500 characters, or status code above 299 are returned the action wi
     # remember to be sure to remove the repsonse_text
     account.keywords('hot').update_attribute :response_text, nil
 
+    # forward everything:
+    forward_params = {
+      url: 'tomale.com',
+      http_method: 'get',
+      expected_content_type: 'text/html', #allows something other than text/plain - the default
+      from_param_name: 'user',    # the name of the phone number parameter - default 'from'
+      sms_body_param_name: 'req', # lets say the text body is "12th" - default 'sms_body'
+    }
+    # these params will result in a request of: http://tomale.com?user="5555555555"&req="12th"
+    # and only a 200ish response of type 'text/html' (and less than 500 chars) will be sent to the user number
+
+    # to foward everything use the default keyword, it will catch anything that doesn't match existing keywords
+    account.create_command('Keywords::AccountDefault', command_type: 'forward', params: forward_params)
+
+    # be sure to remove the response text because the forward command will respond
+    account.default_keyword.update_attribute :response_text, nil
+
 ### With DCM Subscribe Command
 
 an email subscription will be created if an email address is given as an
