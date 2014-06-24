@@ -46,10 +46,10 @@ Two-Way SMS
 -   must be edited in the console
 -   are created automatically
 -   response text can be changed
--   commands can be added to all keywords including the special
+-   commands can be added to all keywords including the special ones
 -   there is no AccountStart keyword
 
-GOV311 is used but any short code of a shared vendor will work
+Here, GOV311 is used but any short code of a shared vendor will work
 
 ### Keywords:VendorDefault
 
@@ -76,13 +76,11 @@ GOV311 is used but any short code of a shared vendor will work
 
 ### Keywords::AccountDefault
 
-GOV311 is used but any short code of a shared vendor will work
-
-BART is used but any prefix will work
+Here, BART is used but any prefix will work
 
 -   text "bart gibberish" to GOV311
 -   text "gibberish" to private short code or number
--   response with help text by default
+-   responds with help text by default
 -   the response text should be removed if a forward command is created (only forward command responds)
 
 ### Keywords::AccountHelp
@@ -135,10 +133,12 @@ if more than 500 characters, or status code above 299 are returned the action wi
 
 ### With DCM Subscribe Command
 
+Creates a subscription in DCM
+
 an email subscription will be created if an email address is given as an
 argument:  "subscribe me@there.com"
 
-a wireless subscription will be created in DCM with no argument
+a wireless subscription will be created if no argument is given
 
     # must be dcm_account_code SINGULAR!
     account.create_command('subscribe',
