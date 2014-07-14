@@ -66,5 +66,4 @@ group :test do
   gem 'mocha', :require => false
   gem 'tms_client'
   gem 'shoulda-matchers'
-  gem 'database_cleaner'
 end

@@ -62,7 +62,6 @@ GEM
     countries (0.9.3)
       currencies (~> 0.4.2)
     currencies (0.4.2)
-    database_cleaner (1.2.0)
     dcm_client (0.1.5)
       faraday
       faraday_middleware
@@ -346,7 +345,6 @@ DEPENDENCIES
   attr_encrypted
   brakeman
   clockwork
-  database_cleaner
   dcm_client (~> 0.1.4)
   devise
   enumify

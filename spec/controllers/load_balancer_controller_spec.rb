@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe LoadBalancerController, "testing status", :tx_off => true do
+describe LoadBalancerController, "testing status" do
   before :each do
     @connection = stub("connection")
     ActiveRecord::Base.stubs(:connection).returns(@connection)
