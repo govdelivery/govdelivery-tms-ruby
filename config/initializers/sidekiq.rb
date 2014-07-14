@@ -9,6 +9,7 @@ Sidekiq::Logging.logger = Rails.logger
 require 'sidekiq/pro/reliable_push'
 require './config/clock.rb'
 require './lib/clockwork/sidekiq_clockwork_scheduler.rb'
+require './config/initializers/yakety_yak'
 
 default=Xact::Application.config.sidekiq[:default]
 
@@ -37,6 +38,11 @@ Sidekiq.configure_server do |config|
     # is already in the logger string.
   end
   SidekiqClockworkScheduler.new.async.run
+
+  if Rails.configuration.analytics[:enabled]
+    Analytics::Supervisor.go!
+  end
+  Rails.logger.info "Background services have started."
 end
 
 

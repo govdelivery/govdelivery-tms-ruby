@@ -31,6 +31,7 @@ gem 'valid_email'
 gem 'newrelic_rpm'
 gem 'request_exception_handler'
 gem 'clockwork'
+gem 'yakety_yak'
 
 platforms :ruby do
   gem 'ruby-oci8'

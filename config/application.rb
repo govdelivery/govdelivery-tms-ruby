@@ -14,7 +14,6 @@ if defined?(Bundler)
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 end
-
 Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
 
 I18n.enforce_available_locales = true
@@ -118,6 +117,10 @@ module Xact
     # DCM is "twilio_requests_timeout."  Here it is named differently,
     # as this is not a vendor-specific behavior.
     config.auto_response_threshold = 0.5
+
+    # Controls whether this environment will publish/subscribe to Kafka
+    config.analytics = HashWithIndifferentAccess.new(
+      YAML.load_file(Rails.root.join('config/analytics.yml'))[Rails.env])
 
     # Default log level is INFO
     config.logger =
