@@ -6,8 +6,10 @@ describe Analytics::ListenerBase do
    
   end
 
-  it 'should have channel' do
-    expect { subject.channel }.to raise_exception(NotImplementedError)
+  ['group_id', 'channel'].each do |thing|
+    it "should have #{thing}" do
+      expect { subject.send(thing) }.to raise_exception(NotImplementedError)
+    end
   end
 
   it 'should have on_message' do

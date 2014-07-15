@@ -6,6 +6,10 @@ describe Analytics::ClickListener do
     expect(subject.channel).to eq('click_channel')
   end
 
+  it 'should have group_id' do
+    expect(subject.group_id).to eq('xact.click_listener')
+  end
+
   it 'should respond to a message' do
     message   = {}
     partition = 1

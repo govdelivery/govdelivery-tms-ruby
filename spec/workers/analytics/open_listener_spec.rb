@@ -6,6 +6,10 @@ describe Analytics::OpenListener do
     expect(subject.channel).to eq('open_channel')
   end
 
+  it 'should have group_id' do
+    expect(subject.group_id).to eq('xact.open_listener')
+  end
+
   it 'should respond to a message' do
     message   = {}
     partition = 1

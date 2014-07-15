@@ -345,7 +345,7 @@ GEM
       mail
     warden (1.2.3)
       rack (>= 1.0)
-    yakety_yak (0.0.4)
+    yakety_yak (0.0.5)
       poseidon_cluster (~> 0.2)
     yaml_db (0.2.3)
     zeus (0.13.3)

@@ -1,6 +1,5 @@
 shared: &shared
   enabled: true
-  group_id: xact.sidekiq
 
 development:
   <<: *shared

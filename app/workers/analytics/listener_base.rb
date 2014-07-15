@@ -19,11 +19,15 @@ module Analytics
 
     def client
       # Subscribe to the channel, look for messages with 'src' => 'xact'
-      @client ||= YaketyYak::Subscriber.new(self.channel, 'xact')
+      @client ||= YaketyYak::Subscriber.new(self.group_id, self.channel, 'xact')
     end
 
     def channel
       raise NotImplementedError.new("You must implement #channel")
+    end
+
+    def group_id
+      raise NotImplementedError.new("You must implement #group_id")
     end
 
     def on_message(message, partition, offset)
