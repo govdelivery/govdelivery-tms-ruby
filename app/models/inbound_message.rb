@@ -13,6 +13,7 @@ class InboundMessage < ActiveRecord::Base
 
   before_validation :set_response_status, :on => :create
   before_create :see_if_this_should_be_ignored
+  after_create :publish_event
 
   def update_status! fail=false
     if fail
@@ -56,6 +57,16 @@ class InboundMessage < ActiveRecord::Base
     unless actionable?
       ignore!
     end
+  end
+
+  def publish_event
+    Analytics::PublisherWorker.perform_async(:channel => 'sms_channel', :message => {
+      :type       => 'incoming',
+      :from       => from,
+      :to         => to,
+      :body       => body,
+      :created_at => created_at
+    })
   end
 
   def set_response_status

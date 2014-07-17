@@ -122,4 +122,23 @@ describe InboundMessage do
     create_list(:inbound_message, 3, account: (account = create(:account_with_sms)))
     InboundMessage.where(account_id: account.id).count.should eql(3)
   end
+
+  it 'publishes an event on create' do
+    message = build(:inbound_message,
+                      keyword: create(:custom_keyword, response_text: nil).
+                        tap { |k| k.commands << build(:forward_command)}.
+                        tap { |k| k.commands << build(:forward_command)})
+
+    expected = {
+      :channel => 'sms_channel', 
+      :message => has_entries({
+        :to => message.to,
+        :from => message.from,
+        :body => message.body,
+        :type => 'incoming'
+      })
+    }
+    Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+    message.save!
+  end
 end
