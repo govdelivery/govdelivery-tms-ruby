@@ -1,5 +1,5 @@
 module Analytics
-  class ClickListener < ListenerBase
+  class ClickListener < YaketyYak::Subscriber::Managed
     def channel
       'click_channel'
     end

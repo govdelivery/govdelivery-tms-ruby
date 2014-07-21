@@ -40,7 +40,7 @@ Sidekiq.configure_server do |config|
   SidekiqClockworkScheduler.new.async.run
 
   if Rails.configuration.analytics[:enabled]
-    Analytics::Supervisor.go!
+    YaketyYak::Subscriber::Supervisor.go!
   end
   Rails.logger.info "Background services have started."
 end

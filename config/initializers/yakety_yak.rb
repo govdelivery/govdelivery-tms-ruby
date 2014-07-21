@@ -7,4 +7,7 @@ if Rails.configuration.analytics[:enabled]
   end
 
   YaketyYak.logger = Rails.logger
+
+  require Rails.root.join('app/workers/analytics/click_listener')
+  require Rails.root.join('app/workers/analytics/open_listener')
 end

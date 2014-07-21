@@ -1,5 +1,5 @@
 module Analytics
-  class OpenListener < ListenerBase
+  class OpenListener < YaketyYak::Subscriber::Managed
     def channel
       'open_channel'
     end
