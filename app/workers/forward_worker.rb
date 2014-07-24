@@ -21,10 +21,23 @@ class ForwardWorker
 
   def perform(opts)
     self.options = opts
+    # message is returns from CommandType::Forward#process_response
+    # only one recipient is created
     message = super
 
-    # Send a text back to the user via twilio
-    Service::TwilioMessageService.deliver!(message, options.callback_url) if message
+    if message
+      recipient_id = message.first_recipient_id
+      # Send a text back to the user via twilio
+      send_response(message, recipient_id, options.callback_url)
+    end
+  end
+
+  def send_response( message, recipient_id, callback_url )
+    message.sending!
+    Twilio::SenderWorker.perform_async(message_class: message.class.name,
+                                       callback_url: callback_url,
+                                       message_id: message.id,
+                                       recipient_id: recipient_id)
   end
 
   def http_service

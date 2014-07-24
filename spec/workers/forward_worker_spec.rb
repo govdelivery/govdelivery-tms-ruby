@@ -18,10 +18,33 @@ describe ForwardWorker do
                    from_param_name: "from_param"} }
 
   it 'creates one Twilio::SenderWorker job if command.process_response returns a message' do
-    Service::TwilioMessageService.expects(:deliver!).with( kind_of(SmsMessage), options[:callback_url] )
-    command.expects(:process_response).returns( SmsMessage.new )
-    subject.expects(:command).returns(command)
-    # this is a pretty worthless test. The super calls in :perform and :process_response are getting in the way of stubbing them.
+    Service::ForwardService.any_instance.expects(:send)
+    Twilio::SenderWorker.expects(:perform_async).once
+    # this craziness is due to the use of super in the perform method
+    fake_command = build(:forward_command).tap{ |c|
+      c.expects(:process_response).
+        returns( build(:sms_message).tap{ |m|
+                  m.expects(:sending!)
+                  m.expects(:first_recipient_id).returns(1)
+                })
+    }
+    subject.expects( :command ).returns(fake_command)
+    subject.expects( :account ).returns(stub('account'))
+
+    subject.perform( options )
+  end
+
+  it 'does not create a Twilio::SenderWorker job if command.process_response does not return a message' do
+    Service::ForwardService.any_instance.expects(:send)
+    Twilio::SenderWorker.expects(:perform_async).never
+    # this craziness is due to the use of super in the perform method
+    fake_command = build(:forward_command).tap{ |c|
+      c.expects(:process_response).
+        returns( nil )
+    }
+    subject.expects( :command ).returns(fake_command)
+    subject.expects( :account ).returns(stub('account'))
+
     subject.perform( options )
   end
 

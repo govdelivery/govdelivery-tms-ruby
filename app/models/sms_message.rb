@@ -30,9 +30,14 @@ class SmsMessage < ActiveRecord::Base
     sms_vendor.shared? ? recipients.to_send(sms_vendor_id, account.id) : recipients.to_send(sms_vendor_id)
   end
 
+  # this is for two-way sms, only one recipient is used
+  def first_recipient_id
+    recipients.first.id
+  end
+
 private
   def set_sms_vendor
     self.sms_vendor_id = account.sms_vendor_id
   end
-  
+
 end
