@@ -29,6 +29,22 @@ IPAWS Setup
     # => Tokens:
     # => pzpL6p1m16yGqDXc6sBjaazPa1sTxVGq
 
+Monitoring Setup
+=================
+For environments from qc to production, a "Monitoring" account should
+be created that can send emails, text, and voice. This is similar to a
+test account, but exists for the sole purpose of monitoring the
+platform.
+
+    # Create the account
+    ./bin/accounts.rb -n "GovDelivery Monitoring Account" --email_vendor=10000 --sms_vendor=10001 --voice_vendor=10001 --sms_prefix='MONITOR'
+
+    # Create user and token
+	./bin/users.rb -a ACCOUNTID -e 'nagios@govdelivery.com' -s 0 -p 'SOMEpasSWORD'
+
+    # List token
+	./bin/tokens.rb -u USERID --list
+
 
 ipaws notes:
 The zip file we receive will be password encrypted by a windows program called pkzip.
