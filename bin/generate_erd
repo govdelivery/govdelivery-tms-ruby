@@ -1,2 +1,0 @@
-#!/bin/bash
-rake erd attributes=foreign_keys,inheritance,content
