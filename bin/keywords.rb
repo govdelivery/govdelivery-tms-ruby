@@ -5,24 +5,28 @@ require 'thor'
 class KeywordsCLI < Thor
 
 
+  default_task :list
+
   desc 'list ACCOUNT_NAME', 'list custom keywords for account'
   option :all, desc: 'list both custom and special'
   option :special, desc: 'list only special keywords'
-  def list(account_name)
-    account = get_account(account_name)
+  def list(account_name=nil)
+    account = get_account(account_name) if account_name
     q = case
-      when options[:all]
-      account.keywords
-      when options[:special]
-      account.keywords.special
-    else
-      account.keywords.custom
-    end
-    print_table q.all.collect { |k| [k.name, k.response_text] }
+        when account.nil?
+          Keyword.custom.limit(100)
+        when options[:all]
+          account.keywords
+        when options[:special]
+          account.keywords.special
+        else
+          account.keywords.custom
+        end
+    print_table q.all.collect { |k| [k.id, k.name, k.response_text] }
   end
 
-  option :response_text
   desc 'create ACCOUNT_NAME KEYWORD_NAME', 'create new custom command'
+  option :response_text, aliases: ["-r"], desc: "text sent to the user when this keyword is detected"
   def create(account_name, keyword_name)
     account = get_account(account_name)
     keyword = account.keywords.build(name: keyword_name, response_text: options[:response_text])
@@ -34,9 +38,9 @@ class KeywordsCLI < Thor
   end
 
   # example 'response_text CUKEAUTO_QC_AUTOMATED  Keywords::AccountDefault For CUKE HELP, visit www.govdelivery.com'
-  desc 'response_text ACCOUNT_NAME KEYWORD_NAME *RESPONSE_TEXT',
+  desc 'set_response_text ACCOUNT_NAME KEYWORD_NAME *RESPONSE_TEXT',
   'anything after KEYWORD_NAME will be used as text'
-  def response_text(account_name, keyword_name, *response_text_words)
+  def set_response_text(account_name, keyword_name, *response_text_words)
     account = get_account(account_name)
     keyword = get_keyword(account, keyword_name)
     response_text = response_text_words.join(' ')
@@ -46,6 +50,15 @@ class KeywordsCLI < Thor
       say "successfully updated keyword", :green
     else
       say "errors: #{keyword.errors}", :red
+    end
+  end
+
+  desc 'delete KEYWORD_ID', 'destroy keyword'
+  def delete(keyword_id)
+    if (keyword = Keyword.find(keyword_id.to_i)) && yes?("Delete #{keyword.name}? (y/n): ") && keyword.destroy
+      say "successfully deleted Keyword: #{keyword_id}", :green
+    else
+      say "deletion aborted", :red
     end
   end
 

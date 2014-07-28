@@ -44,7 +44,7 @@ class CreateCommand < Thor
   desc 'delete COMMAND_ID', 'delete command with id: ID'
   def delete(command_id)
     command = get_command(command_id)
-    if ask?("delete command: #{command.name} ? (y/n): " ) && command.destroy
+    if yes?("delete command: #{command.name} ? (y/n): " ) && command.destroy
       say "Successfully deleted command"
     end
   end
@@ -59,10 +59,10 @@ class CreateCommand < Thor
     end
   end
 
+  desc 'list ACCOUNT_NAME KEYWORD_NAME', 'list latest command actions'
   option :phone, desc: 'can be partial string of a phone number'
   option :limit, default: 10, type: :numeric
   option :offset, default: 0, type: :numeric
-  desc 'list ACCOUNT_NAME KEYWORD_NAME', 'list latest command actions'
   def actions(account_name, keyword_name)
     account = get_account(account_name)
     keyword = get_keyword(account, keyword_name)
@@ -79,7 +79,7 @@ class CreateCommand < Thor
     q.each do |action|
       say [action.id, action.created_at.utc].join(' '), :green
       attributes = action.attributes.slice('status', 'content_type', 'response_body')
-      attributes['status'] = attributes['status'].to_s #weird that thor doesn't do this
+      attributes['status'] = attributes['status'].to_s #number to string
       inbound_message_attributes = action.inbound_message.attributes.slice('caller_phone', 'body', 'command_status')
       print_table( attributes.merge(inbound_message_attributes), indent: 4)
     end
