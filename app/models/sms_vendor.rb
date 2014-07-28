@@ -10,6 +10,7 @@ class SmsVendor < ActiveRecord::Base
 
   validates_inclusion_of :shared, :in => [true, false]
   validates_uniqueness_of :from_phone
+  validates_uniqueness_of :name
 
   has_one :stop_keyword,    class_name: Keywords::VendorStop, :foreign_key => 'vendor_id'
   has_one :start_keyword,   class_name: Keywords::VendorStart, :foreign_key => 'vendor_id'

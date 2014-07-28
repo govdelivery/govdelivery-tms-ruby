@@ -36,7 +36,7 @@ class Account < ActiveRecord::Base
 
   before_validation :normalize_dcm_account_codes
 
-  validates :name, presence: true, length: {maximum: 255}
+  validates :name, presence: true, length: {maximum: 255}, uniqueness: true
   validate :has_one_default_from_address, :if => '!email_vendor_id.blank?'
   validate :validate_sms_prefixes
 
