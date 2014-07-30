@@ -6,10 +6,10 @@ development:
   enabled: true
   kafkas:
     - 192.168.50.3:9093
-  zookeepers: 
+  zookeepers:
     - 192.168.50.2:2181
 
-test: 
+test:
   <<: *shared
   enabled: false
   kafkas:
@@ -20,7 +20,7 @@ qc:
   kafkas:
     - qc-kafka1-ep.tops.gdi:9093
     - qc-kafka2-ep.tops.gdi:9093
-    - qc-kafka3-ep.tops.gdi:9093  
+    - qc-kafka3-ep.tops.gdi:9093
   zookeepers:
     - qc-zk1-ep.tops.gdi:2181
     - qc-zk2-ep.tops.gdi:2181
@@ -28,10 +28,11 @@ qc:
 
 integration:
   <<: *shared
+  enabled: false
   kafkas:
     - int-kafka1-ep.tops.gdi:9093
     - int-kafka2-ep.tops.gdi:9093
-    - int-kafka3-ep.tops.gdi:9093  
+    - int-kafka3-ep.tops.gdi:9093
   zookeepers:
     - int-zk1-ep.tops.gdi:2181
     - int-zk2-ep.tops.gdi:2181
@@ -39,10 +40,11 @@ integration:
 
 stage:
   <<: *shared
+  enabled: false
   kafkas:
     - stg-kafka1-ep.tops.gdi:9093
     - stg-kafka2-ep.tops.gdi:9093
-    - stg-kafka3-ep.tops.gdi:9093  
+    - stg-kafka3-ep.tops.gdi:9093
   zookeepers:
     - stg-zk1-ep.tops.gdi:2181
     - stg-zk2-ep.tops.gdi:2181
@@ -50,10 +52,11 @@ stage:
 
 production:
   <<: *shared
+  enabled: false
   kafkas:
     - prod-kafka1-ep.tops.gdi:9093
     - prod-kafka2-ep.tops.gdi:9093
-    - prod-kafka3-ep.tops.gdi:9093  
+    - prod-kafka3-ep.tops.gdi:9093
   zookeepers:
     - prod-zk1-ep.tops.gdi:2181
     - prod-zk2-ep.tops.gdi:2181
