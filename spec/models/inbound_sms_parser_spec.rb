@@ -73,12 +73,20 @@ describe InboundSmsParser do
       its(:account_id) { should eql(account.id) }
     end
 
+    context "blank sms_body: ' ' yields:" do
+      subject{ InboundSmsParser.parse ' ', account.sms_vendor }
+      its(:prefix)     { should eql(nil) }
+      its(:keyword)    { should be_instance_of(Keywords::VendorDefault) }
+      its(:message)    { should be_blank }
+      its(:account_id) { should be_blank }
+    end
+
   end
 
   def setup_account prefix, keyword_name
     # account with sms prefix
     create(:account_with_sms, :shared, prefix: prefix).tap do |account|
-      # keyword 
+      # keyword
       create(:keyword, account: account, name: keyword_name)
     end
   end

@@ -16,7 +16,7 @@ module InboundSmsParser
   end
 
   def find_account_id first_word, vendor
-    if vendor.shared?
+    if vendor.shared? && first_word.present?
       vendor.sms_prefixes.account_id_for_prefix(first_word)
     elsif (account_id = vendor.accounts.first.try(:id)).present?
       #wow this feels dangerous, private vendors are not enforced
@@ -31,7 +31,7 @@ module InboundSmsParser
   # the prefix determines the account
   def extract_prefix s, vendor
     first_word, *rest = s.split
-    if vendor.sms_prefixes.account_id_for_prefix(first_word) # do it again I guess(?)
+    if vendor.sms_prefixes.account_id_for_prefix(first_word) && first_word.present? # do it again I guess(?)
       [first_word, rest.join(' ')]
     else
       [nil, s]
