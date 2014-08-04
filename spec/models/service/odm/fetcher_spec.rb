@@ -51,13 +51,13 @@ module Service
             number_of_events_returned_from_odm = activity_batch.send(type).size
             batch = Fetcher.new(type, 'creds', service, number_of_events_returned_from_odm + 1).fetch('a sequence')
 
-            batch.has_more?.should be_false
+            batch.has_more?.should be false
           end
           it 'returns a batch that "has_more" when its @batch_size == number of events returned from ODM' do
             number_of_events_returned_from_odm = activity_batch.send(type).size
             batch = Fetcher.new(type, 'creds', service, number_of_events_returned_from_odm).fetch('a sequence')
 
-            batch.has_more?.should be_true
+            batch.has_more?.should be true
           end
           it 'sets ActivityRequest#max_results to its batch_size' do
             batch_size = 3158

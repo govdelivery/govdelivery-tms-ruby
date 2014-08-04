@@ -45,6 +45,8 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'rspec-its'
+  gem 'rspec-collection_matchers'
   gem 'factory_girl_rails'
   gem 'json_spec'
   gem 'guard-rspec'

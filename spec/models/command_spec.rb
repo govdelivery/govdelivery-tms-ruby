@@ -33,7 +33,7 @@ describe Command do
   [:command_type].each do |field|
     context "when #{field} is empty" do
       before { subject.send("#{field}=", nil) }
-      specify { subject.valid?.should be_false }
+      specify { subject.valid?.should be false }
     end
   end
 
@@ -63,7 +63,7 @@ describe Command do
       subject.params = {'dcm_topic_codes' => 'THIS, SHOULD BE AN ARRAY'}
     end
     it 'should show an error on params' do
-      subject.valid?.should be_false
+      subject.valid?.should be false
       subject.errors.should include :params
     end
   end

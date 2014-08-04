@@ -12,10 +12,10 @@ describe Account do
       create(:account, email_vendor: email_vendor)
     }
     it 'should work' do
-      subject.from_email_allowed?('randomemail@foo.com').should be_false
-      subject.from_email_allowed?(subject.default_from_address.from_email).should be_true
-      subject.from_email_allowed?(subject.default_from_address.from_email.upcase).should be_true
-      subject.from_email_allowed?(nil).should be_false
+      subject.from_email_allowed?('randomemail@foo.com').should be false
+      subject.from_email_allowed?(subject.default_from_address.from_email).should be true
+      subject.from_email_allowed?(subject.default_from_address.from_email.upcase).should be true
+      subject.from_email_allowed?(nil).should be false
     end
   end
 

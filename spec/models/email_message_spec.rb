@@ -36,8 +36,8 @@ describe EmailMessage do
       email.click_tracking_enabled = nil
       email.save!
       email.reload
-      email.open_tracking_enabled.should be_true
-      email.click_tracking_enabled.should be_true
+      email.open_tracking_enabled.should be true
+      email.click_tracking_enabled.should be true
     end
   end
   context "with all attributes" do

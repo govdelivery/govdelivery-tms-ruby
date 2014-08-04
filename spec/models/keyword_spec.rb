@@ -187,7 +187,7 @@ describe Keyword do
   describe 'stop?' do
     %w(stop quit STOP QUIT sToP qUiT cancel unsubscribe).each do |stop|
       it "should recognize #{stop}" do
-        Keyword.stop?(stop).should be_true
+        Keyword.stop?(stop).should be true
       end
     end
   end

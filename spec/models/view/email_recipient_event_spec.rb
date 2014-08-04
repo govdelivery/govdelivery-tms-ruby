@@ -8,7 +8,7 @@ describe View::EmailRecipientEvent do
     subject { View::EmailRecipientEvent.new(stub(foobar: :omg_lol), nil) }
     it 'works' do
       subject.foobar.should == :omg_lol
-      subject.respond_to?(:foobar).should be_true
+      subject.respond_to?(:foobar).should be true
     end
   end
 

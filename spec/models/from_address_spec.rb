@@ -17,7 +17,7 @@ describe FromAddress do
 
     it 'should not allow duplicate from emails' do
       fa = account.from_addresses.create(:from_email => 'one@example.com')
-      fa.new_record?.should be_true
+      fa.new_record?.should be true
       fa.errors[:from_email].should_not be_nil
     end
   end

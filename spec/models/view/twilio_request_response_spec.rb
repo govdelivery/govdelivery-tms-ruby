@@ -10,6 +10,6 @@ describe View::TwilioRequestResponse do
     subject.foobar.should == :omg_lol
   end
   it 'works with rabl' do
-    subject.respond_to?(:foobar).should be_true
+    subject.respond_to?(:foobar).should be true
   end
 end

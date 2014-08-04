@@ -7,7 +7,7 @@ describe CommandAction do
                                      response_body:  'something',
                                      status:         '201' ) }
     it { should be_valid }
-    it { subject.success?.should be_true }
+    it { subject.success?.should be true }
   end
 
   describe 'a blank response body' do
@@ -15,7 +15,7 @@ describe CommandAction do
                                      response_body:  '',
                                      status:         '201' ) }
     it { should be_valid }
-    it { subject.success?.should be_false }
+    it { subject.success?.should be false }
   end
 
   describe 'a response of NOT FOUND' do
@@ -23,7 +23,7 @@ describe CommandAction do
                                      response_body:  'something',
                                      status:         '404' ) }
     it { should be_valid }
-    its(:success?) { should be_false }
+    its(:success?) { should be false }
   end
 
   describe 'an html content type' do
@@ -31,7 +31,7 @@ describe CommandAction do
                                      response_body:  'something',
                                      status:         '200' ) }
     it { should be_valid }
-    it(:success?) { should be_true }
+    its(:success?) { should be true }
   end
 
 end

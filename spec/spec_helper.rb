@@ -2,16 +2,21 @@
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
+require 'rspec/its'
 require 'celluloid/test'
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
-  config.include ActionView::TestCase::Behavior, example_group: {file_path: %r{spec/presenters}}
+  config.include ActionView::TestCase::Behavior, file_path: %r{spec/presenters}
   config.mock_with :mocha
+  config.expect_with :rspec do |c|
+     c.syntax = [:should, :expect]
+   end
   config.use_transactional_fixtures = true
   config.infer_base_class_for_anonymous_controllers = false
   config.order = "random"
+  config.infer_spec_type_from_file_location!
 
   #Sidekiq needs this, requiring fakeredis/rspec isn't enough
   fakeredis_opts = {
@@ -51,9 +56,9 @@ def exception_check(worker, expected_message, params=nil)
     java_exception_raised = false
   rescue Exception => rex
     ruby_exception_raised = true
-    rex.message.should eq(expected_message)
+    expect(rex.message).to eq(expected_message)
   end
 
-  java_exception_raised.should be_false
-  ruby_exception_raised.should be_true
+  expect(java_exception_raised).to be_falsey
+  expect(ruby_exception_raised).to be_truthy
 end
