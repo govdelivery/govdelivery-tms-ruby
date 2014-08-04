@@ -8,7 +8,7 @@ class SmsPrefix < ActiveRecord::Base
   belongs_to :sms_vendor
 
 
-  def self.account_id_for_prefix prefix
+  def self.account_id_for_prefix(prefix)
     where(" lower(prefix) = ? ", prefix.downcase).pluck(:account_id).first
   end
 
