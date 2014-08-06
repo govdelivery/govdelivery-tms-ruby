@@ -8,10 +8,25 @@ class TwilioDialPlanController < ApplicationController
       @message = @recipient.message
     end
     respond_to do |format|
-        format.xml { @message }
+      format.xml { render xml: twiml_response(@message).text }
     end
   end
+
   def find_recipient
-    @recipient=VoiceRecipient.find_by_ack!(params['CallSid'])
+    @recipient=VoiceRecipient.includes(message: :call_script).find_by_ack!(params['CallSid'])
+  end
+
+  def twiml_response(message)
+    Twilio::TwiML::Response.new do |r|
+      if message.play_url
+        r.Say "Please stand by for an important message."
+        r.Play message.play_url
+      elsif message.call_script
+        r.Gather(action: twiml_url, numDigits: 1) do
+          r.Say message.call_script.say_text
+          r.Say "To repeat this message, press 1."
+        end
+      end
+    end
   end
 end

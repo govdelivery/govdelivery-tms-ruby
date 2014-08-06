@@ -13,6 +13,13 @@ describe VoiceMessage do
     it { should be_valid }
   end
 
+  context "a voice message with a script" do
+    let(:message) { account.voice_messages.build(:say_text => 'Your Gov Delivery authorization code is 1 2 3 4 5. Thank you for using Gov Delivery. This message will repeat.') }
+
+    subject { message }
+    it { should be_valid }
+  end
+
   context "an account with voice and sms senders" do
     let(:message) { account.voice_messages.create!(:play_url => 'http://localhost/file.mp3') }
     before do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140619154434) do
+ActiveRecord::Schema.define(:version => 20140805213552) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name",                                                                 :null => false
@@ -36,6 +36,13 @@ ActiveRecord::Schema.define(:version => 20140619154434) do
   end
 
   add_index "authentication_tokens", ["token"], :name => "i_authentication_tokens_token", :unique => true, :tablespace => "tsms_indx01"
+
+  create_table "call_scripts", :force => true do |t|
+    t.integer  "voice_message_id",                 :precision => 38, :scale => 0
+    t.string   "say_text",         :limit => 1000
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
+  end
 
   create_table "command_actions", :force => true do |t|
     t.integer  "command_id",                        :precision => 38, :scale => 0
@@ -270,10 +277,11 @@ ActiveRecord::Schema.define(:version => 20140619154434) do
     t.string   "play_url",     :limit => 512
     t.datetime "created_at"
     t.datetime "completed_at"
-    t.integer  "user_id",                     :precision => 38, :scale => 0
-    t.integer  "account_id",                  :precision => 38, :scale => 0,                    :null => false
-    t.string   "status",                                                     :default => "new", :null => false
+    t.integer  "user_id",                      :precision => 38, :scale => 0
+    t.integer  "account_id",                   :precision => 38, :scale => 0,                    :null => false
+    t.string   "status",                                                      :default => "new", :null => false
     t.datetime "sent_at"
+    t.string   "say_text",     :limit => 1000
   end
 
   create_table "voice_recipients", :force => true do |t|
