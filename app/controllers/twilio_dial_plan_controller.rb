@@ -23,8 +23,8 @@ class TwilioDialPlanController < ApplicationController
         r.Play message.play_url
       elsif message.call_script
         r.Gather(action: twiml_url, numDigits: 1) do
-          r.Say message.call_script.say_text
-          r.Say "To repeat this message, press 1."
+          r.Say message.call_script.say_text, voice: 'alice', language: 'en-GB'
+          r.Say "To repeat this message, press 1.", voice: 'alice', language: 'en-GB'
         end
       end
     end
