@@ -14,10 +14,10 @@ describe VoiceMessage do
   end
 
   context "a voice message with a script" do
-    let(:message) { account.voice_messages.build(:say_text => 'Your Gov Delivery authorization code is 1 2 3 4 5. Thank you for using Gov Delivery. This message will repeat.') }
+    let(:message) { account.voice_messages.create!(:say_text => 'Your Gov Delivery authorization code is 1 2 3 4 5. Thank you for using Gov Delivery. This message will repeat.') }
 
     subject { message }
-    it { should be_valid }
+    it { subject.call_script.should_not be_nil }
   end
 
   context "an account with voice and sms senders" do

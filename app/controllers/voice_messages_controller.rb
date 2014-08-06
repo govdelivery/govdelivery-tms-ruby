@@ -2,7 +2,7 @@ class VoiceMessagesController < MessagesController
   include FeatureChecker
   feature :voice
 
-  wrap_parameters :message, :include => [:play_url, :recipients], :format => :json
+  wrap_parameters :message, :include => [:say_text, :play_url, :recipients], :format => :json
 
   protected
 
