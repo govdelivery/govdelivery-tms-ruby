@@ -1,5 +1,5 @@
 require_relative '../../../app/models/view/twilio_request_response'
-require_relative '../../little_spec_helper'
+require 'spec_helper'
 
 describe View::TwilioRequestResponse do
   subject {

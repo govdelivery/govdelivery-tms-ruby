@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe SmsReceiver, '#respond_to_sms!' do
 

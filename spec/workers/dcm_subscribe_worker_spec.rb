@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe DcmSubscribeWorker do
   let(:phone_number) { '+14443332222' }
   let(:account_code) { 'ACCOUNT_CODE' }

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe KeywordCommandsController do
   let(:vendor)  { create(:sms_vendor, :name => 'name', :username => 'username', :password => 'secret', :worker => 'LoopbackMessageWorker') }

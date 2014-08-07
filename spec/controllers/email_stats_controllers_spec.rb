@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 [[ClicksController, :click], [OpensController, :open]].each do |klass, stat|
   describe klass do

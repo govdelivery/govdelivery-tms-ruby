@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe ForwardWorker do
   let(:account){ create(:account_with_sms) }

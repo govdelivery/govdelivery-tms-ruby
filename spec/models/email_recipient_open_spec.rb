@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe EmailRecipientOpen do
   let(:vendor) { create(:email_vendor) }

@@ -1,4 +1,4 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../../rails_helper', __FILE__)
 
 describe 'command_actions/show.rabl' do
   let(:command_action) do

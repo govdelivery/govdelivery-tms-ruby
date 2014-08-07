@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require File.expand_path('../../spec_helper', __FILE__)
+require 'rails_helper'
 
 describe InboundSmsParser do
   let(:account) { setup_account 'abc', 'xyz' }

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe KeywordsController do
   let(:account) { vendor.accounts.create(:name => 'name') }

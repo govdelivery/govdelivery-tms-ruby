@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe ServicesController do
 
   it "should show services" do
@@ -27,7 +27,7 @@ describe ServicesController do
       ipaws_nwem_authorization: ipaws_nwem_authorization_path,
       ipaws_nwem_areas: ipaws_nwem_areas_path,
       ipaws_alerts: ipaws_alerts_path
-    }.stringify_keys
+    }
   end
 
   it "should not allow any method other than GET" do

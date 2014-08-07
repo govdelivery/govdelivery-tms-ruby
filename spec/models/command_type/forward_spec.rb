@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe CommandType::Forward do
   let(:account) { stub_everything('account', sms_messages: stub(:new => SmsMessage.new)) }

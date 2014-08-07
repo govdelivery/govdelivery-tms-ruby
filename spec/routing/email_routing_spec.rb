@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'rails_helper'
 
 describe "routing to email messages" do
   it "routes to email_messages#create" do

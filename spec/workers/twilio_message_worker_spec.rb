@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe TwilioMessageWorker do
   let(:sms_vendor) { create(:sms_vendor, :worker => 'TwilioMessageWorker') }
   let(:account) { account = sms_vendor.accounts.create!(:name => 'name') }

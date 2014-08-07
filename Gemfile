@@ -32,6 +32,7 @@ gem 'valid_email'
 gem 'newrelic_rpm'
 gem 'request_exception_handler'
 gem 'clockwork'
+gem 'simple_token_authentication'
 gem 'yakety_yak'
 
 platforms :ruby do

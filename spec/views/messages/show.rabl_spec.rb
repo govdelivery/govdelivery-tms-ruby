@@ -1,51 +1,51 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe 'messages/show.rabl' do
   let(:sms_message) do
     stub('sms_message',
-         :id => 22,
-         :to_param => 22,
-         :class => SmsMessage,
-         :body => 'hi',
-         :completed_at => Time.now,
-         :created_at => Time.now,
-         :new_record? => false,
-         :status => 'new',
-         :errors => []
+         id: 22,
+         to_param: '22',
+         class: SmsMessage,
+         body: 'hi',
+         completed_at: Time.now,
+         created_at: Time.now,
+         new_record?: false,
+         status: 'new',
+         errors: []
     )
   end
   let(:voice_message) do
     stub('voice_message',
-         :id => 22,
-         :to_param => 22,
-         :class => VoiceMessage,
-         :play_url => 'bomb',
-         :completed_at => Time.now,
-         :created_at => Time.now,
-         :new_record? => false,
-         :status => 'new',
-         :errors => []
+         id: 22,
+         to_param: '22',
+         class: VoiceMessage,
+         play_url: 'bomb',
+         completed_at: Time.now,
+         created_at: Time.now,
+         new_record?: false,
+         status: 'new',
+         errors: []
     )
   end
   let(:email_message) do
     stub('email_message',
-         :id => 22,
-         :to_param => 22,
-         :class => EmailMessage,
-         :body => 'bomb',
-         :subject => 'dude',
-         :from_name => 'baby',
-         :from_email => 'foo@sink.govdelivery.com',
-         :reply_to => 'reply_to@sink.govdelivery.com',
-         :errors_to => 'errors_to@sink.govdelivery.com',
-         :completed_at => Time.now,
-         :created_at => Time.now,
-         :new_record? => false,
-         :status => 'new',
-         :open_tracking_enabled => true,
-         :click_tracking_enabled => false,
-         :macros => {"fun" => "times"},
-         :errors => []
+         id: 22,
+         to_param: '22',
+         class: EmailMessage,
+         body: 'bomb',
+         subject: 'dude',
+         from_name: 'baby',
+         from_email: 'foo@sink.govdelivery.com',
+         reply_to: 'reply_to@sink.govdelivery.com',
+         errors_to: 'errors_to@sink.govdelivery.com',
+         completed_at: Time.now,
+         created_at: Time.now,
+         new_record?: false,
+         status: 'new',
+         open_tracking_enabled: true,
+         click_tracking_enabled: false,
+         macros: {"fun" => "times"},
+         errors: []
     )
   end
 

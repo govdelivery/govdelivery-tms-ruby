@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe TwilioDialPlanController do
   let(:vendor) { create(:voice_vendor) }

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe CreateRecipientsWorker do
   let(:worker) { CreateRecipientsWorker.new }
   let(:recipient_params) { stub('recipients') }

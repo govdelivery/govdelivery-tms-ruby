@@ -1,14 +1,14 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../../rails_helper', __FILE__)
 
 describe 'keyword_commands/show.rabl' do
-  let(:keyword) { stub('Keyword', to_param: 101) }
+  let(:keyword) { stub('Keyword', to_param: '101') }
   let(:command) do
     stub('Command',
          id: 100,
-         to_param: 100,
+         to_param: '100',
          name: "MOMS",
          command_type: 'dcm_subscribe',
-         params: CommandParameters.new(:dcm_account_code => ["foo"], :dcm_topic_codes => ['XXX']),
+         params: CommandParameters.new(:dcm_account_code => ["foo"], :dcm_topic_codes => ['XXX']).to_hash,
          created_at: 1.days.ago,
          updated_at: 1.days.ago,
          keyword_id: 101,
@@ -21,7 +21,6 @@ describe 'keyword_commands/show.rabl' do
   before do
     assign(:command, command)
     assign(:keyword, keyword)
-    controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "commands", :keyword_id => 101, :id => 100}, :script_name => "")
   end
 
   it 'should work when valid' do

@@ -1,5 +1,6 @@
 class TwilioRequestsController < ApplicationController
   skip_before_filter :authenticate
+  skip_before_filter :authenticate_user_from_token!
   before_filter :dcm_forward!
   respond_to :xml
 

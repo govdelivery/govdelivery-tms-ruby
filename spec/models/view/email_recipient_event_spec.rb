@@ -1,5 +1,5 @@
 require_relative '../../../app/models/view/email_recipient_event'
-require_relative '../../little_spec_helper'
+require 'spec_helper'
 require 'active_support/core_ext'
 require 'ostruct'
 

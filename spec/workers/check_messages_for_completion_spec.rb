@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe CheckMessagesForCompletion do
 
   it 'should use the sending scope of each channel and check the messages for completion' do

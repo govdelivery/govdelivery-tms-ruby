@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe TwilioVoiceWorker do
   let(:voice_vendor) { create(:voice_vendor, worker: 'TwilioVoiceWorker') }
   let(:account) { voice_vendor.accounts.create!(:name => 'name') }

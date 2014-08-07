@@ -1,5 +1,5 @@
 require File.expand_path("../../../../app/models/view/recipient_links", __FILE__)
-require File.expand_path("../../../little_spec_helper", __FILE__)
+require 'spec_helper'
 require 'active_support/core_ext'
 
 describe View::RecipientLinks do

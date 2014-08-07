@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 if defined?(JRUBY_VERSION)
 
   describe Odm::TmsExtendedStatisticsWorker do

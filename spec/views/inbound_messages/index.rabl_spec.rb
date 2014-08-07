@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe 'inbound_messages/index.rabl' do
   let(:messages) do
@@ -17,7 +17,7 @@ describe 'inbound_messages/index.rabl' do
 
   before do
     assign(:messages, messages)
-    controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "inbound_messages"}, :script_name => "")
+    Rabl::Engine.any_instance.stubs(:url_for).returns('/fake')
     render
     @json = ActiveSupport::JSON.decode(rendered)
   end

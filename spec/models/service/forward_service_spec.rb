@@ -1,5 +1,5 @@
 require_relative '../../../app/models/service/forward_service'
-require_relative '../../little_spec_helper'
+require 'spec_helper'
 
 describe Service::ForwardService do
   let(:client) { Service::ForwardService.new }

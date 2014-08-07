@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'rails_helper'
 
 def do_create_sms
   post :create, :message => {:body => 'A short body'}, :format => :json

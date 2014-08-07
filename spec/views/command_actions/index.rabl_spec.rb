@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe 'command_actions/index.rabl' do
   let(:command_actions) do
@@ -34,7 +34,7 @@ describe 'command_actions/index.rabl' do
   context "with keywords" do
     before do
       assign(:command_actions, command_actions)
-      controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "command_actions", :sms_id => 2}, :script_name => "")
+      Rabl::Engine.any_instance.stubs(:url_for).returns('/fake')
       render
       @json = ActiveSupport::JSON.decode(rendered)
     end
@@ -46,12 +46,7 @@ describe 'command_actions/index.rabl' do
   context "for stop/help commands" do
     before do
       assign(:command_actions, stop_command_actions)
-      controller.stubs(:url_options).returns(host: "test.host",
-                                             protocol: "http://",
-                                             _path_segments: {action: "show",
-                                               controller: "command_actions",
-                                               sms_id: 2},
-                                             script_name: "")
+      Rabl::Engine.any_instance.stubs(:url_for).returns('/fake')
       render
       @json = ActiveSupport::JSON.decode(rendered)
     end

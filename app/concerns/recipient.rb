@@ -14,7 +14,7 @@ module Recipient
     belongs_to :message, :class_name => self.name.gsub('Recipient', 'Message')
     belongs_to :vendor, :class_name => self.name.gsub('Recipient', 'Vendor')
 
-    scope :to_send, ->(vendor_id) { scoped }
+    scope :to_send, ->(vendor_id) { self }
     scope :with_new_status, -> { where(status: RecipientStatus::NEW) }
     scope :incomplete, -> { where(status: RecipientStatus::INCOMPLETE_STATUSES) }
     scope :sending, -> { where(status: RecipientStatus::SENDING) }

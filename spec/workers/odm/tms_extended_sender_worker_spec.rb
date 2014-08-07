@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 if defined?(JRUBY_VERSION)
   java_import com.govdelivery.tms.tmsextended.ExtendedMessage

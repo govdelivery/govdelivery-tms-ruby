@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe RecipientsController do
   let(:vendor) { create(:sms_vendor) }

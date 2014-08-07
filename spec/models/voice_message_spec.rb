@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe VoiceMessage do
   let(:vendor) { create(:voice_vendor, worker: 'TwilioVoiceWorker') }

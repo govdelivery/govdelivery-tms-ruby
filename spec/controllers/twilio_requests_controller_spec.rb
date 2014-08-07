@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe TwilioRequestsController, '#create' do
   # a short_code has been provisioned with twilio

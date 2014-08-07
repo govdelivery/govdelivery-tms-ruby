@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe 'recipients/index.rabl' do
   let(:message) do
@@ -24,7 +24,8 @@ describe 'recipients/index.rabl' do
 
   before do
     assign(:recipients, recipients)
-    controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "recipients", :sms_id => message.id.to_s}, :script_name => "")
+    Rails.application.routes.url_helpers.stubs(:new_post_path).returns("this path isn't important")
+    Rabl::Engine.any_instance.stubs(:url_for).returns('/fake')
     render
     @json = ActiveSupport::JSON.decode(rendered)
   end

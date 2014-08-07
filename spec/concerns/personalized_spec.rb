@@ -1,4 +1,4 @@
-require File.expand_path('../../little_spec_helper', __FILE__)
+require 'spec_helper'
 require 'active_support'
 require 'json'
 require File.expand_path('../../../app/concerns/personalized', __FILE__)

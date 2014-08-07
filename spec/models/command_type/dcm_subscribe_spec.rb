@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe CommandType::DcmSubscribe do
   let(:account) { stub_everything('account') }

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe Analytics::OpenListener do
   subject { Analytics::OpenListener.new.wrapped_object }
 

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe Analytics::PublisherWorker do
   it 'should not perform when analytics is disabled' do
     Rails.configuration.analytics.expects(:[]).with(:enabled).returns(false)

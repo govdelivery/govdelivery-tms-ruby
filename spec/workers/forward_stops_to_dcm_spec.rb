@@ -1,6 +1,6 @@
 # Even when requiring AR and Rails, using explicit requires is 3x faster than
-# just `require 'spec_helper'`
-require 'little_spec_helper'
+# just `require 'rails_helper'`
+require 'spec_helper'
 require 'sidekiq'
 require 'active_record'
 require 'rails'

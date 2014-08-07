@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe LoopbackEmailWorker do
   let(:email_vendor) { create(:email_vendor, :worker => 'LoopbackEmailWorker') }
   let(:account) { create(:account, email_vendor: email_vendor, name: 'name') }

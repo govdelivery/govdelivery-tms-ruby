@@ -1,5 +1,5 @@
 require File.expand_path('../../../../../app/models/service/odm/sequence', __FILE__)
-require File.expand_path('../../../../little_spec_helper', __FILE__)
+require 'spec_helper'
 
 describe Service::Odm::Sequence do
   let(:vendor) {

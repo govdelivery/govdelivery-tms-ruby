@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe DcmUnsubscribeWorker do
   let(:config) { [{:username => "foo", :password => "bar", :api_root => "http://example.com"},
                   {:username => "foo", :password => "bar", :api_root => "http://example2.com"}] }

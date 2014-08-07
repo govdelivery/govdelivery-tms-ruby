@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'rails_helper'
 require 'set'
 
 describe TokensController do
@@ -16,7 +16,7 @@ describe TokensController do
   end
 
   it 'allows only admin users' do
-    request.env['X-AUTH-TOKEN'] = user.authentication_tokens.first.token
+    request.headers['X-AUTH-TOKEN'] = user.authentication_tokens.first.token
     get :index, account_id: account.id, user_id: user.id
     response.response_code.should eq(404)
   end

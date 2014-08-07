@@ -1,5 +1,4 @@
-require Rails.root.join("lib/devise/strategies/multi_token")
-require Rails.root.join("lib/devise/models/multi_token_authenticatable")
+require Rails.root.join("lib/simple_token_authentication/acts_as_multi_token_authenticatable")
 
 class CustomFailure < Devise::FailureApp
   protected
@@ -236,7 +235,6 @@ Devise.setup do |config|
   #
   config.warden do |manager|
     manager.default_strategies.unshift :http_auth_api
-    manager.default_strategies(scope: :user).unshift :multi_token
     manager.failure_app = CustomFailure
   end
 

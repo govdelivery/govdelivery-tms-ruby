@@ -11,6 +11,10 @@ class ApplicationController < ActionController::API
   include NewRelic::Agent::Instrumentation::Rails3::Errors
   include ActionController::MimeResponds
   include ActionController::ImplicitRender
+  include SimpleTokenAuthentication::ActsAsTokenAuthenticationHandler
+  include Devise::Controllers::SignInOut if Rails.env.test?
+
+  acts_as_token_authentication_handler_for User
   respond_to :json
   self.responder = RablResponder
   prepend_before_filter :extract_token_header
@@ -28,6 +32,28 @@ class ApplicationController < ActionController::API
   end
 
   protected
+  def authenticate_entity_from_token!(entity_class)
+    # Set the authentication token params if not already present,
+    # see http://stackoverflow.com/questions/11017348/rails-api-authentication-by-headers-token
+    params_token_name = "#{entity_class.name.singularize.underscore}_token".to_sym
+    params_email_name = "#{entity_class.name.singularize.underscore}_email".to_sym
+    if token = params[params_token_name].blank? && request.headers[header_token_name(entity_class)]
+      params[params_token_name] = token
+    end
+    if email = params[params_email_name].blank? && request.headers[header_email_name(entity_class)]
+      params[params_email_name] = email
+    end
+
+    if entity = User.with_token(params[:auth_token])
+
+      # Notice the store option defaults to false, so the entity
+      # is not actually stored in the session and a token is needed
+      # for every request. That behaviour can be configured through
+      # the sign_in_token option.
+      sign_in entity, store: SimpleTokenAuthentication.sign_in_token
+    end
+  end
+
 
   ##
   # Pull the X-AUTH-TOKEN header out of the request and put

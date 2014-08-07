@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 describe Analytics::ClickListener do
   subject { Analytics::ClickListener.new.wrapped_object }
 

@@ -1,5 +1,5 @@
 require File.expand_path('../../../../../app/models/service/odm/event_service', __FILE__)
-require File.expand_path('../../../../little_spec_helper', __FILE__)
+require 'spec_helper'
 
 module Service
   module Odm

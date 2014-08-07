@@ -1,32 +1,33 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../../rails_helper', __FILE__)
 
 describe 'recipients/show.rabl' do
 
   context 'an sms recipient' do
     let(:message) do
-      stub('message', :id => 22, :to_param => 22, :class => SmsMessage)
+      stub('message', id: 22, to_param: '22', class: SmsMessage)
     end
     let(:recipient) do
       stub('recipient',
-           :id => 11,
-           :to_param => 11,
-           :message_id => 22,
-           :message => message,
-           :formatted_phone => '+16125551212',
-           :phone => '6125551212',
-           :status => RecipientStatus::SENT,
-           :created_at => Time.now,
-           :sent_at => Time.now,
-           :error_message => nil,
-           :completed_at => Time.now,
-           :valid? => true)
+           id: 11,
+           to_param: '11',
+           message_id: 22,
+           message: message,
+           formatted_phone: '+16125551212',
+           phone: '6125551212',
+           status: RecipientStatus::SENT,
+           created_at: Time.now,
+           sent_at: Time.now,
+           error_message: nil,
+           completed_at: Time.now,
+           valid?: true)
     end
 
 
     before do
       assign(:recipient, recipient)
+      Rabl::Engine.any_instance.expects(:url_for).with(has_entries(controller: 'sms_messages', id: 22)).returns(sms_path(22))
+      Rabl::Engine.any_instance.expects(:url_for).with(has_entries(controller: 'recipients', id: 11)).returns(sms_recipient_path(22, 11))
       assign(:content_attributes, [:phone, :formatted_phone])
-      controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "recipients", :sms_id => message.id.to_s}, :script_name => "")
       render
     end
     it 'should have one item' do
@@ -39,29 +40,30 @@ describe 'recipients/show.rabl' do
 
   context 'an email recipient' do
     let(:message) do
-      stub('message', :id => 22, :to_param => 22, :class => EmailMessage)
+      stub('message', id: 22, to_param: '22', class: EmailMessage)
     end
     let(:recipient) do
       stub('recipient',
-           :id => 11,
-           :to_param => 11,
-           :message_id => 22,
-           :message => message,
-           :email => 'dude@bros.com',
-           :status => RecipientStatus::SENT,
-           :created_at => Time.now,
-           :sent_at => Time.now,
-           :error_message => nil,
-           :completed_at => Time.now,
-           :macros => {"name" => "Henry Hankson"},
-           :valid? => true)
+           id: 11,
+           to_param: '11',
+           message_id: 22,
+           message: message,
+           email: 'dude@bros.com',
+           status: RecipientStatus::SENT,
+           created_at: Time.now,
+           sent_at: Time.now,
+           error_message: nil,
+           completed_at: Time.now,
+           macros: {"name" => "Henry Hankson"},
+           valid?: true)
     end
 
 
     before do
       assign(:recipient, recipient)
+      Rabl::Engine.any_instance.expects(:url_for).with(has_entries(controller: 'email_messages', id: 22)).returns(email_path(22)).at_least_once
+      Rabl::Engine.any_instance.expects(:url_for).with(has_entries(controller: 'recipients', id: 11)).returns(email_recipient_path(22, 11)).at_least_once
       assign(:content_attributes, [:email, :macros])
-      controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "recipients", :email_id => message.id.to_s}, :script_name => "")
       render
     end
     it 'should have one item' do

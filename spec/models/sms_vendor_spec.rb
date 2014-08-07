@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe SmsVendor do
   let(:vendor) { create(:sms_vendor) }

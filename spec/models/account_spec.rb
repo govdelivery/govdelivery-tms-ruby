@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Account do
   let(:email_vendor) { create(:email_vendor) }

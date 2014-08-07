@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe EmailRecipient do
   let(:macros) { {'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value'} }

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe 'keyword_commands/index.rabl' do
   let(:keyword) { stub('Keyword', id: 101) }
@@ -21,7 +21,7 @@ describe 'keyword_commands/index.rabl' do
   before do
     assign(:commands, commands)
     assign(:keyword, keyword)
-    controller.stubs(:url_options).returns(:host => "test.host", :protocol => "http://", :_path_segments => {:action => "show", :controller => "commands", :keyword_id => 2}, :script_name => "")
+    Rabl::Engine.any_instance.stubs(:url_for).returns('/fake')
     render
     @json = ActiveSupport::JSON.decode(rendered)
   end

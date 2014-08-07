@@ -1,15 +1,15 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path('../../../rails_helper', __FILE__)
 
 describe 'keywords/show.rabl' do
   let(:keyword) do
     stub('keyword',
-         :to_param => 22,
-         :id => 22,
-         :class => Keyword,
-         :name => 'Test',
-         :response_text => 'GovAwesome',
-         :errors => [],
-         :persisted? => true)
+         to_param: '22',
+         id: 22,
+         class: Keyword,
+         name: 'Test',
+         response_text: 'GovAwesome',
+         errors: [],
+         persisted?: true)
   end
 
 

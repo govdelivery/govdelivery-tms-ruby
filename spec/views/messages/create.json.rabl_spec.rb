@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe 'messages/create.rabl' do
   it 'renders errors' do
