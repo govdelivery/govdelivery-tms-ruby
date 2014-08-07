@@ -43,7 +43,7 @@ describe ApplicationController do
     let(:auth_token) { user.authentication_tokens.first.token }
 
     before do 
-      request.env['X-AUTH-TOKEN'] = auth_token
+      request.headers['X-AUTH-TOKEN'] = auth_token
     end
 
     it "should log a user in with that auth token" do
@@ -54,7 +54,7 @@ describe ApplicationController do
 
     describe "incorrectly" do
       before do 
-        request.env['X-AUTH-TOKEN'] = auth_token.succ
+        request.headers['X-AUTH-TOKEN'] = auth_token.succ
       end
 
       it "should return the correct response code when token is wrong" do

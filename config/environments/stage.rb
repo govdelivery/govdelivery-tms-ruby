@@ -84,9 +84,6 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = true
 
-  # https://github.com/rails/rails/issues/2662
-  config.threadsafe! unless $rails_rake_task
-
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = []

@@ -1,7 +1,7 @@
 class SmsRecipient < ActiveRecord::Base
   include PhoneRecipient
 
-  scope :to_send, ->(vendor_id, account_id=nil) { 
+  scope :to_send, ->(vendor_id, account_id=nil) {
     if account_id.nil?
       incomplete.not_blacklisted(vendor_id).with_valid_phone_number 
     else
@@ -9,7 +9,7 @@ class SmsRecipient < ActiveRecord::Base
     end
   }
 
-  scope :not_sent, where(:sent_at => nil)
+  scope :not_sent, -> { where(:sent_at => nil) }
   scope :blacklisted, lambda { |vendor_id|
     sql = <<-SQL
       inner join #{StopRequest.table_name} 

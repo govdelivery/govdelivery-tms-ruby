@@ -1,0 +1,2 @@
+class CallScriptsController < ApplicationController
+end

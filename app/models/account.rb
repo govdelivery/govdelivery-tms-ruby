@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   has_many :voice_messages
 
   has_many :from_addresses, :inverse_of => :account
-  has_one :default_from_address, conditions: { is_default: true }, class_name: FromAddress
+  has_one :default_from_address, -> { where(is_default: true) }, class_name: FromAddress
 
   has_one :stop_keyword,    class_name: Keywords::AccountStop
   has_one :help_keyword,    class_name: Keywords::AccountHelp

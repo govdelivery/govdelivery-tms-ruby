@@ -11,7 +11,7 @@
 #   CommandParameters.new({...})
 #
 class CommandParameters
-  include MassAssignment
+  include ActiveModel::Model
   include ActiveModel::Validations
 
   validate :validate_string_fields
@@ -44,7 +44,7 @@ class CommandParameters
     :command_id           # initiating command id
   ]
   attr_accessor *PARAMS
-  attr_accessible *PARAMS
+  #attr_accessible *PARAMS
 
   # These are only required for validation, and are not (or shouldn't be) persisted or mass-assigned
   attr_accessor :command_type, :account
@@ -53,10 +53,12 @@ class CommandParameters
   # encryption. If this property were in PARAMS, it would be serialized into the
   # database, which is exactly what we don't want.
   attr_encrypted :password, :encode => true, :key => "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
-  attr_accessible :password
+  #attr_accessible :password
 
   def merge!(params)
-    assign!(params.to_hash)
+    params.to_hash.each do |attr, value|
+      self.public_send("#{attr}=", value) if self.respond_to?("#{attr}=")
+    end
   end
 
   # return a hash of values for this object's properties, but without any keys that

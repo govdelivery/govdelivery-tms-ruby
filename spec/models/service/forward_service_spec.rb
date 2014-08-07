@@ -1,4 +1,3 @@
-require_relative '../../../app/concerns/mass_assignment'
 require_relative '../../../app/models/service/forward_service'
 require_relative '../../little_spec_helper'
 

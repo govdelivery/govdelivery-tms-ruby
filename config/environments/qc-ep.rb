@@ -58,10 +58,6 @@ Xact::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  # config.active_record.auto_explain_threshold_in_seconds = 0.5
-
   config.twilio_username = 'AC189315456a80a4d1d4f82f4a732ad77e'
   config.twilio_password = '88e3775ad71e487c7c90b848a55a5c88'
   config.twilio_number   = '+19138719228'
@@ -80,10 +76,7 @@ Xact::Application.configure do
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
-  config.public_callback = true  
-
-  # https://github.com/rails/rails/issues/2662
-  config.threadsafe! unless $rails_rake_task
+  config.public_callback = true
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175

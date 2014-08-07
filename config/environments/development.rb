@@ -1,5 +1,6 @@
 Xact::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
+  config.eager_load = false
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -24,10 +25,6 @@ Xact::Application.configure do
 
   # Raise exception on mass assignment protection for Active Record models
   #config.active_record.mass_assignment_sanitizer = :strict
-
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   # Do not compress assets
   config.assets.compress = false
@@ -56,9 +53,6 @@ Xact::Application.configure do
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = ['+16514336311']
-
-  # run in threadsafe mode if we're in a servlet container
-  config.threadsafe! if $servlet_context
 
   config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 

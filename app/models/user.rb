@@ -11,11 +11,11 @@ class User < ActiveRecord::Base
   validates_length_of :email, :maximum => 256
   validates_uniqueness_of :email, :scope => :account_id
 
-  has_many :email_messages, :order => 'email_messages.created_at DESC'
+  has_many :email_messages, -> { order('email_messages.created_at DESC') }
   has_many :account_email_messages, :through => :account, :source => EmailMessage.table_name
-  has_many :sms_messages, :order => 'sms_messages.created_at DESC'
+  has_many :sms_messages, -> { order('sms_messages.created_at DESC') }
   has_many :account_sms_messages, :through => :account, :source => SmsMessage.table_name
-  has_many :voice_messages, :order => 'voice_messages.created_at DESC'
+  has_many :voice_messages, -> { order('voice_messages.created_at DESC') }
   has_many :account_voice_messages, :through => :account, :source => VoiceMessage.table_name
 
   before_validation :downcase_email
@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   delegate :voice_vendor, :to => :account
 
   def self.with_token(token)
-    User.find(:first, :joins => :authentication_tokens, :conditions => ["authentication_tokens.token = ?", token])
+    User.joins(:authentication_tokens).where("authentication_tokens.token = ?", token).first
   end
 
   def to_s

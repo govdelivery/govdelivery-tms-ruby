@@ -48,20 +48,12 @@ Xact::Application.configure do
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
 
-  # Enable threaded mode
-  # https://github.com/rails/rails/issues/2662
-  config.threadsafe! unless $rails_rake_task
-
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)
   config.i18n.fallbacks = true
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
-
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   config.twilio_username = 'ACcc41a7e742457806f26d91a1ea19de9f'
   config.twilio_password = '331b3a44b5067a3c02013a6cfaa18b1c'

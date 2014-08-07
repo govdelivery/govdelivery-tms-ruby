@@ -48,15 +48,15 @@ describe InboundMessage do
       end
       it 'should be :pending after one of two commands have completed' do
         @inbound_message.command_status.should eql(:pending)
-        @inbound_message.command_actions.create! # one of two
+        @inbound_message.command_actions.create!(response_body: 'foo', status: 201) # one of two
         @inbound_message.update_status!
         @inbound_message.command_status.should eql(:pending)
       end
 
       it 'should be :success after two of two commands have completed' do
         @inbound_message.command_status.should eql(:pending)
-        @inbound_message.command_actions.create! # one of two
-        @inbound_message.command_actions.create! # two of two
+        @inbound_message.command_actions.create!(response_body: 'foo', status: 201) # one of two
+        @inbound_message.command_actions.create!(response_body: 'foo', status: 201) # two of two
         @inbound_message.update_status!
         @inbound_message.command_status.should eql(:success)
       end

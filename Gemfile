@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 source "http://ed5779be:de10e893@www.mikeperham.com/rubygems/"
 
 gem 'sinatra', :require => nil
-gem 'rails', '~>3.2.13'
+gem 'rails', '~>4.0'
 gem 'rails-api'
 gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
 gem 'redis-rails'
@@ -18,6 +18,7 @@ gem 'log4r'
 gem 'devise'
 gem 'phony'
 gem 'phony_rails'
+gem 'protected_attributes'
 gem 'slim'
 gem 'typhoeus'
 gem 'faraday'
@@ -26,7 +27,7 @@ gem 'dcm_client', '~>0.1.4'
 gem 'enumify'
 gem "strip_attributes"
 gem 'attr_encrypted'
-gem 'activerecord-oracle_enhanced-adapter', '=1.4.3.5'
+gem 'activerecord-oracle_enhanced-adapter' #, '=1.4.3.5'
 gem 'valid_email'
 gem 'newrelic_rpm'
 gem 'request_exception_handler'
@@ -54,7 +55,8 @@ group :development, :test do
     gem 'zeus'
     gem 'pry-debugger', require: 'pry'
   end
-  gem 'pry', require: 'pry'
+  gem 'pry-rails'
+  gem 'pry', github: 'pry/pry'
   gem 'ruby-debug'
   gem 'brakeman'
   gem 'yaml_db'

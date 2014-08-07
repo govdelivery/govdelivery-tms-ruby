@@ -10,6 +10,7 @@ class ApplicationController < ActionController::API
   include NewRelic::Agent::Instrumentation::Rails3::ActionController
   include NewRelic::Agent::Instrumentation::Rails3::Errors
   include ActionController::MimeResponds
+  include ActionController::ImplicitRender
   respond_to :json
   self.responder = RablResponder
   prepend_before_filter :extract_token_header

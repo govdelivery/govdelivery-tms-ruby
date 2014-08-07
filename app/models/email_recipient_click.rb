@@ -7,5 +7,5 @@ class EmailRecipientClick < ActiveRecord::Base
   # This scope is designed to come purely from an index (and avoid hitting the table altogether).
   # On the other hand, the inclusion of URL forces this query to 
   # go off to the table to fetch it. Oh well. 
-  scope :indexed, select("email_message_id, email_recipient_id, clicked_at, id, url")
+  scope :indexed, -> { select("email_message_id, email_recipient_id, clicked_at, id, url") }
 end

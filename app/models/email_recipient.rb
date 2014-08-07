@@ -11,8 +11,8 @@ class EmailRecipient < ActiveRecord::Base
   # (and will become the partition key in the near future). Removing this condition will make
   # these relations perform very poorly.
   #
-  has_many :email_recipient_clicks, :conditions => proc{"email_recipient_clicks.email_message_id = #{self.message_id}"}
-  has_many :email_recipient_opens, :conditions => proc{"email_recipient_opens.email_message_id = #{self.message_id}"}
+  has_many :email_recipient_clicks, ->(record) { where("email_recipient_clicks.email_message_id = ?", record.message_id) }
+  has_many :email_recipient_opens, ->(record) { where("email_recipient_opens.email_message_id = ?", record.message_id) }
 
   scope :failed, -> { where( status: RecipientStatus::FAILED ) }
   scope :sent,   -> { where( status: RecipientStatus::SENT ) }

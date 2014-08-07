@@ -12,7 +12,7 @@ describe TokensController do
   let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
 
   before do
-    request.env['X-AUTH-TOKEN'] = auth_token
+    request.headers['X-AUTH-TOKEN'] = auth_token
   end
 
   it 'allows only admin users' do

@@ -5,7 +5,7 @@ module PhoneRecipient
     include Recipient
     attr_accessible :phone
 
-    scope :to_send, -> vendor_id { with_valid_phone_number }
+    scope :to_send, ->(vendor_id) { with_valid_phone_number }
 
     before_validation :truncate_error_message
 

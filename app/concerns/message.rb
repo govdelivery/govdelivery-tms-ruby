@@ -22,7 +22,7 @@ module Message
 
     scope :sending, where("#{self.quoted_table_name}.status = ? ", Status::SENDING)
 
-    has_many :recipients, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id', :order => "#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC" do
+    has_many :recipients, -> { order("#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC") }, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id' do
       def build_without_message(attrs)
         recipient = build(attrs)
         recipient.skip_message_validation = true

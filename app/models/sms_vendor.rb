@@ -5,7 +5,7 @@ class SmsVendor < ActiveRecord::Base
 
   has_many :keywords, :foreign_key => 'vendor_id', :dependent => :destroy
   has_many :stop_requests, :foreign_key => 'vendor_id', :dependent => :delete_all
-  has_many :inbound_messages, :inverse_of => :vendor, :foreign_key => 'vendor_id', :order => "#{InboundMessage.table_name}.created_at DESC", :dependent => :delete_all
+  has_many :inbound_messages, -> { order("#{InboundMessage.table_name}.created_at DESC") }, :inverse_of => :vendor, :foreign_key => 'vendor_id', :dependent => :delete_all
   has_many :sms_prefixes, :dependent => :destroy
 
   validates_inclusion_of :shared, :in => [true, false]
