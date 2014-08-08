@@ -1,6 +1,6 @@
 class CreateKeywords < ActiveRecord::Migration
   class Account < ActiveRecord::Base
-    has_one :keyword, :conditions => {:stop => true}
+    has_one :keyword, ->{where(stop:true)}
   end
   def change
     create_table :keywords do |t|

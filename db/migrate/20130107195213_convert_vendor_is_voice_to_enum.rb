@@ -1,5 +1,5 @@
 class OldVendor < ActiveRecord::Base
-  set_table_name "vendors"
+  self.table_name = "vendors"
 end
 class ConvertVendorIsVoiceToEnum < ActiveRecord::Migration
   def up
