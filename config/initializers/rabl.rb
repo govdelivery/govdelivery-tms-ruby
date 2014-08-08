@@ -18,8 +18,8 @@ Rabl.configure do |config|
   # config.view_paths = []
 
   unless ['development', 'test', 'ci'].include?(Rails.env.to_s)
-    config.cache_all_output = true
-    config.cache_sources    = true
+    #config.cache_all_output = true
+    #config.cache_sources    = true
     config.view_paths       = [Rails.root.join("app/views")]
   end
 end
