@@ -1,6 +1,6 @@
 source "http://prod-rubygems1-ep.tops.gdi"
 source 'https://rubygems.org'
-source "http://ed5779be:de10e893@www.mikeperham.com/rubygems/"
+source "https://ed5779be:de10e893@www.mikeperham.com/rubygems/"
 
 gem 'sinatra', :require => nil
 gem 'rails', '~>4.0'
@@ -8,7 +8,7 @@ gem 'rails-api'
 gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
 gem 'redis-rails'
 gem 'sidekiq-pro'
-gem 'sidekiq-retries'
+gem 'sidekiq-retries', git: 'https://github.com/govdelivery/sidekiq-retries.git'
 gem 'sidekiq-failures'
 gem 'sidekiq-unique-jobs'
 gem 'twilio-ruby'
