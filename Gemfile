@@ -4,7 +4,6 @@ source 'https://rubygems.org'
 
 gem 'aasm'
 gem 'activerecord-oracle_enhanced-adapter' #, '=1.4.3.5'
-gem 'attr_encrypted'
 gem 'clockwork'
 gem 'dcm_client', '~>0.1.4'
 gem 'devise'
@@ -35,6 +34,7 @@ gem 'twilio-ruby'
 gem 'typhoeus'
 gem 'valid_email'
 gem 'yakety_yak'
+gem 'attr_encrypted'
 
 platforms :ruby do
   gem 'ruby-oci8'

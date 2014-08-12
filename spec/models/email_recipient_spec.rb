@@ -39,13 +39,14 @@ describe EmailRecipient do
     end
     context 'that is sent' do
       before do
-        subject.sent!(nil, Time.now)
+        subject.sending!('ack')
+        subject.sent!('ack', Time.now)
       end
       it 'should update the record' do
         subject.reload
         subject.vendor.should_not be_nil
         subject.completed_at.should_not be_nil
-        subject.ack.should be_nil
+        subject.ack.should eq('ack')
         subject.status.should eq(RecipientStatus::SENT)
       end
       it 'should save clicks' do
@@ -62,14 +63,14 @@ describe EmailRecipient do
 
     context 'status updates' do
       it 'should have an error_message' do
-        failed_recipiend = subject.dup
-        failed_recipiend.failed!( :ack, :error_message, (sent_at = Time.now))
-        failed_recipiend.error_message.should eq :error_message
-        failed_recipiend.status.should eql(RecipientStatus::FAILED)
+        failed_recipient = subject
+        failed_recipient.failed!(:ack, 'error_message', (sent_at = Time.now))
+        failed_recipient.error_message.should eq 'error_message'
+        failed_recipient.status.should eql(RecipientStatus::FAILED)
       end
 
       it 'should truncate a too-long error message' do
-        failed_recipient = subject.dup
+        failed_recipient = subject
         failed_recipient.failed!(:ack, 'a' * 600, (sent_at = Time.now))
         failed_recipient.error_message.should eq 'a'*512
         failed_recipient.status.should eql(RecipientStatus::FAILED)
