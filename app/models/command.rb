@@ -41,6 +41,10 @@ class Command < ActiveRecord::Base
     "#<#{self.class.name}:#{self.object_id}> #{CommandType[self.command_type]}"
   end
 
+  def params_hash
+    self.params.try(:to_hash)
+  end
+
   def params=(command_parameters)
     command_parameters = CommandParameters.new(command_parameters) unless command_parameters.is_a?(CommandParameters)
     super(command_parameters)

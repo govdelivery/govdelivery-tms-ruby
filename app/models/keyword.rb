@@ -84,6 +84,14 @@ class Keyword < ActiveRecord::Base
     command
   end
 
+  def create_command(params)
+    command            = self.commands.build params
+    command.keyword    = self #strange that this is neccessary
+    command.account_id = self.account_id if self.account_id
+    command.save
+    command
+  end
+
   def execute_commands(params=CommandParameters.new)
     params.account_id = self.account_id if self.account_id
     commands.collect{|a| a.call(params) }

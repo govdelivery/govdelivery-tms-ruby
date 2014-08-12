@@ -12,8 +12,7 @@ class KeywordCommandsController < ApplicationController
   end
 
   def create
-    @command = @keyword.create_command! params[:command]
-    respond_with(@command)
+    respond_with(@command = @keyword.create_command(params[:command]))
   end
 
   def update

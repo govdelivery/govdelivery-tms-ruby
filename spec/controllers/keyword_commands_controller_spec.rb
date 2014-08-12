@@ -35,17 +35,15 @@ describe KeywordCommandsController do
 
   def valid_params
     {
-     :name => "Hello Boston",
-     :command_type => "dcm_unsubscribe",
-     :params => {
-                 :dcm_account_codes => ["ACME"]
-                }
+      name:         "Hello Boston",
+      command_type: "dcm_unsubscribe",
+      params:       {dcm_account_codes: ["ACME"]}
     }
   end
 
   context "Creating a command" do
     before do
-      Command.any_instance.expects(:save!).returns(true)
+      Command.any_instance.expects(:save).returns(true)
       Command.any_instance.expects(:new_record?).returns(false)
     end
 
@@ -72,13 +70,11 @@ describe KeywordCommandsController do
 
   context "Creating an invalid command" do
     before do
-      Command.any_instance.expects(:save!).returns(false)
-      Command.any_instance.expects(:new_record?).returns(true)
       post :create, :keyword_id => keyword.id, :command => {
         :name => "Hello Boston",
         :command_type => "dcm_unsubscribe",
         :params => {
-          :dcm_account_codes => ["ACME"]
+          :dcm_account_codes => ["OOPZ"]
         }
       }
     end
