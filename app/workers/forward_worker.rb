@@ -1,3 +1,4 @@
+require 'base'
 require 'command_worker'
 
 # The application having recieved an SMS from a user that maps to a "forwardable" keyword, this worker

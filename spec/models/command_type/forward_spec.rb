@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe CommandType::Forward do
+
   let(:account) { stub_everything('account', sms_messages: stub(:new => SmsMessage.new)) }
   let(:command_action) { stub('CommandAction',
                               content_type: 'text/plain',
@@ -56,4 +57,16 @@ describe CommandType::Forward do
     subject.process_response(account, command_params, http_response)
   end
 
+  context "associated to an account with transformers" do
+    it "should transform the payload using the transformer" do
+      account_transformer = mock()
+      account.stubs(:transformer_with_type).returns(account_transformer)
+      command_action.stubs(:success?).returns(true)
+      command_action.stubs(:content_type).returns('application/json')
+
+      account_transformer.expects(:transform).returns("blah")
+      subject.expects(:build_message).once
+      subject.process_response(account, command_params, http_response)
+    end
+  end
 end

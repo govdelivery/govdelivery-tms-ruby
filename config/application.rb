@@ -29,6 +29,7 @@ module Xact
     # config.autoload_paths += %W(#{config.root}/extras)
     config.autoload_paths << Rails.root.join('app', 'workers')
     config.autoload_paths << Rails.root.join('app', 'presenters')
+    config.autoload_paths << Rails.root.join('app', 'transformers')
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -65,7 +66,7 @@ module Xact
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    # This is only used to write urls 
+    # This is only used to write urls
     config.protocol = 'https'
 
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
@@ -105,10 +106,10 @@ module Xact
     # override Rack exception application handling of exception status codes
     config.exceptions_app = self.routes
 
-    # Threshold (in minutes) under which multiple inbound messages from a 
-    # user will be ignored.  This is to prevent auto-response messages 
+    # Threshold (in minutes) under which multiple inbound messages from a
+    # user will be ignored.  This is to prevent auto-response messages
     # (as sometimes issued from handsets while people are driving) from entering an infinite
-    # loop.  The corresponding configuration for this value in 
+    # loop.  The corresponding configuration for this value in
     # DCM is "twilio_requests_timeout."  Here it is named differently,
     # as this is not a vendor-specific behavior.
     config.auto_response_threshold = 0.5

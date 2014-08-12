@@ -19,6 +19,7 @@ class Account < ActiveRecord::Base
   has_many :stop_requests
   has_many :users
   has_many :voice_messages
+  has_many :transformers
 
   has_many :from_addresses, :inverse_of => :account
   has_one :default_from_address, -> { where(is_default: true) }, class_name: FromAddress
@@ -54,6 +55,10 @@ class Account < ActiveRecord::Base
   def stop(command_parameters)
     command_parameters.account_id = self.id
     stop_keyword.commands.each { |a| a.call(command_parameters) }
+  end
+
+  def transformer_with_type(type)
+    self.transformers.where(content_type: type).first
   end
 
   ##
