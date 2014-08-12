@@ -1,38 +1,39 @@
 source "http://prod-rubygems1-ep.tops.gdi"
-source 'https://rubygems.org'
 source "https://ed5779be:de10e893@www.mikeperham.com/rubygems/"
+source 'https://rubygems.org'
 
-gem 'sinatra', :require => nil
-gem 'rails', '~>4.0'
-gem 'rails-api'
-gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
-gem 'redis-rails'
-gem 'sidekiq-pro'
-gem 'sidekiq-retries', git: 'https://github.com/govdelivery/sidekiq-retries.git'
-gem 'sidekiq-failures'
-gem 'sidekiq-unique-jobs'
-gem 'twilio-ruby'
-gem 'rabl'
+gem 'aasm'
+gem 'activerecord-oracle_enhanced-adapter' #, '=1.4.3.5'
+gem 'attr_encrypted'
+gem 'clockwork'
+gem 'dcm_client', '~>0.1.4'
+gem 'devise'
+gem 'enumify'
+gem 'faraday'
+gem 'faraday_middleware'
 gem 'kaminari'
 gem 'log4r'
-gem 'devise'
+gem 'newrelic_rpm'
 gem 'phony'
 gem 'phony_rails'
 gem 'protected_attributes'
-gem 'slim'
-gem 'typhoeus'
-gem 'faraday'
-gem 'faraday_middleware'
-gem 'dcm_client', '~>0.1.4'
-gem 'enumify'
-gem "strip_attributes"
-gem 'attr_encrypted'
-gem 'activerecord-oracle_enhanced-adapter' #, '=1.4.3.5'
-gem 'valid_email'
-gem 'newrelic_rpm'
+gem 'rabl'
+gem 'rails', '~>4.0'
+gem 'rails-api'
+gem 'redis-rails'
+gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
 gem 'request_exception_handler'
-gem 'clockwork'
+gem 'sidekiq-failures'
+gem 'sidekiq-pro'
+gem 'sidekiq-retries', git: 'https://github.com/govdelivery/sidekiq-retries.git'
+gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication'
+gem 'sinatra', :require => nil
+gem 'slim'
+gem "strip_attributes"
+gem 'twilio-ruby'
+gem 'typhoeus'
+gem 'valid_email'
 gem 'yakety_yak'
 
 platforms :ruby do
@@ -46,30 +47,32 @@ platforms :jruby do
 end
 
 group :development, :test do
-  gem 'rspec-rails'
-  gem 'rspec-its'
-  gem 'rspec-collection_matchers'
+  gem 'brakeman'
   gem 'factory_girl_rails'
-  gem 'json_spec'
   gem 'guard-rspec'
-  platforms :ruby do
-    gem 'zeus'
-    gem 'pry-debugger', require: 'pry'
-  end
+  gem 'json_spec'
   gem 'pry-rails'
   gem 'pry', github: 'pry/pry'
+  gem 'rspec-collection_matchers'
+  gem 'rspec-its'
+  gem 'rspec-rails'
   gem 'ruby-debug'
-  gem 'brakeman'
   gem 'yaml_db'
+  platforms :ruby do
+    gem 'pry-debugger', require: 'pry'
+    gem 'zeus'
+  end
 end
 
 group :development do
+  gem 'alphabetize'
   gem 'rails-erd'
 end
 
 group :test do
   gem "fakeredis", :require => "fakeredis/rspec"
   gem 'mocha', :require => false
-  gem 'tms_client'
   gem 'shoulda-matchers'
+  gem 'tms_client'
 end
+
