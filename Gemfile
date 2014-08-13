@@ -43,7 +43,6 @@ end
 platforms :jruby do
   gem 'lock_jar', '>= 0.8.0'
   gem 'trinidad', :require => nil
-  gem 'trinidad_generic_dbpool_extension'
 end
 
 group :development, :test do
