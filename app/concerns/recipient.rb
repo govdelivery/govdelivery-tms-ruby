@@ -8,6 +8,12 @@
 module Recipient
   extend ActiveSupport::Concern
 
+  def incomplete_statuses
+    ['new', 'sending']
+  end
+
+  module_function :incomplete_statuses
+
   included do
     include AASM
 
@@ -21,11 +27,11 @@ module Recipient
       state :failed
 
       event :mark_sending do
-        transitions from: :new, to: :sending, on_transition: Proc.new { |obj, *args| obj.ack = args[0] }
+        transitions from: [:new, :sending], to: :sending, on_transition: :acknowledge_sent
       end
 
       event :mark_sent do
-        transitions from: [:new, :sending], to: :sent, on_transition: :finalize
+        transitions from: [:new, :sending, :inconclusive], to: :sent, on_transition: :finalize
       end
 
       event :fail do
@@ -47,10 +53,8 @@ module Recipient
     belongs_to :vendor, :class_name => self.name.gsub('Recipient', 'Vendor')
 
     scope :to_send, ->(vendor_id) { self }
-    scope :with_new_status, -> { where(status: RecipientStatus::NEW) }
-    scope :incomplete, -> { where(status: RecipientStatus::INCOMPLETE_STATUSES) }
-    scope :sending, -> { where(status: RecipientStatus::SENDING) }
-    scope :most_recently_sent, -> { order('sent_at DESC').limit(1) }
+    scope :with_new_status, -> { where(status: 'new') }
+    scope :incomplete, -> { where(status: Recipient.incomplete_statuses) }
 
     attr_accessible :message_id, :vendor_id, :vendor
 
@@ -80,8 +84,7 @@ module Recipient
   end
 
   def ack!(ack=nil)
-    self.ack = ack
-    save!
+    update_attribute(:ack, ack)
   end
 
   protected
@@ -90,6 +93,11 @@ module Recipient
     self.ack           ||= args[0]
     self.completed_at  = args[1] || Time.now
     self.error_message = args[2]
+  end
+
+  def acknowledge_sent(*args)
+    self.ack = args[0]
+    self.sent_at = Time.now
   end
 
   def set_vendor

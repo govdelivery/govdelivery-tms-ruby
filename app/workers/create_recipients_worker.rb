@@ -19,11 +19,11 @@ class CreateRecipientsWorker
   def perform(options)
     message = options['klass'].constantize.find(options['message_id'])
     recipient_params = options['recipients']
-    if message && !recipient_params.blank?
+    if message && recipient_params.present?
       message.create_recipients(recipient_params)
       enqueue_send_job(message, options['send_options'])
     elsif message
-      message.check_complete!
+      message.complete!
     end
   ensure
     Rails.cache.delete(self.class.job_key(message.id)) if message

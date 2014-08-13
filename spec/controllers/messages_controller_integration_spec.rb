@@ -18,7 +18,7 @@ describe 'MessageControllers' do
       it 'has correct attributes' do
         json.fetch('status').should == message.status
         json['recipient_counts']['total'].should == message.recipients.count
-        RecipientStatus.each do |status|
+        VoiceRecipient.aasm.states.map(&:to_s).each do |status|
           json['recipient_counts'][status].should == 1
         end
       end
@@ -26,22 +26,23 @@ describe 'MessageControllers' do
 
     describe VoiceMessagesController do
       describe 'with no recipients' do
-        let(:message) { create_message(:voice, Message::Status::SENDING) }
+        let(:message) do
+          add_recipients!(create_message(:voice))
+        end
         let(:json) {
           get :show, :id => message.id
+          response.status.should eq(200)
           HashWithIndifferentAccess.new(JSON.parse(response.body))
         }
         it 'has 0 for all recipient_counts' do
-          json['recipient_counts']['total'].should == 0
-          RecipientStatus.each do |status|
-            json['recipient_counts'][status].should == 0
+          json['recipient_counts']['total'].should == 7
+          VoiceRecipient.aasm.states.map(&:to_s).each do |status|
+            json['recipient_counts'][status].should == 1
           end
         end
       end
       let(:message) {
-        m = create_message(:voice, Message::Status::SENDING)
-        add_recipients!(m)
-        m
+        add_recipients!(create_message(:voice))
       }
       let(:json) {
         get :show, :id => message.id
@@ -58,9 +59,7 @@ describe 'MessageControllers' do
 
     describe SmsMessagesController do
       let(:message) {
-        m = create_message(:sms, Message::Status::SENDING)
-        add_recipients!(m)
-        m
+        add_recipients!(create_message(:sms))
       }
       let(:json) {
         get :show, :id => message.id
@@ -75,22 +74,23 @@ describe 'MessageControllers' do
       end
     end
 
-    def create_message(message_type, status)
+    def create_message(message_type)
       if message_type == :sms
         m = user.sms_messages.new(:body => 'A short body')
       elsif message_type == :voice
         m = user.voice_messages.new(:play_url => 'http://foo.com/hello.wav')
       end
-      m.status = status
       m.save!
       m
     end
     def add_recipients!(m)
-      RecipientStatus.each_with_index do |status, i|
-        attrs = {:phone => "555444#{i}111"}
-        m.create_recipients([attrs])
-        m.recipients.where(attrs).each {|r| r.status = status; r.save!}
+      VoiceRecipient.aasm.states.map(&:to_s).each_with_index do |status, i|
+        attrs = {phone: "555444#{i}111"}
+        r = m.recipients.create!(attrs)
+        r.update_attribute(:status, status)
       end
+      m.ready!
+      m
     end
   end
 end

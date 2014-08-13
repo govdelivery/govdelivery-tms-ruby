@@ -73,10 +73,14 @@ describe EmailMessage do
 
       context 'and sending!' do
         before do
-          email.expects(:recipients).returns(mock('recipients', with_new_status: mock('with_new_status', :update_all => true)))
-          email.sending!('dummy_id')
+          email.recipients.create!(email: 'bill@busheyworld.ie')
         end
-        it { email.ack.should eq('dummy_id') }
+        it 'should send and set ack' do
+          email.ready!.should be true
+          email.recipients.first.sending?.should be true
+          email.sending!(nil, 'dummy_id').should be true
+          email.ack.should eq('dummy_id')
+        end
       end
 
       [:opened, :clicked].each do |type|

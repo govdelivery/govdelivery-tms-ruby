@@ -12,9 +12,10 @@ describe LoopbackEmailWorker do
   context 'a send' do
     it 'should mark complete' do
       recipient # force the creation of this
-      subject.perform({'message_id' => message.id})
-      message.reload.status.should eq(Message::Status::COMPLETED)
-      recipient.reload.status.should eq(RecipientStatus::SENT)
+      message.ready!.should be true
+      subject.perform('message_id' => message.id)
+      message.reload.completed?.should be true
+      recipient.reload.sent?.should be true
     end
   end
 end

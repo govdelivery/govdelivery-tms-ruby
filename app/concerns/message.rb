@@ -3,15 +3,37 @@ require 'active_support'
 module Message
   extend ActiveSupport::Concern
 
-  module Status
-    unless defined?(NEW)
-      NEW = 'new'
-      SENDING = 'sending'
-      COMPLETED = 'completed'
-    end
-  end
-
   included do
+    include AASM
+
+    aasm column: 'status', skip_validation_on_save: true do
+      state :new, initial: true
+      state :queued
+      state :sending
+      state :completed
+
+      event :ready do
+        transitions from: :new, to: :queued, guard: :has_recipients, on_transition: [:process_blacklist!, :prepare_recipients]
+      end
+
+      event :sending do
+        transitions from: :queued, to: :sending, on_transition: :on_sending
+      end
+
+      event :complete do
+        transitions from: :sending, to: :completed, guard: :check_complete, on_transition: :on_complete
+      end
+    end
+
+    # don't raise an error if complete! fails
+    def complete_with_exception_handler!
+      complete_without_exception_handler!
+    rescue AASM::InvalidTransition => e
+      return false
+    end
+
+    alias_method_chain :complete!, :exception_handler
+
     belongs_to :user
     belongs_to :account
     validates_presence_of :account
@@ -20,9 +42,10 @@ module Message
     attr_accessor :async_recipients
     attr_accessible :recipients_attributes, :async_recipients
 
-    scope :sending, where("#{self.quoted_table_name}.status = ? ", Status::SENDING)
-
-    has_many :recipients, -> { order("#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC") }, :dependent => :delete_all, :class_name => self.name.gsub('Message', 'Recipient'), :foreign_key => 'message_id' do
+    has_many :recipients, -> { order("#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC") },
+             dependent: :delete_all,
+             class_name: self.name.gsub('Message', 'Recipient'),
+             foreign_key: 'message_id' do
       def build_without_message(attrs)
         recipient = build(attrs)
         recipient.skip_message_validation = true
@@ -59,10 +82,11 @@ module Message
     klass = recipient_class
     recipient_params.each_with_index do |r, i|
       # not using a relation here to avoid holding references and leaking
-      recipient = klass.new(r.merge(:vendor => self.vendor, :message_id => self.id))
+      recipient = klass.new(r.merge(vendor: self.vendor, message_id: self.id))
       recipient.skip_message_validation=true
       recipient.save
     end
+    ready!
   end
 
   # The number of seconds it took to build the recipient list for this
@@ -77,36 +101,8 @@ module Message
     end
   end
 
-  def process_blacklist!
-    #do nothing by default
-  end
-
   def sendable_recipients
     recipients.to_send(vendor.id)
-  end
-
-  def sending!
-    self.class.transaction do
-      process_blacklist!
-      self.status=Status::SENDING
-      self.sent_at = Time.now
-      save!(validate: false)
-      self.recipients.with_new_status.update_all(status: RecipientStatus::SENDING, sent_at: Time.now)
-    end
-  end
-
-  def check_complete!
-    counts = recipient_state_counts
-    if val = RecipientStatus::INCOMPLETE_STATUSES.collect { |state| counts[state] }.sum == 0
-      Rails.logger.debug("#{self.class.name} #{self.to_param} is complete")
-      self.completed_at = recipients.most_recently_sent.first.sent_at rescue Time.now
-      self.status = Status::COMPLETED
-    else
-      Rails.logger.debug("#{self.class.name} #{self.to_param} is not yet complete")
-      self.status = Status::SENDING
-    end
-    save!
-    val
   end
 
   def recipient_counts
@@ -114,6 +110,31 @@ module Message
   end
 
   protected
+
+  def process_blacklist!
+    # noop
+  end
+
+  def prepare_recipients
+    # noop
+  end
+
+  def has_recipients
+    recipients.any?
+  end
+
+  def check_complete
+    counts = recipient_state_counts
+    Recipient.incomplete_statuses.collect { |state| counts[state] }.sum == 0
+  end
+
+  def on_sending(*args)
+    self.sent_at = Time.now
+  end
+
+  def on_complete
+    self.completed_at = recipients.sent.order('completed_at DESC').first.completed_at rescue Time.now
+  end
 
   def has_valid_async_recipients?
     if async_recipients && async_recipients.is_a?(Array)
@@ -138,6 +159,6 @@ module Message
   def recipient_state_counts
     groups = recipients.select('count(status) the_count, status').group('status').reorder('')
     h = Hash[groups.map { |r| [r.status, r.the_count] }]
-    Hash[RecipientStatus.map { |s| [s, 0] }].merge(h)
+    Hash[self.class.aasm.states.map(&:to_s).map { |s| [s, 0] }].merge(h)
   end
 end

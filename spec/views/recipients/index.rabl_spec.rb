@@ -12,7 +12,7 @@ describe 'recipients/index.rabl' do
            :message => message,
            :formatted_phone => '+16125551212',
            :phone => '6125551212',
-           :status => RecipientStatus::SENT,
+           :status => 'sent',
            :created_at => Time.now,
            :sent_at => Time.now,
            :error_message => nil,

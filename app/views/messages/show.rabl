@@ -6,7 +6,7 @@ if root_object
     node(:errors) { |message| message.errors }
   end
 
-  if root_object.status != Message::Status::NEW
+  unless root_object.new?
     attribute :recipient_counts
   end
 

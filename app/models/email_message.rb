@@ -23,9 +23,9 @@ class EmailMessage < ActiveRecord::Base
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> { select("id, user_id, created_at, status, subject") }
 
-  def sending!(ack)
-    self.ack=ack
-    super()
+  def on_sending(ack=nil)
+    self.ack||=ack
+    super
   end
 
   def recipients_who_clicked
@@ -71,6 +71,11 @@ class EmailMessage < ActiveRecord::Base
   end
 
   protected
+
+  # ODM EmailVendor sends in batches, so we put everything into sending state as part of the state transition
+  def prepare_recipients
+    self.recipients.with_new_status.update_all(status: 'sending', sent_at: Time.now)
+  end
 
   def from_email_allowed?
     unless account.from_email_allowed?(self.from_email)

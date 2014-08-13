@@ -8,13 +8,6 @@ class SmsMessage < ActiveRecord::Base
 
   before_create :set_sms_vendor
 
-  def process_blacklist!
-    blacklisted_recipients.find_each do |recipient|
-      logger.debug("Marking recipient as BLACKLISTED")
-      recipient.blacklist!
-    end
-  end
-
   def blacklisted_recipients
     blacklist_scope(account_id).not_sent
   end
@@ -35,7 +28,15 @@ class SmsMessage < ActiveRecord::Base
     recipients.first.id
   end
 
-private
+  protected
+
+  def process_blacklist!
+    blacklisted_recipients.find_each do |recipient|
+      logger.debug("Marking recipient as BLACKLISTED")
+      recipient.blacklist!
+    end
+  end
+
   def set_sms_vendor
     self.sms_vendor_id = account.sms_vendor_id
   end

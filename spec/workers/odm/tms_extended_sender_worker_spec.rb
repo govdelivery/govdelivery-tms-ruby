@@ -51,7 +51,7 @@ if defined?(JRUBY_VERSION)
 
     context 'a very happy send' do
       it 'should work' do
-        email_message.expects(:sending!).with('dummy_id')
+        email_message.expects(:sending!).with(nil, 'dummy_id')
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
         odm_v2.expects(:send_message).returns('dummy_id')

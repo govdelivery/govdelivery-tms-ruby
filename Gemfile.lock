@@ -341,7 +341,6 @@ GEM
       celluloid (~> 0.15.2)
     yaml_db (0.2.3)
       poseidon_cluster (~> 0.2)
-    yaml_db (0.2.3)
     zk (1.9.4)
       logging (~> 1.8.2)
       zookeeper (~> 1.4.0)

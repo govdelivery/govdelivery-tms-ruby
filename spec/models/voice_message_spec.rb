@@ -28,21 +28,26 @@ describe VoiceMessage do
     it "should return correct worker" do
       message.worker.should eq(TwilioVoiceWorker)
     end
+    context 'being marked ready' do
+      before do
+        message.expects(:process_blacklist!)
+        message.create_recipients([{phone: "4054343424"}]).should be true
+      end
 
     context "being marked as sending" do
-      before do 
-        message.create_recipients([{:phone => "4054343424"}])
-        message.expects(:process_blacklist!)
-        message.sending!
+      before do
+        message.sending!.should be true
       end
       specify do
-        message.recipients.first.status.should eq(RecipientStatus::SENDING)
-        message.recipients.first.status.should_not be_nil
+        message.recipients.first.new?.should be true
       end
     end
+    end
+
     context "with invalid recipient" do
-      before { message.create_recipients([{:phone => nil}]) }
-      specify { message.recipients.count.should == 0  }
+      it 'should blow up' do
+        expect { message.create_recipients([{:phone => nil}]) }.to raise_error(AASM::InvalidTransition)
+      end
     end
 
     context "with valid recipient" do

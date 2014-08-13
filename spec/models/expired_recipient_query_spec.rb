@@ -8,7 +8,7 @@ describe ExpiredRecipientQuery do
     [1, 2].map{|x|
       m = create(:email_message, account: account, body: "body #{x}")
       m.create_recipients([email: "from-message#{x}@example.com"])
-      m.sending!(nil)
+      m.sending!
       m
     }
   }
@@ -39,7 +39,7 @@ describe ExpiredRecipientQuery do
     it 'only finds recipients in sending status' do
       vendor.update_attribute(:delivery_timeout, 1.minute)
 
-      messages.first.recipients.update_all(status: RecipientStatus::SENT)
+      messages.first.recipients.update_all(status: 'new')
       result = ExpiredRecipientQuery.new(EmailRecipient)
       expect(result).to be_empty
     end

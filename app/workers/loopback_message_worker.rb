@@ -5,15 +5,17 @@ class LoopbackMessageWorker
 
   def perform(options)
     if @message
-      @message.sending!('looped_back')
-      @message.sendable_recipients.sending.except(:order).update_all(:status => RecipientStatus::SENT, :completed_at => DateTime.now)
-      @message.check_complete!
+      @message.sending!
+      @message.sendable_recipients.sending.except(:order).find_each do |recipient|
+        recipient.sent!(ack)
+      end
+      logger.warn("#{self.class.name} #{@message.to_s} could not be completed: #{@message.recipient_counts}") unless @message.complete!
     else
       logger.warn("Unable to find message: #{options}")
     end
   end
 
   def ack
-    "#{(Time.now.to_i + Random.rand(100000)).to_s(16)}"
+    @ack ||= "#{(Time.now.to_i + Random.rand(100000)).to_s(16)}"
   end
 end

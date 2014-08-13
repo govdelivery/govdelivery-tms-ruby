@@ -37,27 +37,36 @@ describe EmailRecipient do
         subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::one_value::seven_value")
       end
     end
-    context 'that is sent' do
+    context 'that is sending' do
       before do
         subject.sending!('ack')
-        subject.sent!('ack', Time.now)
       end
-      it 'should update the record' do
-        subject.reload
-        subject.vendor.should_not be_nil
-        subject.completed_at.should_not be_nil
-        subject.ack.should eq('ack')
-        subject.status.should eq(RecipientStatus::SENT)
+
+      it 'should set sent_at' do
+        subject.sent_at.should_not be_nil
       end
-      it 'should save clicks' do
-        subject.email_recipient_clicks.count.should == 0
-        subject.clicked!("http://foo.bar.com", DateTime.now)
-        subject.email_recipient_clicks.count.should == 1
-      end
-      it 'should save opens' do
-        subject.email_recipient_opens.count.should == 0
-        subject.opened!("1.1.1.1", DateTime.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
-        subject.email_recipient_opens.count.should == 1
+
+      context 'that is sent' do
+        before do
+          subject.sent!('ack', Time.now)
+        end
+        it 'should update the record' do
+          subject.reload
+          subject.vendor.should_not be_nil
+          subject.completed_at.should_not be_nil
+          subject.ack.should eq('ack')
+          subject.sent?.should be true
+        end
+        it 'should save clicks' do
+          subject.email_recipient_clicks.count.should == 0
+          subject.clicked!("http://foo.bar.com", DateTime.now)
+          subject.email_recipient_clicks.count.should == 1
+        end
+        it 'should save opens' do
+          subject.email_recipient_opens.count.should == 0
+          subject.opened!("1.1.1.1", DateTime.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
+          subject.email_recipient_opens.count.should == 1
+        end
       end
     end
 
@@ -66,14 +75,14 @@ describe EmailRecipient do
         failed_recipient = subject
         failed_recipient.failed!(:ack, 'error_message', (sent_at = Time.now))
         failed_recipient.error_message.should eq 'error_message'
-        failed_recipient.status.should eql(RecipientStatus::FAILED)
+        failed_recipient.failed?.should be true
       end
 
       it 'should truncate a too-long error message' do
         failed_recipient = subject
         failed_recipient.failed!(:ack, 'a' * 600, (sent_at = Time.now))
         failed_recipient.error_message.should eq 'a'*512
-        failed_recipient.status.should eql(RecipientStatus::FAILED)
+        failed_recipient.failed?.should be true
       end
 
       it 'failed scope includes failed status ' do

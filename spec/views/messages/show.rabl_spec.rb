@@ -11,6 +11,7 @@ describe 'messages/show.rabl' do
          created_at: Time.now,
          new_record?: false,
          status: 'new',
+         new?: true,
          errors: []
     )
   end
@@ -24,6 +25,7 @@ describe 'messages/show.rabl' do
          created_at: Time.now,
          new_record?: false,
          status: 'new',
+         new?: true,
          errors: []
     )
   end
@@ -42,6 +44,7 @@ describe 'messages/show.rabl' do
          created_at: Time.now,
          new_record?: false,
          status: 'new',
+         new?: true,
          open_tracking_enabled: true,
          click_tracking_enabled: false,
          macros: {"fun" => "times"},

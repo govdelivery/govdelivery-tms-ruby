@@ -34,7 +34,7 @@ describe SmsMessage do
     end
 
     context 'when recipients list is empty' do
-      before { message.async_recipients = []}
+      before { message.async_recipients = [] }
       it 'should be invalid' do
         subject.save_with_async_recipients.should eq(false)
         subject.errors.get(:recipients).should eq(['must contain at least one valid recipient'])
@@ -42,7 +42,7 @@ describe SmsMessage do
     end
 
     context 'when recipients list is garbage' do
-      before { message.async_recipients = ['dude']}
+      before { message.async_recipients = ['dude'] }
       it 'should be invalid' do
         subject.save_with_async_recipients.should eq(false)
         subject.errors.get(:recipients).should eq(['must contain at least one valid recipient'])
@@ -51,10 +51,10 @@ describe SmsMessage do
     end
 
     context 'when recipients list is valid' do
-      before { message.async_recipients = [{:phone=>'+16125015456'}]}
+      before { message.async_recipients = [{:phone => '+16125015456'}] }
       it 'should be invalid' do
         subject.save_with_async_recipients.should eq(true)
-        subject.async_recipients.should eq([{:phone=>'+16125015456'}])
+        subject.async_recipients.should eq([{:phone => '+16125015456'}])
         subject.recipients.should == []
       end
     end
@@ -70,7 +70,7 @@ describe SmsMessage do
   context 'a message on a shared vendor with blacklisted and legit recips' do
     let(:shared_message) do
       shared_account.sms_messages.create!(
-        :body => "FOOO",
+        :body                  => "FOOO",
         :recipients_attributes => [{:phone => "6515551212", :vendor => shared_vendor},
                                    {:phone => "6515551215", :vendor => shared_vendor},
                                    {:phone => "6515551218", :vendor => shared_vendor}])
@@ -90,38 +90,83 @@ describe SmsMessage do
     it 'should remove the right recipients' do
       shared_message.blacklisted_recipients.count.should eq(2)
       shared_message.sendable_recipients.count.should eq(1)
-      shared_message.process_blacklist!
-      shared_message.recipients.find_by_phone('6515551212').status.should eq(RecipientStatus::BLACKLISTED)
-      shared_message.recipients.find_by_phone('6515551215').status.should eq(RecipientStatus::BLACKLISTED)
-      shared_message.recipients.find_by_phone('6515551218').status.should eq(RecipientStatus::NEW)
+      shared_message.ready!.should be true
+      shared_message.recipients.find_by_phone('6515551212').blacklisted?.should be true
+      shared_message.recipients.find_by_phone('6515551215').blacklisted?.should be true
+      shared_message.recipients.find_by_phone('6515551218').new?.should be true
     end
   end
 
   context 'a message with blacklisted and legitimate recipients' do
     let(:message) {
       create(:sms_message,
-        account: account,
-        body: "A"*160,
-        recipients_attributes: [{:phone => "6515551212", :vendor => vendor}, {:phone => "6515551215", :vendor => vendor}])
+             account:               account,
+             body:                  "A"*160,
+             recipients_attributes: [{:phone => "6515551212", :vendor => vendor}, {:phone => "6515551215", :vendor => vendor}])
     }
     before do
       vendor.stop_requests.create!(:phone => "+16515551212")
     end
-    it 'should be removed' do
-      message.blacklisted_recipients.count.should eq(1)
-      message.sendable_recipients.count.should eq(1)
-      message.process_blacklist!
-      message.recipients.find_by_phone('6515551212').status.should eq(RecipientStatus::BLACKLISTED)
-      message.recipients.find_by_phone('6515551215').status.should eq(RecipientStatus::NEW)
+
+    it 'should start out in new state' do
+      message.new?.should be true
     end
-    context 'and checked for completion' do
+
+    it 'should fail on transition to queued if there are no recipients' do
+      message.recipients.destroy_all
+      expect { message.ready! }.to raise_error(AASM::InvalidTransition)
+    end
+
+    context 'a valid ready transition from new to queued' do
       before do
-        message.process_blacklist!
-        message.recipients.find_by_phone('6515551215').sent!('ack1')
+        message.ready!.should be true
       end
+
+      it 'should work' do
+        message.queued?.should be true
+        message.blacklisted_recipients.count.should eq(1)
+        message.sendable_recipients.count.should eq(1)
+        message.recipients.find_by_phone('6515551212').blacklisted?.should be true
+        message.recipients.find_by_phone('6515551215').new?.should be true
+      end
+
+      context 'a valid sending transition from queued to sending' do
+        before do
+          message.sending!.should be true
+        end
+
+        it 'should work' do
+          message.sent_at.should_not be_nil
+        end
+
+        it 'should not complete transition with an incomplete receipient' do
+          #expect{message.complete!}.to raise_error(AASM::InvalidTransition)
+          message.complete!.should be false
+        end
+
+        context 'a valid complete transition from sending to complete' do
+          before do
+            message.recipients.find_by_phone('6515551215').sent!('doing stuff!')
+            message.complete!.should be true
+          end
+
+          it 'should be completed at some time' do
+            message.completed_at.should_not be_nil
+          end
+
+        end
+      end
+
+    end
+
+
+    context 'and checked for completion' do
       it 'should change status' do
-        message.check_complete!.should eq(true)
-        message.status.should eq(SmsMessage::Status::COMPLETED)
+        message.recipients.find_by_phone('6515551215').sent!('ack1')
+        message.ready!.should be true
+        message.sending!.should be true
+        message.complete!.should be true
+        message.completed?.should be true
       end
     end
   end
