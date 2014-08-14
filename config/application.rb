@@ -106,6 +106,8 @@ module Xact
     # override Rack exception application handling of exception status codes
     config.exceptions_app = self.routes
 
+    routes.default_url_options = {host: "#{Rails.env.to_s}-tms.govdelivery.com", protocol: 'https'}
+
     # Threshold (in minutes) under which multiple inbound messages from a
     # user will be ignored.  This is to prevent auto-response messages
     # (as sometimes issued from handsets while people are driving) from entering an infinite

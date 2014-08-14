@@ -29,8 +29,10 @@ Xact::Application.configure do
   # Do not compress assets
   config.assets.compress = false
 
-  # This is only used to write urls 
+  # This is only used to write urls
   config.protocol = 'http'
+
+  routes.default_url_options = {host: 'localhost', port: 3000, protocol: config.protocol}
 
   # Expands the lines which load the assets
   config.assets.debug = true

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140812200554) do
+ActiveRecord::Schema.define(version: 20140813202701) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -316,6 +316,14 @@ ActiveRecord::Schema.define(version: 20140812200554) do
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
     t.integer  "delivery_timeout", precision: 38, scale: 0
+  end
+
+  create_table "webhooks", force: true do |t|
+    t.integer  "account_id",            precision: 38, scale: 0
+    t.string   "event_type", limit: 30
+    t.string   "url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

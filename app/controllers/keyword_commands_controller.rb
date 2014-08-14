@@ -22,6 +22,7 @@ class KeywordCommandsController < ApplicationController
 
   def destroy
     @command.destroy
+    render status: 204, nothing: true
   end
 
   private
@@ -31,7 +32,7 @@ class KeywordCommandsController < ApplicationController
   end
 
   def special_keyword
-    name = ['stop', 'help','default'].select{ |k| k == params[:keyword_id] }.first
+    name = ['stop', 'help', 'default'].select { |k| k == params[:keyword_id] }.first
     @account.send "#{name}_keyword" if name
   end
 

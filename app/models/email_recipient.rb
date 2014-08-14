@@ -14,6 +14,8 @@ class EmailRecipient < ActiveRecord::Base
   has_many :email_recipient_clicks, ->(record) { where("email_recipient_clicks.email_message_id = ?", record.message_id) }
   has_many :email_recipient_opens, ->(record) { where("email_recipient_opens.email_message_id = ?", record.message_id) }
 
+
+
   ##
   # Convert this recipient into a record string for sending to ODM.
   #

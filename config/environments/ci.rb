@@ -41,6 +41,8 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = false
 
+  routes.default_url_options = {host: 'test.host', port: 3000}
+
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = []

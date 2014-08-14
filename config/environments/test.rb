@@ -38,6 +38,8 @@ Xact::Application.configure do
   config.odm_username = 'doesnt'
   config.odm_password = 'matter'
 
+  routes.default_url_options = {host: 'test.host'}
+
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.

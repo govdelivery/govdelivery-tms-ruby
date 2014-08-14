@@ -122,14 +122,4 @@ describe RecipientsController do
       assigns(:recipient).should_not be_nil
     end
   end
-
-  def stub_pagination(collection, current_page, total_pages)
-    collection.stubs(:current_page).returns(current_page)
-    collection.stubs(:total_pages).returns(total_pages)
-    collection.stubs(:first_page?).returns(current_page == 1)
-    collection.stubs(:last_page?).returns(current_page == total_pages)
-
-  end
-
-
 end

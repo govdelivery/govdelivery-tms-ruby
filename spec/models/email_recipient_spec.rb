@@ -5,10 +5,10 @@ describe EmailRecipient do
   let(:vendor) { create(:email_vendor) }
   let(:account) { create(:account, email_vendor: vendor, name: 'account') }
   let(:email_message) { create(:email_message, account: account) }
-  let(:user) { User.create(:email => 'admin@example.com', :password => 'retek01!').tap{|u| u.account =  account } }
+  let(:user) { User.create(:email => 'admin@example.com', :password => 'retek01!').tap { |u| u.account = account } }
 
   subject {
-    r = email_message.recipients.build
+    r         = email_message.recipients.build
     r.message = email_message
     r
   }
@@ -32,11 +32,21 @@ describe EmailRecipient do
       it 'should have the correct ODM record designator' do
         subject.to_odm('five' => nil, 'one' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::five_value::one_value::two_value")
         # remove one from default hash
-        subject.to_odm('five' => nil, 'two' => nil).should        eq("hi@man.com::#{subject.id}::five_value::two_value")
+        subject.to_odm('five' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::five_value::two_value")
         # merging in defaults
         subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::one_value::seven_value")
       end
     end
+    context 'that fails' do
+      it 'should invoke webhooks' do
+        account.webhooks.create!(url: 'http://dudes.ruby', event_type: 'failed')
+        Webhook.any_instance.expects(:invoke).with(subject)
+        subject.reload
+        subject.failed!('ack', 'this message is terrible')
+        subject.failed?.should be true
+      end
+    end
+
     context 'that is sending' do
       before do
         subject.sending!('ack')

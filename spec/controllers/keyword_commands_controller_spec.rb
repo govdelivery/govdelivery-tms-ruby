@@ -119,7 +119,7 @@ describe KeywordCommandsController do
       delete :destroy, :keyword_id => keyword.id, :id => '1'
     end
     it "should work" do
-      response.response_code.should == 200
+      response.response_code.should == 204
     end
   end
 

@@ -75,7 +75,9 @@ Xact::Application.configure do
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
-  config.public_callback = true  
+  config.public_callback = true
+
+  routes.default_url_options = {host: "tms.govdelivery.com", protocol: 'https'}
 
   # Threshold (in minutes) under which multiple inbound messages from a 
   # user will be ignored.  This is to prevent auto-response messages 

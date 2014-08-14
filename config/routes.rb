@@ -17,6 +17,8 @@ Xact::Application.routes.draw do
     get 'page/:page', :action => :index, :on => :collection
   end
 
+  resources :webhooks
+
   resources(:accounts, only: []) do
     resources(:users, only: []) do
       resources(:tokens, only: [:index, :create, :show, :destroy]) do

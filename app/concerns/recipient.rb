@@ -26,31 +26,31 @@ module Recipient
       state :sent
       state :failed
 
-      event :mark_sending do
+      event :mark_sending, after: :invoke_webhooks do
         transitions from: [:new, :sending], to: :sending, on_transition: :acknowledge_sent
       end
 
-      event :mark_sent do
+      event :mark_sent, after: :invoke_webhooks do
         transitions from: [:new, :sending, :inconclusive], to: :sent, on_transition: :finalize
       end
 
-      event :fail do
+      event :fail, after: :invoke_webhooks do
         transitions from: [:new, :sending, :inconclusive], to: :failed, on_transition: :finalize
       end
 
-      event :cancel do
+      event :cancel, after: :invoke_webhooks do
         transitions from: [:new, :sending], to: :canceled, on_transition: :finalize
       end
 
-      event :blacklist do
+      event :blacklist, after: :invoke_webhooks do
         transitions from: [:new, :sending], to: :blacklisted
       end
     end
 
     attr_accessor :skip_message_validation
 
-    belongs_to :message, :class_name => self.name.gsub('Recipient', 'Message')
-    belongs_to :vendor, :class_name => self.name.gsub('Recipient', 'Vendor')
+    belongs_to :message, class_name: self.name.gsub('Recipient', 'Message')
+    belongs_to :vendor, class_name: self.name.gsub('Recipient', 'Vendor')
 
     scope :to_send, ->(vendor_id) { self }
     scope :with_new_status, -> { where(status: 'new') }
@@ -88,6 +88,11 @@ module Recipient
   end
 
   protected
+  def invoke_webhooks
+    message.account.webhooks.where(event_type: self.status).each do |webhook|
+      webhook.invoke(self)
+    end
+  end
 
   def finalize(*args)
     self.ack           ||= args[0]
@@ -96,7 +101,7 @@ module Recipient
   end
 
   def acknowledge_sent(*args)
-    self.ack = args[0]
+    self.ack     = args[0]
     self.sent_at = Time.now
   end
 

@@ -11,18 +11,18 @@ RSpec.configure do |config|
   config.include ActionView::TestCase::Behavior, file_path: %r{spec/presenters}
   config.mock_with :mocha
   config.expect_with :rspec do |c|
-     c.syntax = [:should, :expect]
-   end
-  config.use_transactional_fixtures = true
+    c.syntax = [:should, :expect]
+  end
+  config.use_transactional_fixtures                 = true
   config.infer_base_class_for_anonymous_controllers = false
-  config.order = "random"
+  config.order                                      = "random"
   config.infer_spec_type_from_file_location!
 
   #Sidekiq needs this, requiring fakeredis/rspec isn't enough
   fakeredis_opts = {
-    url: "redis://127.0.0.1:6379/1",
+    url:       "redis://127.0.0.1:6379/1",
     namespace: "spec",
-    driver: Redis::Connection::Memory}
+    driver:    Redis::Connection::Memory}
 
   Sidekiq.configure_client do |conf|
     conf.redis = fakeredis_opts
@@ -37,12 +37,12 @@ end
 def stub_command_action_create!(command_params, http_response, command_action)
   mock_relation = mock('CommandAction.where')
   mock_relation.expects(:first_or_create!).with(
-    status: http_response.status,
-    content_type: http_response.headers['Content-Type'],
+    status:        http_response.status,
+    content_type:  http_response.headers['Content-Type'],
     response_body: http_response.body).returns(command_action)
   CommandAction.expects(:where).with(
     inbound_message_id: command_params.inbound_message_id,
-    command_id: command_params.command_id).returns(mock_relation)
+    command_id:         command_params.command_id).returns(mock_relation)
 end
 
 def exception_check(worker, expected_message, params=nil)
@@ -61,4 +61,11 @@ def exception_check(worker, expected_message, params=nil)
 
   expect(java_exception_raised).to be_falsey
   expect(ruby_exception_raised).to be_truthy
+end
+
+def stub_pagination(collection, current_page, total_pages)
+  collection.stubs(:current_page).returns(current_page)
+  collection.stubs(:total_pages).returns(total_pages)
+  collection.stubs(:first_page?).returns(current_page == 1)
+  collection.stubs(:last_page?).returns(current_page == total_pages)
 end
