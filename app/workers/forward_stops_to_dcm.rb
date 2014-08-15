@@ -3,7 +3,7 @@ require_relative 'base'
 # This worker is a hack intended to be temporary.
 class ForwardStopsToDcm
   include Workers::Base
-  sidekiq_options retry: 25
+  sidekiq_options retry: 25, queue: :command
 
   def self.forward_async!(opts)
     perform_async(opts) if should_forward?(opts)

@@ -2,7 +2,7 @@ require 'base'
 
 class CheckMessagesForCompletion
   include Workers::Base
-  sidekiq_options unique: true, retry: false, unique_job_expiration: 240 * 60 # 4 hours
+  sidekiq_options queue: :stats, unique: true, retry: false, unique_job_expiration: 240 * 60 # 4 hours
 
   def perform(*args)
     [SmsMessage, VoiceMessage, EmailMessage].each do |message_class|

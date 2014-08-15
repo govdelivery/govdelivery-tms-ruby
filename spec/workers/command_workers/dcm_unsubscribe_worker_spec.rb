@@ -1,5 +1,5 @@
 require 'rails_helper'
-describe DcmUnsubscribeWorker do
+describe CommandWorkers::DcmUnsubscribeWorker do
   let(:config) { [{:username => "foo", :password => "bar", :api_root => "http://example.com"},
                   {:username => "foo", :password => "bar", :api_root => "http://example2.com"}] }
   let(:client) { mock('dcm_client') }
@@ -10,7 +10,7 @@ describe DcmUnsubscribeWorker do
   let(:response_not_found){ stub(status: 404) }
 
   subject do
-    w = DcmUnsubscribeWorker.new
+    w = CommandWorkers::DcmUnsubscribeWorker.new
     w.stubs(:command).returns(command)
     w.stubs(:account).returns(account)
     w

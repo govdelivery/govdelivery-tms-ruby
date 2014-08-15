@@ -16,7 +16,7 @@ module CommandType
 
     # new object of this type will call :process_response in the background
     def perform_async!(params)
-      "#{self.class.name.demodulize}Worker".constantize.perform_async(params.to_hash)
+      "CommandWorkers::#{self.class.name.demodulize}Worker".constantize.perform_async(params.to_hash)
     end
 
     # this will get called in the background

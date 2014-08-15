@@ -5,6 +5,7 @@ module Odm
 
   class TmsExtendedWorker
     include ::Workers::Base
+    sidekiq_options queue: :stats
 
     def self.jruby?
       defined?(JRUBY_VERSION)

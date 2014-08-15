@@ -32,7 +32,7 @@ Sidekiq.configure_server do |config|
 
   config.redis = default.merge(Xact::Application.config.sidekiq[:server])
   config.options[:concurrency] = 30
-  config.options[:queues] = ['default', 'webhook']
+  config.options[:queues] = ['sender', 'command', 'webhook', 'stats']
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
     # remove the default logging middleware because it assumes the worker name

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ForwardWorker do
+describe CommandWorkers::ForwardWorker do
   let(:account){ create(:account_with_sms) }
   let(:command){ create(:forward_command, keyword: account.default_keyword) }
   let(:options) { {url: "url",

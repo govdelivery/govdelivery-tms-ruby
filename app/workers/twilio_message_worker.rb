@@ -1,7 +1,11 @@
+#
+# This is a vendor worker that creates a batch of Twilio::SenderWorker jobs (one per recipient)
+# via Service::TwilioMessageService
+#
 require 'base'
 class TwilioMessageWorker
   include Workers::Base
-  sidekiq_options retry: false
+  sidekiq_options retry: false, queue: :sender
 
   def perform(options)
     options.symbolize_keys!

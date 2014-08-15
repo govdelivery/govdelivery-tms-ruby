@@ -1,5 +1,5 @@
 require 'rails_helper'
-describe DcmSubscribeWorker do
+describe CommandWorkers::DcmSubscribeWorker do
   let(:phone_number) { '+14443332222' }
   let(:account_code) { 'ACCOUNT_CODE' }
   let(:topic_codes) { ['TOPIC_CODE', 'TOPIC_2'] }
@@ -14,7 +14,7 @@ describe DcmSubscribeWorker do
   let(:client) { mock('dcm_client') }
 
   subject do
-    w = DcmSubscribeWorker.new
+    w = CommandWorkers::DcmSubscribeWorker.new
     w.stubs(:command).returns(command)
     w.stubs(:account).returns(account)
     w
@@ -54,7 +54,7 @@ describe DcmSubscribeWorker do
   end
 
   context 'multiple requests' do
-    subject{ DcmSubscribeWorker.new }
+    subject{ CommandWorkers::DcmSubscribeWorker.new }
     it 'uses lowest status code' do
       subject.http_response = stub(status: 200)
       subject.http_response = stub(status: 404)

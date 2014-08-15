@@ -1,3 +1,6 @@
+# This worker actually delivers messages to Twilio
+#     e.g. TwilioVoiceWorker creates a batch of n Twilio::SenderWorker jobs (one per recipient)
+#
 module Twilio
   class SenderWorker
     include Workers::Base
