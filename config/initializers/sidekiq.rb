@@ -50,3 +50,5 @@ end
 Sidekiq.configure_client do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:client])
 end
+
+Sidekiq::Web.app_url = '/'

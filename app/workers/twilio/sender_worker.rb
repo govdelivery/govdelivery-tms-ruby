@@ -5,7 +5,7 @@ module Twilio
   class SenderWorker
     include Workers::Base
     #with the default exponential backoff, this will retry for about four hours
-    sidekiq_options retry: 10
+    sidekiq_options retry: 10, queue: :sender
     RETRY_CODES = [401, 404, 429, 500]
 
     sidekiq_retries_exhausted do |msg|

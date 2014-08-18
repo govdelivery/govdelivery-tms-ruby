@@ -4,7 +4,7 @@ module Twilio
 
     included do
       include Workers::Base
-      sidekiq_options unique: true, retry: false
+      sidekiq_options unique: true, retry: false, queue: :stats
       cattr_accessor :service, :recipient_class
     end
 

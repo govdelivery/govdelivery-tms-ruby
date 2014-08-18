@@ -265,7 +265,7 @@ GEM
     sexp_processor (4.4.3)
     shoulda-matchers (2.6.2)
       activesupport (>= 3.0.0)
-    sidekiq (3.2.1)
+    sidekiq (3.2.2)
       celluloid (>= 0.15.2)
       connection_pool (>= 2.0.0)
       json
