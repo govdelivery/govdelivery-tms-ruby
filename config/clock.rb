@@ -14,7 +14,6 @@ module Clockwork
 
   every(5.minutes, 'CheckMessagesForCompletion')
   every(5.minutes, 'MarkOldRecipientsAsInconclusive')
-  every(1.minute, 'CmsThrottledWorker')
 
   if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
     every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')
