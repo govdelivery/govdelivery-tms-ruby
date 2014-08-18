@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 describe IPAWS::Vendor do
+  before do
+    com.govdelivery.ipaws.IPAWSClient.__persistent__ = true if defined?(JRUBY_VERSION)
+  end
 
   it { should have_many(:accounts) }
 
