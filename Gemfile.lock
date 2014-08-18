@@ -7,13 +7,6 @@ GIT
       method_source (~> 0.8.1)
       slop (~> 3.4)
 
-GIT
-  remote: https://github.com/govdelivery/sidekiq-retries.git
-  revision: 06db5823633e00abc8f29a23b54d6fdfd3a60328
-  specs:
-    sidekiq-retries (0.0.1)
-      sidekiq (~> 3.0)
-
 GEM
   remote: http://prod-rubygems1-ep.tops.gdi/
   remote: https://www.mikeperham.com/rubygems/
@@ -275,6 +268,8 @@ GEM
       sidekiq (>= 2.16.0)
     sidekiq-pro (1.7.4)
       sidekiq (>= 3)
+    sidekiq-retries (0.1.0)
+      sidekiq (~> 3.0)
     sidekiq-unique-jobs (3.0.2)
       mock_redis
       sidekiq (>= 2.6)
@@ -389,7 +384,7 @@ DEPENDENCIES
   shoulda-matchers
   sidekiq-failures
   sidekiq-pro
-  sidekiq-retries!
+  sidekiq-retries
   sidekiq-unique-jobs
   simple_token_authentication
   sinatra

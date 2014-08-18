@@ -24,7 +24,7 @@ gem 'redis-store', '=1.1.3' # 1.1.4 has breaking changes
 gem 'request_exception_handler'
 gem 'sidekiq-failures'
 gem 'sidekiq-pro'
-gem 'sidekiq-retries', git: 'https://github.com/govdelivery/sidekiq-retries.git'
+gem 'sidekiq-retries'
 gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication'
 gem 'sinatra', :require => nil
