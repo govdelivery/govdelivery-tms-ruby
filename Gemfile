@@ -3,6 +3,7 @@ source "https://ed5779be:de10e893@www.mikeperham.com/rubygems/"
 source 'https://rubygems.org'
 
 gem 'aasm'
+gem 'addressable'
 gem 'activerecord-oracle_enhanced-adapter' #, '=1.4.3.5'
 gem 'clockwork'
 gem 'dcm_client', '~>0.1.4'
@@ -25,6 +26,7 @@ gem 'request_exception_handler'
 gem 'sidekiq-failures'
 gem 'sidekiq-pro'
 gem 'sidekiq-retries'
+gem 'sidekiq-throttler'
 gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication'
 gem 'sinatra', :require => nil
@@ -32,6 +34,7 @@ gem 'slim'
 gem "strip_attributes"
 gem 'twilio-ruby'
 gem 'typhoeus'
+gem "validate_url"
 gem 'valid_email'
 gem 'yakety_yak'
 gem 'attr_encrypted'

@@ -35,6 +35,7 @@ Sidekiq.configure_server do |config|
   config.options[:queues] = ['sender', 'default', 'command', 'webhook', 'stats']
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
+    chain.add Sidekiq::Throttler, storage: :redis
     # remove the default logging middleware because it assumes the worker name
     # is already in the logger string.
   end

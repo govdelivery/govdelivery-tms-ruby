@@ -14,7 +14,11 @@ module CommandWorkers
   class ForwardWorker
     include CommandWorkers::Base
 
-    sidekiq_options retry: false, queue: :webhook
+    sidekiq_options retry:    false,
+                    queue:    :webhook,
+                    throttle: {threshold: 30,
+                               period:    5.seconds,
+                               key:       ->(options) { Addressable::URI.parse(options['url']).host }}
 
     attr_writer :sms_service
 

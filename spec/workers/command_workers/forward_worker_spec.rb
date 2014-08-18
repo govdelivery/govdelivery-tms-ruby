@@ -3,7 +3,7 @@ require 'rails_helper'
 describe CommandWorkers::ForwardWorker do
   let(:account){ create(:account_with_sms) }
   let(:command){ create(:forward_command, keyword: account.default_keyword) }
-  let(:options) { {url: "url",
+  let(:options) { {url: "http://dudes.ruby",
                    http_method: "post",
                    username: nil,
                    password: nil,

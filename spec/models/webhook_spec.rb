@@ -15,6 +15,7 @@ RSpec.describe Webhook, :type => :model do
       subject { account.webhooks.create(url: 'http://dudes.ruby', event_type: 'failed') }
       it 'should save' do
         subject.persisted?.should be true
+        subject.job_key.should eq 'dudes.ruby'
       end
       it 'should invoke and enqueue a background job' do
         RecipientPresenter.any_instance.stubs(:webhook_params).returns(webhook: 'fake')
@@ -24,9 +25,10 @@ RSpec.describe Webhook, :type => :model do
     end
 
     it 'is uncool to specify a bogus event type' do
-      webhook = account.webhooks.create(url: 'http://dudes.ruby', event_type: 'buttered')
+      webhook = account.webhooks.create(url: 'dudes.ruby', event_type: 'buttered')
       webhook.valid?.should be false
       webhook.errors[:event_type].should_not be_nil
+      webhook.errors[:url].should_not be_nil
     end
   end
 end

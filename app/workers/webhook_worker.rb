@@ -1,7 +1,10 @@
 require 'base'
 class WebhookWorker
   include Workers::Base
-  sidekiq_options retry: 10, queue: :webhook
+  sidekiq_options retry:    10,
+                  queue:    :webhook,
+                  throttle: {threshold: 30, period: 5.seconds, key: ->(options) { options['job_key'] }}
+
 
   READ_TIMEOUT = 5 #seconds
   CONN_TIMEOUT = 2 #seconds

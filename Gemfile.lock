@@ -40,6 +40,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    addressable (2.3.6)
     alphabetize (0.1.2)
     arel (5.0.1.20140414130214)
     attr_encrypted (1.3.2)
@@ -270,6 +271,9 @@ GEM
       sidekiq (>= 3)
     sidekiq-retries (0.1.0)
       sidekiq (~> 3.0)
+    sidekiq-throttler (0.4.1)
+      activesupport
+      sidekiq (>= 2.5, < 4.0)
     sidekiq-unique-jobs (3.0.2)
       mock_redis
       sidekiq (>= 2.6)
@@ -326,6 +330,9 @@ GEM
     valid_email (0.0.7)
       activemodel
       mail
+    validate_url (0.2.2)
+      activemodel (>= 3.0.0)
+      addressable
     warden (1.2.3)
       rack (>= 1.0)
     yakety_yak (0.1.0)
@@ -345,6 +352,7 @@ PLATFORMS
 DEPENDENCIES
   aasm
   activerecord-oracle_enhanced-adapter
+  addressable
   alphabetize
   attr_encrypted
   brakeman
@@ -385,6 +393,7 @@ DEPENDENCIES
   sidekiq-failures
   sidekiq-pro
   sidekiq-retries
+  sidekiq-throttler
   sidekiq-unique-jobs
   simple_token_authentication
   sinatra
@@ -395,6 +404,7 @@ DEPENDENCIES
   twilio-ruby
   typhoeus
   valid_email
+  validate_url
   yakety_yak
   yaml_db
   zeus
