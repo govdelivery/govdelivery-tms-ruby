@@ -1,9 +1,5 @@
 module IPAWS
-  class NwemAuthorizationsController < ApplicationController
-
-    include FeatureChecker
-    before_filter :find_user
-    feature :ipaws
+  class NwemAuthorizationsController < IPAWS::Controller
 
     def show
       respond_with @account.ipaws_vendor.nwem_cog_authorization

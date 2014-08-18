@@ -1,9 +1,5 @@
 module IPAWS
-  class NwemAreasController < ApplicationController
-
-    include FeatureChecker
-    before_filter :find_user
-    feature :ipaws
+  class NwemAreasController < IPAWS::Controller
 
     def index
       respond_with @account.ipaws_vendor.nwem_areas
