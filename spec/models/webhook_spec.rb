@@ -19,7 +19,7 @@ RSpec.describe Webhook, :type => :model do
       end
       it 'should invoke and enqueue a background job' do
         RecipientPresenter.any_instance.stubs(:webhook_params).returns(webhook: 'fake')
-        WebhookWorker.expects(:perform_async).with(url: subject.url, params: {webhook: 'fake'})
+        WebhookWorker.expects(:perform_async).with(url: subject.url, job_key: 'dudes.ruby', params: {webhook: 'fake'})
         subject.invoke(recipient)
       end
     end
