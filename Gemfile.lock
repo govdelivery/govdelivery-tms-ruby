@@ -333,7 +333,7 @@ GEM
       mail
     warden (1.2.3)
       rack (>= 1.0)
-    yakety_yak (0.0.10)
+    yakety_yak (0.1.0)
       celluloid (~> 0.15.2)
       poseidon_cluster (~> 0.2.0.1)
     yaml_db (0.2.3)

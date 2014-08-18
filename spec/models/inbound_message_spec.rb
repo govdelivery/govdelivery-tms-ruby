@@ -132,10 +132,10 @@ describe InboundMessage do
     expected = {
       :channel => 'sms_channel', 
       :message => has_entries({
-        :to => message.to,
+        :to   => message.to,
         :from => message.from,
         :body => message.body,
-        :type => 'incoming'
+        :uri  => 'xact:sms:inbound'
       })
     }
     Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))

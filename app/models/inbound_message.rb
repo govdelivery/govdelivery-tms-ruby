@@ -61,7 +61,7 @@ class InboundMessage < ActiveRecord::Base
 
   def publish_event
     Analytics::PublisherWorker.perform_async(:channel => 'sms_channel', :message => {
-      :type       => 'incoming',
+      :uri        => 'xact:sms:inbound',
       :from       => from,
       :to         => to,
       :body       => body,
