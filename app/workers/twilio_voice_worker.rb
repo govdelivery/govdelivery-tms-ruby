@@ -13,7 +13,7 @@ class TwilioVoiceWorker
     callback_url = options[:callback_url]
     message_url = options[:message_url]
 
-    if message = VoiceMessage.select('id, account_id, play_url').find(message_id)
+    if message = VoiceMessage.select('id, account_id, play_url, status').find(message_id)
       logger.info("Send initiated for message_id=#{message.id} and callback_url=#{callback_url}")
       Service::TwilioMessageService.deliver!(message, callback_url, message_url)
     else

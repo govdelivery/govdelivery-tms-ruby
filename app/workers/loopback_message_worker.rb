@@ -6,7 +6,8 @@ class LoopbackMessageWorker
   def perform(options)
     if @message
       @message.sending!
-      @message.sendable_recipients.sending.except(:order).find_each do |recipient|
+      @message.sendable_recipients.except(:order).find_each do |recipient|
+        recipient.sending!(ack)
         recipient.sent!(ack)
       end
       logger.warn("#{self.class.name} #{@message.to_s} could not be completed: #{@message.recipient_counts}") unless @message.complete!

@@ -13,7 +13,7 @@ module Message
       state :completed
 
       event :ready do
-        transitions from: :new, to: :queued, guard: :has_recipients, on_transition: [:process_blacklist!, :prepare_recipients]
+        transitions from: :new, to: :queued, guard: :create_recipients, on_transition: [:process_blacklist!, :prepare_recipients]
       end
 
       event :sending do
@@ -72,21 +72,22 @@ module Message
   end
 
   ##
-  # Create recipients for this message in batch. Note that this method 
-  # does not return the created recipients.
+  # Create recipients for this message in batch. Returns true if message has valid recipients
   #
   # @param recipient_params [Array of Hashes]
   # @return recipient_params
   # 
-  def create_recipients(recipient_params=[])
-    klass = recipient_class
-    recipient_params.each_with_index do |r, i|
+  def create_recipients(*args)
+    recipient_params = args[0] || []
+    klass            = recipient_class
+    success          = false
+    recipient_params.each do |r|
       # not using a relation here to avoid holding references and leaking
-      recipient = klass.new(r.merge(vendor: self.vendor, message_id: self.id))
-      recipient.skip_message_validation=true
-      recipient.save
+      recipient                         = klass.new(r.merge(vendor: self.vendor, message_id: self.id))
+      recipient.skip_message_validation = true
+      success                           = true if recipient.save
     end
-    ready!
+    success || recipients.count > 0
   end
 
   # The number of seconds it took to build the recipient list for this
@@ -117,10 +118,6 @@ module Message
 
   def prepare_recipients
     # noop
-  end
-
-  def has_recipients
-    recipients.any?
   end
 
   def check_complete

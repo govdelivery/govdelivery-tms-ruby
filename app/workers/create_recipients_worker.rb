@@ -17,13 +17,14 @@ class CreateRecipientsWorker
   end
 
   def perform(options)
-    message = options['klass'].constantize.find(options['message_id'])
+    message          = options['klass'].constantize.find(options['message_id'])
     recipient_params = options['recipients']
-    if message && recipient_params.present?
-      message.create_recipients(recipient_params)
+
+    begin
+      message.ready!(nil, recipient_params)
       message.worker.perform_async({:message_id => message.id}.merge!(options['send_options']))
-    elsif message
-      message.complete!
+    rescue AASM::InvalidTransition => e
+      logger.warn("Failed to queue or complete #{message.to_s}") unless message.complete!
     end
   ensure
     Rails.cache.delete(self.class.job_key(message.id)) if message

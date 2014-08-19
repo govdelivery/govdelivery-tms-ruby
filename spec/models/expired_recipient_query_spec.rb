@@ -7,7 +7,7 @@ describe ExpiredRecipientQuery do
   let(:messages) {
     [1, 2].map{|x|
       m = create(:email_message, account: account, body: "body #{x}")
-      m.create_recipients([email: "from-message#{x}@example.com"])
+      m.ready!(nil, [email: "from-message#{x}@example.com"])
       m.sending!
       m
     }

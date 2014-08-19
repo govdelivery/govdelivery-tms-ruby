@@ -31,7 +31,7 @@ describe VoiceMessage do
     context 'being marked ready' do
       before do
         message.expects(:process_blacklist!)
-        message.create_recipients([{phone: "4054343424"}]).should be true
+        message.ready!(nil, [{phone: "4054343424"}]).should be true
       end
 
     context "being marked as sending" do
@@ -46,7 +46,7 @@ describe VoiceMessage do
 
     context "with invalid recipient" do
       it 'should blow up' do
-        expect { message.create_recipients([{:phone => nil}]) }.to raise_error(AASM::InvalidTransition)
+        expect { message.ready!([{:phone => nil}]) }.to raise_error(AASM::InvalidTransition)
       end
     end
 
