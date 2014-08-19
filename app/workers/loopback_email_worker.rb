@@ -7,4 +7,8 @@ class LoopbackEmailWorker < LoopbackMessageWorker
     super
   end
 
+  def magic_failure?(recipient)
+    recipient.email =~ /fail.govdelivery.com/
+  end
+
 end
