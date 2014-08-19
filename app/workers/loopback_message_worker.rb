@@ -1,7 +1,7 @@
 require 'base'
 class LoopbackMessageWorker
   include Workers::Base
-  sidekiq_options retry: false
+  sidekiq_options retry: 0
 
   def perform(options)
     if @message

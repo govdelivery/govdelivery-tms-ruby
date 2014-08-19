@@ -14,7 +14,7 @@ module CommandWorkers
   class ForwardWorker
     include CommandWorkers::Base
 
-    sidekiq_options retry:    false,
+    sidekiq_options retry:    0,
                     queue:    :webhook,
                     throttle: {threshold: 30,
                                period:    5.seconds,
