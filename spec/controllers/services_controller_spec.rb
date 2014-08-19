@@ -26,7 +26,8 @@ describe ServicesController do
       ipaws_cog_profile: ipaws_cog_profile_path,
       ipaws_nwem_authorization: ipaws_nwem_authorization_path,
       ipaws_nwem_areas: ipaws_nwem_areas_path,
-      ipaws_alerts: ipaws_alerts_path
+      ipaws_alerts: ipaws_alerts_path,
+      webhooks: webhooks_path,
     }
   end
 

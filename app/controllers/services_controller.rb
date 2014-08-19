@@ -32,7 +32,10 @@ class ServicesController < ApplicationController
       @services[:ipaws_nwem_areas] = ipaws_nwem_areas_path
       @services[:ipaws_alerts] = ipaws_alerts_path
     end
+
+    @services[:webhooks] = webhooks_path
   end
+
   
   private
   
