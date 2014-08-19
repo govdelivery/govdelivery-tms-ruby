@@ -59,6 +59,21 @@ describe Twilio::SenderWorker do
       end
     end
 
+    context "a send that blows up because we such" do
+      it 'should retry' do
+        response     = 400
+        twilio_calls = mock
+        subject.expects(:find_message_and_recipient).raises(RuntimeError, 'foo')
+        client.stubs(:account).returns(stub('calls', calls: twilio_calls))
+        expect { subject.perform(
+          message_id:    message.id,
+          message_class: message.class.name,
+          recipient_id:  message.recipients.first.id,
+          callback_url:  'http://localhost')
+        }.to raise_exception(Sidekiq::Retries::Retry)
+      end
+    end
+
     context 'a send that succeed but then fails to update the recipient' do
       it 'should not retry' do
         twilio_calls = mock
@@ -71,7 +86,7 @@ describe Twilio::SenderWorker do
           message_class: message.class.name,
           recipient_id: message.recipients.first.id,
           callback_url: 'http://localhost')
-        }.to raise_exception(Sidekiq::Retries::Fail)
+        }.to raise_exception(RuntimeError, 'this could be anything')
       end
     end
 
