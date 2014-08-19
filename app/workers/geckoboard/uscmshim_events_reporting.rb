@@ -2,6 +2,9 @@ module Geckoboard
   class UscmshimEventsReporting
     include UscmshimHelpers
     include Workers::Base
+
+    sidekiq_options retry: false
+
     #'clicks', 10060, ''"CLICKED_AT"''
     def perform(event_type, account_id, basename)
       scope, column = case event_type
@@ -15,9 +18,7 @@ module Geckoboard
       scope = scope.joins(:email_message).where(email_messages: {account_id: account_id})
 
       time_range, timestamp_range = hour_ranges(24)
-
       results = grouped_by_hour(scope, column, time_range)
-
       data = zeroes(timestamp_range.step(1.hour)).merge(results).sort_by(&:first)
 
       counts = data.map(&:second)
