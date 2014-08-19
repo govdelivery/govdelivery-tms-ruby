@@ -14,10 +14,7 @@ module Geckoboard
       date_range=start...end_time
       int_range=start.to_i...end_time.to_i
 
-      results=EmailMessage.
-        where(account_id: account_id).
-        where(created_at: date_range).
-        count(group: "trunc(created_at, 'HH24')")
+      results=message_counts
 
       # start with 0 for every hour
       data=int_range.step(1.hour).reduce({}) { |memo, i|
@@ -37,6 +34,14 @@ module Geckoboard
         }}.to_json
 
       write_to_file("#{basename}.json", output)
+    end
+
+    def message_counts
+      results=EmailMessage.
+        where(account_id: account_id).
+        where(created_at: date_range).
+        count(group: "trunc(created_at, 'HH24')")
+      results.is_a?(Hash) ? results : {}
     end
 
     def write_to_file(outfile, output)
