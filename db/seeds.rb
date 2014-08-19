@@ -32,8 +32,8 @@ twilio_voice_sender.update_attributes(
   password: Rails.configuration.twilio_password,
   from:     Rails.configuration.twilio_number)
 
-twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender')
-twilio_sms_test_sender.update_attributes(
+twilio_voice_test_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender')
+twilio_voice_test_sender.update_attributes(
   worker:   'TwilioVoiceWorker',
   username: Rails.configuration.twilio_test_username,
   password: Rails.configuration.twilio_test_password,
