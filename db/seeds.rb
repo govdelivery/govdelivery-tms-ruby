@@ -13,16 +13,32 @@
 
 twilio_sms_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Sender')
 twilio_sms_sender.update_attributes(
-                                                      worker: 'TwilioMessageWorker',
-                                                      username: Rails.configuration.twilio_username,
-                                                      password: Rails.configuration.twilio_password,
-                                                      from: Rails.configuration.twilio_number)
+  worker:   'TwilioMessageWorker',
+  username: Rails.configuration.twilio_username,
+  password: Rails.configuration.twilio_password,
+  from:     Rails.configuration.twilio_number)
+
+twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test SMS Sender')
+twilio_sms_test_sender.update_attributes(
+  worker:   'TwilioMessageWorker',
+  username: Rails.configuration.twilio_test_username,
+  password: Rails.configuration.twilio_test_password,
+  from:     Rails.configuration.twilio_number)
+
 twilio_voice_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Voice Sender')
 twilio_voice_sender.update_attributes(
-                                                          worker: 'TwilioVoiceWorker',
-                                                          username: Rails.configuration.twilio_username,
-                                                          password: Rails.configuration.twilio_password,
-                                                          from: Rails.configuration.twilio_number)
+  worker:   'TwilioVoiceWorker',
+  username: Rails.configuration.twilio_username,
+  password: Rails.configuration.twilio_password,
+  from:     Rails.configuration.twilio_number)
+
+twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender')
+twilio_sms_test_sender.update_attributes(
+  worker:   'TwilioVoiceWorker',
+  username: Rails.configuration.twilio_test_username,
+  password: Rails.configuration.twilio_test_password,
+  from:     Rails.configuration.twilio_number)
+
 sms_loopback = SmsVendor.find_or_initialize_by(name: 'Loopback SMS Sender')
 sms_loopback.update_attributes(
                                                  worker: 'LoopbackSmsWorker',
