@@ -12,7 +12,7 @@ describe RecipientPresenter do
                                        message_type:  'sms',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       messsage_url:  presenter.message_url,
+                                       message_url:  presenter.message_url,
                                      })
     end
   end
@@ -26,7 +26,7 @@ describe RecipientPresenter do
                                        message_type:  'sms',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       messsage_url:  presenter.message_url,
+                                       message_url:  presenter.message_url,
                                        error_message: 'not cool',
                                        completed_at:  recipient.completed_at
                                      })
@@ -42,7 +42,7 @@ describe RecipientPresenter do
                                        message_type:  'voice',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       messsage_url:  presenter.message_url,
+                                       message_url:  presenter.message_url,
                                      })
     end
   end
@@ -56,7 +56,7 @@ describe RecipientPresenter do
                                        message_type:  'email',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       messsage_url:  presenter.message_url,
+                                       message_url:  presenter.message_url,
                                      })
     end
   end

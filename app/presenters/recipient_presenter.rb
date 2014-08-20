@@ -19,7 +19,7 @@ class RecipientPresenter < SimpleDelegator
       message_type:  self.message_type,
       status:        self.status,
       recipient_url: self.url,
-      messsage_url:  self.message_url,
+      message_url:  self.message_url,
     }
     params[:error_message] = self.error_message if self.error_message
     params[:completed_at]  = self.completed_at if self.completed_at
