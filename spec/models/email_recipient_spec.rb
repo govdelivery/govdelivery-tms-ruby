@@ -5,6 +5,12 @@ describe EmailRecipient do
   let(:vendor) { create(:email_vendor) }
   let(:account) { create(:account, email_vendor: vendor, name: 'account') }
   let(:email_message) { create(:email_message, account: account) }
+  let(:other_email) {
+    em = create(:email_message, account: account)
+    em.recipients.build(email: 'doo@doo.com')
+    em.save
+    em
+  }
   let(:user) { User.create(:email => 'admin@example.com', :password => 'retek01!').tap { |u| u.account = account } }
 
   subject {
@@ -23,6 +29,10 @@ describe EmailRecipient do
     end
     it 'should have the correct ODM record designator' do
       subject.to_odm.should eq("hi@man.com::#{subject.id}")
+    end
+    it 'should have the right message sendable_recipients using Recipient#to_send' do
+      other_email #init
+      email_message.sendable_recipients.all.should eq(email_message.recipients.all)
     end
     context 'and macros' do
       before do
