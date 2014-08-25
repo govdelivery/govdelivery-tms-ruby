@@ -1,4 +1,5 @@
 require 'rails_helper'
+require_relative '../../../app/transformers/eta_spot'
 
 describe CommandWorkers::ForwardWorker do
   let(:account){ create(:account_with_sms) }
@@ -46,6 +47,20 @@ describe CommandWorkers::ForwardWorker do
     subject.expects( :account ).returns(stub('account'))
 
     subject.perform( options )
+  end
+
+  it 'does not create a Twilio::SenderWorker job if command.process_response blows up' do
+    Service::ForwardService.any_instance.expects(:send)
+    Twilio::SenderWorker.expects(:perform_async).never
+    # this craziness is due to the use of super in the perform method
+    fake_command = build(:forward_command).tap { |c|
+      c.expects(:process_response).
+        raises(::Transformers::InvalidResponse, 'whoops')
+    }
+    subject.expects(:command).returns(fake_command)
+    subject.expects(:account).returns(stub('account'))
+
+    subject.perform(options)
   end
 
 end

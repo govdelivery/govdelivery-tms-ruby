@@ -1,6 +1,10 @@
 require 'json'
 
 module Transformers
+  class InvalidResponse < StandardError
+
+  end
+
   class Base
     def initialize(payload, format)
       @payload = payload
@@ -16,7 +20,7 @@ module Transformers
     end
 
     def formatted_payload
-      return '' unless acceptable_format?
+      on_invalid_format unless acceptable_format?
       @formatted_payload ||= case @format
       when "application/json"
         begin
@@ -27,8 +31,14 @@ module Transformers
       when "text/html", "text/plain"
         @payload
       else
-        ''
+        on_invalid_format
       end
+    end
+
+    protected
+
+    def on_invalid_format
+      raise Transformers::InvalidResponse.new("invalid content type: #{@format}")
     end
   end
 end

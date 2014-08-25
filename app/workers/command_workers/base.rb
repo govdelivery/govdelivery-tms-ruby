@@ -18,6 +18,8 @@ module CommandWorkers
 
       def perform(opts)
         command.process_response(self.account, self.options, self.http_response)
+      rescue Transformers::InvalidResponse => e
+        nil
       end
 
       def options=(opts)

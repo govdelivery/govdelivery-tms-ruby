@@ -2,7 +2,7 @@ require 'spec_helper'
 require_relative '../../app/transformers/eta_spot'
 
 describe Transformers::EtaSpot do
-  let(:valid_json) { { get_stop_etas:[{smsText: "Blah"}] }.to_json }
+  let(:valid_json) { {get_stop_etas: [{smsText: "Blah"}]}.to_json }
   let(:invalid_json) { "test" }
   let(:valid_format) { "application/json" }
   let(:invalid_format) { "text/plain" }
@@ -17,8 +17,8 @@ describe Transformers::EtaSpot do
         expect(subject.acceptable_format?).to be(false)
       end
 
-      it 'should return an empty string when returning the transformed data' do
-        expect(subject.transform).to be_empty
+      it 'should raise an error on transform transformed' do
+        expect { subject.transform }.to raise_error(Transformers::InvalidResponse, "invalid content type: text/plain")
       end
     end
 
@@ -48,7 +48,7 @@ describe Transformers::EtaSpot do
       end
 
       it 'should return an empty string when returning the transformed data' do
-        expect(subject.transform).to be_empty
+        expect { subject.transform }.to raise_error(Transformers::InvalidResponse, "invalid content type: text/plain")
       end
     end
 
@@ -62,7 +62,7 @@ describe Transformers::EtaSpot do
       end
 
       it 'should return an empty string when returning the transformed data' do
-        expect(subject.transform).to be_empty
+        expect { subject.transform }.to raise_error(Transformers::InvalidResponse, "got invalid response body 'test'")
       end
     end
   end
