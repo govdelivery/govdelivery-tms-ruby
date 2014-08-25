@@ -12,6 +12,7 @@ describe Account do
       create(:account, email_vendor: email_vendor)
     }
     it 'should work' do
+      subject.sid.should_not be nil
       subject.from_email_allowed?('randomemail@foo.com').should be false
       subject.from_email_allowed?(subject.default_from_address.from_email).should be true
       subject.from_email_allowed?(subject.default_from_address.from_email.upcase).should be true

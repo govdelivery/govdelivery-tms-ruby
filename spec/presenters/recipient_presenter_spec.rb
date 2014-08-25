@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe RecipientPresenter do
-  let(:presenter) { RecipientPresenter.new(recipient) }
+  let(:account) { build_stubbed(:account, sid: 'this_is_sid') }
+  let(:presenter) { RecipientPresenter.new(recipient, account) }
 
   context 'sms' do
     let(:recipient) { build_stubbed(:sms_recipient, message_id: 101, status: 'sending') }
@@ -12,7 +13,8 @@ describe RecipientPresenter do
                                        message_type:  'sms',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       message_url:  presenter.message_url,
+                                       message_url:   presenter.message_url,
+                                       sid:           'this_is_sid'
                                      })
     end
   end
@@ -26,9 +28,10 @@ describe RecipientPresenter do
                                        message_type:  'sms',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       message_url:  presenter.message_url,
+                                       message_url:   presenter.message_url,
                                        error_message: 'not cool',
-                                       completed_at:  recipient.completed_at
+                                       completed_at:  recipient.completed_at,
+                                       sid:           'this_is_sid'
                                      })
     end
   end
@@ -42,7 +45,8 @@ describe RecipientPresenter do
                                        message_type:  'voice',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       message_url:  presenter.message_url,
+                                       message_url:   presenter.message_url,
+                                       sid:           'this_is_sid'
                                      })
     end
   end
@@ -56,7 +60,8 @@ describe RecipientPresenter do
                                        message_type:  'email',
                                        status:        recipient.status,
                                        recipient_url: presenter.url,
-                                       message_url:  presenter.message_url,
+                                       message_url:   presenter.message_url,
+                                       sid:           'this_is_sid'
                                      })
     end
   end

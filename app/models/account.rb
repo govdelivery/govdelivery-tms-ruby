@@ -37,8 +37,10 @@ class Account < ActiveRecord::Base
   delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, :to => :default_from_address
 
   before_validation :normalize_dcm_account_codes
+  before_validation :generate_sid, on: :create
 
   validates :name, presence: true, length: {maximum: 255}, uniqueness: true
+  validates :sid, presence: true
   validate :has_one_default_from_address, :if => '!email_vendor_id.blank?'
   validate :validate_sms_prefixes
 
@@ -99,14 +101,19 @@ class Account < ActiveRecord::Base
 
   protected
 
+  def generate_sid
+    loop do
+      self.sid = SecureRandom.hex(16)
+      break unless Account.where(sid: self.sid).any?
+    end
+  end
+
   def normalize_dcm_account_codes
     if dcm_account_codes
       self.dcm_account_codes = dcm_account_codes.to_set unless dcm_account_codes.is_a?(Set)
       dcm_account_codes.collect!(&:upcase).collect!(&:strip)
     end
   end
-
-  private
 
   ##
   # Accounts with an email vendor are required to have one (default)

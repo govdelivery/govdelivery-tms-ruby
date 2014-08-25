@@ -9,7 +9,7 @@ class Webhook < ActiveRecord::Base
   validates :url, :url => true
 
   def invoke(recipient)
-    WebhookWorker.perform_async({url: self.url, job_key: job_key}.merge!(params: RecipientPresenter.new(recipient).to_webhook))
+    WebhookWorker.perform_async({url: self.url, job_key: job_key}.merge!(params: RecipientPresenter.new(recipient, self.account).to_webhook))
   end
 
   def job_key
