@@ -19,8 +19,19 @@ class ApplicationController < ActionController::API
   self.responder = RablResponder
   prepend_before_filter :extract_token_header
 
+  ##
+  # Our authentication routine will:
+  # 1. try to log in using a provided auth_token. If the auth token is invalid
+  #    the service will return a 401.
+  # 2. if no auth token is given, try to log in with basic auth.
+  #
+  # NOTE:
+  # authenticate must follow set_default_format to avoid java.lang.NullPointerException
+  # at org.apache.tomcat.util.http.parser.HttpParser.parseMediaType
+  # this happens when auth_token is invalid
+
   before_filter :set_default_format
-  before_filter :authenticate
+  before_filter :authenticate_user!
   before_filter :set_page, :only => :index
 
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
@@ -61,22 +72,6 @@ class ApplicationController < ActionController::API
   def extract_token_header
     if request.headers['X-AUTH-TOKEN']
       params.merge!({:auth_token => request.headers['X-AUTH-TOKEN']})
-    end
-  end
-
-  ##
-  # Our authentication routine will:
-  # 1. try to log in using a provided auth_token. If the auth token is invalid
-  #    the service will return a 401.
-  # 2. if no auth token is given, try to log in with basic auth.
-  #
-  # NOTE:
-  # authenticate must follow set_default_format to avoid java.lang.NullPointerException
-  # at org.apache.tomcat.util.http.parser.HttpParser.parseMediaType
-  # this happens when auth_token is invalid
-  def authenticate
-    authenticate_user!.tap do 
-      Rails.logger.info("Authenticated user #{current_user.id} #{current_user.email}")
     end
   end
 

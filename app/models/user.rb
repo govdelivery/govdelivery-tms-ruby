@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   devise :database_authenticatable, :validatable
+  acts_as_multi_token_authenticatable
 
   attr_accessible :email, :password
 
@@ -18,15 +19,16 @@ class User < ActiveRecord::Base
   has_many :voice_messages, -> { order('voice_messages.created_at DESC') }
   has_many :account_voice_messages, :through => :account, :source => VoiceMessage.table_name
 
+  scope :for_token, ->(token) { joins(:authentication_tokens).where("authentication_tokens.token" => token) }
+
   before_validation :downcase_email
-  acts_as_multi_token_authenticatable
 
   delegate :vendors, :to => :account
   delegate :sms_vendor, :to => :account
   delegate :voice_vendor, :to => :account
 
   def self.with_token(token)
-    self.joins(:authentication_tokens).where("authentication_tokens.token = ?", token).first
+    self.for_token(token).first
   end
 
   def to_s
@@ -42,7 +44,9 @@ class User < ActiveRecord::Base
   end
 
   private
+
   def downcase_email
     self.email.downcase! if self.email
   end
+
 end

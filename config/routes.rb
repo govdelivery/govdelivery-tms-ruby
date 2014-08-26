@@ -7,14 +7,16 @@ Xact::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-  devise_for :users, :skip => :all, :token_authentication_key => 'auth_token'
+  devise_for :users, skip: :all
+
+  root to: 'services#index'
 
   # call this to add pagination to your controller
   # e.g.
-  # pageable =>
-  # paged_messages GET    /messages/page/:page(.:format)                        messages#index
+  # pageable
+  #   paged_messages GET    /messages/page/:page(.:format)                        messages#index
   def pageable
-    get 'page/:page', :action => :index, :on => :collection
+    get 'page/:page', action: :index, on: :collection
   end
 
   resources :webhooks
@@ -27,17 +29,17 @@ Xact::Application.routes.draw do
     end
   end
 
-  resources(:keywords, :only => [:index, :show, :create, :update, :destroy]) do
-    resources(:commands, :only => [:index, :show, :create, :update, :destroy], :controller => :keyword_commands) do
+  resources(:keywords, only: [:index, :show, :create, :update, :destroy]) do
+    resources(:commands, only: [:index, :show, :create, :update, :destroy], controller: :keyword_commands) do
       pageable
       resources :actions, only: [:index, :show], controller: :command_actions
     end
   end
 
-  scope :messages, :path => 'messages' do
-    resources(:email, :only => [:index, :new, :create, :show], :controller => :email_messages) do
+  scope :messages, path: 'messages' do
+    resources(:email, only: [:index, :new, :create, :show], controller: :email_messages) do
       pageable
-      resources(:recipients, :only => [:index, :show]) do
+      resources(:recipients, only: [:index, :show]) do
         pageable
         collection do
           get :clicked
@@ -53,10 +55,10 @@ Xact::Application.routes.draw do
         end
       end
     end
-    {:sms => :sms_messages, :voice => :voice_messages}.each do |_resource, _controller|
-      resources(_resource, :only => [:index, :new, :create, :show], :controller => _controller) do
+    {sms: :sms_messages, voice: :voice_messages}.each do |_resource, _controller|
+      resources(_resource, only: [:index, :new, :create, :show], controller: _controller) do
         pageable
-        resources(:recipients, :only => [:index, :show]) do
+        resources(:recipients, only: [:index, :show]) do
           pageable
           collection do
             get :failed
@@ -67,8 +69,8 @@ Xact::Application.routes.draw do
     end
   end
 
-  scope :inbound, :path => 'inbound', :as => 'inbound' do
-    resources(:sms, :only => [:index, :show], :controller => :inbound_messages) do
+  scope :inbound, path: 'inbound', as: 'inbound' do
+    resources(:sms, only: [:index, :show], controller: :inbound_messages) do
       pageable
       resources :command_actions, only: [:index, :show]
     end
@@ -87,14 +89,13 @@ Xact::Application.routes.draw do
     resources :alerts, only: :create
   end
 
-  root :to => 'services#index'
   get 'load_balancer' => 'load_balancer#show'
   get 'command_types' => 'command_types#index'
   post 'twilio_requests' => 'twilio_requests#create'
   post 'twilio_status_callbacks' => 'twilio_status_callbacks#create'
-  post 'twiml' => 'twilio_dial_plan#show', :defaults => {:format => 'xml'}
+  post 'twiml' => 'twilio_dial_plan#show', defaults: {:format => 'xml'}
 
   %w( 400 401 403 404 405 406 422 500).each do |code|
-    get code, :to => "errors#show", :code => code
+    get code, to: 'errors#show', code: code
   end
 end

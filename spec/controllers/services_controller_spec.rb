@@ -1,14 +1,17 @@
 require 'rails_helper'
 describe ServicesController do
+  let (:account) { create :account,
+                          sms_vendor:   create(:sms_vendor),
+                          email_vendor: create(:email_vendor),
+                          voice_vendor: create(:voice_vendor),
+                          ipaws_vendor: create(:ipaws_vendor) }
+  let (:user) { create :user, account: account }
+
+  before do
+    sign_in user
+  end
 
   it "should show services" do
-    account = create :account,
-      sms_vendor: create(:sms_vendor),
-      email_vendor: create(:email_vendor),
-      voice_vendor: create(:voice_vendor),
-      ipaws_vendor: create(:ipaws_vendor)
-    user = create :user, account: account
-    sign_in user
     get :index
     response.response_code.should == 200
     expect(assigns(:services)).to be == {
@@ -32,9 +35,6 @@ describe ServicesController do
   end
 
   it "should not allow any method other than GET" do
-    account = create :account
-    user = create :user, account: account
-    sign_in user
     post :index
     response.headers.should include('Allow' => 'GET')
     response.response_code.should == 405
