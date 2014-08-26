@@ -11,6 +11,12 @@ class MarkOldRecipientsAsInconclusive
   end
 
   def mark_inconclusive!(expired)
-    expired.update_all(status: 'inconclusive')
+    expired.find_each do |recipient|
+      begin
+        recipient.mark_inconclusive!
+      rescue AASM::InvalidTransition => e
+        logger.warn(e)
+      end
+    end
   end
 end

@@ -34,6 +34,10 @@ module Recipient
         transitions from: [:new, :sending, :inconclusive], to: :sent, on_transition: :finalize
       end
 
+      event :mark_inconclusive, after: :invoke_webhooks do
+        transitions from: [:new, :sending], to: :inconclusive, on_transition: :finalize
+      end
+
       event :fail, after: :invoke_webhooks do
         transitions from: [:new, :sending, :inconclusive], to: :failed, on_transition: :finalize
       end

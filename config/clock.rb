@@ -19,6 +19,8 @@ module Clockwork
     every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')
     every(5.minutes, 'Odm::TmsExtendedOpensWorker')
     every(5.minutes, 'Odm::TmsExtendedClicksWorker')
+  else
+    warn('ODM polling is disabled')
   end
 
   if Rails.configuration.twilio_polling_enabled

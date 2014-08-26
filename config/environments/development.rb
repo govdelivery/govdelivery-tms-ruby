@@ -42,6 +42,7 @@ Xact::Application.configure do
   config.twilio_number = '+16514336311'
 
   # qc ODM
+  config.odm_polling_enabled = false
   config.odm_host = "http://localhost:65080"
   config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
   config.odm_username = 'gd3'

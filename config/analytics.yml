@@ -3,7 +3,7 @@ shared: &shared
 
 development:
   <<: *shared
-  enabled: true
+  enabled: false
   kafkas:
     - 192.168.50.3:9093
   zookeepers:

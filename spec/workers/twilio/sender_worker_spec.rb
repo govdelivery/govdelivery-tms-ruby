@@ -1,4 +1,5 @@
 require 'rails_helper'
+require File.expand_path('../../../../app/workers/base', __FILE__)
 
 describe Twilio::SenderWorker do
   context 'a voice send' do
@@ -37,7 +38,7 @@ describe Twilio::SenderWorker do
             message_class: message.class.name,
             recipient_id: message.recipients.first.id,
             callback_url: 'http://localhost')
-          }.to raise_exception(Twilio::REST::RequestError, 'error')
+          }.to raise_exception(Sidekiq::Retries::Retry)
         end
       end
     end
@@ -90,18 +91,5 @@ describe Twilio::SenderWorker do
       end
     end
 
-
-    context 'on retries exhausted' do
-      it 'should fail with error_message' do
-        expect { subject.complete_recipient_with_error!(
-          {message_id: message.id,
-           message_class: message.class.name,
-           recipient_id: message.recipients.first.id,
-           callback_url: 'http://localhost'},
-          'error!'
-        )
-        }.to change { message.recipients.where(:error_message => 'error!').count }.by 1
-      end
-    end
   end
 end

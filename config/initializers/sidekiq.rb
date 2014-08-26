@@ -36,13 +36,13 @@ Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
     chain.add Sidekiq::Throttler, storage: :redis
-    # remove the default logging middleware because it assumes the worker name
-    # is already in the logger string.
   end
   SidekiqClockworkScheduler.new.async.run
 
   if Rails.configuration.analytics[:enabled]
     YaketyYak::Subscriber::Supervisor.go!
+  else
+    warn('YaketyYak analytics are disabled')
   end
   Rails.logger.info "Background services have started."
 end
