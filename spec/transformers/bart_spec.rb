@@ -16,7 +16,7 @@ describe Transformers::Bart do
     end
 
     it 'should return an empty string when returning the transformed data' do
-      expect(subject.transform).to be_empty
+      expect { subject.transform }.to raise_error(Transformers::InvalidResponse, "invalid content type: text/plain")
     end
   end
 
