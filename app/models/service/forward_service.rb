@@ -14,7 +14,7 @@ module Service
     def get(url, username, password, body)
       connection(username, password).get(url) do |req|
         req.headers[:user_agent] = '2' # Header
-        req.params = body
+        req.params.merge!(body)
       end
     end
 
