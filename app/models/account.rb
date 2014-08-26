@@ -11,18 +11,24 @@ class Account < ActiveRecord::Base
   belongs_to :voice_vendor
   belongs_to :ipaws_vendor, :class_name => 'IPAWS::Vendor'
 
-  has_many :commands
-  has_many :email_messages
-  has_many :keywords
-  has_many :sms_messages
-  has_many :sms_prefixes, :inverse_of => :account
-  has_many :stop_requests
-  has_many :users
-  has_many :voice_messages
-  has_many :transformers
-  has_many :webhooks
+  has_many :commands, dependent: :destroy
+  has_many :keywords, dependent: :destroy
+  has_many :email_messages, dependent: :delete_all
+  has_many :email_recipients, through: :email_messages, source: :recipients
+  has_many :email_recipient_clicks, through: :email_messages
+  has_many :email_recipient_opens, through: :email_messages
+  has_many :sms_messages, dependent: :delete_all
+  has_many :sms_recipients, through: :sms_messages, source: :recipients
+  has_many :sms_prefixes, :inverse_of => :account, dependent: :destroy
+  has_many :stop_requests, dependent: :destroy
+  has_many :users, dependent: :destroy
+  has_many :voice_messages, dependent: :delete_all
+  has_many :voice_recipients, through: :voice_messages, source: :recipients
+  has_many :call_scripts, through: :voice_messages
+  has_many :transformers, dependent: :delete_all
+  has_many :webhooks, dependent: :delete_all
 
-  has_many :from_addresses, :inverse_of => :account
+  has_many :from_addresses, :inverse_of => :account, dependent: :destroy
   has_one :default_from_address, -> { where(is_default: true) }, class_name: FromAddress
 
   has_one :stop_keyword,    class_name: Keywords::AccountStop
@@ -99,6 +105,23 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def destroy
+    sms_vendor.destroy if sms_vendor.account_ids == [self.id]
+    email_vendor.destroy if email_vendor.account_ids == [self.id]
+    voice_vendor.destroy if voice_vendor.account_ids == [self.id]
+
+    # if you put this in a before_destroy, associations get deleted first which breaks things
+    # lolz: https://github.com/rails/rails/issues/670
+    self.class.connection.unprepared_statement do
+      [EmailRecipient, SmsRecipient, VoiceRecipient, CallScript, EmailRecipientClick, EmailRecipientOpen].each do |klass|
+        assoc = klass.name.tableize.pluralize
+        self.class.connection.delete("DELETE FROM #{assoc} WHERE id IN (#{self.send(assoc).select("#{assoc}.id").except(:order).to_sql})")
+      end
+    end
+
+    super
+  end
+
   protected
 
   def generate_sid
@@ -136,5 +159,5 @@ class Account < ActiveRecord::Base
     end
   end
 
-  class KeywordNotFound < Exception;  end
+  class KeywordNotFound < StandardError;  end
 end

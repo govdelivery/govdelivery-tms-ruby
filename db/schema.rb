@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140820185812) do
+ActiveRecord::Schema.define(version: 20140826012129) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -191,16 +191,6 @@ ActiveRecord::Schema.define(version: 20140820185812) do
   end
 
   add_index "keywords", ["vendor_id", "account_id", "LOWER(\"NAME\")"], name: "i_key_ven_id_acc_id_low", unique: true, tablespace: "tsms_indx01"
-
-  create_table "messages", force: true do |t|
-    t.integer  "user_id",      precision: 38, scale: 0
-    t.string   "short_body"
-    t.datetime "completed_at"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
-    t.string   "url"
-    t.integer  "account_id",   precision: 38, scale: 0, null: false
-  end
 
   create_table "sms_messages", force: true do |t|
     t.string   "body"

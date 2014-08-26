@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password
 
   belongs_to :account
-  has_many :authentication_tokens, :dependent => :destroy
+  has_many :authentication_tokens, :dependent => :delete_all
 
   validates_presence_of :account
   validates_presence_of :email

@@ -7,30 +7,13 @@ FactoryGirl.define do
     factory :account_keyword do
 
       before(:create) do |keyword|
-        keyword.account = create( :account_with_sms )
+        keyword.account ||= create( :account_with_sms )
       end
 
-      factory :custom_keyword, class: Keyword do
-
-      end
-
-      factory :account_stop, class: Keywords::AccountHelp do
-        initialize_with do
-          create(:account_with_sms).stop_keyword
-        end
-      end
-
-      factory :account_help, class: Keywords::AccountHelp do
-        initialize_with do
-          create(:account_with_sms).help_keyword
-        end
-      end
-
-      factory :account_default, class: Keywords::AccountHelp do
-        initialize_with do
-          create(:account_with_sms).default_keyword
-        end
-      end
+      factory :custom_keyword, class: Keyword
+      factory :account_stop, class: Keywords::AccountStop
+      factory :account_help, class: Keywords::AccountHelp
+      factory :account_default, class: Keywords::AccountDefault
     end
   end
 

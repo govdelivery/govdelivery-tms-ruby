@@ -138,4 +138,32 @@ describe Account do
     account.keywords('what').should be_kind_of(Keyword)
     account.keywords('what!').should be_nil
   end
+
+  context 'an account with lots of stuff that is destroyed' do
+    before do
+      @tables = ActiveRecord::Base.connection.tables
+      @tables.delete('schema_migrations')
+      @tables.each do |table|
+        ActiveRecord::Base.connection.select_value("select count(*) from #{table}").should eq 0
+      end
+      @account    = create(:account_with_stuff)
+      @account_id = @account.id
+      @account.destroy
+    end
+    it 'is rad' do
+      direct_tables = ActiveRecord::Base.connection.tables.
+        map { |m| m.classify.constantize rescue nil }.compact.
+        select { |m| m.column_names.include?('account_id') }
+
+      direct_tables.each do |klass|
+        expect(klass.where(account_id: @account_id).count).to eq 0
+      end
+
+      (@tables - direct_tables).each do |table|
+        expect(ActiveRecord::Base.connection.select_value("select count(*) from #{table}")).to eq 0
+      end
+
+
+    end
+  end
 end

@@ -5,6 +5,12 @@ FactoryGirl.define do
 
   factory :email_recipient do
     email "schwoop@sink.govdelivery.com"
+
+    factory :email_recipient_clicked do
+      after(:create) do |recipient, evaluator|
+        recipient.clicks.create!
+      end
+    end
   end
 
   factory :voice_recipient do

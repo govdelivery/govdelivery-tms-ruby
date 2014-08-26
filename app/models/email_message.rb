@@ -1,6 +1,8 @@
 class EmailMessage < ActiveRecord::Base
   include Message
   include Personalized
+  has_many :email_recipient_clicks
+  has_many :email_recipient_opens
 
   attr_accessible :body,
                   :click_tracking_enabled,
