@@ -17,7 +17,9 @@ describe Service::ForwardService do
 
   it 'should get the parameters' do
     req = stub("request object", headers: {})
-    req.expects(:params=).with(body)
+    params = mock()
+    params.expects(:merge!).with(body)
+    req.expects(:params).returns(params)
     get = mock("get object")
     get.expects(:get).with(url).yields(req)
     client.expects(:connection).with(nil, nil).returns(get)
