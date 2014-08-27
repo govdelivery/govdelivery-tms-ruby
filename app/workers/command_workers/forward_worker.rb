@@ -30,6 +30,7 @@ module CommandWorkers
 
       if message
         recipient_id = message.first_recipient_id
+        logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
         # Send a text back to the user via twilio
         send_response(message, recipient_id, options.callback_url)
       end

@@ -18,6 +18,7 @@ module Message
 
       event :sending do
         transitions from: :queued, to: :sending, on_transition: :on_sending
+        transitions from: :new, to: :sending, guard: :has_recipients?, on_transition: :on_sending
       end
 
       event :complete do
@@ -152,6 +153,10 @@ module Message
   end
 
   private
+
+  def has_recipients?
+    self.recipients.any?
+  end
 
   def recipient_state_counts
     groups = recipients.select('count(status) the_count, status').group('status').reorder('')

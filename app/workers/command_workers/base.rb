@@ -19,7 +19,8 @@ module CommandWorkers
       def perform(opts)
         command.process_response(self.account, self.options, self.http_response)
       rescue Transformers::InvalidResponse => e
-        nil
+        Rails.logger.warn(e)
+        Rails.logger.warn(e.message)
       end
 
       def options=(opts)

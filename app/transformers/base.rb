@@ -6,7 +6,7 @@ module Transformers
   end
 
   class Base
-    def initialize(payload, format)
+    def initialize(format, payload)
       @payload = payload
       @format = format
     end
