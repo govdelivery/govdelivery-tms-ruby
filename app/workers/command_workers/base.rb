@@ -21,6 +21,7 @@ module CommandWorkers
       rescue Transformers::InvalidResponse => e
         Rails.logger.warn(e)
         Rails.logger.warn(e.message)
+        nil
       end
 
       def options=(opts)
