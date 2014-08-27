@@ -25,7 +25,7 @@ module CommandType
       transformer = account.transformer_with_type(command_action.content_type)
       # check content type against expected to prevent garbage from going to user
       if !transformer.nil? && command_action.success?
-        transformed_content = transformer.transform(command_action.content_type, command_action.response_body)
+        transformed_content = transformer.transform(command_action.response_body, command_action.content_type)
         build_message(account, params.from, transformed_content)
       elsif command_action.content_type.include?(params.expected_content_type) && command_action.success?
         build_message(account, params.from, command_action.response_body)

@@ -44,6 +44,16 @@ describe CommandType::Forward do
     subject.process_response(account, command_params, http_response)
   end
 
+  it 'will use a transformer if there is one associated to the account with a matching content type' do
+    transformer = mock()
+    command_action.stubs(:success?).returns(true)
+    command_action.stubs(:content_type).returns("application/json")
+    account.expects(:transformer_with_type).with("application/json").returns(transformer)
+    transformer.expects(:transform).with(command_action.response_body, command_action.content_type).once
+    subject.expects(:build_message).once
+    subject.process_response(account, command_params, http_response)
+  end
+
   it 'will not create an sms message if command_action.content_type does not match expected_content_type' do
     command_action.stubs(:content_type).returns('something crazy')
     subject.expects(:build_message).never
