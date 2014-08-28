@@ -111,6 +111,10 @@ module Message
     {'total' => recipients.count}.merge(recipient_state_counts)
   end
 
+  def to_s
+    "#{self.class.name} (id #{self.id}"
+  end
+
   protected
 
   def process_blacklist!

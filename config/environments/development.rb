@@ -32,7 +32,14 @@ Xact::Application.configure do
   # This is only used to write urls
   config.protocol = 'http'
 
-  routes.default_url_options = {host: 'localhost', port: 3000, protocol: config.protocol}
+  routes.default_url_options =
+    config.action_controller.default_url_options =
+      if ENV['NGROK_HOSTNAME'].present?
+        {host: ENV['NGROK_HOSTNAME'], protocol: config.protocol, port: 80}
+      else
+        {host: 'localhost', port: 3000, protocol: config.protocol}
+      end
+
 
   # Expands the lines which load the assets
   config.assets.debug = true
@@ -51,7 +58,7 @@ Xact::Application.configure do
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
-  config.public_callback = false
+  config.public_callback = ENV['NGROK_HOSTNAME'].present?
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175

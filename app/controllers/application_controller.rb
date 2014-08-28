@@ -144,4 +144,8 @@ class ApplicationController < ActionController::API
     Rails.logger.error e.message
     NewRelic::Agent.notice_error(e)
   end
+
+  def default_url_options
+    ActionController::Base.default_url_options
+  end
 end
