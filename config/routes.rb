@@ -19,9 +19,7 @@ Xact::Application.routes.draw do
     get 'page/:page', action: :index, on: :collection
   end
 
-  resources :webhooks
-
-  resources(:accounts, only: []) do
+  resources(:accounts) do
     resources(:users, only: []) do
       resources(:tokens, only: [:index, :create, :show, :destroy]) do
         pageable
@@ -29,12 +27,13 @@ Xact::Application.routes.draw do
     end
   end
 
-  resources(:keywords, only: [:index, :show, :create, :update, :destroy]) do
-    resources(:commands, only: [:index, :show, :create, :update, :destroy], controller: :keyword_commands) do
+  resources(:keywords) do
+    resources(:commands, controller: :keyword_commands) do
       pageable
       resources :actions, only: [:index, :show], controller: :command_actions
     end
   end
+
 
   scope :messages, path: 'messages' do
     resources(:email, only: [:index, :new, :create, :show], controller: :email_messages) do
@@ -82,9 +81,9 @@ Xact::Application.routes.draw do
     resources :categories, only: :index
     resources :response_types, only: :index
     # Dynamic Endpoints
-    resource  :acknowledgement, only: :show
-    resource  :cog_profile, only: :show
-    resource  :nwem_authorization, only: :show
+    resource :acknowledgement, only: :show
+    resource :cog_profile, only: :show
+    resource :nwem_authorization, only: :show
     resources :nwem_areas, only: :index
     resources :alerts, only: :create
   end
@@ -98,4 +97,6 @@ Xact::Application.routes.draw do
   %w( 400 401 403 404 405 406 422 500).each do |code|
     get code, to: 'errors#show', code: code
   end
+
+  resources :webhooks
 end

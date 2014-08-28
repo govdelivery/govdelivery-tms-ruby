@@ -8,7 +8,6 @@ FactoryGirl.define do
   end
 
   factory :email_vendor, traits: [:vendor] do
-    name 'new name'
   end
 
   factory :sms_vendor, traits: [:vendor] do
@@ -34,7 +33,6 @@ FactoryGirl.define do
   end
 
   factory :voice_vendor, traits: [:vendor] do
-    name 'voice vendor'
     username 'username'
     password 'secret'
     from '+15555555555'

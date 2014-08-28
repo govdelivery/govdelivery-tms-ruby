@@ -33,6 +33,10 @@ class ServicesController < ApplicationController
       @services[:ipaws_alerts] = ipaws_alerts_path
     end
 
+    if current_user.admin?
+      @services[:accounts] = accounts_path
+    end
+
     @services[:webhooks] = webhooks_path
   end
 

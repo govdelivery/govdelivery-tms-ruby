@@ -1,15 +1,17 @@
 require 'set'
 
 class Account < ActiveRecord::Base
-  attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :from_address, :dcm_account_codes
+  attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :ipaws_vendor,
+                  :sms_vendor_id, :email_vendor_id, :voice_vendor_id, :ipaws_vendor_id, :stop_handler_id,
+                  :from_address, :dcm_account_codes
 
   belongs_to :email_vendor
   belongs_to :sms_vendor
 
   #Temporary
-  belongs_to :stop_handler, :class_name => 'EventHandler'
+  belongs_to :stop_handler, class_name: 'EventHandler'
   belongs_to :voice_vendor
-  belongs_to :ipaws_vendor, :class_name => 'IPAWS::Vendor'
+  belongs_to :ipaws_vendor, class_name: 'IPAWS::Vendor'
 
   has_many :commands, dependent: :destroy
   has_many :keywords, dependent: :destroy
@@ -19,7 +21,7 @@ class Account < ActiveRecord::Base
   has_many :email_recipient_opens, through: :email_messages
   has_many :sms_messages, dependent: :delete_all
   has_many :sms_recipients, through: :sms_messages, source: :recipients
-  has_many :sms_prefixes, :inverse_of => :account, dependent: :destroy
+  has_many :sms_prefixes, inverse_of: :account, dependent: :destroy
   has_many :stop_requests, dependent: :destroy
   has_many :users, dependent: :destroy
   has_many :voice_messages, dependent: :delete_all
@@ -28,7 +30,7 @@ class Account < ActiveRecord::Base
   has_many :transformers, dependent: :delete_all
   has_many :webhooks, dependent: :delete_all
 
-  has_many :from_addresses, :inverse_of => :account, dependent: :destroy
+  has_many :from_addresses, inverse_of: :account, dependent: :destroy
   has_one :default_from_address, -> { where(is_default: true) }, class_name: FromAddress
 
   has_one :stop_keyword,    class_name: Keywords::AccountStop
@@ -40,14 +42,14 @@ class Account < ActiveRecord::Base
   after_save( :create_default_keyword!, if: ->{ self.default_keyword.nil? && self.sms_vendor.present? } )
 
   serialize :dcm_account_codes, Set
-  delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, :to => :default_from_address
+  delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, to: :default_from_address
 
   before_validation :normalize_dcm_account_codes
   before_validation :generate_sid, on: :create
 
   validates :name, presence: true, length: {maximum: 255}, uniqueness: true
   validates :sid, presence: true
-  validate :has_one_default_from_address, :if => '!email_vendor_id.blank?'
+  validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
   validate :validate_sms_prefixes
 
   scope :with_sms, where('sms_vendor_id is not null')
@@ -106,9 +108,9 @@ class Account < ActiveRecord::Base
   end
 
   def destroy
-    sms_vendor.destroy if sms_vendor.account_ids == [self.id]
-    email_vendor.destroy if email_vendor.account_ids == [self.id]
-    voice_vendor.destroy if voice_vendor.account_ids == [self.id]
+    sms_vendor.destroy if sms_vendor.try(:account_ids) == [self.id]
+    email_vendor.destroy if email_vendor.try(:account_ids) == [self.id]
+    voice_vendor.destroy if voice_vendor.try(:account_ids) == [self.id]
 
     # if you put this in a before_destroy, associations get deleted first which breaks things
     # lolz: https://github.com/rails/rails/issues/670
@@ -120,6 +122,10 @@ class Account < ActiveRecord::Base
     end
 
     super
+  end
+
+  def dcm_account_codes_array
+    self.dcm_account_codes.try(:to_a)
   end
 
   protected

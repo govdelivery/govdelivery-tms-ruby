@@ -8,6 +8,10 @@ RSpec::Matchers.define :be_json_for do |expected|
     @objects = attributes
   end
 
+  chain :with_arrays do |*attributes|
+    @arrays = attributes
+  end
+
   chain :with_timestamps do |*timestamps|
     @timestamps = timestamps
   end
@@ -27,8 +31,9 @@ RSpec::Matchers.define :be_json_for do |expected|
   match do |actual|
     json = ActiveSupport::JSON.decode(actual)
 
-    @links ||= []
-    @objects ||= []
+    @links      ||= []
+    @objects    ||= []
+    @arrays     ||= []
     @timestamps ||= [:created_at, :updated_at]
     fail('no attributes specified') unless @attributes
 
@@ -42,6 +47,8 @@ RSpec::Matchers.define :be_json_for do |expected|
         Time.parse(v).to_s(:json).should eq(expected.send(ts).to_s(:json))
       elsif @objects.delete(k.to_sym)
         v.should be_a(Hash)
+      elsif @arrays.delete(k.to_sym)
+        v.should be_a(Array)
       elsif @attributes.delete(k.to_sym)
         v.should eq(expected.send(k))
       else
