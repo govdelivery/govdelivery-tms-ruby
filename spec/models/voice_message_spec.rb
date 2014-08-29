@@ -18,6 +18,20 @@ describe VoiceMessage do
 
     subject { message }
     it { subject.call_script.should_not be_nil }
+
+    context 'recipient filters' do
+      [:failed, :sent].each do |type|
+        context "with recips who #{type}" do
+          before do
+            subject.recipients.create!(:phone => '5555555555')
+
+            recip = subject.recipients.reload.first
+            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
+          end
+          it { subject.send(:"recipients_who_#{type}").count.should == 1 }
+        end
+      end
+    end
   end
 
   context "an account with voice and sms senders" do
@@ -34,14 +48,14 @@ describe VoiceMessage do
         message.ready!(nil, [{phone: "4054343424"}]).should be true
       end
 
-    context "being marked as sending" do
-      before do
-        message.sending!.should be true
+      context "being marked as sending" do
+        before do
+          message.sending!.should be true
+        end
+        specify do
+          message.recipients.first.new?.should be true
+        end
       end
-      specify do
-        message.recipients.first.new?.should be true
-      end
-    end
     end
 
     context "with invalid recipient" do

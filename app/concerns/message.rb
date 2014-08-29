@@ -77,7 +77,7 @@ module Message
   #
   # @param recipient_params [Array of Hashes]
   # @return recipient_params
-  # 
+  #
   def create_recipients(*args)
     recipient_params = args[0] || []
     klass            = recipient_class
@@ -109,6 +109,14 @@ module Message
 
   def recipient_counts
     {'total' => recipients.count}.merge(recipient_state_counts)
+  end
+
+  def recipients_who_failed
+    recipients.failed
+  end
+
+  def recipients_who_sent
+    recipients.sent
   end
 
   def to_s

@@ -5,13 +5,13 @@ describe EmailMessage do
   let(:account) { create(:account, email_vendor: vendor, name: 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:email) { user.email_messages.build(
-    :body => 'longggg body', 
-    :subject => 'specs before tests', 
+    :body => 'longggg body',
+    :subject => 'specs before tests',
     :from_email => account.from_email,
-    :open_tracking_enabled => true, 
+    :open_tracking_enabled => true,
     :click_tracking_enabled => true,
     :macros => {
-      'macro1' => 'foo', 
+      'macro1' => 'foo',
       'macro2' => 'bar',
       'first' => 'bazeliefooga'
     }
@@ -19,7 +19,7 @@ describe EmailMessage do
   subject { email }
 
   it_should_validate_as_email :reply_to, :errors_to
-  
+
   context "with a from_email that is not allowed" do
     before do
       Account.any_instance.stubs(:from_email_allowed?).returns(false)
@@ -83,14 +83,14 @@ describe EmailMessage do
         end
       end
 
-      [:opened, :clicked].each do |type|
+      # recipient filters
+      [:opened, :clicked, :failed, :sent].each do |type|
         context "with recips who #{type}" do
           before do
             email.create_recipients([:email => 'tyler@dudes.com', :email => 'ben@dudees.com'])
-            
+
             # one dude twice, the other not at all
             recip = email.recipients.reload.first
-            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
             recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
           end
           it { email.send(:"recipients_who_#{type}").count.should == 1 }

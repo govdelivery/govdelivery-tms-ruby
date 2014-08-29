@@ -52,7 +52,7 @@ describe EmailRecipient do
         account.webhooks.create!(url: 'http://dudes.ruby', event_type: 'failed')
         Webhook.any_instance.expects(:invoke).with(subject)
         subject.reload
-        subject.failed!('ack', 'this message is terrible')
+        subject.failed!('ack', nil, 'this message is terrible')
         subject.failed?.should be true
       end
     end
@@ -93,14 +93,14 @@ describe EmailRecipient do
     context 'status updates' do
       it 'should have an error_message' do
         failed_recipient = subject
-        failed_recipient.failed!(:ack, 'error_message', (sent_at = Time.now))
+        failed_recipient.failed!(:ack, (sent_at = Time.now), 'error_message')
         failed_recipient.error_message.should eq 'error_message'
         failed_recipient.failed?.should be true
       end
 
       it 'should truncate a too-long error message' do
         failed_recipient = subject
-        failed_recipient.failed!(:ack, 'a' * 600, (sent_at = Time.now))
+        failed_recipient.failed!(:ack, (sent_at = Time.now), 'a' * 600)
         failed_recipient.error_message.should eq 'a'*512
         failed_recipient.failed?.should be true
       end

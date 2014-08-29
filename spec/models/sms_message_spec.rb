@@ -58,6 +58,21 @@ describe SmsMessage do
         subject.recipients.should == []
       end
     end
+
+    context 'recipient filters' do
+      [:failed, :sent].each do |type|
+        context "with recips who #{type}" do
+          before do
+            subject.save!
+            subject.recipients.create!(:phone => '5555555555')
+
+            recip = subject.recipients.reload.first
+            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
+          end
+          it { subject.send(:"recipients_who_#{type}").count.should == 1 }
+        end
+      end
+    end
   end
 
   context 'a message with valid recipients attributes' do

@@ -1,9 +1,9 @@
 #
-# Before saving, recipient tries to properly format the 
-# provided phone attribute into the formatted_phone attribute. 
+# Before saving, recipient tries to properly format the
+# provided phone attribute into the formatted_phone attribute.
 #
-# A recipient without a formatted_phone is one that we 
-# cannot possibly forward on to the third-party provider. 
+# A recipient without a formatted_phone is one that we
+# cannot possibly forward on to the third-party provider.
 #
 module Recipient
   extend ActiveSupport::Concern
@@ -79,7 +79,7 @@ module Recipient
     mark_sent!(:sent, ack, date_sent)
   end
 
-  def failed!(ack=nil, error_message=nil, completed_at=nil)
+  def failed!(ack=nil, completed_at=nil, error_message=nil)
     fail!(:failed, ack, completed_at, error_message)
   end
 

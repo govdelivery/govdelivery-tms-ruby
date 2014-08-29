@@ -26,8 +26,8 @@ module Odm
         recipient.sent!(nil, sent_at(delivery_event))
       else
         # error messages are stored on the value of a delivery_event, just 'cause
-        #                 ack, error_message, completed_at
-        recipient.failed!(nil, delivery_event.value, sent_at(delivery_event))
+        #                 ack, completed_at, error_message
+        recipient.failed!(nil, sent_at(delivery_event), delivery_event.value)
       end
     end
 
