@@ -32,7 +32,7 @@ module Twilio
       rescue Twilio::REST::RequestError => e
         raise Sidekiq::Retries::Retry.new(e) if RETRY_CODES.include?(client.last_response_code)
         logger.warn { "Non-retryable error from Twilio (#{message}): #{e.code} - #{e.message}" }
-        recipient.failed!(nil, e.message)
+        recipient.failed!(nil, nil, e.message)
         return
       rescue StandardError => e
         raise Sidekiq::Retries::Retry.new(e)
@@ -49,7 +49,7 @@ module Twilio
 
     def complete_recipient_with_error!(options, error_message)
       _, recipient = find_message_and_recipient(options)
-      recipient.failed!(nil, error_message)
+      recipient.failed!(nil, nil, error_message)
     end
 
   end

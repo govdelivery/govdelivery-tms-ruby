@@ -11,7 +11,7 @@ describe RecipientsController do
     3.times.map { |i| message.recipients.build(:phone => (6125551200 + i).to_s) }
   end
   let(:voice_recipients) do
-      3.times.map { |i| voice_message.recipients.build(:phone => (6125551200 + i).to_s) }
+    3.times.map { |i| voice_message.recipients.build(:phone => (6125551200 + i).to_s) }
   end
   let(:email_message) { user.email_messages.create(:subject => "subs", :from_name => 'dude', :body => 'hi') }
   let(:email_recipients) do
@@ -97,29 +97,53 @@ describe RecipientsController do
 
   end
 
-  context '#page' do
-    it 'should work' do
-      stub_pagination(recipients, 2, 5)
-      SmsMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
+  context 'SmsMessage' do
+
+    context '#page' do
+      it 'should work' do
+        stub_pagination(recipients, 2, 5)
+        SmsMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
 
 
-      get :index, :sms_id => 1, :format => :json, :page => 2
-      assigns(:page).should eq(2)
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should =~ /next/
-      response.headers['Link'].should =~ /last/
+        get :index, :sms_id => 1, :format => :json, :page => 2
+        assigns(:page).should eq(2)
+        response.headers['Link'].should =~ /first/
+        response.headers['Link'].should =~ /prev/
+        response.headers['Link'].should =~ /next/
+        response.headers['Link'].should =~ /last/
+      end
     end
-  end
 
-  context '#show' do
-    it 'should work' do
-      stub_pagination(recipients, 2, 5)
-      SmsMessage.any_instance.expects(:recipients).returns(stub(:find => stub(:find => recipients.first)))
+    context '#failed' do
+      it 'should show a failed send' do
+        recipients.first.failed!
+        get :failed, email_id: email_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eql(1)
+        assigns(:recipients).first.status.should eql('failed')
+      end
+    end
 
-      get :show, :sms_id => 1, :format => :json, :id=> 2
-      response.response_code.should == 200
-      assigns(:recipient).should_not be_nil
+    context '#sent' do
+      it 'should show a successful email send' do
+        recipients.first.sent! :ack
+        get :sent, email_id: email_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eql(1)
+        assigns(:recipients).first.status.should eql('sent')
+      end
+    end
+
+
+    context '#show' do
+      it 'should work' do
+        stub_pagination(recipients, 2, 5)
+        SmsMessage.any_instance.expects(:recipients).returns(stub(:find => stub(:find => recipients.first)))
+
+        get :show, :sms_id => 1, :format => :json, :id=> 2
+        response.response_code.should == 200
+        assigns(:recipient).should_not be_nil
+      end
     end
   end
 end
