@@ -45,7 +45,8 @@ module CommandWorkers
     end
 
     def http_service
-      @http_service ||= Service::ForwardService.new
+      @http_service ||= Service::ForwardService.new(self.logger)
+
     end
 
     def http_response

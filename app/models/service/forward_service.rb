@@ -5,6 +5,10 @@ module Service
 
     attr_accessor :logger
 
+    def initialize(logger=nil)
+      self.logger = logger
+    end
+
     def post(url, username, password, body)
       connection(username, password).post(url) do |req|
         req.body = body
