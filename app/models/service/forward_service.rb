@@ -28,7 +28,7 @@ module Service
         faraday.use Faraday::Response::Logger, self.logger if self.logger
         faraday.use Faraday::Response::RaiseError
         faraday.basic_auth(username, password) if username && password
-        faraday.adapter :typhoeus
+        faraday.adapter :net_http
       end
     end
   end
