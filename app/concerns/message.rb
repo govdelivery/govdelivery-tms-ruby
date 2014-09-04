@@ -173,6 +173,6 @@ module Message
   def recipient_state_counts
     groups = recipients.select('count(status) the_count, status').group('status').reorder('')
     h = Hash[groups.map { |r| [r.status, r.the_count] }]
-    Hash[self.class.aasm.states.map(&:to_s).map { |s| [s, 0] }].merge(h)
+    Hash[EmailRecipient.aasm.states.map(&:to_s).map { |s| [s, 0] }].merge(h)
   end
 end

@@ -200,4 +200,13 @@ describe SmsMessage do
     it { message.should_not be_valid }
   end
 
+  it 'should have counts for all states in recipient_state_counts' do
+    message = account.sms_messages.create!(:body => 'short body')
+    counts = message.recipient_counts
+    EmailRecipient.aasm.states.map(&:to_s).each do |state|
+      expect(counts[state]).to eq 0
+    end
+    expect(counts['total']).to eq 0
+  end
+
 end
