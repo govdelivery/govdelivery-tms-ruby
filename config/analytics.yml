@@ -28,31 +28,20 @@ qc:
 
 integration:
   <<: *shared
-  enabled: false
   kafkas:
     - int-kafka1-ep.tops.gdi:9093
-    - int-kafka2-ep.tops.gdi:9093
-    - int-kafka3-ep.tops.gdi:9093
   zookeepers:
     - int-zk1-ep.tops.gdi:2181
-    - int-zk2-ep.tops.gdi:2181
-    - int-zk3-ep.tops.gdi:2181
 
 stage:
   <<: *shared
-  enabled: false
   kafkas:
     - stg-kafka1-ep.tops.gdi:9093
-    - stg-kafka2-ep.tops.gdi:9093
-    - stg-kafka3-ep.tops.gdi:9093
   zookeepers:
     - stg-zk1-ep.tops.gdi:2181
-    - stg-zk2-ep.tops.gdi:2181
-    - stg-zk3-ep.tops.gdi:2181
 
 production:
   <<: *shared
-  enabled: false
   kafkas:
     - prod-kafka1-ep.tops.gdi:9093
     - prod-kafka2-ep.tops.gdi:9093
