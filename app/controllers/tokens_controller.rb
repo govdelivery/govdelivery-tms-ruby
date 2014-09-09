@@ -11,7 +11,8 @@ class TokensController < ApplicationController
 
   def create
     u=User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
-    t=u.build_authentication_token
+    t=u.authentication_tokens.build()
+    t.token = u.generate_token
     u.save!
     render json: TokenView.new(t).render
   end
