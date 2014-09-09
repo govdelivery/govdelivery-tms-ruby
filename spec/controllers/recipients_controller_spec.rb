@@ -117,9 +117,9 @@ describe RecipientsController do
     context '#failed' do
       it 'should show a failed send' do
         recipients.first.failed!
-        get :failed, email_id: email_message.id
+        get :failed, sms_id: message.id
         response.status.should eql(200)
-        assigns(:recipients).count.should eql(1)
+        assigns(:recipients).count.should eq(1)
         assigns(:recipients).first.status.should eql('failed')
       end
     end
@@ -127,9 +127,9 @@ describe RecipientsController do
     context '#sent' do
       it 'should show a successful email send' do
         recipients.first.sent! :ack
-        get :sent, email_id: email_message.id
+        get :sent, sms_id: message.id
         response.status.should eql(200)
-        assigns(:recipients).count.should eql(1)
+        assigns(:recipients).count.should eq(1)
         assigns(:recipients).first.status.should eql('sent')
       end
     end
