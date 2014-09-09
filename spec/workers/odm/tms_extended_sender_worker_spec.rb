@@ -51,6 +51,7 @@ if defined?(JRUBY_VERSION)
 
     context 'a very happy send' do
       it 'should work' do
+        email_message.stubs(:queued?).returns(true)
         email_message.expects(:sending!).with(nil, 'dummy_id')
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
@@ -59,11 +60,16 @@ if defined?(JRUBY_VERSION)
 
         worker.perform(params)
       end
+      it 'should fail unless message is queued' do
+        EmailMessage.expects(:find).with(11).returns(email_message)
+        expect { worker.perform(params) }.to raise_error(RuntimeError, "EmailMessage  is not ready for delivery!")
+      end
     end
 
     context 'odm throws error' do
 
       it 'should catch Throwable and throw Ruby Exception' do
+        email_message.stubs(:queued?).returns(true)
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
         Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
@@ -73,6 +79,7 @@ if defined?(JRUBY_VERSION)
       end
 
       it 'should catch TMSFault and throw Ruby Exception' do
+        email_message.stubs(:queued?).returns(true)
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
         Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)

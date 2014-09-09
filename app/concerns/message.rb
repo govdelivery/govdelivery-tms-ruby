@@ -166,7 +166,7 @@ module Message
 
   private
 
-  def has_recipients?
+  def has_recipients?(*args)
     self.recipients.any?
   end
 
