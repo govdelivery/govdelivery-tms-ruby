@@ -8,22 +8,22 @@ class LoopbackMessageWorker
       @message.sending!
       @message.sendable_recipients.except(:order).find_each do |recipient|
         if magic_sending?(recipient)
-          logger.info("Magic Sending Number: Going to Sending State.")
+          logger.info("Magic Sending Message: Going to Sending State.")
           recipient.sending!(ack)
         elsif magic_inconclusive?(recipient)
-          logger.info("Magic Inconclusive Number: Going to Inconclusive State.")
+          logger.info("Magic Inconclusive Message: Going to Inconclusive State.")
           recipient.mark_inconclusive!
         elsif magic_canceled?(recipient)
-          logger.info("Magic Canceled Number: Going to Canceled State.")
+          logger.info("Magic Canceled Message: Going to Canceled State.")
           recipient.canceled!(ack)
         elsif magic_sent?(recipient)
-          logger.info("Magic Sent Number: Going to Sent State.")
+          logger.info("Magic Sent Message: Going to Sent State.")
           recipient.sent!(ack)
         elsif magic_failed?(recipient)
-          logger.info("Magic Failed Number: Going to Failed State.")
+          logger.info("Magic Failed Message: Going to Failed State.")
           recipient.failed!(ack)
         elsif magic_blacklisted?(recipient)
-          logger.info("Magic Blacklisted Number: Going to Blacklisted State.")
+          logger.info("Magic Blacklisted Message: Going to Blacklisted State.")
           recipient.blacklist!
         end
       end
