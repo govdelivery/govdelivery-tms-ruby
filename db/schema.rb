@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140826012129) do
+ActiveRecord::Schema.define(version: 20140909142020) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20140826012129) do
     t.integer  "ipaws_vendor_id",                    precision: 38, scale: 0
     t.string   "default_response_text"
     t.string   "sid",                   limit: 32,                            null: false
+    t.string   "link_encoder",          limit: 30
   end
 
   create_table "authentication_tokens", force: true do |t|
