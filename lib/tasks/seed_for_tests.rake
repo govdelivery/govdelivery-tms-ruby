@@ -188,8 +188,6 @@ namespace :db do
     if lba.users.empty?
       user = lba.users.build(user_config)
       user.save
-      token = user.authentication_tokens.build()
-      token.save
       puts "User created for #{account_config[:name]}"
       puts "\tEmail Addr:\t #{user.email}"
       puts "\tPassword:\t #{user.password}"
