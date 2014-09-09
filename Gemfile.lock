@@ -259,7 +259,7 @@ GEM
     sexp_processor (4.4.3)
     shoulda-matchers (2.6.2)
       activesupport (>= 3.0.0)
-    sidekiq (3.2.2)
+    sidekiq (3.2.4)
       celluloid (>= 0.15.2)
       connection_pool (>= 2.0.0)
       json
@@ -269,8 +269,8 @@ GEM
       sidekiq (>= 2.16.0)
     sidekiq-pro (1.7.5)
       sidekiq (>= 3)
-    sidekiq-retries (0.2.0)
-      sidekiq (~> 3.0)
+    sidekiq-retries (0.3.0)
+      sidekiq (~> 3.2, >= 3.2.4)
     sidekiq-throttler (0.4.1)
       activesupport
       sidekiq (>= 2.5, < 4.0)
