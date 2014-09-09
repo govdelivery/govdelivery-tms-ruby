@@ -2,6 +2,38 @@ require 'fileutils'
 
 namespace :db do
 
+  loopback_vendors_config = {
+      sms_vendor_name: 'Loopback SMS Sender',
+      voice_vendor_name: 'Loopback Voice Sender',
+      email_vendor_name: 'Email Loopback Sender'
+  }
+
+
+  def create_or_verify_by_name(klass, config, pre_save = nil)
+    r = klass.find_by(name: config[:name])
+    if r
+      puts "Verifying #{config[:name]}"
+      config.each do |k,v|
+        r.send("#{k}=", v)
+      end
+      if r.changed?
+        puts "\tSetting #{r.name} to #{r.changes}"
+        pre_save.call(r) if pre_save
+        r.save!
+      end
+      puts "Verified"
+    else
+      r = klass.new(config)
+      puts "Creating #{config[:name]}"
+      pre_save.call(r) if pre_save
+      r.save!
+      puts "Created"
+    end
+    puts
+    r
+  end
+
+
   desc 'Seed database for testing. This creates and saves the mock data for the xact_rest_tests_followup'
   task :seed_for_tests => :environment do |t|
     all_id = 17331
@@ -87,5 +119,88 @@ namespace :db do
     end
 
   end # :seed_for_tests task
+
+
+  desc 'Create all the Loopback Vendors.'
+  task :create_loopback_vendors => :environment do |t|
+
+    sms_loopback = create_or_verify_by_name(SmsVendor, {
+        name: loopback_vendors_config[:sms_vendor_name],
+        worker: 'LoopbackSmsWorker',
+        username: 'sms_loopback_username',
+        password: 'dont care',
+        from: '+15551112222'
+      }
+    )
+
+    voice_loopback = create_or_verify_by_name(VoiceVendor,{
+        name: loopback_vendors_config[:voice_vendor_name],
+        worker: 'LoopbackVoiceWorker',
+        username: 'voice_loopback_username',
+        password: 'dont care',
+        from: '+15551112222'
+      }
+    )
+
+    email_loopback = create_or_verify_by_name(EmailVendor, {
+        name: loopback_vendors_config[:email_vendor_name],
+        worker: 'LoopbackEmailWorker'
+      }
+    )
+  end # :create_loopback_vendors
+
+
+  desc 'Create an Account that has all Loopback Vendors.'
+  task :create_all_loopbacks_account => :environment do |t|
+
+    Rake::Task['db:create_loopback_vendors'].invoke
+
+    account_config = {
+        name: Rails.env.capitalize + " Loopbacks Account",
+        voice_vendor: VoiceVendor.find_by(name: loopback_vendors_config[:voice_vendor_name]),
+        sms_vendor: SmsVendor.find_by(name: loopback_vendors_config[:sms_vendor_name]),
+        email_vendor: EmailVendor.find_by(name: loopback_vendors_config[:email_vendor_name])
+    }
+
+    account_email_addresses_config = {
+        from_email: Rails.env + '-tms_dev@evotest.govdelivery.com',
+        errors_to: Rails.env + '-errors@evotest.govdelivery.com',
+        reply_to: Rails.env + '-reply@evotest.govdelivery.com',
+        is_default: true
+    }
+
+    user_config = {
+        account_name: Rails.env.capitalize + " Loopbacks Account",
+        email: Rails.env + "-loopback@govdelivery.com",
+        password: "retek01!",
+        admin: true
+    }
+
+    lba = create_or_verify_by_name(Account, account_config, lambda{ |lba|
+      if lba.from_addresses.empty?
+        puts "\tCreating #{lba.name} From Addresses"
+        lba.from_addresses.build(account_email_addresses_config)
+        puts "\tCreated"
+      end
+      }
+    )
+
+    if lba.users.empty?
+      user = lba.users.build(user_config)
+      user.save
+      token = user.authentication_tokens.build()
+      token.save
+      puts "User created for #{account_config[:name]}"
+      puts "\tEmail Addr:\t #{user.email}"
+      puts "\tPassword:\t #{user.password}"
+      puts
+    end
+
+    token = lba.users.first.authentication_tokens.first.token
+
+    puts "Loopbacks Account User Auth Token: "
+    puts "\t#{token}"
+    puts
+  end # :create_all_loopbacks_account
 
 end # :db namespace
