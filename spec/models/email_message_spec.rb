@@ -82,9 +82,8 @@ describe EmailMessage do
           email.ack.should eq('dummy_id')
         end
 
-        it 'should skip queued send and set ack' do
-          email.sending!(nil, 'dummy_id').should be true
-          email.ack.should eq('dummy_id')
+        it 'should not be able to skip queued' do
+          expect{email.sending!(nil, 'dummy_id')}.to raise_error(AASM::InvalidTransition)
         end
       end
 

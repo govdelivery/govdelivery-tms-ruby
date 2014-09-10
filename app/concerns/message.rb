@@ -18,7 +18,6 @@ module Message
 
       event :sending do
         transitions from: :queued, to: :sending, on_transition: :on_sending
-        transitions from: :new, to: :sending, guard: :has_recipients?, on_transition: :on_sending
       end
 
       event :complete do

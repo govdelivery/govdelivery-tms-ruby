@@ -9,7 +9,7 @@ describe TwilioMessageWorker do
   #need to add recipient stubs and verify recipients are modified correctly
   context 'a send' do
     it 'should create a batch job' do
-      message.class.any_instance.stubs(:queued?).returns(true)
+      message.class.any_instance.stubs(:may_sending?).returns(true)
       message.class.any_instance.expects(:sending!)
 
       Twilio::SenderWorker.expects(:perform_async).with(
