@@ -48,10 +48,14 @@ platforms :jruby do
 end
 
 group :development, :test do
+  gem 'awesome_print'
   gem 'brakeman'
+  gem 'capybara'
+  gem 'cucumber'
   gem 'factory_girl_rails'
   gem 'guard-rspec'
   gem 'json_spec'
+  gem 'poltergeist'
   gem 'pry-rails'
   gem 'pry', github: 'pry/pry'
   gem 'rspec-collection_matchers'
@@ -59,6 +63,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'ruby-debug'
   gem 'yaml_db'
+  
   platforms :ruby do
     gem 'pry-debugger', require: 'pry'
     gem 'zeus'
