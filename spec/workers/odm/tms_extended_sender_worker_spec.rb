@@ -82,6 +82,24 @@ if defined?(JRUBY_VERSION)
       end
     end
 
+    context 'create_link_encoder with HYRULE' do
+      it 'should use HYRULE as the link encoder' do
+        expect(worker.send(:create_link_encoder, 'HYRULE')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::HYRULE)
+      end
+    end
+
+    context 'create_link_encoder with STRONGMAIL' do
+      it 'should use STRONGMAIL as the link encoder' do
+        expect(worker.send(:create_link_encoder, 'STRONGMAIL')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::STRONGMAIL)
+      end
+    end
+
+    context 'create_link_encoder with nil' do
+      it 'should use nil as the link encoder' do
+        expect(worker.send(:create_link_encoder, nil)).to be(nil)
+      end
+    end
+
     context 'odm throws error' do
 
       it 'should catch Throwable and throw Ruby Exception' do
