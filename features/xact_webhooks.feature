@@ -10,4 +10,3 @@ Scenario: Invoke the webhook of every recipient event type on email messages
   And a callback url is registered for each event_type
   When I send an email message to the magic address of each event state
   Then the callback registered for each event state should receive a POST referring to the appropriate message
-

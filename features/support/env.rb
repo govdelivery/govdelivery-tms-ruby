@@ -2,9 +2,6 @@ require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'tms_client'
-  
-
-
 
 
 
