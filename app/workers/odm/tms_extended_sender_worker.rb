@@ -28,10 +28,21 @@ module Odm
           msg.record_designator   = message.odm_record_designator
           msg.track_clicks        = message.click_tracking_enabled?
           msg.track_opens         = message.open_tracking_enabled?
+          msg.link_encoder        = create_link_encoder(account.link_encoder)
           message.recipients.find_each { |recipient| msg.to << recipient.to_odm(macros) }
           message.sending!(nil, odm.send_message(credentials(message.vendor), msg))
           logger.debug("Sent EmailMessage #{message.to_param} (account #{account.name}, admin #{message.user_id}) to ODM")
         end
+      end
+    end
+
+    private
+
+    def create_link_encoder(encoder)
+      if encoder == 'HYRULE'
+        return Java::ComGovdeliveryTmsTmsextended::LinkEncoder::HYRULE
+      elsif encoder == 'STRONGMAIL'
+        return Java::ComGovdeliveryTmsTmsextended::LinkEncoder::STRONGMAIL
       end
     end
   end
