@@ -14,7 +14,7 @@ class TwilioMessageWorker
 
     logger.info("Send initiated for message_id=#{message_id} and callback_url=#{callback_url}")
     if message = SmsMessage.select('id, sms_vendor_id, account_id, status').find_by_id(message_id)
-      raise Sidekiq::Retries::Retry.new(RuntimeError.new("#{message.class.name} #{message.id} is not ready for delivery!")) unless message.queued?
+      raise Sidekiq::Retries::Retry.new(RuntimeError.new("#{message.class.name} #{message.id} is not ready for delivery!")) unless message.may_sending?
       Service::TwilioMessageService.deliver!(message, callback_url)
     else
       logger.warn("Send failed, unable to find message with id #{message_id}")

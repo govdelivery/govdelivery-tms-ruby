@@ -5,7 +5,7 @@ describe LoopbackEmailWorker do
   let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:message) { create(:email_message, account: account) }
   let(:recipient) { create(:email_recipient, message: message) }
-  let(:fail_recipient) { create(:email_recipient, email: 'ben@fail.govdelivery.com', message: message) }
+  let(:fail_recipient) { create(:email_recipient, email: 'failed@sink.govdelivery.com', message: message) }
 
   # :recipients_attributes => [
   #   {:email => "schwoop@sink.govdelivery.com", :vendor => email_vendor}]) }
