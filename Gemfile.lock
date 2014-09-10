@@ -175,6 +175,7 @@ GEM
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
       websocket-driver (>= 0.2.0)
+    polyglot (0.3.5)
     poseidon (0.0.4.1)
     poseidon_cluster (0.2.0.1)
       poseidon

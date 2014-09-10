@@ -88,8 +88,3 @@ Then(/^the callback registered for each event state should receive a POST referr
   end
 end
 
-
-
-
-
-
