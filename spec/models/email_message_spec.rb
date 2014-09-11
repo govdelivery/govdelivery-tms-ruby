@@ -79,7 +79,7 @@ describe EmailMessage do
           email.ready!.should be true
           email.recipients.first.sending?.should be true
           email.sending!(nil, 'dummy_id').should be true
-          email.ack.should eq('dummy_id')
+          email.reload.ack.should eq('dummy_id')
         end
 
         it 'should not be able to skip queued' do
