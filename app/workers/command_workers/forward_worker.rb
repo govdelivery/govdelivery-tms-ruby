@@ -37,7 +37,7 @@ module CommandWorkers
     end
 
     def send_response(message, recipient_id, callback_url)
-      message.sending!
+      message.responding!
       Twilio::SenderWorker.perform_async(message_class: message.class.name,
                                          callback_url:  callback_url,
                                          message_id:    message.id,

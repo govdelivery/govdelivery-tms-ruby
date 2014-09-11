@@ -132,8 +132,15 @@ describe SmsMessage do
       expect { message.ready! }.to raise_error(AASM::InvalidTransition)
     end
 
-    it 'should fail on transition from new to sending' do
+    it 'should fail on transition from new to sending unless we are responding to a message' do
       expect { message.sending! }.to raise_error(AASM::InvalidTransition)
+      expect(message.responding!).to be true
+      expect(message.sending?).to be true
+    end
+
+    it 'should fail on responding unelss there are recipients' do
+      message.recipients.destroy_all
+      expect { message.responding! }.to raise_error(AASM::InvalidTransition)
     end
 
     context 'a valid ready transition from new to queued' do
