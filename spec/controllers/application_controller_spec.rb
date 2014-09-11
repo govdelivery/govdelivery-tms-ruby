@@ -29,8 +29,8 @@ describe ApplicationController do
       response.response_code.should eq(404)
     end
 
-    it "should 400 when MultiJson::LoadError" do
-      get :show, :id => 'MultiJson::LoadError'
+    it "should 400 on" do
+      get :show, :id => 'JSON::ParserError'
       response.response_code.should eq(400)
       JSON.parse(response.body) # this shouldn't raise
     end

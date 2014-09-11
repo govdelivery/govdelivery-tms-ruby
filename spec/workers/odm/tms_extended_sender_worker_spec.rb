@@ -62,6 +62,10 @@ if defined?(JRUBY_VERSION)
 
         worker.perform(params)
       end
+      it 'should fail unless message is queued' do
+        EmailMessage.expects(:find).with(11).returns(email_message)
+        expect { worker.perform(params) }.to raise_error(RuntimeError, "EmailMessage  is not ready for delivery!")
+      end
     end
 
     context 'a very happy send with HYRULE link_encoder' do

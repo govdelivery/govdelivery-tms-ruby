@@ -119,7 +119,7 @@ describe RecipientsController do
         recipients.first.failed!
         get :failed, sms_id: message.id
         response.status.should eql(200)
-        assigns(:recipients).count.should eql(1)
+        assigns(:recipients).count.should eq(1)
         assigns(:recipients).first.status.should eql('failed')
       end
     end
@@ -129,7 +129,7 @@ describe RecipientsController do
         recipients.first.sent! :ack
         get :sent, sms_id: message.id
         response.status.should eql(200)
-        assigns(:recipients).count.should eql(1)
+        assigns(:recipients).count.should eq(1)
         assigns(:recipients).first.status.should eql('sent')
       end
     end

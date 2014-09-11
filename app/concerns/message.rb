@@ -20,6 +20,10 @@ module Message
         transitions from: :queued, to: :sending, on_transition: :on_sending
       end
 
+      event :responding do
+        transitions from: :new, to: :sending, guard: :has_recipients?, on_transition: :on_sending
+      end
+
       event :complete do
         transitions from: :sending, to: :completed, guard: :check_complete, on_transition: :on_complete
       end
