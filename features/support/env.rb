@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
+require 'tms_client'
   
 
 #pass environment variables to control which browser is used for testing. Default is HEADLESS/POLTERGEIST
