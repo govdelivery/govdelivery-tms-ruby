@@ -4,7 +4,6 @@ require 'capybara/poltergeist'
 require 'tms_client'
 
 
-
 Capybara.default_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
 options = {
