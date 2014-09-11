@@ -41,6 +41,7 @@
 <xs:complexType name="deliveryEventType">
 <xs:simpleContent>
 <xs:extension base="xs:string">
+<xs:attribute name="campaignID" type="xs:string"/>
 <xs:attribute name="messageID" type="xs:string" use="required"/>
 <xs:attribute name="recipientID" type="xs:string"/>
 <xs:attribute name="address" type="xs:string" use="required"/>
@@ -51,9 +52,11 @@
 </xs:complexType>
 <xs:complexType name="message">
 <xs:sequence>
-<xs:element minOccurs="0" name="body" type="xs:string"/>
+<xs:element name="body" type="xs:string"/>
+<xs:element minOccurs="0" name="campaignId" type="xs:string"/>
 <xs:element default="email" name="emailColumn" type="xs:string"/>
 <xs:element name="fromName" type="xs:string"/>
+<xs:element minOccurs="0" name="linkEncoder" type="tns:linkEncoder"/>
 <xs:element minOccurs="0" name="plainTextBody" type="xs:string"/>
 <xs:element minOccurs="0" name="recipientIdColumn" type="xs:string"/>
 <xs:element default="email" name="recordDesignator" type="xs:string"/>
@@ -117,6 +120,7 @@
 </xs:complexType>
 <xs:complexType name="clickEventType">
 <xs:sequence/>
+<xs:attribute name="campaignID" type="xs:string"/>
 <xs:attribute name="messageID" type="xs:string" use="required"/>
 <xs:attribute name="recipientID" type="xs:string"/>
 <xs:attribute name="address" type="xs:string" use="required"/>
@@ -142,11 +146,19 @@
 </xs:complexType>
 <xs:complexType name="openEventType">
 <xs:sequence/>
+<xs:attribute name="campaignID" type="xs:string"/>
 <xs:attribute name="messageID" type="xs:string" use="required"/>
 <xs:attribute name="recipientID" type="xs:string"/>
 <xs:attribute name="address" type="xs:string" use="required"/>
 <xs:attribute name="at" type="xs:dateTime" use="required"/>
 </xs:complexType>
+<xs:simpleType name="linkEncoder">
+<xs:restriction base="xs:string">
+<xs:enumeration value="UNDEFINED"/>
+<xs:enumeration value="HYRULE"/>
+<xs:enumeration value="STRONGMAIL"/>
+</xs:restriction>
+</xs:simpleType>
 <xs:simpleType name="activityType">
 <xs:restriction base="xs:string">
 <xs:enumeration value="DELIVERY"/>
@@ -174,14 +186,15 @@
 <xsd:element name="code" nillable="true" type="xsd:string"/>
 <xsd:element name="category" nillable="true" type="xsd:string"/>
 <xsd:element name="detail" nillable="true" type="xsd:string"/>
+<xsd:element name="codeValue" nillable="true" type="xsd:int"/>
 </xsd:sequence>
 </xsd:complexType>
 </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="clickActivitySince">
+  <wsdl:message name="lastActivitySequence">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
-    <wsdl:part element="tns:clickActivitySince" name="clickActivitySince">
+    <wsdl:part element="tns:activityType" name="activityType">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="openActivitySince">
@@ -190,18 +203,10 @@
     <wsdl:part element="tns:openActivitySince" name="openActivitySince">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="openActivitySinceResponse">
-    <wsdl:part element="tns:opens" name="opens">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="lastActivitySequence">
+  <wsdl:message name="clickActivitySince">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
-    <wsdl:part element="tns:activityType" name="activityType">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="deliveryActivitySinceResponse">
-    <wsdl:part element="tns:deliveries" name="deliveries">
+    <wsdl:part element="tns:clickActivitySince" name="clickActivitySince">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="changePassword">
@@ -210,12 +215,20 @@
     <wsdl:part element="tns:newPassword" name="newPassword">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="deliveryActivitySinceResponse">
+    <wsdl:part element="tns:deliveries" name="deliveries">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:message name="lastActivitySequenceResponse">
     <wsdl:part element="tns:lastSequence" name="lastSequence">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="changePasswordResponse">
     <wsdl:part element="tns:success" name="success">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openActivitySinceResponse">
+    <wsdl:part element="tns:opens" name="opens">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="TMSFault">
@@ -228,18 +241,18 @@
     <wsdl:part element="tns:message" name="message">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="deliveryActivitySince">
-    <wsdl:part element="tns:credentials" name="credentials">
-    </wsdl:part>
-    <wsdl:part element="tns:deliveryActivitySince" name="deliveryActivitySince">
+  <wsdl:message name="clickActivitySinceResponse">
+    <wsdl:part element="tns:clicks" name="clicks">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="sendMessageResponse">
     <wsdl:part element="tns:messageID" name="messageID">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="clickActivitySinceResponse">
-    <wsdl:part element="tns:clicks" name="clicks">
+  <wsdl:message name="deliveryActivitySince">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:deliveryActivitySince" name="deliveryActivitySince">
     </wsdl:part>
   </wsdl:message>
   <wsdl:portType name="TMSExtended">
@@ -381,7 +394,7 @@
   </wsdl:binding>
   <wsdl:service name="TMSExtended">
     <wsdl:port binding="tns:TMSExtendedSoapBinding" name="TMSExtendedPort">
-      <soap:address location="http://stg-tms1.visi.gdi:65080/service/TMSExtended"/>
+      <soap:address location="https://stg-tms.govdelivery.com:65081/service/TMSExtended"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

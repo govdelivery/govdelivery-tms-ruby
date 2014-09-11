@@ -38,6 +38,7 @@ if defined?(JRUBY_VERSION)
         m.expects(:record_designator=).with('email::recipient_id::macro1::macro2')
         m.expects(:track_clicks=).with(email_message.click_tracking_enabled?)
         m.expects(:track_opens=).with(email_message.open_tracking_enabled?)
+        m.expects(:link_encoder=).with(account.link_encoder == 'HYRULE' ? Java::ComGovdeliveryTmsTmsextended::LinkEncoder::HYRULE : nil)
         m.stubs(:to).returns([])
       end
     }
@@ -49,8 +50,23 @@ if defined?(JRUBY_VERSION)
     let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)}
 
 
-    context 'a very happy send' do
+    context 'a very happy send with no link_encoder' do
       it 'should work' do
+        email_message.stubs(:queued?).returns(true)
+        account.link_encoder = nil
+        email_message.expects(:sending!).with(nil, 'dummy_id')
+        ExtendedMessage.expects(:new).returns(extended_message)
+        EmailMessage.expects(:find).with(11).returns(email_message)
+        odm_v2.expects(:send_message).returns('dummy_id')
+        Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
+
+        worker.perform(params)
+      end
+    end
+
+    context 'a very happy send with HYRULE link_encoder' do
+      it 'should work' do
+        account.link_encoder = 'HYRULE'
         email_message.stubs(:queued?).returns(true)
         email_message.expects(:sending!).with(nil, 'dummy_id')
         ExtendedMessage.expects(:new).returns(extended_message)
@@ -63,6 +79,24 @@ if defined?(JRUBY_VERSION)
       it 'should fail unless message is queued' do
         EmailMessage.expects(:find).with(11).returns(email_message)
         expect { worker.perform(params) }.to raise_error(RuntimeError, "EmailMessage  is not ready for delivery!")
+      end
+    end
+
+    context 'create_link_encoder with HYRULE' do
+      it 'should use HYRULE as the link encoder' do
+        expect(worker.send(:create_link_encoder, 'HYRULE')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::HYRULE)
+      end
+    end
+
+    context 'create_link_encoder with STRONGMAIL' do
+      it 'should use STRONGMAIL as the link encoder' do
+        expect(worker.send(:create_link_encoder, 'STRONGMAIL')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::STRONGMAIL)
+      end
+    end
+
+    context 'create_link_encoder with nil' do
+      it 'should use nil as the link encoder' do
+        expect(worker.send(:create_link_encoder, nil)).to be(nil)
       end
     end
 

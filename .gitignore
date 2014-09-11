@@ -30,3 +30,4 @@ public/custom_reports/**/*
 .ruby-version
 .ruby-gemset
 /Vagrantfile
+.idea/

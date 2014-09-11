@@ -66,6 +66,26 @@ describe Account do
       it { should_not be_valid }
     end
 
+    context "when link_encoder is nil" do
+      before { subject.link_encoder = nil }
+      it { should be_valid }
+    end
+
+    context "when link_encoder is HYRULE" do
+      before { subject.link_encoder = 'HYRULE' }
+      it { should be_valid }
+    end
+
+    context "when link_encoder is STRONGMAIL" do
+      before { subject.link_encoder = 'STRONGMAIL' }
+      it { should be_valid }
+    end
+
+    context "when link_encoder is invalid" do
+      before { subject.link_encoder = 'blah' }
+      it { should_not be_valid }
+    end
+
     context 'creating a command' do
       it 'can create a command on a keyword on the fly' do
         account = create(:account_with_sms)
