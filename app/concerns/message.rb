@@ -6,7 +6,7 @@ module Message
   included do
     include AASM
 
-    aasm column: 'status', skip_validation_on_save: true do
+    aasm column: 'status' do
       state :new, initial: true
       state :queued
       state :sending
