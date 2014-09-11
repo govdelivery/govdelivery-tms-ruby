@@ -25,7 +25,7 @@ describe CommandWorkers::ForwardWorker do
     fake_command = build(:forward_command).tap{ |c|
       c.expects(:process_response).
         returns( build(:sms_message).tap{ |m|
-                  m.expects(:sending!)
+                  m.expects(:responding!)
                   m.expects(:first_recipient_id).returns(1)
                 })
     }
