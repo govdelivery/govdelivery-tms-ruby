@@ -124,10 +124,6 @@ class Account < ActiveRecord::Base
     super
   end
 
-  def dcm_account_codes_array
-    self.dcm_account_codes.try(:to_a)
-  end
-
   protected
 
   def generate_sid

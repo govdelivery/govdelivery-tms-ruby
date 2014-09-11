@@ -1,6 +1,5 @@
 object @command
-attributes :name, :command_type, :created_at, :updated_at
-attribute params_hash: :params
+attributes :name, :command_type, :created_at, :updated_at, :params
 if root_object
   if root_object.errors.empty?
     node(:_links) do |a|
