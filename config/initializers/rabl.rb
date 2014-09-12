@@ -24,3 +24,5 @@ Rabl.configure do |config|
   end
 end
 
+ActiveSupport::JSON::Encoding.time_precision = 0
+
