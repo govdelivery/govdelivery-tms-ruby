@@ -43,3 +43,6 @@ def environment
     end
 end
 
+def callbacks_api_root
+    'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
+end
