@@ -6,7 +6,7 @@ I want to be notified whenever the state of a recipient changes
 
 Background:
   Given The following event types:
-    | event_types  |
+    | event_type   |
     | sending      |
     | sent         |
     | failed       |
