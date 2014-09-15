@@ -2,10 +2,10 @@ require 'faraday'
 
 class Callbacks_API_Client
     attr_accessor :callback_uris
+    attr_accessor :callbacks_root
 
-    CALLBACK_ROOT = 'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
-
-    def initialize
+    def initialize(callback_root)
+        @callbacks_root = callback_root
         @callback_uris = []
     end
 
@@ -56,7 +56,7 @@ class Callbacks_API_Client
 
     private
         def get_a_faraday
-            Faraday.new(:url => CALLBACK_ROOT) do |faraday|
+            Faraday.new(:url => callbacks_root) do |faraday|
                 faraday.request     :url_encoded
                 faraday.response    :logger
                 faraday.adapter     Faraday.default_adapter
