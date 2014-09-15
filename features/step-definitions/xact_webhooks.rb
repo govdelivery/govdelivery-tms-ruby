@@ -88,3 +88,15 @@ Then(/^the callback registered for each event state should receive a POST referr
   end
 end
 
+Then(/^something$/) do
+  puts 'Arby\'s nation.'
+end
+
+When(/^The following event types:$/) do |event_types|
+    event_types = event_types.hashes.map {|data| data["event_type"]}
+    @event_callbacks = Hash[event_types.map {|event_type| [event_type,nil]}]
+end
+
+When(/^A callback url exists for each state$/) do
+    puts @event_callbacks
+end
