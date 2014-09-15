@@ -1,19 +1,15 @@
 require 'faraday'
-require 'uri'
 
 class Callbacks_API_Client
     attr_accessor :callback_uris
-    attr_accessor :callbacks_root
-    attr_accessor :callbacks_domain
 
-    def initialize(callback_root)
-        @callbacks_root = callback_root
-        uri = URI.parse(@callbacks_root)
-        @callbacks_domain = "#{uri.scheme}://#{uri.host}"
+    CALLBACK_ROOT = 'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
+
+    def initialize
         @callback_uris = []
     end
 
-    def create_callback_uri(desc=nil)
+    def create_callback_endpoint(desc=nil)
 
         conn = get_a_faraday
 
@@ -25,10 +21,11 @@ class Callbacks_API_Client
 
         uri = JSON.parse(resp.body)['url']
         @callback_uris << uri
+        @callback_uris.push
         uri
     end
 
-    def destroy_callback_uri(uri)
+    def destroy_callback_endpoint(uri)
         conn = get_a_faraday
 
         resp = conn.delete uri
@@ -41,26 +38,17 @@ class Callbacks_API_Client
         return true
     end
 
-    def destroy_all_callback_uris()
+    def destroy_all_callback_endpoints()
         all_callback_endpoints = Array.new(self.callback_uris)
         for uri in all_callback_endpoints
-            destroy_callback_uri(uri)
+            destroy_callback_endpoint(uri)
         end
         return true
     end
 
-    def get(uri)
-        conn = get_a_faraday
-        resp = conn.get uri
-
-        raise "Callback Endpoint Get Failed\n Status: #{resp.status}\n #{resp.body}" unless resp.status == 200
-
-        return JSON.parse(resp.body)
-    end
-
     private
         def get_a_faraday
-            Faraday.new(:url => callbacks_root) do |faraday|
+            Faraday.new(:url => CALLBACK_ROOT) do |faraday|
                 faraday.request     :url_encoded
                 faraday.response    :logger
                 faraday.adapter     Faraday.default_adapter
