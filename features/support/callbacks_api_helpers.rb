@@ -21,7 +21,6 @@ class Callbacks_API_Client
 
         uri = JSON.parse(resp.body)['url']
         @callback_uris << uri
-        @callback_uris.push
         uri
     end
 
@@ -44,6 +43,15 @@ class Callbacks_API_Client
             destroy_callback_endpoint(uri)
         end
         return true
+    end
+
+    def get(uri)
+        conn = get_a_faraday
+        resp = conn.get uri
+
+        raise "Callback Endpoint Get Failed\n Status: #{resp.status}\n #{resp.body}" unless resp.status == 200
+
+        return JSON.parse(resp.body)
     end
 
     private
