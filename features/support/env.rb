@@ -4,15 +4,7 @@ require 'capybara/poltergeist'
 require 'tms_client'
   
 
-#pass environment variables to control which browser is used for testing. Default is HEADLESS/POLTERGEIST
-#usage: FIREFOX=true bundle exec cucumber features/test.feature
 
-# Before do 
-#   $dunit ||= false  # have to define a variable before we can reference its value
-#   return $dunit if $dunit                  # bail if $dunit TRUE
-#   step "run the really slow log in method" # otherwise do it.
-#   $dunit = true                            # don't do it again.
-# end 
 
 
 
