@@ -23,15 +23,16 @@ describe 'accounts/show.rabl' do
   it 'should work when valid' do
     render
     rendered.should be_json_for(account).
-                      with_attributes(:name,
-                                      :stop_handler_id,
-                                      :voice_vendor_id,
-                                      :email_vendor_id,
-                                      :sms_vendor_id,
-                                      :ipaws_vendor_id,
-                                      :help_text,
-                                      :stop_text,
-                                      :default_response_text).
+          with_attributes(:name,
+                          :stop_handler_id,
+                          :voice_vendor_id,
+                          :email_vendor_id,
+                          :sms_vendor_id,
+                          :ipaws_vendor_id,
+                          :help_text,
+                          :stop_text,
+                          :default_response_text,
+                          :sid).
                       with_arrays(:dcm_account_codes).
                       with_timestamps(:created_at, :updated_at).
                       with_links('self' => account_path(account))
