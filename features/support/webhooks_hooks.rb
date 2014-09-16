@@ -4,6 +4,6 @@ Before do |scenario|
     puts @capi.callbacks_root
 end
 
-#After('@webhooks') do
-    #@capi.destroy_all_callback_uris
-#end
+After('@webhooks') do
+    @capi.destroy_all_callback_uris
+end
