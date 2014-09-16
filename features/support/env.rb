@@ -25,13 +25,13 @@ def environment
     if !ENV.has_key?('XACT_ENV') | ENV['XACT_ENV'] == 'dev'
         "http://localhost:3000"
     elsif ENV['XACT_ENV'] == 'qc'
-        "http://qc-tms.govdelivery.com"
+        "https://qc-tms.govdelivery.com"
     elsif ENV['XACT_ENV'] == 'int'
-        "http://int-tms.govdelivery.com"
+        "https://int-tms.govdelivery.com"
     elsif ENV['XACT_ENV'] == 'stage'
-        "http://stage-tms.govdelivery.com"
+        "https://stage-tms.govdelivery.com"
     elsif ENV['XACT_ENV'] == 'prod'
-        "http://tms.govdelivery.com"
+        "https://tms.govdelivery.com"
     end
 end
 

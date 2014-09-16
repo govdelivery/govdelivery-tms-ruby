@@ -1,11 +1,15 @@
 require 'faraday'
+require 'uri'
 
 class Callbacks_API_Client
     attr_accessor :callback_uris
     attr_accessor :callbacks_root
+    attr_accessor :callbacks_domain
 
     def initialize(callback_root)
         @callbacks_root = callback_root
+        uri = URI.parse(@callbacks_root)
+        @callbacks_domain = "#{uri.scheme}://#{uri.host}"
         @callback_uris = []
     end
 
@@ -40,7 +44,7 @@ class Callbacks_API_Client
     def destroy_all_callback_uris()
         all_callback_endpoints = Array.new(self.callback_uris)
         for uri in all_callback_endpoints
-            destroy_callback_endpoint(uri)
+            destroy_callback_uri(uri)
         end
         return true
     end
