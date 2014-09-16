@@ -9,7 +9,7 @@ class Callbacks_API_Client
         @callback_uris = []
     end
 
-    def create_callback_endpoint(desc=nil)
+    def create_callback_uri(desc=nil)
 
         conn = get_a_faraday
 
@@ -24,7 +24,7 @@ class Callbacks_API_Client
         uri
     end
 
-    def destroy_callback_endpoint(uri)
+    def destroy_callback_uri(uri)
         conn = get_a_faraday
 
         resp = conn.delete uri
@@ -37,7 +37,7 @@ class Callbacks_API_Client
         return true
     end
 
-    def destroy_all_callback_endpoints()
+    def destroy_all_callback_uris()
         all_callback_endpoints = Array.new(self.callback_uris)
         for uri in all_callback_endpoints
             destroy_callback_endpoint(uri)
