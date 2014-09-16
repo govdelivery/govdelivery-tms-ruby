@@ -22,27 +22,34 @@ def url
     end
 end
 
-When(/^placeholder$/) do
-  "#{env}"
-  webhook = client.webhooks.build(:url=>"#{url}", :event_type=>'inconclusive')
-  webhook.post
-end
 
-Then(/^something$/) do
-  puts 'Arby\'s nation.'
-end
-
-Given(/^The following event types:$/) do |event_types|
+Given(/^the following "(.*?)":$/) do |arg1, table|
     event_types = event_types.hashes.map {|data| data["event_type"]}
     @event_callback_uris = Hash[event_types.map {|event_type| [event_type,nil]}]
 end
 
-Given(/^A callback url exists for each state$/) do
+Then(/^a callback url exists for each "(.*?)"$/) do |arg1, table|
     @event_callback_uris.each_key do |event_type|
         @event_callback_uris[event_type] = @capi.create_callback_uri(event_type)
     end
 end
 
-Given(/^A callback url is registered for each event state$/) do
-    puts @event_callback_uris
+And(/^a callback url is registered for each event_type$/) do 
+  puts @event_callback_uris
 end
+
+When(/^I send an email message to the magic address of each event state$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^the callback registered for each event state should receive a POST referring to the appropriate message$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+
+
+
+
+
+
+
