@@ -92,11 +92,17 @@ Then(/^something$/) do
   puts 'Arby\'s nation.'
 end
 
-When(/^The following event types:$/) do |event_types|
+Given(/^The following event types:$/) do |event_types|
     event_types = event_types.hashes.map {|data| data["event_type"]}
-    @event_callbacks = Hash[event_types.map {|event_type| [event_type,nil]}]
+    @event_callback_uris = Hash[event_types.map {|event_type| [event_type,nil]}]
 end
 
-When(/^A callback url exists for each state$/) do
-    puts @event_callbacks
+Given(/^A callback url exists for each state$/) do
+    @event_callback_uris.each_key do |event_type|
+        @event_callback_uris[event_type] = @capi.create_callback_uri(event_type)
+    end
+end
+
+Given(/^A callback url is registered for each event state$/) do
+    puts @event_callback_uris
 end
