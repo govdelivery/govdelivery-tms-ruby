@@ -34,3 +34,17 @@ end
 def callbacks_api_root
     'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
 end
+
+def tms_client
+  if ENV['XACT_ENV'].nil? or ENV['XACT_ENV'] == 'dev'
+    TMS::Client.new(ENV['XACT_TOKEN'], :api_root => environment)
+  elsif ENV['XACT_ENV'] == 'qc'
+    client = TMS::Client.new('gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp', :api_root => environment)
+  elsif ENV['XACT_ENV'] == 'int'
+    "http://int-tms.govdelivery.com"
+  elsif ENV['XACT_ENV'] == 'stage'
+    "http://stage-tms.govdelivery.com"
+  elsif ENV['XACT_ENV'] == 'prod'
+    "http://tms.govdelivery.com"
+  end
+end

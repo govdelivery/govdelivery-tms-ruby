@@ -5,5 +5,11 @@ Before do |scenario|
 end
 
 After('@webhooks') do
-    @capi.destroy_all_callback_uris
+  @capi.destroy_all_callback_uris
+  # TODO: Wouldn't it be better to only delete hooks we created for this test, not all hooks on the account?
+  hooks = tms_client.webhooks
+  hooks.get
+  hooks.collection.each do |hook|
+    hook.delete
+  end
 end
