@@ -1,4 +1,3 @@
-require 'typhoeus/adapters/faraday'
 module Service
   class ForwardService
     USER_AGENT = "Mozilla/5.0 (compatible; GovDelivery TMS v1.0; http://govdelivery.com)"
@@ -28,7 +27,7 @@ module Service
         faraday.use Faraday::Response::Logger, self.logger if self.logger
         faraday.use Faraday::Response::RaiseError
         faraday.basic_auth(username, password) if username && password
-        faraday.adapter :net_http
+        faraday.adapter Faraday.default_adapter
       end
     end
   end

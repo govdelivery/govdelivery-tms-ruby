@@ -6,7 +6,7 @@ gem 'aasm'
 gem 'addressable'
 gem 'activerecord-oracle_enhanced-adapter' #, '=1.4.3.5'
 gem 'clockwork'
-gem 'dcm_client', '~>0.1.4'
+gem 'dcm_client'
 gem 'devise'
 gem 'enumify'
 gem 'faraday'
@@ -33,7 +33,6 @@ gem 'sinatra', :require => nil
 gem 'slim'
 gem "strip_attributes"
 gem 'twilio-ruby'
-gem 'typhoeus'
 gem "validate_url"
 gem 'valid_email'
 gem 'yakety_yak'

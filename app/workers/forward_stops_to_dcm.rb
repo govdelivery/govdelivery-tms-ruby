@@ -28,7 +28,7 @@ class ForwardStopsToDcm
     Faraday.new do |faraday|
       faraday.use Faraday::Response::Logger, Rails.logger if self.logger
       faraday.use Faraday::Response::RaiseError
-      faraday.adapter :typhoeus
+      faraday.adapter Faraday.default_adapter
     end
   end
 end
