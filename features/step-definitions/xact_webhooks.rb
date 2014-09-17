@@ -11,21 +11,7 @@ def event_types
 end    
 
 def magic_emails
-  magic_email = ["mike.sutehall@govdelivery.com"]
-end    
-
-def tms_client
-    if ENV['XACT_ENV'].nil? or ENV['XACT_ENV'] == 'dev'
-        TMS::Client.new(ENV['XACT_TOKEN'], :api_root => environment)
-    elsif ENV['XACT_ENV'] == 'qc'
-        client = TMS::Client.new('gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp', :api_root => environment)
-    elsif ENV['XACT_ENV'] == 'int'
-        "http://int-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'stage'
-        "http://stage-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'prod'
-        "http://tms.govdelivery.com"
-    end
+  magic_email = ["sending@sink.govdelivery.com","sent@sink.govdelivery.com","failing@sink.govdelivery.com","blacklisted@sink.govdelivery.com","inconclusive@sink.govdelivery.com","canceled@sink.govdelivery.com"]
 end
 
 def url
@@ -67,25 +53,28 @@ When(/^I send an email message to the magic address of each event state$/) do
     puts magic_email
   end
   @message.post
-  puts @message.href
-  puts @message.recipients
 end
 
 Then(/^the callback registered for each event state should receive a POST referring to the appropriate message$/) do
+  sleep(5)
+  # TODO: Sleep shouldn't fix our problems
+  # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
   @message.recipients.get
-  @message.recipients.collection.each |recipient|
+  @message.recipients.collection.each do |recipient|
     status = recipient.attributes[:status]
     event_callback_uri = @event_callback_uris[status]
-    event_callback = capi.get(event_callback_uri)
-    raise "#{status} callback endpoint should have at least 1 payload" if event_callback["payload_count"] == 0
-    # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
+    event_callback = @capi.get(event_callback_uri)
+    raise "#{status} callback endpoint should have at least 1 payload\n#{status }callback endpoint: #{event_callback}" if event_callback["payload_count"] == 0
     passed = false
+    payloads = []
+    condition = environment + recipient.href
     event_callback["payloads"].each do |payload_info|
-      payload = capi.get(payload_info["url"])
-      passed = true if payload["payload"]["recipient_url"] == recipient.href
-      # TODO: recipient.href does not have the full URL, should be adding the api_root of tms_client for the above comparison
+      payloads << @capi.get(payload_info["url"])
+      foo = payloads[-1]["payload"]["recipient_url"]
+      passed = true if payloads[-1]["payload"]["recipient_url"] == condition
     end
-  raise "#{status} callback endpoint does not have a payload referring to the message it should" if not passed
+  raise "#{status} callback endpoint does not have a payload referring to #{condition}\npayloads: #{payloads}" if not passed
+  end
 end
 
 Then(/^something$/) do
