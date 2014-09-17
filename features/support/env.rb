@@ -2,13 +2,6 @@ require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'tms_client'
-<<<<<<< HEAD
-=======
-  
-
-
-
->>>>>>> 6a4963545918b0e16996ad85879c195edacd5c6a
 
 
 Capybara.default_driver = :poltergeist
@@ -40,8 +33,4 @@ end
 
 def callbacks_api_root
     'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> 6a4963545918b0e16996ad85879c195edacd5c6a
