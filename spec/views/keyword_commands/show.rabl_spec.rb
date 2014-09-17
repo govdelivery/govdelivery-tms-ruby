@@ -13,7 +13,7 @@ describe 'keyword_commands/show.rabl' do
          created_at: 1.days.ago,
          updated_at: 1.days.ago,
          keyword_id: 101,
-         errors: [],
+         errors: {},
          command_actions: [1],
          :persisted? => true
     )
@@ -36,7 +36,7 @@ describe 'keyword_commands/show.rabl' do
   end
 
   it 'should work when invalid' do
-    command.stubs(:errors).returns(['whoops'])
+    command.stubs(:errors).returns({:foo => 'whoops'})
     render
     rendered.should be_json_for(command).
                       with_attributes(:name, :command_type).

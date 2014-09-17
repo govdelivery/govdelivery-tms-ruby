@@ -41,7 +41,7 @@ RSpec::Matchers.define :be_json_for do |expected|
 
     json.each do |k, v|
       if k=='errors' && @errors
-        v.should be_a(Array)
+        v.should be_a(Hash)
       elsif k=='_links'
         @links.each { |rel, href| v[rel.to_s].should eq(href) }
         @links.keys.length.should eq(v.keys.length)
