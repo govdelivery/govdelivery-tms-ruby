@@ -42,6 +42,7 @@ And(/^a callback url is registered for each event_type$/) do
   @event_callback_uris.each do |key,value|
     webhook = client.webhooks.build(:url=>@capi.callbacks_domain + value, :event_type=>key)
     webhook.post
+    @webhooks << webhook
   end
 end
 
@@ -56,10 +57,11 @@ When(/^I send an email message to the magic address of each event state$/) do
 end
 
 Then(/^the callback registered for each event state should receive a POST referring to the appropriate message$/) do
-  sleep(5)
+  sleep(10)
   # TODO: Sleep shouldn't fix our problems
   # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
   @message.recipients.get
+  @webhooks[-1].delete # TODO: Remove me
   @message.recipients.collection.each do |recipient|
     status = recipient.attributes[:status]
     event_callback_uri = @event_callback_uris[status]
