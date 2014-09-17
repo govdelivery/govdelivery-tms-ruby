@@ -1,15 +1,18 @@
-Before do |scenario|
-	puts "Starting scenario: "
+Before() do |scenario|
     @capi = Callbacks_API_Client.new(callbacks_api_root)
     puts @capi.callbacks_root
+    @webhooks = []
 end
 
 After('@webhooks') do
-  @capi.destroy_all_callback_uris
-  # TODO: Wouldn't it be better to only delete hooks we created for this test, not all hooks on the account?
-  hooks = tms_client.webhooks
-  hooks.get
-  hooks.collection.each do |hook|
-    hook.delete
+  # Return registered webhooks, and callback endpoints to their pre-test state
+  @webhooks.each do |webhook|
+    begin
+      webhook.delete
+    rescue => e
+      STDERR.puts "Could not unregister webhook: #{e.message}"
+    end
   end
+
+  @capi.destroy_all_callback_uris
 end
