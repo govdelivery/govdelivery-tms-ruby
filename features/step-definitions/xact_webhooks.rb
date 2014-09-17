@@ -61,7 +61,6 @@ Then(/^the callback registered for each event state should receive a POST referr
   # TODO: Sleep shouldn't fix our problems
   # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
   @message.recipients.get
-  @webhooks[-1].delete # TODO: Remove me
   @message.recipients.collection.each do |recipient|
     status = recipient.attributes[:status]
     event_callback_uri = @event_callback_uris[status]
