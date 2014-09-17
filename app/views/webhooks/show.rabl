@@ -1,5 +1,5 @@
 object @webhook
-attributes :url, :event_type
+attributes :url, :event_type, :created_at
 
 if root_object
   if root_object.errors.any?
@@ -8,5 +8,5 @@ if root_object
 end
 
 node(:'_links') do |w|
-  links = {:self => webhook_path(w)}
+  {:self => webhook_path(w)}
 end

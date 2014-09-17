@@ -37,6 +37,8 @@ RSpec::Matchers.define :be_json_for do |expected|
     @timestamps ||= [:created_at, :updated_at]
     fail('no attributes specified') unless @attributes
 
+    fail ('expected _links') if @links.present? and !json.has_key?("_links")
+
     json.each do |k, v|
       if k=='errors' && @errors
         v.should be_a(Array)
