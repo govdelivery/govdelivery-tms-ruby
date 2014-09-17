@@ -15,7 +15,9 @@ def magic_emails
 end    
 
 def tms_client
-    if ENV['XACT_ENV'] == 'qc'
+    if ENV['XACT_ENV'].nil? or ENV['XACT_ENV'] == 'dev'
+        TMS::Client.new(ENV['XACT_TOKEN'], :api_root => environment)
+    elsif ENV['XACT_ENV'] == 'qc'
         client = TMS::Client.new('gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp', :api_root => environment)
     elsif ENV['XACT_ENV'] == 'int'
         "http://int-tms.govdelivery.com"
@@ -53,7 +55,7 @@ And(/^a callback url is registered for each event_type$/) do
   client = tms_client
   @event_callback_uris.each do |key,value|
     webhook = client.webhooks.build(:url=>@capi.callbacks_domain + value, :event_type=>key)
-    webhook.post 
+    webhook.post
   end
 end
 
