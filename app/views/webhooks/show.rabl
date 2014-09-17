@@ -6,3 +6,7 @@ if root_object
     node(:errors) { |webhook| webhook.errors }
   end
 end
+
+node(:'_links') do |w|
+  links = {:self => webhook_path(w)}
+end
