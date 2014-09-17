@@ -18,7 +18,7 @@ end
 
 
 def environment
-    if !ENV.has_key?('XACT_ENV') | ENV['XACT_ENV'] == 'dev'
+    if !ENV.has_key?('XACT_ENV') or ENV['XACT_ENV'] == 'dev'
         "http://localhost:3000"
     elsif ENV['XACT_ENV'] == 'qc'
         "https://qc-tms.govdelivery.com"
