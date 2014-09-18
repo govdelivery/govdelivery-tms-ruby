@@ -4,7 +4,7 @@ require 'rails_helper'
 describe CommandType::DcmUnsubscribe do
   let(:account) { stub_everything('account') }
   let(:command_action) { stub('CommandAction', content_type: 'text/plain', save!: true) }
-  let(:http_response) { OpenStruct.new(:body => "ATLANTA IS FULL OF ZOMBIES, STAY AWAY",
+  let(:http_response) { OpenStruct.new(:body => {'message'=> "ATLANTA IS FULL OF ZOMBIES, STAY AWAY"},
                                        :status => 200,
                                        :headers => {'Content-Type' => 'text/plain'}) }
   let(:command_params) do
@@ -22,7 +22,7 @@ describe CommandType::DcmUnsubscribe do
   subject { CommandType::DcmUnsubscribe.new }
 
   it 'creates a command response and sms message' do
-    stub_command_action_create!(command_params, http_response, command_action)
+    stub_command_action_create!(command_params, http_response, command_action, http_response.body.to_json)
     subject.process_response(account, command_params, http_response)
   end
 

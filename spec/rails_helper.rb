@@ -34,12 +34,12 @@ RSpec.configure do |config|
 
 end
 
-def stub_command_action_create!(command_params, http_response, command_action)
+def stub_command_action_create!(command_params, http_response, command_action, body=http_response.body)
   mock_relation = mock('CommandAction.where')
   mock_relation.expects(:first_or_create!).with(
     status:        http_response.status,
     content_type:  http_response.headers['Content-Type'],
-    response_body: http_response.body).returns(command_action)
+    response_body: body).returns(command_action)
   CommandAction.expects(:where).with(
     inbound_message_id: command_params.inbound_message_id,
     command_id:         command_params.command_id).returns(mock_relation)

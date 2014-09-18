@@ -45,8 +45,21 @@ module CommandType
         first_or_create!(
         status: http_response.status,
         content_type: http_response.headers['Content-Type'],
-        response_body: http_response.body)
+        response_body:  response_body(http_response.body))
     end
+
+    # DCM command type responses return parsed hashes of JSON, so...
+    def response_body(body)
+      case
+        when body.is_a?(String)
+          body
+        when body.respond_to?(:to_json)
+          body.to_json
+        else
+          nil
+      end
+    end
+
   end
 
   ALL = HashWithIndifferentAccess.new
