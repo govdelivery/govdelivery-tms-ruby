@@ -26,7 +26,7 @@ class ForwardStopsToDcm
 
   def connection
     Faraday.new do |faraday|
-      faraday.use Faraday::Response::Logger, Rails.logger if self.logger
+      faraday.use Faraday::Response::Logger, self.logger if self.logger
       faraday.use Faraday::Response::RaiseError
       faraday.request :url_encoded
       faraday.adapter Faraday.default_adapter
