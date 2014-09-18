@@ -23,6 +23,7 @@ module Service
 
     def connection(username, password)
       Faraday.new do |faraday|
+        faraday.request  :url_encoded
         faraday.headers[:user_agent] = USER_AGENT
         faraday.use Faraday::Response::Logger, self.logger if self.logger
         faraday.use Faraday::Response::RaiseError
