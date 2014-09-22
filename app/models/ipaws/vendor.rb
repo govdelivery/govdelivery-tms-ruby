@@ -37,8 +37,9 @@ module IPAWS
       # The response statuses will be grouped in groups of 4 and merged together.
       reform_cap_response(client.postCAP(attributes.as_json)).reduce({}) do |response, item|
         # If the item only has subParaListItem, this is our list of statuses.
+        response['statuses'] ||= []
         if item.keys == ['subParaListItem']
-          response['statuses'] = item['subParaListItem'].in_groups_of(4, false).map { |hashes| hashes.inject(&:merge!) }
+          response['statuses'] += item['subParaListItem'].in_groups_of(4, false).map { |hashes| hashes.inject(&:merge!) }
         else
           response.merge!(item)
         end
