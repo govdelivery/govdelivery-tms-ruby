@@ -203,8 +203,13 @@ describe IPAWS::Vendor do
           {"CHANNELNAME"=>"PUBLIC"},
           {"STATUSITEMID"=>"800"},
           {"ERROR"=>"N"},
-          {"STATUS"=>"Ack"}]}]
-    end
+          {"STATUS"=>"Ack"}]},
+       {"subParaListItem"=>
+            [{"CHANNELNAME"=>"sendinggatewayid"},
+             {"STATUSITEMID"=>10},
+             {"ERROR"=>"N"},
+             {"STATUS"=>"Ack"}]}]
+     end
     let(:xact_response) do
       {
         "identifier"=>"CAP12-TEST-1397743203",
@@ -248,6 +253,12 @@ describe IPAWS::Vendor do
           {
             "CHANNELNAME"=>"PUBLIC",
             "STATUSITEMID"=>"800",
+            "ERROR"=>"N",
+            "STATUS"=>"Ack"
+          },
+          {
+            "CHANNELNAME"=>"sendinggatewayid",
+            "STATUSITEMID"=>10,
             "ERROR"=>"N",
             "STATUS"=>"Ack"
           }
