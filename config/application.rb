@@ -131,5 +131,7 @@ module Xact
       ActiveRecord::Base.logger =
         Log4r::Logger['default']
     Rails.logger.level = Log4r::INFO
+
+    config.default_message_timeout = 2.days
   end
 end
