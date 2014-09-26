@@ -4,7 +4,7 @@ module CommandWorkers
     def self.included(base)
       base.send(:include, ::Workers::Base)
       base.send(:include, InstanceMethods)
-      base.sidekiq_options queue: :command
+      base.sidekiq_options queue: :webhook
 
       base.sidekiq_retries_exhausted do |msg|
         logger.warn "Sidekiq job failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
