@@ -8,5 +8,5 @@ if root_object
 end
 
 node(:'_links') do |w|
-  links = {:self => webhook_path(w)}
+  {:self => w.persisted? ? webhook_path(w) : webhooks_path}
 end
