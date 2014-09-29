@@ -41,8 +41,16 @@ def xact_token
   token
 end
 
+def message_types
+  message_types = [
+    "email",
+    "sms",
+    "voice"
+  ]
+end
+
 def event_types
-  event_type = [
+  event_types = [
     "sending",
     "sent",
     "failed",
@@ -53,13 +61,25 @@ def event_types
 end
 
 def magic_emails
-  magic_email = [
+  magic_emails = [
     "sending@sink.govdelivery.com",
     "sent@sink.govdelivery.com",
     "failing@sink.govdelivery.com",
     "blacklisted@sink.govdelivery.com",
     "inconclusive@sink.govdelivery.com",
     "canceled@sink.govdelivery.com"
+  ]
+end
+
+def magic_phone_numbers
+  magic_phone_numbers = [
+    "15005550000",
+    "15005550001",
+    "15005550002",
+    "15005550003",
+    "15005550004",
+    "15005550005",
+    "15005550006"
   ]
 end
 
