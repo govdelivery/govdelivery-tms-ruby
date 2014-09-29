@@ -2,9 +2,7 @@ require 'base'
 class WebhookWorker
   include Workers::Base
   sidekiq_options retry:    10,
-                  queue:    :webhook,
-                  throttle: {threshold: 30, period: 5.seconds, key: ->(options) { options['job_key'] }}
-
+                  queue:    :webhook
 
   READ_TIMEOUT = 5 #seconds
   CONN_TIMEOUT = 2 #seconds
@@ -31,7 +29,8 @@ class WebhookWorker
     Faraday.new do |faraday|
       faraday.use Faraday::Response::Logger, logger
       faraday.use Faraday::Response::RaiseError
-      faraday.adapter :typhoeus
+      faraday.request :url_encoded
+      faraday.adapter Faraday.default_adapter
     end
   end
 

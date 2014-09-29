@@ -30,12 +30,12 @@ end
 Sidekiq.configure_server do |config|
   require 'sidekiq/pro/reliable_fetch'
 
-  config.redis = default.merge(Xact::Application.config.sidekiq[:server])
+  config.redis                 = default.merge(Xact::Application.config.sidekiq[:server])
   config.options[:concurrency] = 30
-  config.options[:queues] = ['sender', 'default', 'command', 'webhook', 'stats']
+  config.options[:queues]      = ['sender', 'default', 'webhook', 'stats', 'low']
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
-    chain.add Sidekiq::Throttler, storage: :redis
+    #chain.add Sidekiq::Throttler, storage: :redis
   end
   SidekiqClockworkScheduler.new.async.run
 
@@ -51,5 +51,7 @@ end
 Sidekiq.configure_client do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:client])
 end
+
+SidekiqUniqueJobs::Config.unique_args_enabled = true
 
 Sidekiq::Web.app_url = '/'

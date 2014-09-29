@@ -3,8 +3,8 @@ class VoiceMessage < ActiveRecord::Base
   has_one :call_script
 
   attr_accessible :play_url, :say_text
-  validates :play_url, presence: true, unless: ->(message) { message.say_text.present? }
-  validates :say_text, presence: true, unless: ->(message) { message.play_url.present? }
+  validates :play_url, presence: true, unless: ->(message) { message.say_text.present? }, on: :create
+  validates :say_text, presence: true, unless: ->(message) { message.play_url.present? }, on: :create
 
   after_create :create_script
 

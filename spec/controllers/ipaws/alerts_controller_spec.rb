@@ -29,7 +29,7 @@ if defined? JRUBY_VERSION
     end
 
     let(:ipaws_post_cap_response) do
-      [{"identifier"=>"CAP12-TEST-1397743203"},
+      [{"identifier"=>"ipaws_alerts/3c9cfb43/2014-09-18T17:33:28-04:00"},
        {"subParaListItem"=>
          [{"CHANNELNAME"=>"CAPEXCH"},
           {"STATUSITEMID"=>"200"},
@@ -48,17 +48,22 @@ if defined? JRUBY_VERSION
           {"ERROR"=>"N"},
           {"STATUS"=>"message-not-disseminated-as-NWEM"},
           {"CHANNELNAME"=>"EAS"},
-          {"STATUSITEMID"=>"501"},
+          {"STATUSITEMID"=>"500"},
           {"ERROR"=>"N"},
-          {"STATUS"=>"message-not-disseminated-as-EAS"},
+          {"STATUS"=>"Ack"},
           {"CHANNELNAME"=>"CMAS"},
           {"STATUSITEMID"=>"600"},
           {"ERROR"=>"N"},
           {"STATUS"=>"Ack"},
           {"CHANNELNAME"=>"PUBLIC"},
-          {"STATUSITEMID"=>"800"},
+          {"STATUSITEMID"=>"801"},
           {"ERROR"=>"N"},
-          {"STATUS"=>"Ack"}]}]
+          {"STATUS"=>"message-not-disseminated-as-non-EAS-public"}]},
+       {"subParaListItem"=>
+            [{"CHANNELNAME"=>"sendinggatewayid"},
+             {"STATUSITEMID"=>"10"},
+             {"ERROR"=>"N"},
+             {"STATUS"=>"Ack"}]}]
     end
 
     let(:ipaws_post_cap_error_response) do

@@ -13,8 +13,8 @@ class EmailMessage < ActiveRecord::Base
                   :reply_to,
                   :subject
 
-  validates :body, presence: true
-  validates :subject, presence: true, length: {maximum: 400}
+  validates :body, presence: true, on: :create
+  validates :subject, presence: true, length: {maximum: 400}, on: :create
   validates :from_email, presence: true
   validates :reply_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
   validates :errors_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
