@@ -16,35 +16,70 @@ options = {
 Capybara::Poltergeist::Driver.new(app, options)
 end
 
+def xact_url
+  urls = {
+    :dev => "http://localhost:3000",
+    :qc => "http://qc-tms.govdelivery.com",
+    :stage => "http://stage-tms.govdelivery.com",
+    :int => "http://int-tms.govdelivery.com",
+    :prod => "http://tms.govdelivery.com"
+  }
 
-def environment
-    if !ENV.has_key?('XACT_ENV') or ENV['XACT_ENV'] == 'dev'
-        "http://localhost:3000"
-    elsif ENV['XACT_ENV'] == 'qc'
-        "https://qc-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'int'
-        "https://int-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'stage'
-        "https://stage-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'prod'
-        "https://tms.govdelivery.com"
-    end
+  url = urls[environment]
+  raise "No XACT URL defined for environment #{environment}" if !url
+  url
+end
+
+def xact_token
+  tokens = {
+    :dev => ENV['XACT_TOKEN'],
+    :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp'
+  }
+
+  token = tokens[environment]
+  raise "No XACT Token defined for environment #{environment}" if !token
+  token
+end
+
+def event_types
+  event_type = [
+    "sending",
+    "sent",
+    "failed",
+    "blacklisted",
+    "inconclusive",
+    "canceled"
+  ]
+end
+
+def magic_emails
+  magic_email = [
+    "sending@sink.govdelivery.com",
+    "sent@sink.govdelivery.com",
+    "failing@sink.govdelivery.com",
+    "blacklisted@sink.govdelivery.com",
+    "inconclusive@sink.govdelivery.com",
+    "canceled@sink.govdelivery.com"
+  ]
 end
 
 def callbacks_api_root
-    'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
+  'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
+end
+
+def environment
+  environments = [
+    :dev,
+    :qc,
+    :stage,
+    :int,
+    :prod
+  ]
+  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :dev
+  raise "Unsupported XACT Environment: #{env}" if !environments.include?(env)
+  env
 end
 
 def tms_client
-  if ENV['XACT_ENV'].nil? or ENV['XACT_ENV'] == 'dev'
-    TMS::Client.new(ENV['XACT_TOKEN'], :api_root => environment)
-  elsif ENV['XACT_ENV'] == 'qc'
-    client = TMS::Client.new('gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp', :api_root => environment)
-  elsif ENV['XACT_ENV'] == 'int'
-    "http://int-tms.govdelivery.com"
-  elsif ENV['XACT_ENV'] == 'stage'
-    "http://stage-tms.govdelivery.com"
-  elsif ENV['XACT_ENV'] == 'prod'
-    "http://tms.govdelivery.com"
-  end
+  client = TMS::Client.new(xact_token, :api_root => xact_url)
 end

@@ -6,25 +6,7 @@ $subject = Hash.new #generating a hash value
 $subject.store(1, Time.new) #storing the hash value so we can retrieve it later on
 
 
-def event_types
-  event_type = ["sending","sent","failed","blacklisted","inconclusive","canceled"]
-end    
 
-def magic_emails
-  magic_email = ["sending@sink.govdelivery.com","sent@sink.govdelivery.com","failing@sink.govdelivery.com","blacklisted@sink.govdelivery.com","inconclusive@sink.govdelivery.com","canceled@sink.govdelivery.com"]
-end
-
-def url
-    if ENV['XACT_ENV'] == 'qc'
-        "http://qc-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'int'
-        "http://int-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'stage'
-        "http://stage-tms.govdelivery.com"
-    elsif ENV['XACT_ENV'] == 'prod'
-        "http://tms.govdelivery.com"
-    end
-end
 
 Given(/^the following event type$/) do
     @event_callback_uris = Hash[event_types.map {|event_type| [event_type,nil]}]
@@ -68,7 +50,7 @@ Then(/^the callback registered for each event state should receive a POST referr
     raise "#{status} callback endpoint should have at least 1 payload\n#{status }callback endpoint: #{event_callback}" if event_callback["payload_count"] == 0
     passed = false
     payloads = []
-    condition = environment + recipient.href
+    condition = xact_url + recipient.href
     event_callback["payloads"].each do |payload_info|
       payloads << @capi.get(payload_info["url"])
       foo = payloads[-1]["payload"]["recipient_url"]
