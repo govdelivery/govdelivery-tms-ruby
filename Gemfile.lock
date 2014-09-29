@@ -376,7 +376,7 @@ DEPENDENCIES
   capybara
   clockwork
   cucumber
-  dcm_client (~> 0.1.4)
+  dcm_client
   devise
   enumify
   factory_girl_rails
