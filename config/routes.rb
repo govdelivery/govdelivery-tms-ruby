@@ -20,7 +20,7 @@ Xact::Application.routes.draw do
   end
 
   resources(:accounts) do
-    resources(:users, only: []) do
+    resources(:users, only: [:index]) do
       resources(:tokens, only: [:index, :create, :show, :destroy]) do
         pageable
       end
