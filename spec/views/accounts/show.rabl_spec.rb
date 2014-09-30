@@ -15,6 +15,8 @@ describe 'accounts/show.rabl' do
            dcm_account_codes: ['so', 'rad'])
   end
 
+  let (:user) { create :user, account: account, admin: false }
+  let (:admin_user) { create :user, account: account, admin: true }
 
   before do
     assign(:account, account)
@@ -35,7 +37,7 @@ describe 'accounts/show.rabl' do
                           :sid).
                       with_arrays(:dcm_account_codes).
                       with_timestamps(:created_at, :updated_at).
-                      with_links('self' => account_path(account))
+                      with_links( 'self' => account_path(account),
+                                  'users' => account_users_path(account))
   end
-
 end
