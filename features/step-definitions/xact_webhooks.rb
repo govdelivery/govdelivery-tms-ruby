@@ -42,7 +42,6 @@ When(/^I send a message of each type to the magic address of each event state$/)
     @email_message.recipients.build(:email=>magic_email)
     puts magic_email
   end
-  binding.pry
   @email_message.post!
 
   @sms_message = client.sms_messages.build(:body=>'Webhooks Testing')
@@ -52,7 +51,7 @@ When(/^I send a message of each type to the magic address of each event state$/)
   end
   @sms_message.post!
 
-  @voice_message = client.sms_messages.build(:play_url => 'http://www.webhooks-testing.com')
+  @voice_message = client.voice_messages.build(:play_url => 'http://www.webhooks-testing.com')
   magic_phone_numbers.each do |magic_number|
     @voice_message.recipients.build(:phone=>magic_number)
     puts magic_number
