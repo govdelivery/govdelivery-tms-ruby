@@ -43,9 +43,9 @@ end
 
 def message_types
   message_types = [
-    "email",
-    "sms",
-    "voice"
+    :email,
+    :sms,
+    :voice
   ]
 end
 
@@ -73,7 +73,7 @@ end
 
 def magic_phone_numbers
   magic_phone_numbers = [
-    "15005550000",
+#    "15005550000",
     "15005550001",
     "15005550002",
     "15005550003",
