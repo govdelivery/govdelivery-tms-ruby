@@ -19,7 +19,7 @@ end
 Then(/^a callback url exists for each message type and event type$/) do
     @message_event_callback_uris.each do |message_type, event_callback_uris|
       event_callback_uris.each_key do |event_type|
-        event_callback_uris[event_type] = @capi.create_callback_uri(event_type)
+        event_callback_uris[event_type] = @capi.create_callback_uri("#{message_type}-#{event_type}")
       end
     end
 end
@@ -64,13 +64,14 @@ Then(/^the callback registered for each event state should receive a POST referr
   # TODO: Sleep shouldn't fix our problems
   # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
 
-  {:email_message => @email_message, :sms_message => @sms_message, :voice_message => @voice_message}.each do |message_type, message|
+  {:email => @email_message, :sms => @sms_message, :voice => @voice_message}.each do |message_type, message|
     message.recipients.get
-    recipients.collection.each do |recipient|
+    message.recipients.collection.each do |recipient|
       status = recipient.attributes[:status]
       event_callback_uri = @message_event_callback_uris[message_type][status]
       event_callback = @capi.get(event_callback_uri)
-      raise "#{status} callback endpoint should have at least 1 payload\n#{status }callback endpoint: #{event_callback}" if event_callback["payload_count"] == 0
+      raise "#{message_type}-#{status} callback endpoint should have at least 1 payload\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payload_count"] == 0
+      raise "#{message_type}-#{status} callback endpoint should have non-nil payloads\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payloads"].nil?
       passed = false
       payloads = []
       condition = xact_url + recipient.href
