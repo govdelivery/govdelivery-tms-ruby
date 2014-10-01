@@ -187,6 +187,7 @@ namespace :db do
 
     if lba.users.empty?
       user = lba.users.build(user_config)
+      user.admin = true
       user.save
       puts "User created for #{account_config[:name]}"
       puts "\tEmail Addr:\t #{user.email}"
