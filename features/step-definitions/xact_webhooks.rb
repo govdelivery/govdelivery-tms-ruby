@@ -75,6 +75,7 @@ Then(/^the callback registered for each event state should receive a POST referr
       puts "#{message_type} | Current Status: #{status} | URL: #{recipient.href}"
       event_callback_uri = @message_event_callback_uris[message_type][status]
       event_callback = @capi.get(event_callback_uri)
+      puts "Checking webhook registered for #{message_type}-#{status}: #{event_callback_uri}"
       raise "Callback endpoint for #{message_type} #{recipient.href} should have at least 1 payload\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payload_count"] == 0
       raise "Callback endpoint for #{message_type} #{recipient.href} should have non-nil payloads\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payloads"].nil?
       passed = false
