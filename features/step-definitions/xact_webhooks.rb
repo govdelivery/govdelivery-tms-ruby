@@ -30,6 +30,7 @@ And(/^a callback url is registered for each message type and event type$/) do
     event_callback_uris.each do |key,value|
       webhook = client.webhooks.build(:url=>@capi.callbacks_domain + value, :event_type=>key)
       webhook.post
+      puts "Webhook registered for #{message_type}-#{key}: #{value}"
       @webhooks << webhook
     end
   end
@@ -38,29 +39,32 @@ end
 When(/^I send a message of each type to the magic address of each event state$/) do
   client = tms_client
   @email_message = client.email_messages.build(:body=>'Webhooks Testing',:subject=>"#{$subject[1]}")
+  puts 'Sending to the following Email Addresses'
   magic_emails.each do |magic_email|
     @email_message.recipients.build(:email=>magic_email)
-    puts magic_email
+    puts "\t#{magic_email}"
   end
   @email_message.post!
 
   @sms_message = client.sms_messages.build(:body=>'Webhooks Testing')
+  puts 'Sending to the following SMS Numbers'
   magic_phone_numbers.each do |magic_number|
     @sms_message.recipients.build(:phone=>magic_number)
-    puts magic_number
+    puts "\t#{magic_number}"
   end
   @sms_message.post!
 
   @voice_message = client.voice_messages.build(:play_url => 'http://www.webhooks-testing.com')
+  puts 'Sending to the following Voice Numbers'
   magic_phone_numbers.each do |magic_number|
     @voice_message.recipients.build(:phone=>magic_number)
-    puts magic_number
+    puts "\t#{magic_number}"
   end
   @voice_message.post!
 end
 
 Then(/^the callback registered for each event state should receive a POST referring to the appropriate message$/) do
-  sleep(10)
+  sleep(30)
   # TODO: Sleep shouldn't fix our problems
   # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
 
@@ -68,8 +72,10 @@ Then(/^the callback registered for each event state should receive a POST referr
     message.recipients.get
     message.recipients.collection.each do |recipient|
       status = recipient.attributes[:status]
+      puts "#{message_type} | Current Status: #{status} | URL: #{recipient.href}"
       event_callback_uri = @message_event_callback_uris[message_type][status]
       event_callback = @capi.get(event_callback_uri)
+      puts "Checking webhook registered for #{message_type}-#{status}: #{event_callback_uri}"
       raise "Callback endpoint for #{message_type} #{recipient.href} should have at least 1 payload\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payload_count"] == 0
       raise "Callback endpoint for #{message_type} #{recipient.href} should have non-nil payloads\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payloads"].nil?
       passed = false
@@ -80,7 +86,7 @@ Then(/^the callback registered for each event state should receive a POST referr
         foo = payloads[-1]["payload"]["recipient_url"]
         passed = true if payloads[-1]["payload"]["recipient_url"] == condition
       end
-    raise "#{status} callback endpoint does not have a payload referring to #{condition}\npayloads: #{payloads}" if not passed
+    raise "#{status} callback endpoint does not have a payload referring to #{condition}\npayloads: #{JSON.pretty_generate(payloads)}" if not passed
     end
   end
 end
