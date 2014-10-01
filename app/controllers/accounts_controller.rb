@@ -1,7 +1,7 @@
 class AccountsController < ApplicationController
 
-  before_filter ->(c) { render(json:   {error: "Something went wrong parsing your request JSON"},
-                               status: :forbidden) and return false unless current_user.admin? }
+  before_filter ->(c) { render(json:   {error: "forbidden"},
+                               status: :forbidden) unless current_user.admin? }
   before_filter :find_account, only: [:show, :update, :destroy]
 
   wrap_parameters :message,

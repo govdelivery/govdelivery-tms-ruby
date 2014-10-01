@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe AccountsController, :type => :controller do
+describe AccountsController, :type => :controller do
   let (:account) { create :account,
                           sms_vendor:   create(:sms_vendor),
                           email_vendor: create(:email_vendor),
@@ -87,19 +87,19 @@ RSpec.describe AccountsController, :type => :controller do
     end
     it 'should not be able to do anything' do
       get :index
-      response.body.should eq(403)
+      response.status.should eq(403)
 
       get :show, id: 1
-      response.body.should eq(403)
+      response.status.should eq(403)
 
       post :create
-      response.body.should eq(403)
+      response.status.should eq(403)
 
       patch :update, id: 1
-      response.body.should eq(403)
+      response.status.should eq(403)
 
       delete :destroy, id: 1
-      response.body.should eq(403)
+      response.status.should eq(403)
 
     end
   end
