@@ -19,10 +19,10 @@ end
 def xact_url
   urls = {
     :dev => "http://localhost:3000",
-    :qc => "http://qc-tms.govdelivery.com",
-    :stage => "http://stage-tms.govdelivery.com",
-    :int => "http://int-tms.govdelivery.com",
-    :prod => "http://tms.govdelivery.com"
+    :qc => "https://qc-tms.govdelivery.com",
+    :stage => "https://stage-tms.govdelivery.com",
+    :int => "https://int-tms.govdelivery.com",
+    :prod => "https://tms.govdelivery.com"
   }
 
   url = urls[environment]
