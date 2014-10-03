@@ -4,6 +4,7 @@ ENV['NLS_LANG'] = 'american_america.AL32UTF8'
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'rack/ssl'
 
 # set up logging
 require File.expand_path("../logging", __FILE__)
@@ -71,8 +72,11 @@ module Xact
     config.protocol = 'https'
 
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
+    # Rack::SSL has to come before ActionDispatch::Cookies!
+    config.middleware.use Rack::SSL, exclude: lambda { |env| !Rack::Request.new(env).ssl? }
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
+
 
     redis_config = YAML::load_file(Rails.root.join('config/redis.yml'))[Rails.env]
     config.cache_store = :redis_store, redis_config['url']
