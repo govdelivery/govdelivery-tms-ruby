@@ -190,6 +190,8 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
+    rack-ssl (1.4.1)
+      rack
     rack-test (0.6.2)
       rack (>= 1.0)
     rails (4.1.5)
@@ -403,6 +405,7 @@ DEPENDENCIES
   pry-debugger
   pry-rails
   rabl
+  rack-ssl
   rails (~> 4.0)
   rails-api
   rails-erd
