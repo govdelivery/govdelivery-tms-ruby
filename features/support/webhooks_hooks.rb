@@ -16,3 +16,21 @@ After('@webhooks') do
 
   @capi.destroy_all_callback_uris
 end
+
+def backoff_check(check, condition, desc)
+
+  slept_time = 0
+
+  # 2 ^ 8 = ~ 4.2 minutes
+  for x in 0..8
+    sleep_time = 2 ** x
+    puts "Waiting #{sleep_time} seconds to #{desc}"
+    sleep(sleep_time)
+    slept_time += sleep_time
+
+    check.call()
+    break if condition.call()
+    raise "#{desc} has taken too long. Have waited #{slept_time} seconds" if x == 8
+  end
+  puts "Total time waited to #{desc}: #{slept_time}"
+end

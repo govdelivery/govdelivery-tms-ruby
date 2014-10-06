@@ -58,17 +58,13 @@ end
 
 Then(/^the callback registered for each event state should receive a POST referring to the appropriate message$/) do
 
+  # TODO: backoff_check shouldn't fix our problems
+  # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
 
   message_map = {:email => @email_message, :sms => @sms_message, :voice => @voice_message}
-  slept_time = 0
   slept_messages = Hash[message_types.map {|message_type| [message_type,false]}]
 
-  # 2 ^ 8 = ~ 4.2 minutes
-  for x in 0..8
-    sleep_time = 2 ** x
-    puts "Waiting #{sleep_time} seconds for recipients lists to build"
-    sleep(sleep_time)
-    slept_time += sleep_time
+  check = Proc.new do
     slept_messages.each do |message_type, got|
       if not got
         begin
@@ -78,12 +74,10 @@ Then(/^the callback registered for each event state should receive a POST referr
         end
       end
     end
-    break if slept_messages.all?{|event_type, got| got}
-    raise "Recipients list has not built within a reasonable time. Have waited #{slept_time} seconds" if x == 8
   end
-  puts "Total time waited for recipients list to build: #{slept_time}"
-  # TODO: Sleep shouldn't fix our problems
-  # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
+
+  condition = Proc.new {slept_messages.all?{|event_type, got| got}}
+  backoff_check(check, condition, "build recipients list")
 
   message_map.each do |message_type, message|
     message.recipients.get
