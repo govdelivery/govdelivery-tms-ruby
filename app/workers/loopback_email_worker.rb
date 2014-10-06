@@ -7,6 +7,10 @@ class LoopbackEmailWorker < LoopbackMessageWorker
     super
   end
 
+  def magic_new?(recipient)
+    false
+  end
+
   def magic_sending?(recipient)
     recipient.email == 'sending@sink.govdelivery.com'
   end
@@ -28,12 +32,6 @@ class LoopbackEmailWorker < LoopbackMessageWorker
   end
 
   def magic_sent?(recipient)
-    [
-      :magic_sending?,
-      :magic_inconclusive?,
-      :magic_canceled?,
-      :magic_failed?,
-      :magic_blacklisted?
-    ].none? {|func| self.send(func, recipient)}
+    recipient.email == 'sent@sink.govdelivery.com'
   end
 end
