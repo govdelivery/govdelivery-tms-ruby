@@ -1,6 +1,7 @@
 require 'tms_client'
 require 'uri'
 require 'net/http'
+require 'pry'
 
 $subject = Hash.new #generating a hash value
 $subject.store(1, Time.new) #storing the hash value so we can retrieve it later on
@@ -82,14 +83,20 @@ Then(/^the callback registered for each event state should receive a POST referr
   message_map.each do |message_type, message|
     message.recipients.get
     message.recipients.collection.each do |recipient|
+      recipient.get
       status = recipient.attributes[:status]
-      puts "#{message_type} | Current Status: #{status} | URL: #{recipient.href}"
-      #event_callback_uri = @message_event_callback_uris[message_type][status]
       event_callback_uri = @event_callback_uris[status]
-      event_callback = @capi.get(event_callback_uri)
+      event_callback = nil
+
+      puts "#{message_type} | Current Status: #{status} | URL: #{recipient.href}"
       puts "Checking webhook registered for #{status}: #{event_callback_uri}"
-      raise "Callback endpoint for #{message_type} #{recipient.href} should have at least 1 payload\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payload_count"] == 0
+
+      check = Proc.new {event_callback = @capi.get(event_callback_uri)}
+      condition = Proc.new {event_callback["payload_count"] > 0}
+      backoff_check(check, condition, "have at least 1 payload at callback endpoint for #{message_type} #{recipient.href}")
+
       raise "Callback endpoint for #{message_type} #{recipient.href} should have non-nil payloads\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payloads"].nil?
+
       passed = false
       payloads = []
       condition = xact_url + recipient.href
@@ -97,29 +104,9 @@ Then(/^the callback registered for each event state should receive a POST referr
         payloads << @capi.get(payload_info["url"])
         #foo = payloads[-1]["payload"]["recipient_url"]
         #passed = true if payloads[-1]["payload"]["recipient_url"] == condition
-        passed = payloads.any?{|payload| payload["payload"][recipient_url] == condition}
+        passed = payloads.any?{|payload| payload["payload"]["recipient_url"] == condition}
       end
       raise "#{status} callback endpoint does not have a payload referring to #{condition}\npayloads: #{JSON.pretty_generate(payloads)}" if not passed
     end
   end
-end
-
-
-
-
-
-### Don't believe these are used
-Then(/^something$/) do
-  puts 'Arby\'s nation.'
-end
-
-Given(/^the following "(.*?)":$/) do |arg1, table|
-    event_types = event_types.hashes.map {|data| data["event_type"]}
-    @event_callback_uris = Hash[event_types.map {|event_type| [event_type,nil]}]
-end
-
-Then(/^a callback url exists for each "(.*?)"$/) do |arg1, table|
-    @event_callback_uris.each_key do |event_type|
-        @event_callback_uris[event_type] = @capi.create_callback_uri(event_type)
-    end
 end
