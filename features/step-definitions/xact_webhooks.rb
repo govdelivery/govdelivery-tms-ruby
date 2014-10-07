@@ -10,7 +10,7 @@ $subject.store(1, Time.new) #storing the hash value so we can retrieve it later 
 Given(/^all message types$/) do
 end
 
-Given(/^all event types$/) do
+And(/^all event types$/) do
   @event_callback_uris = Hash[event_types.map {|event_type| [event_type,nil]}]
 end
 
@@ -61,7 +61,7 @@ Then(/^the callback registered for each event state should receive a POST referr
 
   # TODO: backoff_check shouldn't fix our problems
   # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
-
+  sleep(300)
   message_map = {:email => @email_message, :sms => @sms_message, :voice => @voice_message}
   slept_messages = Hash[message_types.map {|message_type| [message_type,false]}]
 
