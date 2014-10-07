@@ -20,8 +20,8 @@ def xact_url
   urls = {
     :dev => "http://localhost:3000",
     :qc => "https://qc-tms.govdelivery.com",
-    :stage => "https://stage-tms.govdelivery.com",
     :int => "https://int-tms.govdelivery.com",
+    :stage => "https://stage-tms.govdelivery.com",
     :prod => "https://tms.govdelivery.com"
   }
 
@@ -33,7 +33,8 @@ end
 def xact_token
   tokens = {
     :dev => ENV['XACT_TOKEN'],
-    :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp'
+    :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
+    :int => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL'
   }
 
   token = tokens[environment]
