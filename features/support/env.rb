@@ -33,13 +33,9 @@ end
 def xact_token
   tokens = {
     :dev => ENV['XACT_TOKEN'],
-<<<<<<< HEAD
-    :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp'
-=======
     :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
     :int => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
     :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
->>>>>>> added int, stage api keys
   }
 
   token = tokens[environment]
