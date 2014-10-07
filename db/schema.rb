@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140909142020) do
+ActiveRecord::Schema.define(version: 20141007154506) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -228,16 +228,16 @@ ActiveRecord::Schema.define(version: 20140909142020) do
   add_index "sms_recipients", ["message_id", "id"], name: "i_sms_recipients_message_id_id", tablespace: "tsms_indx01"
 
   create_table "sms_vendors", force: true do |t|
-    t.string   "name",                                                                                                null: false
-    t.string   "username",                                                                                            null: false
-    t.string   "password",                                                                                            null: false
-    t.string   "from_phone",                                                                                          null: false
-    t.string   "worker",                                                                                              null: false
+    t.string   "name",                                                                                                                                                                              null: false
+    t.string   "username",                                                                                                                                                                          null: false
+    t.string   "password",                                                                                                                                                                          null: false
+    t.string   "from_phone",                                                                                                                                                                        null: false
+    t.string   "worker",                                                                                                                                                                            null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "help_text",                                      default: "Go to http://bit.ly/govdhelp for help",    null: false
-    t.string   "stop_text",                                      default: "You will no longer receive SMS messages.", null: false
-    t.boolean  "shared",                precision: 1,  scale: 0, default: false,                                      null: false
+    t.string   "help_text",                                      default: "This service is provided by GovDelivery. If you are a customer in need of assistance, please contact customer support.", null: false
+    t.string   "stop_text",                                      default: "You will no longer receive SMS messages.",                                                                               null: false
+    t.boolean  "shared",                precision: 1,  scale: 0, default: false,                                                                                                                    null: false
     t.integer  "delivery_timeout",      precision: 38, scale: 0
     t.string   "default_response_text"
   end

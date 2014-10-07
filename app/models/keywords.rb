@@ -1,7 +1,7 @@
 module Keywords
   DEFAULT_STOP_TEXT = "You will no longer receive SMS messages."
   DEFAULT_START_TEXT = "Welcome to GovDelivery SMS Alerts. Msg&data rates may apply. Reply HELP for help, STOP to cancel. http://govdelivery.com/wireless for more help. 5 msg/wk."
-  DEFAULT_HELP_TEXT = "Go to http://bit.ly/govdhelp for help"
+  DEFAULT_HELP_TEXT = "This service is provided by GovDelivery. If you are a customer in need of assistance, please contact customer support."
 
   # We always want to respond to stop, help and start.
   # Account.find(x).default_keyword.update_attribute :response_text, "wut"
