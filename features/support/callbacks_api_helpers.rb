@@ -62,7 +62,7 @@ class Callbacks_API_Client
         def get_a_faraday
             Faraday.new(:url => callbacks_root) do |faraday|
                 faraday.request     :url_encoded
-                faraday.response    :logger
+                #faraday.response    :logger
                 faraday.adapter     Faraday.default_adapter
             end
         end
