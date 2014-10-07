@@ -8,11 +8,14 @@ describe 'accounts/show.rabl' do
 
   let(:account) do
     create(:account,
-           sms_vendor:        sms_vendor,
-           voice_vendor:      voice_vendor,
-           ipaws_vendor:      ipaws_vendor,
-           email_vendor:      email_vendor,
-           dcm_account_codes: ['so', 'rad'])
+           sms_vendor:            sms_vendor,
+           voice_vendor:          voice_vendor,
+           ipaws_vendor:          ipaws_vendor,
+           email_vendor:          email_vendor,
+           stop_text:             'seriously stopped',
+           help_text:             'seriously helped',
+           default_response_text: 'seriously default',
+           dcm_account_codes:     ['so', 'rad'])
   end
 
   let (:user) { create :user, account: account, admin: false }
