@@ -1,6 +1,7 @@
 require 'tms_client'
 require 'uri'
 require 'net/http'
+require 'pry'
 
 $subject = Hash.new #generating a hash value
 $subject.store(1, Time.new) #storing the hash value so we can retrieve it later on
