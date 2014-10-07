@@ -1,7 +1,6 @@
 require 'tms_client'
 require 'uri'
 require 'net/http'
-require 'pry'
 
 $subject = Hash.new #generating a hash value
 $subject.store(1, Time.new) #storing the hash value so we can retrieve it later on
@@ -92,8 +91,8 @@ Then(/^the callback registered for each event state should receive a POST referr
       puts "Checking webhook registered for #{status}: #{event_callback_uri}"
 
       check = Proc.new {event_callback = @capi.get(event_callback_uri)}
-      condition = Proc.new {event_callback["payload_count"] > 0}
-      backoff_check(check, condition, "have at least 1 payload at callback endpoint for #{message_type} #{recipient.href}")
+      condition = Proc.new {event_callback["payload_count"] >= message_map.count}
+      backoff_check(check, condition, "have at least 1 payload per message type at callback endpoint for #{message_type} #{recipient.href}")
 
       raise "Callback endpoint for #{message_type} #{recipient.href} should have non-nil payloads\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payloads"].nil?
 
