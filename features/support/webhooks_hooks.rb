@@ -14,17 +14,18 @@ After('@webhooks') do
     end
   end
 
-  @capi.destroy_all_callback_uris
+  #@capi.destroy_all_callback_uris
 end
 
 def backoff_check(check, condition, desc)
 
   slept_time = 0
+  min = 0
+  max = environment == :dev ? 4 : 8;
 
   # 2 ^ 8 = ~ 4.2 minutes
-  for x in 0..8
+  for x in min..max
     sleep_time = 2 ** x
-    puts "Waiting #{sleep_time} seconds to #{desc}"
     sleep(sleep_time)
     slept_time += sleep_time
 

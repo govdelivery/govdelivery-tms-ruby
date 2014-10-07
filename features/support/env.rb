@@ -51,36 +51,53 @@ end
 
 def event_types
   event_types = [
-    "sending",
-    "sent",
-    "failed",
-    "blacklisted",
-    "inconclusive",
-    "canceled"
+    :sending,
+    :sent,
+    :failed,
+    :blacklisted,
+    :inconclusive,
+    :canceled
   ]
 end
 
 def magic_emails
-  magic_emails = [
-    "sending@sink.govdelivery.com",
-    "sent@sink.govdelivery.com",
-    "failing@sink.govdelivery.com",
-    "blacklisted@sink.govdelivery.com",
-    "inconclusive@sink.govdelivery.com",
-    "canceled@sink.govdelivery.com"
-  ]
+  magic_emails = {
+    :sending => "sending@sink.govdelivery.com",
+    :sent => "sent@sink.govdelivery.com",
+    :failed => "failed@sink.govdelivery.com",
+    :blacklisted => "blacklisted@sink.govdelivery.com",
+    :inconclusive => "inconclusive@sink.govdelivery.com",
+    :canceled => "canceled@sink.govdelivery.com"
+  }
 end
 
 def magic_phone_numbers
-  magic_phone_numbers = [
-    "15005550000",
-    "15005550001",
-    "15005550002",
-    "15005550003",
-    "15005550004",
-    "15005550005",
- #   "15005550006"
-  ]
+  magic_phone_numbers = {
+    #:new => "15005550000",
+    :sending => "15005550001",
+    :inconclusive => "15005550002",
+    :canceled => "15005550003",
+    :failed => "15005550004",
+    :blacklisted => "15005550005",
+    :sent => "15005550006"
+  }
+end
+
+def magic_addresses(message_type)
+  case message_type
+    when :email
+      magic_emails
+    when :sms
+      magic_phone_numbers
+    when :voice
+      magic_phone_numbers
+  end
+end
+
+def status_for_address(magic_addresses, address)
+  matches = magic_addresses.select {|status, magic_address| magic_address == address}
+  status = matches ? matches.first.first : nil
+  return status
 end
 
 def callbacks_api_root
