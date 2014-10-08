@@ -4,8 +4,8 @@ class WebhookWorker
   sidekiq_options retry:    10,
                   queue:    :webhook
 
-  READ_TIMEOUT = 5 #seconds
-  CONN_TIMEOUT = 2 #seconds
+  READ_TIMEOUT = 10 #seconds
+  CONN_TIMEOUT = 5 #seconds
 
   def perform(options)
     connection.post(options['url'], options['params']) do |req|
