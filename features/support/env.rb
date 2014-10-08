@@ -20,8 +20,8 @@ def xact_url
   urls = {
     :dev => "http://localhost:3000",
     :qc => "https://qc-tms.govdelivery.com",
-    :stage => "https://stage-tms.govdelivery.com",
     :int => "https://int-tms.govdelivery.com",
+    :stage => "https://stage-tms.govdelivery.com",
     :prod => "https://tms.govdelivery.com"
   }
 
@@ -33,7 +33,9 @@ end
 def xact_token
   tokens = {
     :dev => ENV['XACT_TOKEN'],
-    :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp'
+    :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
+    :int => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
+    :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
   }
 
   token = tokens[environment]
@@ -43,44 +45,61 @@ end
 
 def message_types
   message_types = [
-    "email",
-    "sms",
-    "voice"
+    :email,
+    :sms,
+    :voice
   ]
 end
 
 def event_types
   event_types = [
-    "sending",
-    "sent",
-    "failed",
-    "blacklisted",
-    "inconclusive",
-    "canceled"
+    :sending,
+    :sent,
+    :failed,
+    :blacklisted,
+    :inconclusive,
+    :canceled
   ]
 end
 
 def magic_emails
-  magic_emails = [
-    "sending@sink.govdelivery.com",
-    "sent@sink.govdelivery.com",
-    "failing@sink.govdelivery.com",
-    "blacklisted@sink.govdelivery.com",
-    "inconclusive@sink.govdelivery.com",
-    "canceled@sink.govdelivery.com"
-  ]
+  magic_emails = {
+    :sending => "sending@sink.govdelivery.com",
+    :sent => "sent@sink.govdelivery.com",
+    :failed => "failed@sink.govdelivery.com",
+    :blacklisted => "blacklisted@sink.govdelivery.com",
+    :inconclusive => "inconclusive@sink.govdelivery.com",
+    :canceled => "canceled@sink.govdelivery.com"
+  }
 end
 
 def magic_phone_numbers
-  magic_phone_numbers = [
-    "15005550000",
-    "15005550001",
-    "15005550002",
-    "15005550003",
-    "15005550004",
-    "15005550005",
-    "15005550006"
-  ]
+  magic_phone_numbers = {
+    #:new => "15005550000",
+    :sending => "15005550001",
+    :inconclusive => "15005550002",
+    :canceled => "15005550003",
+    :failed => "15005550004",
+    :blacklisted => "15005550005",
+    :sent => "15005550006"
+  }
+end
+
+def magic_addresses(message_type)
+  case message_type
+    when :email
+      magic_emails
+    when :sms
+      magic_phone_numbers
+    when :voice
+      magic_phone_numbers
+  end
+end
+
+def status_for_address(magic_addresses, address)
+  matches = magic_addresses.select {|status, magic_address| magic_address == address}
+  status = matches ? matches.first.first : nil
+  return status
 end
 
 def callbacks_api_root
