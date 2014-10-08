@@ -26,10 +26,13 @@ end
 
 def imap_opts
     if ENV['XACT_ENV'] == 'qc'
-        puts 'QC does not have imap_opts configured'.red
-        puts 'QC does not have imap_opts configured'.red
-        puts 'QC does not have imap_opts configured'.red
-        puts 'QC does not have imap_opts configured'.red
+        imap_opts = {
+        :address    => 'imap.gmail.com',
+        :port       => 993,
+        :user_name  => 'canari11dd@gmail.com',
+        :password   => 'govdel01!', 
+        :enable_ssl => true
+      }
     elsif ENV['XACT_ENV'] == 'int'
       imap_opts = {
         :address    => 'imap.gmail.com',
@@ -59,10 +62,11 @@ end
 
 def xact_opts
     if ENV['XACT_ENV'] == 'qc'
-      puts 'QC does not have xact_opts configured'.red
-      puts 'QC does not have xact_opts configured'.red
-      puts 'QC does not have xact_opts configured'.red
-      puts 'QC does not have xact_opts configured'.red
+      xact_opts = {
+        :user_name  => 'cukeautoqc@govdelivery.com',
+        :password   => 'govdel01',
+        :recipient  => 'canari11dd@gmail.com'
+      }
     elsif ENV['XACT_ENV'] == 'int'
       xact_opts = {
         :user_name  => 'cukeautoint@govdelivery.com',
