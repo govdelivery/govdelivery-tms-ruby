@@ -137,14 +137,13 @@ Then(/^the callback registered for each event state should receive a POST referr
       begin
         backoff_check(check, check_condition, "have all the payloads expected")
       rescue => e
-        # TODO Should modify e's message
         webhooks = tms_client.webhooks
         webhooks.get
         registered_hooks = webhooks.collection.map{|hook| hook.attributes}
         msg = "#{expected_status} callback endpoint does not have a payload referring to #{condition}\n"
         msg += "payloads: #{JSON.pretty_generate(payloads)} \n"
         msg += "registered webhooks: #{PP.pp(registered_hooks, '')}"
-        raise msg
+        raise $!, "#{$!}\n#{msg}"
       end
     end
   end

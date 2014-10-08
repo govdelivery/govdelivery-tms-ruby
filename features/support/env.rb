@@ -74,17 +74,6 @@ def magic_emails
 end
 
 def magic_phone_numbers
-<<<<<<< HEAD
-  magic_phone_numbers = [
-    "15005550000",
-    "15005550001",
-    "15005550002",
-    "15005550003",
-    "15005550004",
-    "15005550005",
- #   "15005550006"
-  ]
-=======
   magic_phone_numbers = {
     #:new => "15005550000",
     :sending => "15005550001",
@@ -111,7 +100,6 @@ def status_for_address(magic_addresses, address)
   matches = magic_addresses.select {|status, magic_address| magic_address == address}
   status = matches ? matches.first.first : nil
   return status
->>>>>>> 9b46082ad1203c68b08b6b9dcb4b6ed17f035e70
 end
 
 def callbacks_api_root
