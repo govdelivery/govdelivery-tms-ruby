@@ -31,7 +31,7 @@ def backoff_check(check, condition, desc)
 
     check.call()
     break if condition.call()
-    raise "#{desc} has taken too long. Have waited #{slept_time} seconds" if x == 8
+    raise "#{desc} has taken too long. Have waited #{slept_time} seconds" if x >= max
   end
   puts "Total time waited to #{desc}: #{slept_time}"
 end

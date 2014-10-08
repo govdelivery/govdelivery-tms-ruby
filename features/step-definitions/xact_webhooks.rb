@@ -125,13 +125,18 @@ Then(/^the callback registered for each event state should receive a POST referr
 
       passed = false
       payloads = []
-      condition = xact_url + recipient.href
-      event_callback["payloads"].each do |payload_info|
-        payloads << @capi.get(payload_info["url"])
-        passed = payloads.any?{|payload| payload["payload"]["recipient_url"] == condition}
+      check = Proc.new do
+        condition = xact_url + recipient.href
+        event_callback["payloads"].each do |payload_info|
+          payloads << @capi.get(payload_info["url"])
+          passed = payloads.any?{|payload| payload["payload"]["recipient_url"] == condition}
+        end
       end
-
-      if not passed
+      check_condition = Proc.new{passed}
+      begin
+        backoff_check(check, check_condition, "have all the payloads expected")
+      rescue => e
+        # TODO Should modify e's message
         webhooks = tms_client.webhooks
         webhooks.get
         registered_hooks = webhooks.collection.map{|hook| hook.attributes}
