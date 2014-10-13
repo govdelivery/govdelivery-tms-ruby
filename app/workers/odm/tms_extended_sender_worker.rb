@@ -39,10 +39,10 @@ module Odm
     private
 
     def create_link_encoder(encoder)
-      if encoder == 'HYRULE'
-        return Java::ComGovdeliveryTmsTmsextended::LinkEncoder::HYRULE
-      elsif encoder == 'STRONGMAIL'
-        return Java::ComGovdeliveryTmsTmsextended::LinkEncoder::STRONGMAIL
+      if encoder == 'ONE'
+        return Java::ComGovdeliveryTmsTmsextended::LinkEncoder::ONE
+      elsif encoder == 'TWO'
+        return Java::ComGovdeliveryTmsTmsextended::LinkEncoder::TWO
       end
     end
   end
