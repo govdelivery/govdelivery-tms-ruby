@@ -5,7 +5,7 @@ class WebhookWorker
                   queue:    :webhook
 
   READ_TIMEOUT = 30 #seconds
-  CONN_TIMEOUT = 15 #seconds
+  CONN_TIMEOUT = 30 #seconds
 
   def perform(options)
     connection.post(options['url'], options['params']) do |req|
