@@ -18,9 +18,9 @@ end
 
 def xact_url
   urls = {
-    :dev => "http://localhost:3000",
+    :devlopment => "http://localhost:3000",
     :qc => "https://qc-tms.govdelivery.com",
-    :int => "https://int-tms.govdelivery.com",
+    :integration => "https://int-tms.govdelivery.com",
     :stage => "https://stage-tms.govdelivery.com",
     :prod => "https://tms.govdelivery.com"
   }
@@ -41,15 +41,16 @@ def xact_token(account_type = :live)
   case account_type
     when :live
       tokens = {
-        :dev => ENV['XACT_LIVE_TOKEN'],
+        :devlopment => ENV['XACT_LIVE_TOKEN'],
         :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
-        :int => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
+        :integration => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
         :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
       }
     when :loopback
       tokens = {
-        :dev => ENV['XACT_LOOPBACK_TOKEN'],
-        :qc => 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL'
+        :devlopment => ENV['XACT_LOOPBACK_TOKEN'],
+        :qc => 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL',
+        :integration => '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE'
       }
   end
 
@@ -123,13 +124,13 @@ end
 
 def environment
   environments = [
-    :dev,
+    :devlopment,
     :qc,
+    :integration,
     :stage,
-    :int,
     :prod
   ]
-  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :dev
+  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :devlopment
   raise "Unsupported XACT Environment: #{env}" if !environments.include?(env)
   env
 end
