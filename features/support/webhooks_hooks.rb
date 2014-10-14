@@ -4,7 +4,7 @@ Before() do |scenario|
     @webhooks = []
 end
 
-After('@webhooks') do
+After('@webhooks') do |scenario|
   # Return registered webhooks, and callback endpoints to their pre-test state
   @webhooks.each do |webhook|
     begin
@@ -14,7 +14,10 @@ After('@webhooks') do
     end
   end
 
-  #@capi.destroy_all_callback_uris
+  if not scenario.failed?
+    STDOUT.puts "Deleting Callback URIs"
+    @capi.destroy_all_callback_uris
+  end
 end
 
 def backoff_check(check, condition, desc)
