@@ -50,7 +50,8 @@ def xact_token(account_type = :live)
       tokens = {
         :devlopment => ENV['XACT_LOOPBACK_TOKEN'],
         :qc => 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL',
-        :integration => '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE'
+        :integration => '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE',
+        :stage => 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
       }
   end
 
