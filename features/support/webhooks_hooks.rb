@@ -21,7 +21,7 @@ def backoff_check(check, condition, desc)
 
   slept_time = 0
   min = 0
-  max = environment == :dev ? 4 : 8;
+  max = environment == :development ? 5 : 8;
 
   # 2 ^ 8 = ~ 4.2 minutes
   for x in min..max

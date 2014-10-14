@@ -127,7 +127,7 @@ Then(/^the callback registered for each event state should receive a POST referr
       passed = false
       payloads = []
       check = Proc.new do
-        condition = xact_url + recipient.href
+        condition = (environment == :integration ? xact_url.sub('int-', 'integration-') : xact_url) + recipient.href
         payloads = []
         event_callback["payloads"].each do |payload_info|
           payloads << @capi.get(payload_info["url"])
