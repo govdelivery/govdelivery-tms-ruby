@@ -39,7 +39,7 @@ Then(/^a callback url exists for each event type$/) do
 end
 
 And(/^a callback url is registered for each event type$/) do
-  client = tms_client
+  client = tms_client(:loopback)
   @event_callback_uris.each do |key,value|
     webhook = client.webhooks.build(:url=>@capi.callbacks_domain + value, :event_type=>key)
     webhook.post
@@ -49,7 +49,7 @@ And(/^a callback url is registered for each event type$/) do
 end
 
 When(/^I send a message of each type to the magic address of each event state$/) do
-  client = tms_client
+  client = tms_client(:loopback)
   @messages = {}
   @messages[:email] = client.email_messages.build(:body=>'Webhooks Testing',:subject=>"#{$subject[1]}")
   puts 'Sending to the following Email Addresses'
@@ -138,7 +138,7 @@ Then(/^the callback registered for each event state should receive a POST referr
       begin
         backoff_check(check, check_condition, "have all the payloads expected")
       rescue => e
-        webhooks = tms_client.webhooks
+        webhooks = tms_client(:loopback).webhooks
         webhooks.get
         registered_hooks = webhooks.collection.map{|hook| hook.attributes}
         msg = "#{expected_status} callback endpoint does not have a payload referring to #{condition}\n"

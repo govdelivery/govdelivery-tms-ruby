@@ -30,16 +30,31 @@ def xact_url
   url
 end
 
-def xact_token
-  tokens = {
-    :dev => ENV['XACT_TOKEN'],
-    :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
-    :int => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
-    :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
-  }
+# Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
+#
+# If the XACT_TOKEN environment variable is set, that will be returned regardless of the account type or the test environment.
+#
+# +account_type+:: :live or :loopback - Determines whether to use an account that sends messages or an account that does not.
+def xact_token(account_type = :live)
+  return ENV['XACT_TOKEN'] if ENV['XACT_TOKEN']
+
+  case account_type
+    when :live
+      tokens = {
+        :dev => ENV['XACT_LIVE_TOKEN'],
+        :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
+        :int => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
+        :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
+      }
+    when :loopback
+      tokens = {
+        :dev => ENV['XACT_LOOPBACK_TOKEN'],
+        :qc => 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL'
+      }
+  end
 
   token = tokens[environment]
-  raise "No XACT Token defined for environment #{environment}" if !token
+  raise "No XACT Token defined for environment #{environment} and account type #{account_type}" if !token
   token
 end
 
@@ -119,6 +134,6 @@ def environment
   env
 end
 
-def tms_client
-  client = TMS::Client.new(xact_token, :api_root => xact_url)
+def tms_client(account_type = :live)
+  client = TMS::Client.new(xact_token(account_type), :api_root => xact_url)
 end
