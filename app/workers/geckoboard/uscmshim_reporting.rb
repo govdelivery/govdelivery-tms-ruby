@@ -9,11 +9,11 @@ module Geckoboard
 
     #10060, '"CREATED_AT"'
     def perform(account_id, column, basename)
-      scope = EmailMessage.where(account_id: account_id)
+      messages = EmailMessage.where(account_id: account_id)
 
       time_range, timestamp_range = hour_ranges(48)
 
-      results = grouped_by_hour(scope, column, time_range)
+      results = grouped_by_hour(messages, column, time_range)
 
       data = zeroes(timestamp_range.step(1.hour)).
         merge(results).
