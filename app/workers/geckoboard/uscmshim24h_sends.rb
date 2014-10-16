@@ -40,7 +40,7 @@ module Geckoboard
       results=EmailMessage.
         where(account_id: account_id).
         where(created_at: date_range).
-        count(group: "trunc(created_at, 'HH24')")
+        group("trunc(created_at, 'HH24')").count
       results.is_a?(Hash) ? results : {}
     end
 

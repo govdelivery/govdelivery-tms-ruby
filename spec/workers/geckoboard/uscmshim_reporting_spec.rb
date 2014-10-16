@@ -1,0 +1,18 @@
+require 'rails_helper'
+
+describe Geckoboard::UscmshimReporting do
+  let(:account){ create(:account_with_sms) }
+
+  subject { Geckoboard::UscmshimReporting.new }
+
+  it 'writes aggregate column info for the past 48 hours in json format to disk' do
+    create_list(:email_message, 3, account: account)
+    subject.expects(:write_to_file).with("name.json", {
+      "item" => [
+        {"text" => '', "value" => 3},
+        {"text" => '', "value" => 0}
+      ]
+    }.to_json)
+    subject.perform(account.id, 'CREATED_AT', 'name')
+  end
+end
