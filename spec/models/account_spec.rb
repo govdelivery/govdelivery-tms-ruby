@@ -71,13 +71,15 @@ describe Account do
       it { should be_valid }
     end
 
-    context "when link_encoder is HYRULE" do
-      before { subject.link_encoder = 'HYRULE' }
+    # HYRULE
+    context "when link_encoder is ONE" do
+      before { subject.link_encoder = 'ONE' }
       it { should be_valid }
     end
 
-    context "when link_encoder is STRONGMAIL" do
-      before { subject.link_encoder = 'STRONGMAIL' }
+    # STRONGMAIL
+    context "when link_encoder is TWO" do
+      before { subject.link_encoder = 'TWO' }
       it { should be_valid }
     end
 

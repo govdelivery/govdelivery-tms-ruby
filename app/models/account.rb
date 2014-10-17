@@ -51,7 +51,8 @@ class Account < ActiveRecord::Base
   validates :sid, presence: true
   validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
   validate :validate_sms_prefixes
-  validates :link_encoder, inclusion: { in: %w(STRONGMAIL HYRULE), allow_nil: true,
+  # ONE: HYRULE, TWO: STRONGMAIL
+  validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
                                 message: "%{value} is not a valid link_encoder" }
 
   scope :with_sms, where('sms_vendor_id is not null')

@@ -155,8 +155,8 @@
 <xs:simpleType name="linkEncoder">
 <xs:restriction base="xs:string">
 <xs:enumeration value="UNDEFINED"/>
-<xs:enumeration value="HYRULE"/>
-<xs:enumeration value="STRONGMAIL"/>
+<xs:enumeration value="ONE"/>
+<xs:enumeration value="TWO"/>
 </xs:restriction>
 </xs:simpleType>
 <xs:simpleType name="activityType">

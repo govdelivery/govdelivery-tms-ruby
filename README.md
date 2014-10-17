@@ -198,3 +198,10 @@ Create a worker in `app/workers/` by appending "Worker" to the name of the class
 
 The worker should use the CommandParameters that are serialized in the database on command.params combined with parameters from
 the twilio request controller
+
+Generating a TMS Extended jar
+=============================
+```
+rake odm:jar
+```
+will generate lib/tms_extended.jar from config/TMSExtended.wsdl

@@ -38,7 +38,7 @@ if defined?(JRUBY_VERSION)
         m.expects(:record_designator=).with('email::recipient_id::macro1::macro2')
         m.expects(:track_clicks=).with(email_message.click_tracking_enabled?)
         m.expects(:track_opens=).with(email_message.open_tracking_enabled?)
-        m.expects(:link_encoder=).with(account.link_encoder == 'HYRULE' ? Java::ComGovdeliveryTmsTmsextended::LinkEncoder::HYRULE : nil)
+        m.expects(:link_encoder=).with(account.link_encoder == 'TWO' ? Java::ComGovdeliveryTmsTmsextended::LinkEncoder::TWO : nil)
         m.stubs(:to).returns([])
       end
     }
@@ -70,7 +70,7 @@ if defined?(JRUBY_VERSION)
 
     context 'a very happy send with HYRULE link_encoder' do
       it 'should work' do
-        account.link_encoder = 'HYRULE'
+        account.link_encoder = 'TWO'
         email_message.stubs(:queued?).returns(true)
         email_message.expects(:sending!).with(nil, 'dummy_id')
         ExtendedMessage.expects(:new).returns(extended_message)
@@ -88,13 +88,13 @@ if defined?(JRUBY_VERSION)
 
     context 'create_link_encoder with HYRULE' do
       it 'should use HYRULE as the link encoder' do
-        expect(worker.send(:create_link_encoder, 'HYRULE')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::HYRULE)
+        expect(worker.send(:create_link_encoder, 'ONE')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::ONE)
       end
     end
 
     context 'create_link_encoder with STRONGMAIL' do
       it 'should use STRONGMAIL as the link encoder' do
-        expect(worker.send(:create_link_encoder, 'STRONGMAIL')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::STRONGMAIL)
+        expect(worker.send(:create_link_encoder, 'TWO')).to be(Java::ComGovdeliveryTmsTmsextended::LinkEncoder::TWO)
       end
     end
 
