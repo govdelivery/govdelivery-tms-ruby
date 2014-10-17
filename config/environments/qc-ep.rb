@@ -32,7 +32,7 @@ Xact::Application.configure do
 
   # See everything in the log (default is :info)
   #Rails.logger.level = Log4r::DEBUG
-  
+
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
 
@@ -65,7 +65,7 @@ Xact::Application.configure do
   config.dcm = [{
     username: 'xact-api@govdelivery.com',
     password: "let's do Ortega Bombs",
-    api_root: 'https://qc-api.govdelivery.com' 
+    api_root: 'https://qc-api.govdelivery.com'
   }]
 
   config.odm_host = "https://qc-tms.govdelivery.com:65081"
@@ -82,7 +82,7 @@ Xact::Application.configure do
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = ['+16519684981']
 
-  config.custom_report_account_id = 10040
+  config.custom_report_account_id = 10120
 
   config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 end
