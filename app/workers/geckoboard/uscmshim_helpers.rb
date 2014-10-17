@@ -8,18 +8,18 @@ module Geckoboard
       }
     end
 
-    def grouped_by_hour(scope, column, time_range)
+    def grouped_by_time_format(scope, column, time_range, format)
       result = scope.
         where(created_at: time_range).
-        group(%Q[trunc(#{scope.quoted_table_name}.#{dbconn.quote_column_name(column)}, 'HH24')]).count # hash with Time objs as keys
+        group(%Q[trunc(#{scope.quoted_table_name}.#{dbconn.quote_column_name(column)}, '#{format}')]).count # hash with Time objs as keys
       result.is_a?(Hash) ? result : {} # result==0 when there's nothing to report on
     end
 
-    def hour_ranges(num_hours)
-      # Range's end should be up to but not including one hour from now. This means
+    def time_ranges(num_units, unit)
+      # Range's end should be up to but not including one unit of time from now. This means
       # that part of the range is in the future, which is the desired behavior.
-      end_time = (Time.now + 1.hour).beginning_of_hour
-      start_time = end_time - num_hours.hours
+      end_time = (Time.now + 1.send(unit)).send(:"beginning_of_#{unit}")
+      start_time = end_time - num_units.send(:"#{unit}s")
       time_range = start_time...end_time
       timestamp_range = start_time.to_i...end_time.to_i
       [time_range, timestamp_range]
@@ -31,6 +31,10 @@ module Geckoboard
 
     def dbconn
       ActiveRecord::Base.connection
+    end
+
+    def timezone
+      'Eastern Time (US & Canada)'
     end
   end
 end

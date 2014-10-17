@@ -1,7 +1,7 @@
 require 'base'
 
 module Geckoboard
-  class Uscmshim24hSends
+  class Uscmshim30mSends
     include UscmshimHelpers
     include Workers::Base
     sidekiq_options retry:  false,
@@ -9,14 +9,14 @@ module Geckoboard
 
     def perform(account_id, basename)
       messages = EmailMessage.where(account_id: account_id)
-      time_range, timestamp_range = time_ranges(24, :hour)
+      time_range, timestamp_range = time_ranges(30, :minute)
 
-      results = grouped_by_time_format(messages, "CREATED_AT", time_range, 'HH24')
+      results = grouped_by_time_format(messages, "CREATED_AT", time_range, 'MI')
 
-      data = zeroes(timestamp_range.step(1.hour)).merge(results).sort_by(&:first)
+      data = zeroes(timestamp_range.step(1.minute)).merge(results).sort_by(&:first)
       counts  = data.map(&:second)
       max     = counts.max
-      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%H') }
+      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%H:%M') }
 
       output = {
         item:     counts,
