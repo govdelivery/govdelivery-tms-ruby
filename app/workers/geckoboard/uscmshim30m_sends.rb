@@ -16,7 +16,7 @@ module Geckoboard
       data = zeroes(timestamp_range.step(1.minute)).merge(results).sort_by(&:first)
       counts  = data.map(&:second)
       max     = counts.max
-      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%H:%M') }
+      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%M') }
 
       output = {
         item:     counts,
