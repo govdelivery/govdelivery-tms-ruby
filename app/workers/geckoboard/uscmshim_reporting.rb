@@ -11,9 +11,9 @@ module Geckoboard
     def perform(account_id, column, basename)
       messages = EmailMessage.where(account_id: account_id)
 
-      time_range, timestamp_range = hour_ranges(48)
+      time_range, timestamp_range = time_ranges(48, :hour)
 
-      results = grouped_by_hour(messages, column, time_range)
+      results = grouped_by_time_format(messages, column, time_range, 'HH24')
 
       data = zeroes(timestamp_range.step(1.hour)).
         merge(results).
