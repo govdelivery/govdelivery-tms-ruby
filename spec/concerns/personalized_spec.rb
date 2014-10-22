@@ -3,9 +3,9 @@ require 'active_support'
 require 'json'
 require File.expand_path('../../../app/concerns/personalized', __FILE__)
 
-class ImportantMessage 
+class ImportantMessage
   def self.serialize(attrib, clazz); end
-  def self.attr_accessible(*args); end
+  def self.attr_readonly(*args); end
 
   include Personalized
 
