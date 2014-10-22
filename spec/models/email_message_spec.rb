@@ -4,7 +4,8 @@ describe EmailMessage do
   let(:vendor) { create(:email_vendor) }
   let(:account) { create(:account, email_vendor: vendor, name: 'name') }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:email) { user.email_messages.build(
+  let(:email) { build(:email_message,
+    :user => user,
     :body => 'longggg body',
     :subject => 'specs before tests',
     :from_email => account.from_email,
@@ -15,6 +16,15 @@ describe EmailMessage do
       'macro2' => 'bar',
       'first' => 'bazeliefooga'
     }
+  ) }
+  let(:macroless_email) { build(:email_message,
+      :user => user,
+      :body => 'longggg body',
+      :subject => 'specs before tests',
+      :from_email => account.from_email,
+      :open_tracking_enabled => true,
+      :click_tracking_enabled => true,
+      :macros => {}
   ) }
   subject { email }
 
@@ -47,8 +57,7 @@ describe EmailMessage do
     end
     it 'should have a record designator for odm' do
       subject.odm_record_designator.should eq('email::recipient_id::first::macro1::macro2')
-      subject.macros = {}
-      subject.odm_record_designator.should eq('email::recipient_id')
+      macroless_email.odm_record_designator.should eq('email::recipient_id')
     end
     context 'and saved' do
       before { email.save! }
@@ -84,6 +93,19 @@ describe EmailMessage do
 
         it 'should not be able to skip queued' do
           expect{email.sending!(nil, 'dummy_id')}.to raise_error(AASM::InvalidTransition)
+        end
+
+        context 'and completed! without a message' do
+          it 'should not set the macros attribute' do
+            email.has_attribute?(:macros).should be true
+            email.ready!.should be true
+            email.sending!(nil, 'dummy_id').should be true
+            email.recipients.first.mark_sent!.should be true
+
+            message = EmailMessage.without_message.find(email.id)
+            message.has_attribute?(:macros).should be false
+            message.complete!.should be true
+          end
         end
       end
 

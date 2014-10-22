@@ -3,7 +3,7 @@ module Personalized
 
   included do
     serialize :macros, Hash
-    attr_accessible :macros
+    attr_readonly :macros
   end
 
   ##
