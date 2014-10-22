@@ -88,23 +88,45 @@ module Geckoboard
       end
 
       output = {
-        chart: {
-          type: 'spline'
+        colors: ["#FCFFF5", "#D1DBBD", "#91AA9D", "#ACF0F2", "#EB7F00"],
+        credits: {
+          enabled: false
+        },
+        legend: {
+          enabled: false
         },
         title: {
-          text: 'Emails by Subject for the past 12 hours'
+          text: nil
+        },
+        chart: {
+          type: 'spline',
+          style: {
+            color: "#9A9A9A"
+          },
+          renderTo: "container",
+          backgroundColor: "transparent",
+          lineColor: "rgba(154,154,154,100)",
+          plotShadow: false
         },
         xAxis: {
           categories: xlabels
         },
         yAxis: {
           title: {
+            style: {
+              color: "#9a9a9a"
+            },
             text: 'Sent Messages'
           }
         },
         tooltip: {
-            crosshairs: true,
-            shared: true
+          borderColor: "rgba(0,0,0,0.85)",
+          backgroundColor: "rgba(0,0,0,0.85)",
+          style: {
+            color: "#9a9a9a"
+          },
+          crosshairs: true,
+          shared: true
         },
         series: series
       }.to_json
@@ -112,3 +134,8 @@ module Geckoboard
     end
   end
 end
+
+{
+
+
+}

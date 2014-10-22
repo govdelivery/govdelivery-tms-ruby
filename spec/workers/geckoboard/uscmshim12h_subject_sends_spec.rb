@@ -15,23 +15,45 @@ describe Geckoboard::Uscmshim12hSubjectSends do
     times = time_range.step(1.hour).map {|t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime("%H")}
 
     subject.expects(:write_to_file).with("name.json",{
-      chart: {
-        type: 'spline'
+      colors: ["#FCFFF5", "#D1DBBD", "#91AA9D", "#ACF0F2", "#EB7F00"],
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
       },
       title: {
-        text: 'Emails by Subject for the past 12 hours'
+        text: nil
+      },
+      chart: {
+        type: 'spline',
+        style: {
+          color: "#9A9A9A"
+        },
+        renderTo: "container",
+        backgroundColor: "transparent",
+        lineColor: "rgba(154,154,154,100)",
+        plotShadow: false
       },
       xAxis: {
         categories: times
       },
       yAxis: {
         title: {
+          style: {
+            color: "#9a9a9a"
+          },
           text: 'Sent Messages'
         }
       },
       tooltip: {
-          crosshairs: true,
-          shared: true
+        borderColor: "rgba(0,0,0,0.85)",
+        backgroundColor: "rgba(0,0,0,0.85)",
+        style: {
+          color: "#9a9a9a"
+        },
+        crosshairs: true,
+        shared: true
       },
       series: [
         {
