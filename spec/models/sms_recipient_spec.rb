@@ -26,6 +26,24 @@ describe SmsRecipient do
     its(:formatted_phone) { should be_nil }
   end
 
+  describe "when phone starts with zero" do
+    before do
+      subject.phone = '0001112222'
+      subject.save!
+    end
+    it { should be_valid }
+    its(:formatted_phone) { should be_nil }
+  end
+
+  describe "when phone has wrong # of digits" do
+    before do
+      subject.phone = '223'
+      subject.save!
+    end
+    it { should be_valid }
+    its(:formatted_phone) { should eq '+1223' }
+  end
+
   describe "when phone is a non-string number" do
     before do
       subject.phone = 6125015456
