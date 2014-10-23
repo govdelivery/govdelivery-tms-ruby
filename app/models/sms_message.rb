@@ -32,7 +32,7 @@ class SmsMessage < ActiveRecord::Base
 
   def process_blacklist!
     blacklisted_recipients.find_each do |recipient|
-      logger.debug("Marking recipient as BLACKLISTED")
+      logger.debug("Marking #{recipient.class.name} #{self.id} as BLACKLISTED")
       recipient.blacklist!
     end
   end
