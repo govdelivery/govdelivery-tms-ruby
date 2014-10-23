@@ -79,7 +79,7 @@ module Xact
 
 
     redis_config = YAML::load_file(Rails.root.join('config/redis.yml'))[Rails.env]
-    config.cache_store = :redis_store, redis_config['url']
+    config.cache_store = :redis_store, redis_config['url'], {pool_size: 7}
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq = {
