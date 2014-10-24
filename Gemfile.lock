@@ -1,7 +1,7 @@
 GEM
+  remote: http://prod-rubygems1-ep.tops.gdi/
   remote: https://ed5779be:de10e893@www.mikeperham.com/rubygems/
   remote: https://rubygems.org/
-  remote: http://prod-rubygems1-ep.tops.gdi/
   specs:
     aasm (3.4.0)
     actionmailer (4.1.5)
@@ -24,7 +24,7 @@ GEM
       activemodel (= 4.1.5)
       activesupport (= 4.1.5)
       arel (~> 5.0.0)
-    activerecord-oracle_enhanced-adapter (1.5.5.1)
+    activerecord-oracle_enhanced-adapter (1.5.5.2)
     activesupport (4.1.5)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
@@ -395,7 +395,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
-  activerecord-oracle_enhanced-adapter (= 1.5.5.1)!
+  activerecord-oracle_enhanced-adapter (= 1.5.5.2)
   addressable
   alphabetize
   attr_encrypted

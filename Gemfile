@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gem 'aasm'
 gem 'addressable'
-gem 'activerecord-oracle_enhanced-adapter', '=1.5.5.1', :source => "http://prod-rubygems1-ep.tops.gdi"
+gem 'activerecord-oracle_enhanced-adapter', '=1.5.5.2'
 gem 'clockwork'
 gem 'dcm_client'
 gem 'devise'
