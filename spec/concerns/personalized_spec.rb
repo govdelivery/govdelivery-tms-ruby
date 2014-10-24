@@ -4,8 +4,10 @@ require 'json'
 require File.expand_path('../../../app/concerns/personalized', __FILE__)
 
 class ImportantMessage
-  def self.serialize(attrib, clazz); end
+  def self.serialize(attrib); end
+  def self.attr_accessible(*args); end
   def self.attr_readonly(*args); end
+  def self.validate(*args); end
 
   include Personalized
 
