@@ -29,7 +29,7 @@ describe SmsRecipient do
   describe "when phone starts with zero" do
     before do
       subject.phone = '0001112222'
-      subject.save!
+      subject.save
     end
     it { should be_valid }
     its(:formatted_phone) { should be_nil }

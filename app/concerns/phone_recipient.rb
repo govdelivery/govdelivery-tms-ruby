@@ -9,10 +9,10 @@ module PhoneRecipient
 
     before_validation :truncate_error_message
 
-    validates_length_of :ack, :maximum => 256
+    validates :ack, length: {maximum: 256}
     validates :phone, presence: true, length: {maximum: 256}
-    validates :formatted_phone, presence: true, length: {maximum: 256}
-    validates :phone, scope: 'message_id', message: 'has already been associated with this message', uniqueness: true
+    validates :formatted_phone, length: {maximum: 256}
+    validates :phone, uniqueness: {scope: 'message_id', message: 'has already been associated with this message', }
 
     scope :to_poll, lambda {
       start_time = eval("#{Rails.configuration.min_twilio_polling_age}.ago")
