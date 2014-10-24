@@ -28,7 +28,7 @@ class EmailRecipient < ActiveRecord::Base
   #
   def to_odm(defaults={})
     record = "#{self.email}::#{self.id}"
-    defaults.merge(self.macros).tap do |hsh|
+    defaults.merge(self.macros || {}).tap do |hsh|
       unless hsh.empty?
         hsh.keys.sort.each do |k|
           record << "::#{hsh[k]}" if defaults.has_key?(k)

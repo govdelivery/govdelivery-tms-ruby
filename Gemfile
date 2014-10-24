@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gem 'aasm'
 gem 'addressable'
-gem 'activerecord-oracle_enhanced-adapter' #, '=1.4.3.5'
+gem 'activerecord-oracle_enhanced-adapter', '=1.5.5.1', :source => "http://prod-rubygems1-ep.tops.gdi"
 gem 'clockwork'
 gem 'dcm_client'
 gem 'devise'
@@ -69,7 +69,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'ruby-debug'
   gem 'yaml_db'
-  
+
   platforms :ruby do
     gem 'pry-debugger', require: 'pry'
     gem 'zeus'
