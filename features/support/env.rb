@@ -18,7 +18,7 @@ end
 
 def xact_url
   urls = {
-    :devlopment => "http://localhost:3000",
+    :development => "http://localhost:3000",
     :qc => "https://qc-tms.govdelivery.com",
     :integration => "https://int-tms.govdelivery.com",
     :stage => "https://stage-tms.govdelivery.com",
@@ -41,14 +41,14 @@ def xact_token(account_type = :live)
   case account_type
     when :live
       tokens = {
-        :devlopment => ENV['XACT_LIVE_TOKEN'],
+        :development => ENV['XACT_LIVE_TOKEN'],
         :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
         :integration => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
         :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
       }
     when :loopback
       tokens = {
-        :devlopment => ENV['XACT_LOOPBACK_TOKEN'],
+        :development => ENV['XACT_LOOPBACK_TOKEN'],
         :qc => 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL',
         :integration => '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE',
         :stage => 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
@@ -120,22 +120,60 @@ def status_for_address(magic_addresses, address)
 end
 
 def callbacks_api_root
-  'http://xact-webhook-callbacks.herokuapp.com/api/v2/'
+  'http://xact-webhook-callbacks.herokuapp.com/api/v3/'
+end
+
+def callbacks_api_sms_root
+  'http://xact-webhook-callbacks.herokuapp.com/api/v3/sms/'
+end
+
+def twilio_test_user_number
+  {
+    :phone => '+15183004174',
+    :sid => 'PN53d0531f78bf8061549b953c6619b753'
+  }
+end
+
+def twilio_test_account_creds
+  {
+    :sid => 'AC189315456a80a4d1d4f82f4a732ad77e',
+    :token => '88e3775ad71e487c7c90b848a55a5c88'
+  }
 end
 
 def environment
   environments = [
-    :devlopment,
+    :development,
     :qc,
     :integration,
     :stage,
     :prod
   ]
-  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :devlopment
+  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
   raise "Unsupported XACT Environment: #{env}" if !environments.include?(env)
   env
 end
 
 def tms_client(account_type = :live)
   client = TMS::Client.new(xact_token(account_type), :api_root => xact_url)
+end
+
+#
+# Returns true if testing development without a token for a live account
+#
+def dev_not_live?
+  return false unless environment == :development
+
+  begin
+    xact_token(:live)
+    return false
+  rescue
+
+    return true
+  end
+end
+
+
+Before('@Dev-Safety') do |scenario|
+  STDOUT.puts "\tSkipping on Dev with Non-Live Account" if dev_not_live?
 end

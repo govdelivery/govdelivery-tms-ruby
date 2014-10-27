@@ -111,7 +111,9 @@ expected_link = 'http://govdelivery.com'
 #expected_status_code = 201
 
 
-When /^I POST a new EMAIL message to TMS$/ do 
+When /^I POST a new EMAIL message to TMS$/ do
+  next if dev_not_live?
+
   email_body = "This is a test for end to end email delivery. <a href=\\\"#{expected_link}\\\">With a link</a>"
   xact_helper = XACTHelper.new
   xact_helper.send_email(xact_opts[:user_name], xact_opts[:password], expected_subject, email_body, xact_opts[:recipient], path)
@@ -119,6 +121,7 @@ end
 
 
 Then /^I go to Gmail to check for message delivery$/ do
+  next if dev_not_live?
 
   message_list = Hash.new { }
 
