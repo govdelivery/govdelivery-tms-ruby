@@ -34,7 +34,7 @@ class EmailRecipient < ActiveRecord::Base
           record << "::#{hsh[k]}" if defaults.has_key?(k)
         end
       end
-    end
+    end unless defaults.nil?
     record
   end
 
