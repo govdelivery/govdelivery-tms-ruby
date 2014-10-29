@@ -49,6 +49,15 @@ if defined?(JRUBY_VERSION)
     let (:odm_v2) { mock(' Odm::TmsExtendedSenderWorker::ODMv2') }
     let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)}
 
+    context 'dynamic_queue_key' do
+      it 'should work with subject' do
+        expect(tk_proc = worker.class.get_sidekiq_options['dynamic_queue_key']).to_not eq nil
+
+        expect(tk_proc.call(params)).to eq nil
+        expect(tk_proc.call(params.merge('subject' => 'goooo'))).to eq('sender_goooo')
+      end
+    end
+
 
     context 'a very happy send with no link_encoder' do
       it 'should work' do

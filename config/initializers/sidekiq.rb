@@ -26,27 +26,30 @@ class Sidekiq::Middleware::Server::LogAllTheThings
   end
 end
 
-
 Sidekiq.configure_server do |config|
   require 'sidekiq/pro/reliable_fetch'
 
   config.redis                 = default.merge(Xact::Application.config.sidekiq[:server])
-  config.options[:concurrency] = 30
+  config.options[:concurrency] = 1
   config.options[:queues]      = ['sender', 'default', 'webhook', 'stats', 'low']
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
-    #chain.add Sidekiq::Throttler, storage: :redis
   end
   SidekiqClockworkScheduler.new.async.run
+
 
   if Rails.configuration.analytics[:enabled]
     YaketyYak::Subscriber::Supervisor.go!
   else
     warn('YaketyYak analytics are disabled')
   end
+  Sidekiq::RateLimitedQueue::Configuration.load!(Rails.root.join('config', 'sidekiq_rate_limited_queues.yml'))
+
   Rails.logger.info "Background services have started."
 end
 
+require 'sidekiq/dynamic_queue/setup'
+require 'sidekiq/rate_limited_queue/setup'
 
 Sidekiq.configure_client do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:client])
@@ -54,4 +57,6 @@ end
 
 SidekiqUniqueJobs::Config.unique_args_enabled = true
 
+
 Sidekiq::Web.app_url = '/'
+
