@@ -11,7 +11,7 @@ module Sidekiq
       Sidekiq.redis_pool.with { |conn| conn.smembers(QUEUE_LIST_KEY) }
     end
 
-    def self.includes?
+    def self.includes_queue?(name)
       Sidekiq.redis_pool.with { |conn| conn.sismember(QUEUE_LIST_KEY, name) }
     end
 
@@ -50,7 +50,7 @@ module Sidekiq
     end
 
     def rate_limiting_enabled?
-      self.class.include?(name)
+      self.class.includes_queue?(name)
     end
 
     private
@@ -69,19 +69,4 @@ module Sidekiq
   end
 end
 
-Sidekiq.configure_server do |config|
-  config.server_middleware do |chain|
-    chain.add self.class::Middleware::Server
-  end
-
-  config.client_middleware do |chain|
-    chain.add self.class::Middleware::Client
-  end
-end
-
-Sidekiq.configure_client do |config|
-  config.client_middleware do |chain|
-    chain.add self.class::Middleware::Client
-  end
-end
 

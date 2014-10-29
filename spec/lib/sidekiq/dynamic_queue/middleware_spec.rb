@@ -13,8 +13,8 @@ describe Sidekiq::DynamicQueue::Middleware do
 
   it 'should change the queue' do
     queue = 'wubble'
-    item  = {'args' => {'value' => 'moms'}, 'queue' => 'wubble'}
-    subject.call(RadWorker, item, queue)
+    item  = {'args' => [{'value' => 'moms'}], 'queue' => 'wubble'}
+    expect(subject.call(RadWorker, item, queue) { 'foo' }).to eq('foo')
     expect(item['queue']).to eq 'wubble_smom'
     expect(queue).to eq 'wubble_smom'
   end

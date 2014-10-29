@@ -1,5 +1,5 @@
 module Sidekiq
-  class ThrottledQueue
+  class RateLimitedQueue
     class Configuration
       module ClassMethods
 
@@ -17,7 +17,7 @@ module Sidekiq
             end
           end
           Sidekiq.logger.info("Reloaded queue rate limits: #{config}")
-          ::Sidekiq::ThrottledQueue.config = config
+          ::Sidekiq::RateLimitedQueue.config = config
         end
       end
 
