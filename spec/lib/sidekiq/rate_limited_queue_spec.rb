@@ -2,7 +2,12 @@ require 'rails_helper'
 
 describe Sidekiq::RateLimitedQueue do
   before do
+    Sidekiq.options[:queues] = ['sender', 'default', 'webhook', 'stats', 'low']
     Sidekiq::RateLimitedQueue::Configuration.load!(Rails.root.join('test', 'fixtures', 'sidekiq_throttled_queues.yml'))
+  end
+
+  it 'should merge queue lists' do
+    expect(Sidekiq.options[:queues]).to match_array ['sender', 'sender_sadklfjhasdlkfjhasldkj', 'default', 'webhook', 'stats', 'low']
   end
 
   it 'should list throttled queues' do

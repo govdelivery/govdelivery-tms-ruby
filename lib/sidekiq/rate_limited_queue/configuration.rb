@@ -4,8 +4,17 @@ module Sidekiq
       module ClassMethods
 
         def load!(filename)
-          @config_filename = filename if filename
-          reload!
+          @config_filename = filename
+          reload!.tap do
+            merge_rate_limited_queues!
+          end
+        end
+
+        def merge_rate_limited_queues!(queues = Sidekiq.options[:queues], rlqs = Sidekiq::RateLimitedQueue.throttled_queues)
+          rlqs.reject { |rlq| queues.include?(rlq) }.each do |rlq|
+            index = queues.index { |q| rlq=~/^#{q}/ } || queues.length
+            queues.insert(index+1, rlq)
+          end
         end
 
         def reload!

@@ -54,7 +54,7 @@ if defined?(JRUBY_VERSION)
         expect(tk_proc = worker.class.get_sidekiq_options['dynamic_queue_key']).to_not eq nil
 
         expect(tk_proc.call(params)).to eq nil
-        expect(tk_proc.call(params.merge('subject' => 'goooo'))).to eq('sender_goooo')
+        expect(tk_proc.call(params.merge('subject' => 'goooo'))).to eq('goooo')
       end
     end
 

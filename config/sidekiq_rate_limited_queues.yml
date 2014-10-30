@@ -3,6 +3,9 @@
 #     Odm::TmsExtendedSenderWorker.sidekiq_options[:throttle_key].call({})
 #
 ---
-sender:
-  interval: 15
-  limit: 5
+#sender:
+#  interval: 15
+#  limit: 5
+sender_hi_im_billy:
+  interval: 60
+  limit: 1000
