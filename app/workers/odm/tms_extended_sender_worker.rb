@@ -5,7 +5,7 @@ module Odm
     sidekiq_options retry:             10,
                     queue:             :sender,
                     dynamic_queue_key: ->(args) {
-                      args['subject'] ? args['subject'].parameterize : nil
+                      args['subject'].try(:parameterize)
                     }
 
     def perform(options)
