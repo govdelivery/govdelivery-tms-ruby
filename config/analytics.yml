@@ -26,12 +26,32 @@ qc-ep:
     - qc-zk2-ep.tops.gdi:2181
     - qc-zk3-ep.tops.gdi:2181
 
+qc:
+  <<: *shared
+  kafkas:
+    - qc-kafka1-ep.tops.gdi:9093
+    - qc-kafka2-ep.tops.gdi:9093
+    - qc-kafka3-ep.tops.gdi:9093
+  zookeepers:
+    - qc-zk1-ep.tops.gdi:2181
+    - qc-zk2-ep.tops.gdi:2181
+    - qc-zk3-ep.tops.gdi:2181
+
+
 integration-ep:
   <<: *shared
   kafkas:
     - int-kafka1-ep.tops.gdi:9093
   zookeepers:
     - int-zk1-ep.tops.gdi:2181
+
+integration:
+  <<: *shared
+  kafkas:
+    - int-kafka1-ep.tops.gdi:9093
+  zookeepers:
+    - int-zk1-ep.tops.gdi:2181
+
 
 stage-ep:
   <<: *shared
@@ -40,7 +60,26 @@ stage-ep:
   zookeepers:
     - stg-zk1-ep.tops.gdi:2181
 
+stage:
+  <<: *shared
+  kafkas:
+    - stg-kafka1-ep.tops.gdi:9093
+  zookeepers:
+    - stg-zk1-ep.tops.gdi:2181
+
+
 production-ep:
+  <<: *shared
+  kafkas:
+    - prod-kafka1-ep.tops.gdi:9093
+    - prod-kafka2-ep.tops.gdi:9093
+    - prod-kafka3-ep.tops.gdi:9093
+  zookeepers:
+    - prod-zk1-ep.tops.gdi:2181
+    - prod-zk2-ep.tops.gdi:2181
+    - prod-zk3-ep.tops.gdi:2181
+
+production:
   <<: *shared
   kafkas:
     - prod-kafka1-ep.tops.gdi:9093
