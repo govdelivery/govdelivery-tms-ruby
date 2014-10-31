@@ -1,6 +1,11 @@
 class LoopbackEmailWorker < LoopbackMessageWorker
   include Workers::Base
-  sidekiq_options retry: 0
+  sidekiq_options retry: 0,
+                  queue: :sender,
+                  dynamic_queue_key:
+                    ->(args) {
+                      args['subject'] ? args['subject'].parameterize : nil
+                    }
 
   def perform(options)
     @message = EmailMessage.find(options['message_id'])

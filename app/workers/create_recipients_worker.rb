@@ -22,7 +22,12 @@ class CreateRecipientsWorker
 
     begin
       message.ready!(nil, recipient_params)
-      message.worker.perform_async({:message_id => message.id}.merge!(options['send_options']))
+      args = {message_id: message.id}.merge!(options['send_options'])
+      if message.respond_to?(:subject)
+        args['subject']    = message.subject
+        args['account_id'] = message.account_id
+      end
+      message.worker.perform_async(args)
     rescue AASM::InvalidTransition => e
       logger.warn("Failed to queue or complete #{message.to_s}") unless message.complete!
     end

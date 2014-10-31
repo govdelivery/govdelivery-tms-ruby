@@ -15,6 +15,8 @@ module Clockwork
   every(5.minutes, 'Messages::CheckMessagesForCompletion')
   every(5.minutes, 'MarkOldRecipientsAsInconclusive')
 
+  every(1.minutes, 'Sidekiq::RateLimitedQueue::LockInvalidator')
+
   if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
     every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')
     every(5.minutes, 'Odm::TmsExtendedOpensWorker')

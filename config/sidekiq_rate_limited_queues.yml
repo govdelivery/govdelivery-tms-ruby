@@ -1,0 +1,8 @@
+# get the queue key for the thing you want
+# e.g.
+#     Odm::TmsExtendedSenderWorker.sidekiq_options[:throttle_key].call({})
+#
+---
+#sender_message-subject:
+#  interval: 15
+#  limit: 5

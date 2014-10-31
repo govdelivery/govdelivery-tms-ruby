@@ -2,7 +2,11 @@ require 'base'
 
 module Odm
   class TmsExtendedSenderWorker < Odm::TmsExtendedWorker
-    sidekiq_options retry: 10, queue: :sender
+    sidekiq_options retry:             10,
+                    queue:             :sender,
+                    dynamic_queue_key: ->(args) {
+                      args['subject'] ? args['subject'].parameterize : nil
+                    }
 
     def perform(options)
       super do
