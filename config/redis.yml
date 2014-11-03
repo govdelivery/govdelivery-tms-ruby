@@ -11,15 +11,15 @@ ci:
   <<: *defaults
   url: 'redis://it-buildbox1.office.gdi:6379'
   sidekiq_db: '2'
-qc-ep:
+qc:
   <<: *defaults
   url: 'redis://qc-xactredis-master-ep.tops.gdi:6379'
-integration-ep:
+integration:
   <<: *defaults
   url: 'redis://int-xactredis-master-ep.tops.gdi:6379'
-stage-ep:
+stage:
   <<: *defaults
   url: 'redis://stg-xactredis-master-ep.tops.gdi:6379'
-production-ep:
+production:
   <<: *defaults
   url: 'redis://prod-xactredis-master-ep.tops.gdi:6379'

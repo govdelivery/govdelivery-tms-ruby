@@ -214,13 +214,18 @@ test:
 stage-ep:
   <<: *default_settings
   monitor_mode: true
+  app_name: XACT (stage-ep)
+
+stage:
+  <<: *default_settings
+  monitor_mode: true
   app_name: XACT (stage)
 
 # Turn on the agent in production for 24x7 monitoring. NewRelic
 # testing shows an average performance impact of < 5 ms per
 # transaction, you can leave this on all the time without
 # incurring any user-visible performance degradation.
-production-ep:
+production:
   <<: *default_settings
   monitor_mode: true
   app_name: XACT (production)

@@ -15,7 +15,7 @@ test:
   kafkas:
     - 192.168.50.3:9093
 
-qc-ep:
+qc:
   <<: *shared
   kafkas:
     - qc-kafka1-ep.tops.gdi:9093
@@ -26,21 +26,21 @@ qc-ep:
     - qc-zk2-ep.tops.gdi:2181
     - qc-zk3-ep.tops.gdi:2181
 
-integration-ep:
+integration:
   <<: *shared
   kafkas:
     - int-kafka1-ep.tops.gdi:9093
   zookeepers:
     - int-zk1-ep.tops.gdi:2181
 
-stage-ep:
+stage:
   <<: *shared
   kafkas:
     - stg-kafka1-ep.tops.gdi:9093
   zookeepers:
     - stg-zk1-ep.tops.gdi:2181
 
-production-ep:
+production:
   <<: *shared
   kafkas:
     - prod-kafka1-ep.tops.gdi:9093

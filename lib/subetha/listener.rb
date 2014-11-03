@@ -54,9 +54,12 @@ module Subetha
         max_connections:  100,
         max_recipients:   500,
         max_message_size: 10_000_000,
-        host_name:        "#{Rails.env =~ /production/ ? '' : "#{Rails.env.to_s.split("-")[0]}-"}tms.govdelivery.com"
+        host_name:        "#{Rails.env.production? ? '' : "#{Rails.env.to_s}-"}tms.govdelivery.com"
       }
     end
 
   end
 end
+
+
+

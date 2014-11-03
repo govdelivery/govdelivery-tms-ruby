@@ -13,7 +13,7 @@ done;
 
 declare -ax LOGDIRS PATTERNS
 
-$DEBUG && echo "$0: starting" && date && ls -laF "$0"
+$DEBUG && echo "$0: starting" && date && ls -laF "$0" 
 
 
 ROTATE_LOG_DATE_PATTERN="\.20[0-9][0-9][01][0-9][0123][0-9]-[0-2][0-9][0-5][0-9][0-5][0-9]"
@@ -54,7 +54,7 @@ rotatelog "${LOGDIRS[4]}/trinidad.log"
 
 ## ENV Logs
 LOGDIRS[5]="/opt/xact/log"
-PATTERNS[5]=".*/(poc|qc|integration|stage|production)-\w{2}_[0-9]{4}-[01][0-9]-[0123][0-9]\.log"
+PATTERNS[5]=".*/(poc|qc|integration|stage|production)20[0-9][0-9]-[01][0-9]-[0123][0-9]\.log"
 
 ## Trinidad Logs
 LOGDIRS[6]="/opt/xact/log"
@@ -85,7 +85,7 @@ while [ "${X}" -lt "${#LOGDIRS[*]}" ]; do
 	$DEBUG && echo
 	$DEBUG && echo "$LOGDIR     $PATTERN"
 
-        if [ -d "${LOGDIR}" ]; then
+        if [ -d "${LOGDIR}" ]; then 
 		$DEBUG && find "${LOGDIR}" -follow -regextype posix-egrep -regex "${PATTERN}.*" -type f -mmin +${DELM}  | sed -e 's/^/  remove:    /g'
 		$TEST  || find "${LOGDIR}" -follow -regextype posix-egrep -regex "${PATTERN}.*" -type f -mmin +${DELM} -print0 | xargs -0r rm
 
@@ -96,3 +96,4 @@ while [ "${X}" -lt "${#LOGDIRS[*]}" ]; do
 done
 $DEBUG && echo;
 $DEBUG && echo "$0: done"
+
