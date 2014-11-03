@@ -1,0 +1,26 @@
+###
+### This file customizes vagrant machines built with GovDelivery's custom Vagrantfile
+### It should be committed to the project. It should create machines that the project requires
+### It should ease the adoption of a project of new developers.
+###
+
+# this is the path to the puppet project
+puppet_path: "../puppet"
+
+# these can be other projects that you want to "deploy" to the guest
+# they are combined with host specific mounts
+mounts: []
+  # - host: "~/projects/evolution"
+  #   guest: "/NFS/techops/scripts"
+  # - host: "~/projects/vatican"
+  #   guest: "/NFS/vatican_deploy_dev/vatican/current-dev-vatican1-hamm"
+
+# Host Config Options:
+# ip: will configure a private network (one for each subnet)
+# ports: will forward_ports
+# ram: custom ram size in MB default=1024
+# mounts: host specific mounts combined with mounts above
+
+hosts:
+  xactweb:
+    ip: '192.168.50.201'

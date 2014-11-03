@@ -29,5 +29,5 @@ public/custom_reports/**/*
 .rvmrc
 .ruby-version
 .ruby-gemset
-/Vagrantfile
 .idea/
+config/vagrant_user_config.yml
