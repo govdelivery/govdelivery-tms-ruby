@@ -17,7 +17,6 @@ class CommandParameters
   validate :validate_string_fields
   validate :validate_array_fields
   validate :validate_dcm_account
-  validate :validate_content_type
 
   # Some attributes in this collection may be persisted in the database as Command#params (marshalled
   # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or
@@ -32,7 +31,6 @@ class CommandParameters
     :username,            # username for HTTP BASIC auth during forward requests
     :encrypted_password,  # don't set this directly - setting :password sets this automatically
     :url,                 # the URL to send a forward request to
-    :expected_content_type, # any response not matching this value (partially) will get ignored
     :http_method,         # GET or POST - method of the forward request
     :from_param_name,     # the name of the phone number variable during forward commands
     :sms_body_param_name, # the name of the sms body variable during forward commands
@@ -94,12 +92,6 @@ class CommandParameters
     @from_param_name ||= "from"
   end
 
-  ##
-  # The first part of a ContentType header for error checking on the forward command
-  def expected_content_type
-    @expected_content_type ||= "text/plain"
-  end
-
   private
 
   def validate_string_fields
@@ -128,15 +120,6 @@ class CommandParameters
       errors.add(:dcm_account_code, "is not a valid code")
     elsif command_type.required_array_fields.include?(:dcm_account_codes) && !valid_account_codes?(account)
       errors.add(:dcm_account_codes, "contain one or more invalid account codes")
-    end
-  end
-
-  def validate_content_type
-    # we only allow html because of BART, they didn't want to change it
-    # text/html is treated as text/plain
-    acceptable_content_types = ['text/html', 'text/plain']
-    unless acceptable_content_types.include?(expected_content_type)
-      errors.add(:expected_content_type, "#{expected_content_type} must be one of: #{acceptable_content_types.join(', ')}")
     end
   end
 end
