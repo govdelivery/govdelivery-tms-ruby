@@ -4,22 +4,6 @@ require 'httpi'
 require 'json'
 require 'awesome_print'
 require 'twilio-ruby'
-require 'pry'
-
-
-##########
-# Outline
-#
-# This should be similar, and simplier, than the Webhooks test
-#
-# 1. Create a dynamic endpoint for SMSes on the Xact Testing Support app
-# 2. Set the SmsUrl/VoiceUrl of the GovD Test User phone number to what was made in step 1
-# 3. Send a message to the GovD Test User
-# 4. Get payloads from the endpoint made in step 1
-# 5. Check whether the message we sent in 3 is in the payloads
-# 6. If the test passes, set the GovD Test User phone number SmsUrl/VoiceUrl to nothing, and elete the endpoint made in 1
-#
-##########
 
 $bt = Hash.new
 $bt.store(1, Time.new.to_s + "::" + rand(100000).to_s)

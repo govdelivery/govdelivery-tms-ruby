@@ -88,6 +88,5 @@ group :test do
   gem 'mocha', :require => false
   gem 'shoulda-matchers'
   gem 'tms_client'
-  gem 'twilio-ruby'
 end
 
