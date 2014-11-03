@@ -3,10 +3,15 @@ Before() do |scenario|
   @webhooks = []
 end
 
+
+Before('@Dev-Safety') do |scenario|
+  STDOUT.puts "\tSkipping on Dev with Non-Live Account" if dev_not_live?
+end
+
 # Set our Twilio test account to have no callbacks when we are done
 After('@Twilio') do |scenario|
   twil = Twilio::REST::Client.new twilio_test_account_creds[:sid], twilio_test_account_creds[:token]
-  twil.account.incoming_phone_numbers.get(twilio_test_user_number[:sid]).update(
+  twil.account.incoming_phone_numbers.get(twilio_test_support_number[:sid]).update(
     :voice_url => '',
     :sms_url => ''
   )
@@ -38,4 +43,8 @@ def backoff_check(check, condition, desc)
     raise "#{desc} has taken too long. Have waited #{slept_time} seconds" if x >= max
   end
   puts "Total time waited to #{desc}: #{slept_time}"
+end
+
+def random_string
+  "#{Time.now.to_i}::#{rand(100000)}"
 end

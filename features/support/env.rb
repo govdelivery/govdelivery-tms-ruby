@@ -46,6 +46,11 @@ def xact_token(account_type = :live)
         :integration => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
         :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
       }
+    when :twilio_test
+      tokens = {
+        :development => ENV['XACT_TWILIO_TEST_TOKEN'],
+        :qc => 'Br7wEWVPPpGFbwdJMZSDezKEJaYXCpgT'
+      }
     when :loopback
       tokens = {
         :development => ENV['XACT_LOOPBACK_TOKEN'],
@@ -58,6 +63,54 @@ def xact_token(account_type = :live)
   token = tokens[environment]
   raise "No XACT Token defined for environment #{environment} and account type #{account_type}" if !token
   token
+end
+
+# Returns a hash with credentials and info for an Xact account, based on the environment being tested and the type of
+# account requested.
+#
+# Returned hash includes:
+# * token - Xact user token for API access
+# * xact_url - URL to the Xact instance being tested
+# * sms_phone - Phone number of the SMS Vendor of the account
+# * sms_vendor_username - Twilio Account SID of the SMS Vendor, or mock SID for loopbacks account
+# * sms_vendor_password - Twilio token of the SMS Vendor, or mock password for loopbacks account
+# * sms_phone_sid - Twilio SID of of the SMS phone number
+# * voice_phone | voice_vendor_username | voice_vendor_password | voice_phone_sid - The type of info as above, but for Voice Vendors
+def xact_account(account_type = :live)
+  account = {}
+  account[:token] = xact_token(account_type)
+  account[:xact_url] = xact_url
+  case account_type
+    when :live
+      account[:sms_phone] = twilio_xact_test_number[:phone]
+      account[:sms_vendor_username] = twilio_test_account_creds[:sid]
+      account[:sms_vendor_password] = twilio_test_account_creds[:token]
+      account[:sms_phone_sid] = twilio_xact_test_number[:sid]
+      account[:voice_phone] = twilio_xact_test_number[:phone]
+      account[:voice_vendor_username] = twilio_test_account_creds[:sid]
+      account[:voice_vendor_password] = twilio_test_account_creds[:token]
+      account[:voice_phone_sid] = twilio_xact_test_number[:sid]
+    when :twilio_test
+      account[:sms_phone] = '+15005550006'
+      account[:sms_vendor_username] = twilio_test_test_account_creds[:sid]
+      account[:sms_vendor_password] = twilio_test_test_account_creds[:token]
+      account[:sms_phone_sid] = nil
+      account[:voice_phone] = '+15005550006'
+      account[:voice_vendor_username] = twilio_test_test_account_creds[:sid]
+      account[:voice_vendor_password] = twilio_test_test_account_creds[:token]
+      account[:voice_phone_sid] = nil
+    when :loopback
+      account[:sms_phone] = '+15559999999'
+      account[:sms_vendor_username] = 'loopbacks_account_sms_username'
+      account[:sms_vendor_password] = 'dont care'
+      account[:sms_phone_sid] = nil
+      account[:voice_phone] = '+15559999999'
+      account[:voice_vendor_username] = 'loopbacks_account_voice_username'
+      account[:voice_vendor_password] = 'dont care'
+      account[:voice_phone_sid] = nil
+  end
+
+  return account
 end
 
 def message_types
@@ -127,7 +180,16 @@ def callbacks_api_sms_root
   'http://xact-webhook-callbacks.herokuapp.com/api/v3/sms/'
 end
 
-def twilio_test_user_number
+# Number to use to send SMSs to Xact
+def twilio_xact_test_number
+  {
+    :phone => '+19526577631',
+    :sid => 'PN49f07b59dc4e5cffe85a508dd1a44dca'
+  }
+end
+
+# Number for the Test Support App to send/receive (or these tests to send on the behalf of)
+def twilio_test_support_number
   {
     :phone => '+15183004174',
     :sid => 'PN53d0531f78bf8061549b953c6619b753'
@@ -138,6 +200,13 @@ def twilio_test_account_creds
   {
     :sid => 'AC189315456a80a4d1d4f82f4a732ad77e',
     :token => '88e3775ad71e487c7c90b848a55a5c88'
+  }
+end
+
+def twilio_test_test_account_creds
+  {
+    :sid => 'ACc66477e37af9ebee0f12b349c7b75117',
+    :token => '5b1c96ca034d474c6d4b68f8d05c99f5'
   }
 end
 
@@ -171,9 +240,4 @@ def dev_not_live?
 
     return true
   end
-end
-
-
-Before('@Dev-Safety') do |scenario|
-  STDOUT.puts "\tSkipping on Dev with Non-Live Account" if dev_not_live?
 end
