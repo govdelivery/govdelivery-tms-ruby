@@ -15,7 +15,7 @@ Capybara.default_wait_time = 600
 def expected_link_prefix
     if ENV['XACT_ENV'] == 'qc'
       expected_link_prefix = 'http://test-links.govdelivery.com:80'
-    elsif ENV['XACT_ENV'] == 'int'
+    elsif ENV['XACT_ENV'] == 'integration'
       expected_link_prefix = 'http://test-links.govdelivery.com:80'
     elsif ENV['XACT_ENV'] == 'stage'
       expected_link_prefix = 'http://stage-links.govdelivery.com:80/track'
@@ -33,7 +33,7 @@ def imap_opts
         :password   => 'govdel01!', 
         :enable_ssl => true
       }
-    elsif ENV['XACT_ENV'] == 'int'
+    elsif ENV['XACT_ENV'] == 'integration'
       imap_opts = {
         :address    => 'imap.gmail.com',
         :port       => 993,
@@ -67,7 +67,7 @@ def xact_opts
         :password   => 'govdel01',
         :recipient  => 'canari11dd@gmail.com'
       }
-    elsif ENV['XACT_ENV'] == 'int'
+    elsif ENV['XACT_ENV'] == 'integration'
       xact_opts = {
         :user_name  => 'cukeautoint@govdelivery.com',
         :password   => 'govdel01',
@@ -91,7 +91,7 @@ end
 def path
     if ENV['XACT_ENV'] == 'qc'
       'https://qc-tms.govdelivery.com/messages/email'
-    elsif ENV['XACT_ENV'] == 'int'
+    elsif ENV['XACT_ENV'] == 'integration'
       'https://int-tms.govdelivery.com/messages/email'
     elsif ENV['XACT_ENV'] == 'stage'
       'https://stage-tms.govdelivery.com/messages/email'
