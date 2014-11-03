@@ -7,7 +7,6 @@ module CommandType
                       :sms_body_param_name,
                       :strip_keyword,
                       :url,
-                      :expected_content_type,
                       :username
                     ].freeze
 
@@ -16,7 +15,7 @@ module CommandType
     end
 
     def required_string_fields
-      [:http_method, :url, :sms_body_param_name, :from_param_name, :expected_content_type]
+      [:http_method, :url, :sms_body_param_name, :from_param_name]
     end
 
     # this will get called in the background
@@ -27,7 +26,7 @@ module CommandType
       if !transformer.nil? && command_action.success?
         transformed_content = transformer.transform(command_action.response_body, command_action.content_type)
         build_message(account, params.from, transformed_content)
-      elsif command_action.content_type.include?(params.expected_content_type) && command_action.success?
+      elsif command_action.content_type == 'text/plain' && command_action.success?
         build_message(account, params.from, command_action.response_body)
       else
         Rails.logger.warn "ignoring: #{command_action.inspect}"

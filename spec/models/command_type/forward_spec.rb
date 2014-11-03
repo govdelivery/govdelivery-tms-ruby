@@ -54,13 +54,13 @@ describe CommandType::Forward do
     subject.process_response(account, command_params, http_response)
   end
 
-  it 'will not create an sms message if command_action.content_type does not match expected_content_type' do
+  it 'will not create an sms message if command_action.content_type does not match text/plain' do
     command_action.stubs(:content_type).returns('something crazy')
     subject.expects(:build_message).never
     subject.process_response(account, command_params, http_response)
   end
 
-  it 'will return an sms message if command_action.content_type matches the expected_content_type' do
+  it 'will return an sms message if command_action.content_type matches text/plain' do
     command_action.stubs(:success?).returns(true)
     command_action.stubs(:content_type).returns('text/plain')
     subject.expects(:build_message).once

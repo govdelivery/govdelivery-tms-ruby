@@ -8,7 +8,6 @@ class CreateCommand < Thor
   #   --command_type forward \
   #   --url tomale.com \
   #   --http_method get \
-  #   --expected_content_type text/html \
   #   --from_param_name user \
   #   --sms_body_param_name req
 
@@ -18,7 +17,6 @@ class CreateCommand < Thor
   class_option :command_type
   class_option :url
   class_option :http_method
-  class_option :expected_content_type
   class_option :from_param_name
   class_option :strip_keyword #, type: :boolean
   def create(account_name, keyword_name)

@@ -74,15 +74,4 @@ describe CommandParameters do
     command_parameters.from_param_name.should eq("from_param_name value")
     command_parameters.strip_keyword.should eq("strip_keyword value")
   end
-
-  it "should not allow expected_content_type to be application/json" do
-    command_parameters = build(:forward_command_parameters, expected_content_type: 'application/json').tap(&:valid?)
-    command_parameters.errors.should include(:expected_content_type)
-  end
-
-  it "should default expected_content_type to text/plain" do
-    command_parameters = build(:forward_command_parameters, expected_content_type: nil).tap(&:valid?)
-    command_parameters.expected_content_type.should eql('text/plain')
-  end
-
 end

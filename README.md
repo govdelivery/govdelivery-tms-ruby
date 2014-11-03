@@ -134,7 +134,6 @@ if more than 500 characters, or status code above 299 are returned the action wi
     forward_params = {
       url: 'tomale.com',
       http_method: 'get',
-      expected_content_type: 'text/html', #allows something other than text/plain - the default
       from_param_name: 'user',    # the name of the phone number parameter - default 'from'
       sms_body_param_name: 'req', # lets say the text body is "12th" - default 'sms_body'
     }
