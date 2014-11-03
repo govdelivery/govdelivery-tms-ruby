@@ -414,6 +414,7 @@ DEPENDENCIES
   faraday_middleware
   guard-rspec
   httpi (= 2.1.0)
+  json
   json_spec
   kaminari
   lock_jar (>= 0.8.0)

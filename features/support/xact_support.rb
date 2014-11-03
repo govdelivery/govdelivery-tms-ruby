@@ -37,6 +37,7 @@ class LinkTester
     ca_path = File.expand_path "lib/Essential.ca-bundle"
     a.agent.http.ca_file = ca_path #end of mechanize browser emulator
 
+
     a.get(link_url) do |page| #retrieve link_url from agent
       page.forms.each do |f|
         return ((f['url'].eql? expected) && (link_url.start_with? expected_prefix))

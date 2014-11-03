@@ -34,7 +34,7 @@ end
 
 Then(/^a callback url exists for each event type$/) do
   @event_callback_uris.each_key do |event_type|
-    @event_callback_uris[event_type] = @capi.create_callback_uri(event_type)
+    @event_callback_uris[event_type] = @capi.create_callback_uri(:recipient_status, event_type)
   end
 end
 

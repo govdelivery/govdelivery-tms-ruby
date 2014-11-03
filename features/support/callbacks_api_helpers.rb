@@ -6,6 +6,11 @@ class Callbacks_API_Client
     attr_accessor :callbacks_root
     attr_accessor :callbacks_domain
 
+    def callback_types
+      [:recipient_status,
+       :sms]
+    end
+
     def initialize(callback_root)
         @callbacks_root = callback_root
         uri = URI.parse(@callbacks_root)
@@ -13,13 +18,16 @@ class Callbacks_API_Client
         @callback_uris = []
     end
 
-    def create_callback_uri(desc=nil)
+    def create_callback_uri(type=nil, desc=nil)
+
+        raise "Must provide callback type" if type.nil?
+        raise "Callback Type #{type} not supported " if not callback_types.include?(type)
 
         conn = get_a_faraday
 
         payload = {}
         payload[:desc] = desc if desc
-        resp = conn.post '', payload
+        resp = conn.post "#{type}/", payload
 
         raise "Callback Endpoint Creation Failed\n Status: #{resp.status}\n #{resp.body}" unless resp.status == 200
 
