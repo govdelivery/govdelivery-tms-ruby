@@ -1,6 +1,6 @@
 require 'rails_helper'
 describe Analytics::ClickListener do
-  subject { Analytics::ClickListener.new.wrapped_object }
+  subject { Analytics::ClickListener.new }
 
   before do
     YaketyYak.configure do |c|
