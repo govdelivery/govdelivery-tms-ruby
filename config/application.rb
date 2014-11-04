@@ -139,8 +139,8 @@ module Xact
     # Controls whether this environment will publish/subscribe to Kafka
     config.analytics               = {
       enabled:    ENV['ANALYTICS_ENABLED']=='true',
-      kafkas:     ENV['KAFKAS'].try(:split, ','),
-      zookeepers: ENV['ZOOKEEPERS'].try(:split, ','),
+      kafkas:     ENV['ANALYTICS_KAFKAS'].split(','),
+      zookeepers: ENV['ANALYTICS_ZOOKEEPERS'].split(','),
     }
 
     # Default log level is INFO
