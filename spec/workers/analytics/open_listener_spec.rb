@@ -1,6 +1,6 @@
 require 'rails_helper'
 describe Analytics::OpenListener do
-  subject { Analytics::OpenListener.new.wrapped_object }
+  subject { Analytics::OpenListener.new }
 
   it 'should have channel' do
     expect(subject.channel).to eq('open_channel')
