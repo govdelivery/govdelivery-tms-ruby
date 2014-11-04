@@ -62,23 +62,6 @@ Xact::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.twilio_username = 'AC189315456a80a4d1d4f82f4a732ad77e'
-  config.twilio_password = '88e3775ad71e487c7c90b848a55a5c88'
-  config.twilio_number   = '+12532929228'
-
-  config.dcm = [
-    {
-      username: 'xact-api@govdelivery.com',
-      password: "let's do Ortega Bombs",
-      api_root: 'https://stage-api.govdelivery.com'
-    }
-  ]
-
-  config.odm_host = "https://stage-tms.govdelivery.com:65081"
-  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
-  config.odm_username = 'xact'
-  config.odm_password = 'Eish8sai2Heofereekae5ohmiyeijiN'
-
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
@@ -87,8 +70,5 @@ Xact::Application.configure do
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = []
-
   config.custom_report_account_id = 10040
-
-  config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 end

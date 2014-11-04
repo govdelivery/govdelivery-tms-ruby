@@ -55,23 +55,6 @@ Xact::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  config.twilio_username = 'ACcc41a7e742457806f26d91a1ea19de9f'
-  config.twilio_password = '331b3a44b5067a3c02013a6cfaa18b1c'
-  config.twilio_number   = '+16514336311'
-
-  config.dcm = [
-    {
-      username: 'xact-api@govdelivery.com',
-      password: 'BV&f3dS3^PRntHeT&0xekwko%4nJo#PO',
-      api_root: 'https://api.govdelivery.com'
-    }
-  ]
-
-  config.odm_host     = "https://tms.govdelivery.com:65081"
-  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
-  config.odm_username = 'xact'
-  config.odm_password = 'phystondusonujocrazendehifreri'
-
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
@@ -92,5 +75,4 @@ Xact::Application.configure do
   config.shared_phone_numbers = ["468311"]
 
   config.custom_report_account_id = 10060
-  config.fema_url = 'https://integration.fema.gov/IPAWS_CAPService/IPAWS'
 end

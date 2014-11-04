@@ -8,6 +8,7 @@ gem 'activerecord-oracle_enhanced-adapter', '=1.5.5.3'
 gem 'clockwork'
 gem 'dcm_client'
 gem 'devise'
+gem 'dotenv-rails', groups: [:development, :test]
 gem 'enumify'
 gem 'faraday'
 gem 'faraday_middleware'
@@ -31,7 +32,7 @@ gem 'sidekiq-retries'
 gem 'sidekiq-throttler'
 gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication'
-gem 'sinatra', :require => nil
+gem 'sinatra', require: nil
 gem 'slim'
 gem "strip_attributes"
 gem 'twilio-ruby'
@@ -46,7 +47,7 @@ end
 
 platforms :jruby do
   gem 'lock_jar', '>= 0.8.0'
-  gem 'trinidad', :require => nil
+  gem 'trinidad', require: nil
 end
 
 group :development, :test do
@@ -84,8 +85,9 @@ group :development do
 end
 
 group :test do
-  gem "fakeredis", :require => "fakeredis/rspec"
-  gem 'mocha', :require => false
+  gem "fakeredis", require: "fakeredis/rspec"
+  gem 'fakeweb'
+  gem 'mocha', require: false
   gem 'shoulda-matchers'
   gem 'tms_client'
 end
