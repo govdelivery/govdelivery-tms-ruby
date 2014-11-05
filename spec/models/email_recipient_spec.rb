@@ -126,7 +126,7 @@ describe EmailRecipient do
     let(:vendor) { create(:email_vendor) }
     let(:account) { create(:account, email_vendor: vendor, name: 'account') }
     let(:messages) {
-      [1, 2, 3].map { |x|
+      [1, 2].map { |x|
         m = create(:email_message, account: account, body: "body #{x}")
         m.ready!(nil, [email: "from-message#{x}@example.com"])
         m.sending!
@@ -135,31 +135,14 @@ describe EmailRecipient do
     }
     before do
       # do this in SQL to get as close to boundaries as possible
-      # a long time ago
-      messages[0].recipients.update_all('sent_at = sysdate - 4')
-      # 1 second after it times out
-      messages[1].recipients.update_all('sent_at = sysdate - 61/(24*60*60)')
-      # 1 second before it times out
-      messages[2].recipients.update_all('sent_at = sysdate - 59/(24*60*60)')
-
-    end
-
-    it "has a two day timeout by default" do
-      vendor.update_attribute(:delivery_timeout, nil)
-      expect(EmailRecipient.timeout_expired.all).to eq(messages[0].recipients.all)
-    end
-
-    it 'returns the recipients that are timed out' do
-      vendor.update_attribute(:delivery_timeout, 1.minute)
-
-      result   = EmailRecipient.timeout_expired.map(&:id)
-      expected = messages[0].recipients.map(&:id) + messages[1].recipients.map(&:id)
-      expect(result).to eq(expected)
+      # less than a day ago
+      messages[0].recipients.update_all('sent_at = sysdate - ((24*60*60)-1)/(24*60*60)')
+      # more than a day ago
+      messages[1].recipients.update_all('sent_at = sysdate - ((24*60*60)+1)/(24*60*60)')
     end
 
     it 'only finds recipients in sending status' do
-      vendor.update_attribute(:delivery_timeout, 1.minute)
-
+      expect(EmailRecipient.timeout_expired.all).to match_array(messages[1].recipients.all)
       messages[0].recipients.update_all(status: 'new')
       messages[1].recipients.update_all(status: 'new')
       result = EmailRecipient.timeout_expired.all

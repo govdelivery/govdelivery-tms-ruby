@@ -4,6 +4,7 @@ module PhoneRecipient
   included do
     include Recipient
     attr_accessible :phone
+    self.delivery_timeout = 4.hours
 
     scope :to_send, ->(vendor_id) { with_valid_phone_number }
 

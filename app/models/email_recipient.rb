@@ -2,6 +2,8 @@ class EmailRecipient < ActiveRecord::Base
   include Recipient
   include Personalized
 
+  self.delivery_timeout = 24.hours
+
   attr_accessible :email
   validates_presence_of :message, :unless => :skip_message_validation
   validates :email, :presence => true, length: {maximum: 256}, :email => true

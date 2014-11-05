@@ -2,15 +2,15 @@ require 'rails_helper'
 
 describe SmsRecipient do
   subject {
-    v = create(:sms_vendor)
-    m = SmsMessage.new(:body => 'short body')
-    a = Account.create(:name => 'account', :sms_vendor => v)
-    u = User.create(:email => 'admin@get-endorsed-by-bens-mom.com', :password => 'retek01!')
+    v         = create(:sms_vendor)
+    m         = SmsMessage.new(:body => 'short body')
+    a         = Account.create(:name => 'account', :sms_vendor => v)
+    u         = User.create(:email => 'admin@get-endorsed-by-bens-mom.com', :password => 'retek01!')
     u.account = a
     m.account = a
-    r = SmsRecipient.new
+    r         = SmsRecipient.new
     r.message = m
-    r.vendor = v
+    r.vendor  = v
     r
   }
 
@@ -71,11 +71,37 @@ describe SmsRecipient do
       subject.should be_valid
     end
   end
+
+  describe 'timeout_expired' do
+    let(:vendor) { create(:sms_vendor) }
+    let(:account) { create(:account, sms_vendor: vendor, name: 'account') }
+    let(:messages) {
+      [1, 2].map { |x|
+        m = create(:sms_message, account: account, body: "body #{x}")
+        r = m.recipients.create!(phone: "1612555123#{x}")
+        r.sending!('doo')
+        m.ready!
+        m.sending!
+        m
+      }
+    }
+    before do
+      # do this in SQL to get as close to boundaries as possible
+      messages[0].recipients.update_all("sent_at = sysdate - #{5.hours.to_i}/(24*60*60)")
+      messages[1].recipients.update_all("sent_at = sysdate - #{3.hours.to_i}/(24*60*60)")
+    end
+
+    it 'only finds recipients in sending status' do
+      expect(SmsRecipient.timeout_expired.all).to eq(messages[0].recipients.all)
+      messages.each { |m| m.recipients.update_all(status: 'new') }
+      expect(SmsRecipient.timeout_expired.all).to be_empty
+    end
+  end
 end
 
 describe SmsRecipient, 'blacklist scopes' do
-  let(:sms_vendor)  { create(:shared_sms_vendor) }
-  let(:account)     { create(:account_with_sms) }
+  let(:sms_vendor) { create(:shared_sms_vendor) }
+  let(:account) { create(:account_with_sms) }
   let(:sms_message) { create(:sms_message, account: account) }
 
   before do
@@ -95,7 +121,7 @@ describe SmsRecipient, 'blacklist scopes' do
   it 'should get account_blacklisted' do
     scope = sms_message.recipients.account_blacklisted(sms_vendor.id, account.id)
     scope.count.should eq(2)
-    scope.map(&:phone).sort.should eq(["+16123089081","+16123089082"])
+    scope.map(&:phone).sort.should eq(["+16123089081", "+16123089082"])
   end
 
   it 'should get not_account_blacklisted' do
