@@ -119,7 +119,7 @@ module Xact
 
     # qc ODM
     config.odm_polling_enabled = false
-    config.odm_endpoint        = ENV['ODM_URI']
+    config.odm_endpoint        = "#{ENV['ODM_URI']}/service/TMSExtended?wsdl"
     config.odm_username        = ENV['ODM_USERNAME']
     config.odm_password        = ENV['ODM_PASSWORD']
 
