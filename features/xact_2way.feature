@@ -11,3 +11,9 @@ Feature: XACT SMS 2-Way tests.
 		Given I send an SMS to opt out of receiving TMS messages
 		Then I should receive a STOP response
 		And a my subscription should be removed
+
+    @2waystatic
+    Scenario: XACT 2-Way SMS to receive static content
+        Given A keyword with static content is configured for an TMS account
+        And I send that keyword as an SMS to TMS
+        Then I should receive static content

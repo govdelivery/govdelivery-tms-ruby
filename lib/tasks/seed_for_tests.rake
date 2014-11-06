@@ -8,6 +8,12 @@ namespace :db do
       email_vendor_name: 'Email Loopback Sender'
   }
 
+  loopbacks_account_vendors_config = {
+    sms_vendor_name: 'Loopbacks Account SMS Vendor',
+    voice_vendor_name: 'Loopbacks Account Voice Vendor',
+    email_vendor_name: 'Email Loopback Sender'
+  }
+
 
   def create_or_verify_by_name(klass, config, pre_save = nil)
     r = klass.find_by(name: config[:name])
@@ -120,7 +126,7 @@ namespace :db do
 
   end # :seed_for_tests task
 
-
+  # Creates the OMG Account vendors
   desc 'Create all the Loopback Vendors.'
   task :create_loopback_vendors => :environment do |t|
 
@@ -149,17 +155,46 @@ namespace :db do
     )
   end # :create_loopback_vendors
 
+  # Creates the Loopbacks Account vendors
+  desc 'Create all the vendors for the  Loopbacks account.'
+  task :create_loopbacks_account_vendors => :environment do |t|
+
+    sms_loopback = create_or_verify_by_name(SmsVendor, {
+        name: loopbacks_account_vendors_config[:sms_vendor_name],
+        worker: 'LoopbackSmsWorker',
+        username: 'loopbacks_account_sms_username',
+        password: 'dont care',
+        from: '+15559999999'
+      }
+    )
+
+    voice_loopback = create_or_verify_by_name(VoiceVendor,{
+        name: loopbacks_account_vendors_config[:voice_vendor_name],
+        worker: 'LoopbackVoiceWorker',
+        username: 'loopbacks_account_voice_username',
+        password: 'dont care',
+        from: '+15559999999'
+      }
+    )
+
+    email_loopback = create_or_verify_by_name(EmailVendor, {
+        name: loopbacks_account_vendors_config[:email_vendor_name],
+        worker: 'LoopbackEmailWorker'
+      }
+    )
+  end # :create_loopback_vendors
+
 
   desc 'Create an Account that has all Loopback Vendors.'
   task :create_all_loopbacks_account => :environment do |t|
 
-    Rake::Task['db:create_loopback_vendors'].invoke
+    Rake::Task['db:create_loopbacks_account_vendors'].invoke
 
     account_config = {
         name: Rails.env.capitalize + " Loopbacks Account",
-        voice_vendor: VoiceVendor.find_by(name: loopback_vendors_config[:voice_vendor_name]),
-        sms_vendor: SmsVendor.find_by(name: loopback_vendors_config[:sms_vendor_name]),
-        email_vendor: EmailVendor.find_by(name: loopback_vendors_config[:email_vendor_name])
+        voice_vendor: VoiceVendor.find_by(name: loopbacks_account_vendors_config[:voice_vendor_name]),
+        sms_vendor: SmsVendor.find_by(name: loopbacks_account_vendors_config[:sms_vendor_name]),
+        email_vendor: EmailVendor.find_by(name: loopbacks_account_vendors_config[:email_vendor_name])
     }
 
     account_email_addresses_config = {

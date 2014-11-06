@@ -15,7 +15,7 @@ Given (/^I have a user who can receive SMS messages$/)do
 
 
   twil = Twilio::REST::Client.new twilio_test_account_creds[:sid], twilio_test_account_creds[:token]
-  twil.account.incoming_phone_numbers.get(twilio_test_user_number[:sid]).update(
+  twil.account.incoming_phone_numbers.get(twilio_test_support_number[:sid]).update(
     :voice_url => @sms_receiver_full_uri,
     :sms_url => @sms_receiver_full_uri
   )
@@ -26,8 +26,8 @@ Given(/^I POST a new SMS message to TMS$/) do
 
   client = tms_client
   message = client.sms_messages.build(:body=>"#{$bt[1]}")
-  message.recipients.build(:phone=>twilio_test_user_number[:phone])
-  puts twilio_test_user_number[:phone]
+  message.recipients.build(:phone=>twilio_test_support_number[:phone])
+  puts twilio_test_support_number[:phone]
   message.post
   message.recipients.collection.detect{|r| r.errors }
   @message = message
