@@ -93,10 +93,6 @@ module Xact
     # ODM stats jobs fetch content in batches of this size
     config.odm_stats_batch_size   = 500
 
-    # Twilio test credentials
-    config.twilio_test_username   = ENV['TWILIO_TEST_SID']
-    config.twilio_test_password   = ENV['TWILIO_TEST_TOKEN']
-
     # Messages sent via Twilio that we haven't heard back about should be finalized
     config.min_twilio_polling_age = '24.hours'
     config.max_twilio_polling_age = '72.hours'
@@ -110,10 +106,6 @@ module Xact
     config.twilio_polling_enabled = true
     config.odm_polling_enabled    = true
     config.colorize_logging       = false
-
-    config.twilio_username = ENV['TWILIO_SID']
-    config.twilio_password = ENV['TWILIO_TOKEN']
-    config.twilio_number   = ENV['TWILIO_NUMBER']
 
     config.fema_url            = ENV['FEMA_URI']
 

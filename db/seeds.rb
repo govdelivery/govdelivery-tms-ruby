@@ -11,32 +11,38 @@
 #   rake db:seed
 ##
 
+raise "TWILIO_SID not set" unless twilio_username = ENV['TWILIO_SID']
+raise "TWILIO_TOKEN not set" unless twilio_password = ENV['TWILIO_TOKEN']
+raise "TWILIO_NUMBER not set" unless twilio_number = ENV['TWILIO_NUMBER']
+raise "TWILIO_TEST_SID not set" unless twilio_test_username = ENV['TWILIO_TEST_SID']
+raise "TWILIO_TEST_TOKEN not set" unless twilio_test_password = ENV['TWILIO_TEST_TOKEN']
+
 twilio_sms_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Sender')
 twilio_sms_sender.update_attributes(
   worker:   'TwilioMessageWorker',
-  username: Rails.configuration.twilio_username,
-  password: Rails.configuration.twilio_password,
-  from:     Rails.configuration.twilio_number)
+  username: twilio_username,
+  password: twilio_password,
+  from:     twilio_number)
 
 twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test SMS Sender')
 twilio_sms_test_sender.update_attributes(
   worker:   'TwilioMessageWorker',
-  username: Rails.configuration.twilio_test_username,
-  password: Rails.configuration.twilio_test_password,
+  username: twilio_test_username,
+  password: twilio_test_password,
   from:     '+15005550006')
 
 twilio_voice_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Voice Sender')
 twilio_voice_sender.update_attributes(
   worker:   'TwilioVoiceWorker',
-  username: Rails.configuration.twilio_username,
-  password: Rails.configuration.twilio_password,
-  from:     Rails.configuration.twilio_number)
+  username: twilio_username,
+  password: twilio_password,
+  from:     twilio_number)
 
 twilio_voice_test_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender')
 twilio_voice_test_sender.update_attributes(
   worker:   'TwilioVoiceWorker',
-  username: Rails.configuration.twilio_test_username,
-  password: Rails.configuration.twilio_test_password,
+  username: twilio_test_username,
+  password: twilio_test_password,
   from:     '+15005550006')
 
 sms_loopback = SmsVendor.find_or_initialize_by(name: 'Loopback SMS Sender')
