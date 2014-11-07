@@ -34,33 +34,17 @@ rotatelog() {
 LOGDIRS[0]="/opt/xact/log"
 PATTERNS[0]=".*/xact_[a-z]+_20[0-9][0-9]-[01][0-9]-[0123][0-9]\.log"
 
-## Sidekiq Logs
-LOGDIRS[1]="/opt/xact/log"
-PATTERNS[1]=".*/sidekiq${ROTATE_LOG_DATE_PATTERN}\.log"
-rotatelog "${LOGDIRS[1]}/sidekiq.log"
-
 ## Bundler Logs
-LOGDIRS[2]="/opt/xact/log"
-PATTERNS[2]=".*/bundler\.log\.20[0-9][0-9][01][0-9][0123][0-9]"
+LOGDIRS[1]="/opt/xact/log"
+PATTERNS[1]=".*/bundler\.log\.20[0-9][0-9][01][0-9][0123][0-9]"
 
 ## DB Migrate Logs
-LOGDIRS[3]="/opt/xact/log"
-PATTERNS[3]=".*/xact_[a-z]+_db-migrate-[-a-z_0-9]+_20[0-9][0-9][01][0-9][0123][0-9]-[0-9]{6}\.log"
-
-## Trinidad Logs
-LOGDIRS[4]="/opt/xact/log"
-PATTERNS[4]=".*/trinidad${ROTATE_LOG_DATE_PATTERN}\.log"
-rotatelog "${LOGDIRS[4]}/trinidad.log"
+LOGDIRS[2]="/opt/xact/log"
+PATTERNS[2]=".*/xact_[a-z]+_db-migrate-[-a-z_0-9]+_20[0-9][0-9][01][0-9][0123][0-9]-[0-9]{6}\.log"
 
 ## ENV Logs
-LOGDIRS[5]="/opt/xact/log"
-PATTERNS[5]=".*/(poc|qc|integration|stage|production)-\w{2}_[0-9]{4}-[01][0-9]-[0123][0-9]\.log"
-
-## Trinidad Logs
-LOGDIRS[6]="/opt/xact/log"
-PATTERNS[6]=".*/newrelic_agent${ROTATE_LOG_DATE_PATTERN}\.log"
-rotatelog "${LOGDIRS[6]}/newrelic_agent.log"
-
+LOGDIRS[3]="/opt/xact/log"
+PATTERNS[3]=".*/(poc|qc|integration|stage|production)-\w{2}_[0-9]{4}-[01][0-9]-[0123][0-9]\.log"
 
 
 
