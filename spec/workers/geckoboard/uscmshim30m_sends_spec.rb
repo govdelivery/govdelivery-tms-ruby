@@ -5,11 +5,15 @@ describe Geckoboard::Uscmshim30mSends do
 
   subject { Geckoboard::Uscmshim30mSends.new }
   before do
-    create_list(:email_message, 3, account: account)
+    messages = create_list(:email_message, 3, account: account)
+    messages.each do |message|
+      message.created_at = message.created_at - 1.minute
+      message.save!
+    end
   end
 
   it 'writes sending info for the past 30m in json format to disk' do
-    end_time = (Time.now + 1.minute).beginning_of_minute
+    end_time = Time.now.beginning_of_minute
     start_time = end_time - 30.minutes
     time_range = start_time.to_i...end_time.to_i
     times = time_range.step(1.minute).map {|t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime("%M")}

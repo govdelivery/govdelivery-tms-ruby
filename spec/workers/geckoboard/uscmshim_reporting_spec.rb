@@ -6,7 +6,11 @@ describe Geckoboard::UscmshimReporting do
   subject { Geckoboard::UscmshimReporting.new }
 
   it 'writes aggregate column info for the past 48 hours in json format to disk' do
-    create_list(:email_message, 3, account: account)
+    messages = create_list(:email_message, 3, account: account)
+    messages.each do |message|
+      message.created_at = message.created_at - 1.hour
+      message.save!
+    end
     subject.expects(:write_to_file).with("name.json", {
       "item" => [
         {"text" => '', "value" => 3},
