@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Geckoboard::UscmshimEventsReporting do
   let(:account){ create(:account_with_sms) }
   let(:times) do
-    end_time = (Time.now + 1.hour).beginning_of_hour
+    end_time = Time.now.beginning_of_hour
     start_time = end_time - 24.hours
     time_range = start_time.to_i...end_time.to_i
     time_range.step(1.hour).map {|t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime("%H")}
@@ -12,7 +12,11 @@ describe Geckoboard::UscmshimEventsReporting do
   subject { Geckoboard::UscmshimEventsReporting.new }
 
   before do
-    create_list(:email_message, 3, account: account)
+    messages = create_list(:email_message, 3, account: account)
+    messages.each do |message|
+      message.created_at = message.created_at - 1.hour
+      message.save!
+    end
   end
 
   it 'writes aggregate click data for the past 24 hours in json format to disk' do

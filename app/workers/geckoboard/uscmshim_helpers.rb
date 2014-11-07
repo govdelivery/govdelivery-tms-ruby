@@ -16,9 +16,9 @@ module Geckoboard
     end
 
     def time_ranges(num_units, unit)
-      # Range's end should be up to but not including one unit of time from now. This means
+      # Range's end should be up to now but not including now. This means
       # that part of the range is in the future, which is the desired behavior.
-      end_time = (Time.now + 1.send(unit)).send(:"beginning_of_#{unit}")
+      end_time = Time.now.send(:"beginning_of_#{unit}")
       start_time = end_time - num_units.send(:"#{unit}s")
       time_range = start_time...end_time
       timestamp_range = start_time.to_i...end_time.to_i

@@ -26,7 +26,7 @@ module Geckoboard
                           union all
                           select 'Other' as subject from dual
                         ) top5,
-                        (select trunc(cast(sys_extract_utc(systimestamp) as date), 'HH24') + (1/24) - (rownum/24) as hour_of_day
+                        (select trunc(cast(sys_extract_utc(systimestamp) as date), 'HH24') - (rownum/24) as hour_of_day
                            from email_messages
                           where rownum <= 12
                         ) twelve_hours -- cartesian here on purpose
