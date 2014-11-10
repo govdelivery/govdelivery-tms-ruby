@@ -46,9 +46,9 @@ module CommandWorkers
     def request_subscription client, from_number, opts
       if (email_address = extract_email(opts.sms_tokens || []))
         # example: subscribe em@il
-        response = client.email_subscribe(email_address, opts.dcm_account_code, opts.dcm_topic_codes)
+        client.email_subscribe(email_address, opts.dcm_account_code, opts.dcm_topic_codes)
       else
-        response = client.wireless_subscribe(from_number, opts.dcm_account_code, opts.dcm_topic_codes)
+        client.wireless_subscribe(from_number, opts.dcm_account_code, opts.dcm_topic_codes)
       end
     end
 

@@ -23,10 +23,13 @@ module CommandWorkers
     attr_writer :sms_service
 
     def perform(opts)
-      self.options = opts
+      self.options       = opts
+
+      # hit the service before we do any database business
+      self.http_response = send_request
       # message is returns from CommandType::Forward#process_response
       # only one recipient is created
-      message      = super
+      message            = super
 
       if message
         recipient_id = message.first_recipient_id
@@ -49,24 +52,23 @@ module CommandWorkers
 
     end
 
-    def http_response
+    def send_request
+      response = nil
       begin
-        return @http_response if @http_response
-
         # If the command was configured to strip the keyword, we use sms_tokens
         # (which is an array of tokens in the sms body, minus the detected keyword).  Otherwise,
         # we pass along the body unmolested.
         sms_body = options.strip_keyword ? options.sms_tokens.join(" ") : options.sms_body
 
-        @http_response = http_service.send(options.http_method.downcase,
-                                           options.url,
-                                           options.username,
-                                           options.password,
-                                           {
-                                             options.from_param_name     => options.from,
-                                             options.sms_body_param_name => sms_body
-                                           })
-        if @http_response.status == 0
+        response = http_service.send(options.http_method.downcase,
+                                     options.url,
+                                     options.username,
+                                     options.password,
+                                     {
+                                       options.from_param_name     => options.from,
+                                       options.sms_body_param_name => sms_body
+                                     })
+        if response.status == 0
           raise Faraday::Error::ConnectionFailed.new(nil,
                                                      body:    "Couldn't connect to #{@http_response.env[:url].to_s}",
                                                      headers: {})
@@ -75,12 +77,12 @@ module CommandWorkers
         # these are network problems, they could happen because of a bad command but we should probably know about them
         # in case e.g. our network is having issues
         self.exception = e
-        @http_response = OpenStruct.new(e.response)
+        response       = OpenStruct.new(e.response)
       rescue Faraday::Error::ClientError => e
         # anything that isn't potentially a network problem is marked as a failure without reraising
-        @http_response = OpenStruct.new(e.response)
+        response = OpenStruct.new(e.response)
       ensure
-        return @http_response
+        return response
       end
     end
   end

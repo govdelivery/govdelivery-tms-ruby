@@ -21,13 +21,15 @@ module Twilio
     def perform(options={})
       begin
         options.symbolize_keys!
-        message, recipient = find_message_and_recipient(options)
-        callback_url       = options[:callback_url]
-        message_url        = options[:message_url]
-
+        callback_url               = options[:callback_url]
+        message_url                = options[:message_url]
+        vendor, message, recipient = nil
+        ActiveRecord::Base.connection_pool.with_connection do
+          message, recipient = find_message_and_recipient(options)
+          vendor = message.vendor
+        end
+        client   = vendor.delivery_mechanism
         logger.debug { "Sending message to #{recipient.phone}" }
-
-        client   = message.vendor.delivery_mechanism
         response = client.deliver(message, recipient, callback_url, message_url)
       rescue Twilio::REST::RequestError => e
         raise Sidekiq::Retries::Retry.new(e) if RETRY_CODES.include?(client.last_response_code)
