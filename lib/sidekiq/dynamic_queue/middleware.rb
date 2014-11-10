@@ -13,6 +13,7 @@ module Sidekiq
         end
 
         def queue_for(worker, msg, queue)
+          worker = worker.constantize if worker.is_a?(String)
           return queue unless queue_proc = worker.get_sidekiq_options['dynamic_queue_key']
           possible_queue = [msg['queue'], queue_proc.call(*msg['args'])].compact.join('_')
           Sidekiq::RateLimitedQueue.includes_queue?(possible_queue) ? possible_queue : queue

@@ -29,4 +29,13 @@ describe Sidekiq::DynamicQueue::Middleware do
     expect(queue).to eq 'wubble'
   end
 
+  it 'should work with a string' do
+    Sidekiq::RateLimitedQueue.expects(:includes_queue?).returns(false)
+    queue = 'wubble'
+    item  = {'args' => [{'value' => 'moms'}], 'queue' => 'wubble'}
+    expect(subject.call('RadWorker', item, queue) { 'foo' }).to eq(item)
+    expect(item['queue']).to eq 'wubble'
+    expect(queue).to eq 'wubble'
+  end
+
 end
