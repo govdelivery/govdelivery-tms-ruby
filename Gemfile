@@ -62,6 +62,7 @@ group :development, :test do
   gem 'json_spec'
   gem 'mail'
   gem 'mechanize'
+  gem 'multi_xml'
   gem 'nokogiri'
   gem 'poltergeist'
   gem 'pry-rails'

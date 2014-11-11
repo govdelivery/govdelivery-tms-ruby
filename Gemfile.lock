@@ -169,6 +169,7 @@ GEM
     mock_redis (0.13.2)
     multi_json (1.10.1)
     multi_test (0.1.1)
+    multi_xml (0.5.5)
     multipart-post (2.0.0)
     naether (0.13.7-java)
     net-http-digest_auth (1.4)
@@ -421,6 +422,7 @@ DEPENDENCIES
   mail
   mechanize
   mocha
+  multi_xml
   newrelic_rpm
   nokogiri
   phony

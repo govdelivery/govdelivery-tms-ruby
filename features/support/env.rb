@@ -2,6 +2,7 @@ require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'tms_client'
+require 'multi_xml'
 
 
 Capybara.default_driver = :poltergeist
@@ -180,14 +181,6 @@ def callbacks_api_sms_root
   'http://xact-webhook-callbacks.herokuapp.com/api/v3/sms/'
 end
 
-# Number to use to send SMSs to Xact
-def twilio_xact_test_number
-  {
-    :phone => '+19526577631',
-    :sid => 'PN49f07b59dc4e5cffe85a508dd1a44dca'
-  }
-end
-
 # Number for the Test Support App to send/receive (or these tests to send on the behalf of)
 def twilio_test_support_number
   {
@@ -241,3 +234,101 @@ def dev_not_live?
     return true
   end
 end
+
+def keyword_params
+    if ENV['XACT_ENV'] == 'qc'
+      "qc_subscribe"
+    elsif ENV['XACT_ENV'] == 'integration'
+      "int_subscribe"
+    elsif ENV['XACT_ENV'] == 'stage'
+      "stage_subscribe"
+    elsif ENV['XACT_ENV'] == 'prod'
+      "prod_subscribe"
+    end
+end
+
+def subscribe_command
+    if ENV['XACT_ENV'] == 'qc'
+      'cuke qc_subscribe'
+    elsif ENV['XACT_ENV'] == 'integration'
+      'cukeint int_subscribe'
+    elsif ENV['XACT_ENV'] == 'stage'
+      'cuke stage_subscribe'
+    elsif ENV['XACT_ENV'] == 'prod'
+      'cuke prod_subscribe'
+    end
+end
+
+#xact_2waysms - prints different param strings according to environment variable passed
+def dcm_params
+    if ENV['XACT_ENV'] == 'qc'
+      {:dcm_account_code => "CUKEAUTO_QC", :dcm_topic_codes => ["CUKEAUTO_QC_SMS"]}
+    elsif ENV['XACT_ENV'] == 'integration'
+      {:dcm_account_code => "CUKEAUTO_INT", :dcm_topic_codes => ["CUKEAUTO_INT_SMS"]}
+    elsif ENV['XACT_ENV'] == 'stage'
+      {:dcm_account_code => "CUKEAUTO_STAGE", :dcm_topic_codes => ["CUKEAUTO_STAGE_SMS"]}
+    elsif ENV['XACT_ENV'] == 'prod'
+      {:dcm_account_code => "CUKEAUTO_PROD", :dcm_topic_codes => ["CUKEAUTO_PROD_SMS"]}
+    end
+end
+
+def dcm_base64_url
+    if ENV['XACT_ENV'] == 'qc'
+      'https://qc-api.govdelivery.com/api/account/CUKEAUTO_QC/subscribers/'
+    elsif ENV['XACT_ENV'] == 'integration'
+      'https://int-api.govdelivery.com/api/account/CUKEAUTO_INT/subscribers/'
+    elsif ENV['XACT_ENV'] == 'stage'
+      'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
+    elsif ENV['XACT_ENV'] == 'prod'
+      'https://api.govdelivery.com/api/account/CUKEAUTO_PROD/subscribers/'
+    end
+end
+
+def user
+    if ENV['XACT_ENV'] == 'qc'
+      @request = HTTPI::Request.new
+      @request.headers["Content-Type"] = "application/xml"
+      @request.auth.basic("autocukeqc_sa@evotest.govdelivery.com", "govdel01!")
+    elsif ENV['XACT_ENV'] == 'integration'
+      @request = HTTPI::Request.new
+      @request.headers["Content-Type"] = "application/xml"
+      @request.auth.basic("autocukeint_sa@evotest.govdelivery.com", "govdel01!")
+    elsif ENV['XACT_ENV'] == 'stage'
+      @request = HTTPI::Request.new
+      @request.headers["Content-Type"] = "application/xml"
+      @request.auth.basic("autocukestage_sa@evotest.govdelivery.com", "govdel01!")
+    elsif ENV['XACT_ENV'] == 'prod'
+      @request = HTTPI::Request.new
+      @request.headers["Content-Type"] = "application/xml"
+      @request.auth.basic("autocukeprod_sa@evotest.govdelivery.com", "govdel01!")
+    end
+end
+
+# Number to use to send SMSs to Xact
+def twilio_xact_test_number
+    if ENV['XACT_ENV'] == 'qc'
+      {
+      :phone => '+16519684981',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    elsif ENV['XACT_ENV'] == 'integration'
+      {
+      :phone => '+16122550428',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    elsif ENV['XACT_ENV'] == 'stage'
+      {
+      :phone => '+16124247727',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    elsif ENV['XACT_ENV'] == 'prod'
+      {
+      :phone => '+16124247727',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    end
+end
+
+def sample_subscriber_number
+  '+16126158635'
+end  
