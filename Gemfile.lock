@@ -311,9 +311,6 @@ GEM
       sidekiq (>= 3.2.3)
     sidekiq-retries (0.3.0)
       sidekiq (~> 3.2, >= 3.2.4)
-    sidekiq-throttler (0.4.1)
-      activesupport
-      sidekiq (>= 2.5, < 4.0)
     sidekiq-unique-jobs (3.0.2)
       mock_redis
       sidekiq (>= 2.6)
@@ -450,7 +447,6 @@ DEPENDENCIES
   sidekiq-failures
   sidekiq-pro
   sidekiq-retries
-  sidekiq-throttler
   sidekiq-unique-jobs
   simple_token_authentication
   sinatra

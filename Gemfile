@@ -28,7 +28,6 @@ gem 'request_exception_handler'
 gem 'sidekiq-failures'
 gem 'sidekiq-pro'
 gem 'sidekiq-retries'
-gem 'sidekiq-throttler'
 gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication'
 gem 'sinatra', :require => nil
