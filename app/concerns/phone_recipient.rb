@@ -4,7 +4,7 @@ module PhoneRecipient
   included do
     include Recipient
     attr_accessible :phone
-    self.delivery_timeout = 4.hours
+    self.delivery_timeout = Rails.configuration.twilio_delivery_timeout
 
     scope :to_send, ->(vendor_id) { with_valid_phone_number }
 
@@ -16,10 +16,10 @@ module PhoneRecipient
     validates :phone, uniqueness: {scope: 'message_id', message: 'has already been associated with this message', }
 
     scope :to_poll, lambda {
-      start_time = eval("#{Rails.configuration.min_twilio_polling_age}.ago")
-      end_time = eval("#{Rails.configuration.max_twilio_polling_age}.ago")
-      incomplete.where("#{self.quoted_table_name}.created_at BETWEEN ? and ?", start_time, end_time).includes(:vendor)
-    }
+                    min_age = Rails.configuration.twilio_minimum_polling_age.ago
+                    max_age = self.delivery_timeout.ago
+                    incomplete.where("#{self.quoted_table_name}.created_at BETWEEN ? and ?", max_age, min_age)
+                  }
 
     def self.with_valid_phone_number
       where("#{self.table_name}.formatted_phone is not null")
