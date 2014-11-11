@@ -8,7 +8,7 @@ describe InboundSmsParser do
     context "sms_body: 'abc' yields:" do
       subject{ InboundSmsParser.parse 'abc', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Keywords::AccountDefault) }
+      its(:keyword)    { should be_instance_of(Keywords::Help) }
       its(:message)    { should be_blank }
       its(:account_id) { should eql(account.id) }
     end
@@ -16,7 +16,7 @@ describe InboundSmsParser do
     context "sms_body: 'blah gibberish with CAPS and ٸ unicode' yields:" do
       subject{ InboundSmsParser.parse 'blah gibberish with CAPS and ٸ unicode', account.sms_vendor }
       its(:prefix)     { should be_blank }
-      its(:keyword)    { should be_instance_of(Keywords::VendorDefault) }
+      its(:keyword)    { should be_instance_of(Keywords::Help) }
       its(:message)    { should eql('blah gibberish with caps and ٸ unicode') }
       its(:account_id) { should be_blank }
     end
@@ -44,7 +44,7 @@ describe InboundSmsParser do
     context "sms_body: 'xyz' yields:" do
       subject{ InboundSmsParser.parse 'xyz', account.sms_vendor }
       its(:prefix)     { should be_blank }
-      its(:keyword)    { should be_instance_of(Keywords::VendorDefault) }
+      its(:keyword)    { should be_instance_of(Keywords::Help) }
       its(:message)    { should eql('xyz') }
       its(:account_id) { should be_blank }
     end
@@ -52,7 +52,7 @@ describe InboundSmsParser do
     context "sms_body: 'help I fell down' yields:" do
       subject{ InboundSmsParser.parse 'help I fell down', account.sms_vendor }
       its(:prefix)     { should be_blank }
-      its(:keyword)    { should be_instance_of(Keywords::VendorHelp) }
+      its(:keyword)    { should be_instance_of(Keywords::Help) }
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should be_blank }
     end
@@ -60,7 +60,7 @@ describe InboundSmsParser do
     context "sms_body: 'abc help I fell down' yields:" do
       subject{ InboundSmsParser.parse 'abc help I fell down', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Keywords::AccountHelp) }
+      its(:keyword)    { should be_instance_of(Keywords::Help) }
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should eql(account.id) }
     end
@@ -68,7 +68,7 @@ describe InboundSmsParser do
     context "sms_body: 'abc unsubscribe' yields:" do
       subject{ InboundSmsParser.parse 'abc unsubscribe me@you.com', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Keywords::AccountStop) }
+      its(:keyword)    { should be_instance_of(Keywords::Stop) }
       its(:message)    { should eql('me@you.com') }
       its(:account_id) { should eql(account.id) }
     end
@@ -76,7 +76,7 @@ describe InboundSmsParser do
     context "blank sms_body: ' ' yields:" do
       subject{ InboundSmsParser.parse ' ', account.sms_vendor }
       its(:prefix)     { should eql(nil) }
-      its(:keyword)    { should be_instance_of(Keywords::VendorDefault) }
+      its(:keyword)    { should be_instance_of(Keywords::Help) }
       its(:message)    { should be_blank }
       its(:account_id) { should be_blank }
     end

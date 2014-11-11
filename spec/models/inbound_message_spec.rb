@@ -7,7 +7,6 @@ describe InboundMessage do
   it { should validate_presence_of( :body ) }
   it { should validate_presence_of( :from ) }
   it { should validate_presence_of( :vendor ) }
-  it { should validate_presence_of( :keyword ) }
 
   it 'is ignored if not actionable' do
     subject.expects(:actionable?).returns(false)
@@ -130,7 +129,7 @@ describe InboundMessage do
                         tap { |k| k.commands << build(:forward_command)})
 
     expected = {
-      :channel => 'sms_channel', 
+      :channel => 'sms_channel',
       :message => has_entries({
         :to   => message.to,
         :from => message.from,

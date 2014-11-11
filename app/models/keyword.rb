@@ -1,5 +1,5 @@
 class Keyword < ActiveRecord::Base
-  attr_accessible :name, :response_text
+  attr_accessible :name, :response_text, :is_default
 
   # for at least one of our vendors (twilio) we need to support stop, quit, cancel, and unsubscribe
   # http://www.twilio.com/help/faq/sms/does-twilio-support-stop-block-and-cancel-aka-sms-filtering
@@ -9,58 +9,35 @@ class Keyword < ActiveRecord::Base
   RESERVED_KEYWORDS = STOP_WORDS + START_WORDS + HELP_WORDS
 
   has_many :inbound_messages, inverse_of: :keyword
-  has_many :commands
+  has_many :commands, dependent: :delete_all
 
-  #TEMPORARY for data migration:
-  belongs_to :event_handler, :dependent => :destroy
+  scope :default, -> { where(is_default: true) }
 
-  scope :custom, -> { where('type is null') }
-  scope :special, -> { where("type is not null") }
-
-  belongs_to :vendor, class_name: 'SmsVendor'
   belongs_to :account
   validates_presence_of :name
-  validates_presence_of :vendor
   validates_length_of :name, :maximum => 160
   validates_format_of :name, without: / /, message: 'No spaces allow in keyword name'
-  validates_uniqueness_of :name, :scope => [:vendor_id, :account_id]
-  validate :name_not_reserved
+  validates_uniqueness_of :name, :scope => [:account_id]
   validates_length_of :response_text, :maximum => 160
 
-  before_validation :set_vendor
-  before_validation :set_special_name
+  after_save :reset_defaults
+  after_create :reset_defaults
 
   def self.get_keyword keyword_name, vendor, account_id
     account = Account.find(account_id) if account_id
-    # account_scope
-    if account.present?
-      case
-      when STOP_WORDS.include?(keyword_name)
-        account.stop_keyword
-      when HELP_WORDS.include?(keyword_name)
-        account.help_keyword
-      when (keyword = account.keywords.where(name: keyword_name).first).present?
-        keyword
-      else
-        account.default_keyword
-      end
-    #vendor scope
-    else # vendor is always present like the wind
-      case
-      when STOP_WORDS.include?(keyword_name)
-        vendor.stop_keyword
-      when START_WORDS.include?(keyword_name)
-        vendor.start_keyword
-      when HELP_WORDS.include?(keyword_name)
-        vendor.help_keyword
-      when (keyword = vendor.keywords.where(name: keyword_name, account_id: nil).first).present?
-        keyword
-      else
-        vendor.default_keyword
-      end
+    case
+    when START_WORDS.include?(keyword_name)
+      Keywords::Start.new(account, vendor)
+    when STOP_WORDS.include?(keyword_name)
+      Keywords::Stop.new(account, vendor)
+    when HELP_WORDS.include?(keyword_name)
+      Keywords::Help.new(account)
+    when account && (keyword = account.keywords.where(name: keyword_name).first).present?
+      keyword
+    else
+      account.try(:default_keyword) || Keywords::Help.new(account)
     end
   end
-
 
   def self.stop?(text)
     # Message is a stop request if it starts with a stop word.
@@ -79,7 +56,6 @@ class Keyword < ActiveRecord::Base
   def create_command!(params)
     command = self.commands.build params
     command.keyword = self #strange that this is neccessary
-    command.account_id = self.account_id if self.account_id
     command.save!
     command
   end
@@ -87,7 +63,6 @@ class Keyword < ActiveRecord::Base
   def create_command(params)
     command            = self.commands.build params
     command.keyword    = self #strange that this is neccessary
-    command.account_id = self.account_id if self.account_id
     command.save
     command
   end
@@ -106,27 +81,27 @@ class Keyword < ActiveRecord::Base
   end
 
   def default?
-    false
+    !!self.is_default
+  end
+
+  def make_default!
+    self.is_default = true
+    self.save
   end
 
   private
 
-  # just a shortcut
-  def set_vendor
-    self.vendor ||= account.sms_vendor if account.present?
+  def reset_defaults
+    if self.is_default
+      sibling_keywords.update_all({is_default: false})
+    end
   end
 
-  def set_special_name
-    self.name ||= self.class.name if special?
+  def sibling_keywords
+    Keyword.where(account_id: self.account.id).where(Keyword.arel_table[:id].not_eq(self.id))
   end
 
   def sanitize_name(n)
     self.class.sanitize_string(n)
-  end
-
-  def name_not_reserved
-    if RESERVED_KEYWORDS.any? { |kw| /^(#{kw} |#{kw}$)/ =~ self.name }
-      errors.add(:name, "Illegal keyword name #{self.name}")
-    end
   end
 end

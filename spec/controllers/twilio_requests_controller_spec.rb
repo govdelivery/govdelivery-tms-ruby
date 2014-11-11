@@ -20,20 +20,21 @@ describe TwilioRequestsController, '#create' do
       SmsVendor.any_instance.expects(:stop!).with(kind_of(CommandParameters))
       post :create, twilio_request_params('STOP', @vendor)
       response.response_code.should eq(201)
-      assigns(:response).response_text.should == @vendor.stop_keyword.response_text
+      assigns(:response).response_text.should == Keywords::DEFAULT_STOP_TEXT
     end
 
     it "responds to 'HELP' with vendor help text" do
       post :create, twilio_request_params('HELP', @vendor)
       response.response_code.should eq(201)
-      assigns(:response).response_text.should == @vendor.help_keyword.response_text
+      assigns(:response).response_text.should == Keywords::DEFAULT_HELP_TEXT
     end
 
-    it "responds to: 'GIBBERISH' with vendor default response text" do
-      @vendor.default_keyword.update_attribute :response_text, "turn left"
+    it "responds to: 'GIBBERISH' with account default response text" do
+      account = create_account 'pirate', 'plunder', @vendor
+      account.keywords.create(name: 'booty', response_text: "Aye! Ye got me booty!").make_default!
       post :create, twilio_request_params('GIBBERISH', @vendor)
       response.response_code.should eq(201)
-      assigns(:response).response_text.should == "turn left"
+      assigns(:response).response_text.should == "Aye! Ye got me booty!"
     end
   end
 
@@ -75,9 +76,9 @@ describe TwilioRequestsController, '#create' do
 
       context "an account WITH custom stop text, help text, and default response text" do
         before :each do
-          @account.stop_keyword.update_attribute :response_text, 'oh sorry'
-          @account.help_keyword.update_attribute :response_text, 'maybe later'
-          @account.default_keyword.update_attribute :response_text, 'wat'
+          @account.stop_text = 'oh sorry'
+          @account.help_text = 'maybe later'
+          @account.keywords.create(name: "custom", response_text: 'wat').make_default!
           @account.save!
         end
         it "responds to 'pirate stop' with account stop text" do

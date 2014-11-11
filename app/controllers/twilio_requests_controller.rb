@@ -20,14 +20,15 @@ class TwilioRequestsController < ApplicationController
 
     #parse it
     prefix, keyword, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
-    Rails.logger.debug "parsed keyword: #{keyword.name}"
+    Rails.logger.debug "parsed keyword: #{keyword.try(:name) || keyword.class.name}"
 
     #store it
     inbound_msg = vendor.create_inbound_message!({ from:  command_parameters.from,
                                                    to:    command_parameters.to,
                                                    body:  command_parameters.sms_body,
                                                    account_id: account_id,  #used for scoped reporting, can be blank
-                                                   keyword: keyword,
+                                                   keyword: keyword.is_a?(Keyword) ? keyword : nil,
+                                                   special_keyword: keyword.is_a?(Keyword) ? nil : keyword,
                                                    keyword_response: keyword.try(:response_text)})
 
     # respond to it (now and/or later)

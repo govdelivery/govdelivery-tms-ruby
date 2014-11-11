@@ -41,13 +41,12 @@ module InboundSmsParser
   def extract_keyword(s, vendor, account_id)
     first_word, *rest = s.split
     keyword = Keyword.get_keyword(first_word, vendor, account_id)
-    if keyword.default?
+    if keyword.default? || (!Keyword::RESERVED_KEYWORDS.include?(first_word) && account_id.nil?)
       [keyword, s, account_id] #return the full string, no keyword found
     else
       [keyword, rest.join(' '), account_id]
     end
   end
-
 
   class NoAccount < Exception; end
 

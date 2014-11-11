@@ -11,7 +11,7 @@ describe KeywordsController do
   before do
     sign_in user
   end
-  
+
   context "Listing keywords" do
     before do
       Account.any_instance.expects(:custom_keywords).returns(keywords)
@@ -35,7 +35,6 @@ describe KeywordsController do
       keywords.expects(:new).with(attrs).returns(keyword)
       Account.any_instance.expects(:keywords).returns(keywords)
       keyword.expects(:save).returns(true)
-      keyword.expects(:vendor=).with(vendor)
       keyword.stubs(:new_record?).returns(false)
       post :create, :keyword => attrs, :format => :json
     end
@@ -59,7 +58,7 @@ describe KeywordsController do
       keywords.first.expects(:valid?).returns(true)
       mock_finder('twelve')
       put :update, :id => 'twelve', :keyword => attrs,
-          :format => :json    
+          :format => :json
     end
     it "should update" do
       response.response_code.should == 200
@@ -71,7 +70,7 @@ describe KeywordsController do
       keywords.first.expects(:valid?).returns(false)
       mock_finder('twelve')
       put :update, :id => 'twelve', :keyword => attrs,
-          :format => :json    
+          :format => :json
     end
     it "should return error" do
       response.response_code.should == 422
@@ -92,5 +91,5 @@ describe KeywordsController do
     find = mock()
     find.expects(:find).with(id).returns(keywords.first)
     Account.any_instance.expects(:custom_keywords).returns(find)
-  end 
+  end
 end

@@ -36,14 +36,12 @@ describe Keyword do
       subject.save!
       @new_keyword = Keyword.new(:name => subject.name)
       @new_keyword.account = subject.account
-      @new_keyword.vendor  = subject.vendor
     end
     specify { @new_keyword.should be_invalid }
 
     context "and same vendor but different account_id" do
       before do
-        @new_keyword.account = create(:account, sms_vendor: subject.vendor)
-        @new_keyword.vendor = subject.vendor
+        @new_keyword.account = create(:account, sms_vendor: subject.account.sms_vendor)
       end
       specify do
         @new_keyword.should be_valid
@@ -53,30 +51,30 @@ describe Keyword do
   end
 
   context 'special keywords' do
-    describe 'AccountStop' do
-      subject{ account_stop_keyword_with_forward_command }
+    let (:account) { create(:account_with_sms) }
+    before do
+      account.help_keyword.create_command!( params: build(:forward_command_parameters), command_type: :forward )
+      account.stop_keyword.create_command!( params: build(:forward_command_parameters), command_type: :forward )
+    end
 
-      it 'get a special class' do
-        # special keywords are created through accounts or vendors
-        vendor = create(:sms_vendor)
-        special_keywords = vendor.keywords.collect(&:class)
-        special_keywords.should include(Keywords::VendorStop)
-        special_keywords.should include(Keywords::VendorHelp)
-        special_keywords.should include(Keywords::VendorDefault)
-      end
-
-      it 'does not downcase the name' do
-        subject.name = 'FOOBAR'
-        subject.name.should == 'FOOBAR'
-      end
+    describe 'Help' do
+      subject { Keywords::Help.new(account) }
 
       context '#execute_commands' do
-        context 'AccountStop' do
-          subject{ account_stop_keyword_with_forward_command }
-          it 'should call Account#stop!' do
-            subject.account.expects(:stop!)
-            subject.execute_commands(build(:forward_command_parameters))
-          end
+        it 'should call Account#help' do
+          account.expects(:help)
+          subject.execute_commands(build(:forward_command_parameters))
+        end
+      end
+    end
+
+    describe 'Stop' do
+      subject { Keywords::Stop.new(account, account.sms_vendor) }
+
+      context '#execute_commands' do
+        it 'should call Account#stop!' do
+          account.expects(:stop!)
+          subject.execute_commands(build(:forward_command_parameters))
         end
       end
     end
@@ -101,53 +99,26 @@ describe Keyword do
         subject.name = " foobar \n"
         subject.name.should == 'foobar'
       end
-
-      %w(stop quit help).each do |name|
-        it "doesn't allow a '#{name}' keyword to be created" do
-          subject.name = name
-          subject.should_not be_valid
-        end
-
-        it "doesn't allow '#{name}' as the first word in a multi-word keyword" do
-          subject.name = "#{name} more words"
-          subject.should_not be_valid
-        end
-
-        it "doesn't allow '#{name}' as the first word in a multi-word keyword separated by non-space characters" do
-          subject.name = "#{name}\nmore\nwords"
-          subject.should_not be_valid
-        end
-
-        it "DOES allow a keyword to start with a word beginning with '#{name}' to be created" do
-          subject.name = "#{name}word"
-          subject.should be_valid
-        end
-
-        it "does not allow multiword keywords" do
-          subject.name = 'some more words'
-          subject.should_not be_valid
-        end
-
-      end
     end
   end
 
   describe '#create_command!' do
     let(:command){ stub('Command', call: true) }
     let(:command_params){ CommandParameters.new }
-    subject { create(:sms_vendor).stop_keyword }
-
+    subject { create(:account_with_sms).stop_keyword }
 
     it 'creates a command' do
       expect {
-        dcm_account_codes = subject.vendor.accounts.map(&:dcm_account_codes).reduce(:+).to_a
+        dcm_account_codes = subject.account.dcm_account_codes.to_a
         subject.create_command!(:params => CommandParameters.new(:dcm_account_codes => dcm_account_codes),
                              :command_type => :dcm_unsubscribe)
       }.to change{Command.count}.by 1
     end
 
-    it 'a vendor default keyword can have a forward command' do
-      keyword = create(:vendor_default)
+    it 'an account default keyword can have a forward command' do
+      account = create(:account_with_sms)
+      keyword = create(:keyword, account: account)
+      keyword.make_default!
       CommandType::Forward.any_instance.expects(:perform_async!).with(kind_of(CommandParameters))
 
       keyword.create_command!(params: {
@@ -197,70 +168,70 @@ describe Keyword do
     before { @account = create(:account_with_sms) }
     describe 'given only a vendor' do
       subject{ Keyword.get_keyword nil, build(:sms_vendor), nil }
-      it { should be_instance_of(Keywords::VendorDefault) }
+      it { should be_instance_of(Keywords::Help) }
     end
 
     describe 'given a vendor and an account_id' do
       subject{ Keyword.get_keyword( nil, build(:sms_vendor), @account.id ) }
-      it { should be_instance_of(Keywords::AccountDefault) }
+      it { should be_instance_of(Keywords::Help) }
     end
 
     describe 'given a vendor and an account without sms' do
       before { @account = create(:account) }
       subject{ Keyword.get_keyword( nil, build(:sms_vendor), @account.id ) }
-      it { should be_nil }
+      it { should be_instance_of(Keywords::Help) }
     end
 
     describe "given a vendor and an account and keyword: 'help' " do
       subject{ Keyword.get_keyword( 'help', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::AccountHelp) }
-    end
-
-    describe "given a vendor and an account and keyword: 'info' " do
-      subject{ Keyword.get_keyword( 'help', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::AccountHelp) }
+      it { should be_instance_of( Keywords::Help) }
     end
 
     describe "given a vendor and an account and keyword: 'stop' " do
       subject{ Keyword.get_keyword( 'stop', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::AccountStop) }
+      it { should be_instance_of( Keywords::Stop) }
     end
 
     describe "given a vendor and keyword: 'start' " do
       subject{ Keyword.get_keyword( 'start', build(:sms_vendor), nil) }
-      it { should be_instance_of( Keywords::VendorStart) }
+      it { should be_instance_of( Keywords::Start) }
     end
 
     describe "given a vendor and an account keyword: 'start' because there is no AccountStart " do
       subject{ Keyword.get_keyword( 'start', build(:sms_vendor), @account.id) }
-      it { should be_instance_of( Keywords::AccountDefault) }
+      it { should be_instance_of( Keywords::Start) }
     end
 
     describe "given a vendor and an account and keyword: 'unsubscribe' " do
       subject{ Keyword.get_keyword( 'unsubscribe', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::AccountStop) }
+      it { should be_instance_of( Keywords::Stop) }
     end
 
-    describe "given a vendor and an account and keyword: 'plunder'  " do
+    describe "given a vendor and an account and keyword: 'plunder'" do
       before do
-        account = create(:account_with_sms, :shared, prefix: 'pirate')
-        account.create_command!('plunder', params: build(:forward_command_parameters).to_hash, command_type: 'forward')
+        @account = create(:account_with_sms, :shared, prefix: 'pirate')
+        @account.create_command!('plunder', params: build(:forward_command_parameters).to_hash, command_type: 'forward')
       end
-      subject{ Keyword.get_keyword( 'stop', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::AccountStop) }
+      subject{ Keyword.get_keyword( 'plunder', build(:sms_vendor), @account.id ) }
+      it { should be_instance_of Keyword }
+      it "should be the plunder keyword" do
+        expect(subject.name).to eql("plunder")
+      end
     end
 
     describe "given a vendor and an account and keyword: 'nothing' " do
       subject{ Keyword.get_keyword( 'nothing', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::AccountDefault) }
+      it { should be_instance_of( Keywords::Help) }
     end
 
+    describe "given an account with a default keyword and the message: 'nothing'" do
+      before { @account.keywords.first.make_default! }
+      subject { Keyword.get_keyword( 'nothing', build(:sms_vendor), @account.id ) }
+      it { should be_instance_of( Keyword ) }
+      it "should be the default keyword" do
+        expect(subject.name).to eql @account.default_keyword.name
+      end
+    end
 
-  end
-
-  def account_stop_keyword_with_forward_command
-    keyword = create(:account_with_sms).stop_keyword
-    keyword.create_command!( params: build(:forward_command_parameters), command_type: :forward )
-    keyword
   end
 end

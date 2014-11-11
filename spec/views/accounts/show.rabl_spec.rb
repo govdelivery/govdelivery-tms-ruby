@@ -29,7 +29,6 @@ describe 'accounts/show.rabl' do
     render
     rendered.should be_json_for(account).
           with_attributes(:name,
-                          :stop_handler_id,
                           :voice_vendor_id,
                           :email_vendor_id,
                           :sms_vendor_id,

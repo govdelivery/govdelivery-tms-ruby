@@ -10,7 +10,6 @@ FactoryGirl.define do
 
     trait :shared do
       sms_vendor factory: :shared_sms_vendor
-
     end
 
     factory :account_with_sms do
@@ -55,16 +54,14 @@ FactoryGirl.define do
       end
 
       after(:create) do |account, evaluator|
-        create_list(:account_help, 1, account: account)
-        create_list(:account_stop, 1, account: account)
-        create_list(:account_default, 1, account: account)
         keywords = create_list(:keyword, 3, account: account)
+        keywords.first.make_default!
 
-        create_list(:dcm_subscribe_command, 1, account: account, keyword: keywords[0],
+        create_list(:dcm_subscribe_command, 1, keyword: keywords[0],
                     params: CommandParameters.new(dcm_account_code: evaluator.dcm_account_codes.first, dcm_topic_codes: ['foo']), command_type: :dcm_subscribe)
-        create_list(:dcm_unsubscribe_command, 1, account: account, keyword: keywords[1],
+        create_list(:dcm_unsubscribe_command, 1, keyword: keywords[1],
                     params: CommandParameters.new(dcm_account_codes: evaluator.dcm_account_codes, dcm_topic_codes: ['foo']), command_type: :dcm_unsubscribe)
-        create_list(:forward_command, 1, account: account, keyword: keywords[2],
+        create_list(:forward_command, 1, keyword: keywords[2],
                     params: CommandParameters.new(http_method: 'GET', url: 'http://foo.web'), command_type: :forward)
 
         create_list(:stop_request, 1, account: account, vendor: account.sms_vendor, phone: account.sms_vendor.from)
@@ -94,10 +91,7 @@ FactoryGirl.define do
         opie.email         = recipient.email
         opie.event_ip      = '128.101.101.101'
         opie.save!
-
       end
-
-
     end
   end
 

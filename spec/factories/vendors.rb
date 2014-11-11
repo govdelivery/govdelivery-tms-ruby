@@ -15,14 +15,6 @@ FactoryGirl.define do
     password 'secret'
     from { generate(:short_code) }
     shared false
-
-    # # pretent like a save - optimization
-    after(:build) do |vendor,eval|
-      vendor.build_help_keyword
-      vendor.build_stop_keyword
-      vendor.build_start_keyword
-      vendor.build_default_keyword
-    end
   end
 
   factory :shared_sms_vendor, class: SmsVendor, traits: [:vendor] do

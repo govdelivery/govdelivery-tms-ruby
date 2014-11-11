@@ -14,7 +14,6 @@ class KeywordsController < ApplicationController
 
   def create
     @keyword = @account.keywords.new(params[:keyword])
-    @keyword.vendor = @account.sms_vendor
     @keyword.save
     respond_with(@keyword)
   end

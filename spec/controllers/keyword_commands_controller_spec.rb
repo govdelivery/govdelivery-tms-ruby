@@ -4,7 +4,7 @@ describe KeywordCommandsController do
   let(:vendor)  { create(:sms_vendor, :name => 'name', :username => 'username', :password => 'secret', :worker => 'LoopbackMessageWorker') }
   let(:account) { vendor.accounts.create! :name=> "HELLO ACCOUNT" }
   let(:user)    { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:keyword) { create(:keyword, vendor: vendor, account: account ) }
+  let(:keyword) { create(:keyword, account: account ) }
   let(:command) { Command.new(:command_type => :dcm_subscribe, :name => "ALLIGATORZ") }
   let(:commands) { [stub(:name => "Hello New York")] }
 
@@ -63,6 +63,7 @@ describe KeywordCommandsController do
     end
 
     it "should be able to create a command on the default keyword" do
+      keyword.make_default!
       post :create, keyword_id: 'default', command: valid_params
       response.response_code.should == 201
     end

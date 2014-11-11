@@ -3,10 +3,10 @@ require 'rails_helper'
 describe Command do
   let(:vendor){create(:sms_vendor)}
   let(:account){create(:account, sms_vendor: vendor, :dcm_account_codes=>['acme'])}
+  let(:keyword){create(:keyword, account: account, name: "test")}
   let(:dcm_subscribe_command) {
-    Command.new(:name => "FOO",
-                :command_type => :dcm_subscribe,
-                :params => CommandParameters.new(:dcm_account_code => ["acme"], :dcm_topic_codes=>['XXX'])).tap{|c| c.account = account }
+    keyword.commands.create(name: "FOO", command_type: :dcm_subscribe,
+                            params: CommandParameters.new(:dcm_account_code => ["acme"], :dcm_topic_codes=>['XXX']) )
   }
 
   subject { build_dcm_unsubscribe_command( account ) }
@@ -14,20 +14,6 @@ describe Command do
   context "without a keyword" do
     subject { build(:command, keyword: nil) }
     it { should_not be_valid }
-  end
-
-  context "without an account" do
-    context "with a special keyword" do
-      subject { build(:dcm_subscribe_command, keyword: build(:account_help) ) }
-      its(:errors) { should_not include(:keyword) }
-    end
-    context "with a custom keyword" do
-      # Note: you could put a subscribe command on the help keyword - user control
-      subject { build(:dcm_subscribe_command,
-                      account: nil,
-                      keyword: build(:custom_keyword) ).tap(&:valid?) }
-      its(:errors) { should include(:account) }
-    end
   end
 
   [:command_type].each do |field|
@@ -91,8 +77,7 @@ describe Command do
 
   def build_dcm_unsubscribe_command account
     build(:dcm_unsubscribe_command,
-          account: account,
-          keyword: build(:custom_keyword),
+          keyword: build(:custom_keyword, account: account),
           params: build(:unsubscribe_command_parameters,
                         dcm_account_codes: Array(account.dcm_account_codes)))
   end
