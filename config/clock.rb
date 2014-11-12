@@ -13,7 +13,6 @@ module Clockwork
   end
 
   every(1.minutes, 'Sidekiq::RateLimitedQueue::LockInvalidator')
-  every(10.minutes, 'Messages::CheckMessagesForCompletion')
 
   if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
     every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')
@@ -27,7 +26,12 @@ module Clockwork
     every(1.hour, 'Twilio::SmsPollingWorker', :at => '**:15')
     every(1.hour, 'Twilio::VoicePollingWorker', :at => '**:45')
   end
+
   every(1.hour, 'MarkOldRecipientsAsInconclusive', :at => '**:30')
+
+  ['**:00', '**:30'].each do |time|
+    every(1.hour, 'Messages::CheckMessagesForCompletion', :at => time)
+  end
 
   begin
     Rails.configuration.custom_report_account_id
