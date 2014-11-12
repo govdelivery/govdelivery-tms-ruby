@@ -4,8 +4,7 @@ class InboundMessage < ActiveRecord::Base
   belongs_to :keyword, inverse_of: :inbound_messages
   enum :command_status, [:no_action, :pending, :failure, :success, :ignored]
 
-  attr_accessible :body, :from, :vendor, :to, :keyword, :keyword_response, :account_id, :special_keyword
-  attr_accessor :special_keyword
+  attr_accessible :body, :from, :vendor, :to, :keyword, :keyword_response, :account_id
 
   validates_presence_of :body, :from, :vendor
   alias_attribute :from, :caller_phone # 'caller_phone' is the database column, as 'from' is a reserved word in Oracle (who knew?)
@@ -72,12 +71,12 @@ class InboundMessage < ActiveRecord::Base
   end
 
   def set_response_status
-    self.command_status = :no_action
-    if (keyword || special_keyword).response_text.present?
-      self.command_status = :success
-    end
-    if (keyword || special_keyword).try(:commands).try(:any?)
-      self.command_status = :pending
+    self.command_status = if !keyword.try(:commands).blank?
+      :pending
+    elsif keyword.try(:response_text)
+      :success
+    else
+      :no_action
     end
   end
 end

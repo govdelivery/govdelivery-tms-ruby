@@ -60,11 +60,11 @@ describe Keyword do
 
     ['help','stop','start'].each do |type|
       describe type do
-        subject { Service::Keyword.new(type, account, account.sms_vendor) }
+        subject { Service::Keyword.new(type, account.id, account.sms_vendor) }
         context '#execute_commands' do
           it "should call Account##{type}!" do
-            account.expects(:"#{type}!")
-            subject.execute_commands(build(:forward_command_parameters))
+            Account.any_instance.expects(:"#{type}!")
+            subject.send(:execute_commands, build(:forward_command_parameters))
           end
         end
       end
@@ -128,22 +128,7 @@ describe Keyword do
                                 :command_type => :dcm_unsubscribe)
       }.to raise_error(ActiveRecord::RecordInvalid)
     end
-
-    it 'Keyword.get_keyword can retreive a forward keyword command' do
-      account = create(:account_with_sms, :shared, prefix: 'pirate')
-
-      account.create_command!('plunder', { params: { command_type: :forward,
-                                                 http_method: 'POST',
-                                                 url: 'http://what.cd' },
-                                        command_type: :forward })
-      account.keywords.pluck(:name).should include('plunder')
-      keyword = Keyword.get_keyword('plunder', account.sms_vendor, account.id )
-      keyword.should be_instance_of(Keyword)
-      keyword.name.should eql('plunder')
-    end
-
   end
-
 
   describe 'stop?' do
     %w(stop quit STOP QUIT sToP qUiT cancel unsubscribe).each do |stop|
@@ -153,102 +138,4 @@ describe Keyword do
     end
   end
 
-  context 'Keyword.get_keywords' do
-
-    before { @account = create(:account_with_sms) }
-    describe 'given only a vendor' do
-      subject{ Keyword.get_keyword nil, build(:sms_vendor), nil }
-      it { should be_instance_of(Service::Keyword) }
-      it "should return a help keyword service" do
-        subject.type.should eql "help"
-      end
-    end
-
-    describe 'given a vendor and an account_id' do
-      subject{ Keyword.get_keyword( nil, build(:sms_vendor), @account.id ) }
-      it { should be_instance_of(Keyword) }
-      it "should return the account's default keyword" do
-        subject.should eql @account.default_keyword
-      end
-    end
-
-    describe 'given a vendor and an account without sms' do
-      before { @account = create(:account) }
-      subject{ Keyword.get_keyword( nil, build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keyword ) }
-      it "should be the default keyword" do
-        subject.should eql @account.default_keyword
-      end
-    end
-
-    describe "given a vendor and an account and keyword: 'help' " do
-      subject{ Keyword.get_keyword( 'help', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Service::Keyword ) }
-      it "should return a help keyword service" do
-        subject.type.should eql "help"
-      end
-    end
-
-    describe "given a vendor and an account and keyword: 'stop' " do
-      subject{ Keyword.get_keyword( 'stop', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Service::Keyword ) }
-      it "should return a stop keyword service" do
-        subject.type.should eql "stop"
-      end
-    end
-
-    describe "given a vendor and keyword: 'start' " do
-      subject{ Keyword.get_keyword( 'start', build(:sms_vendor), nil) }
-      it { should be_instance_of( Service::Keyword ) }
-      it "should return a start keyword service" do
-        subject.type.should eql "start"
-      end
-    end
-
-    describe "given a vendor and an account keyword: 'start' " do
-      subject{ Keyword.get_keyword( 'start', build(:sms_vendor), @account.id) }
-      it { should be_instance_of( Service::Keyword ) }
-      it "should return a start keyword service" do
-        subject.type.should eql "start"
-      end
-
-    end
-
-    describe "given a vendor and an account and keyword: 'unsubscribe' " do
-      subject{ Keyword.get_keyword( 'unsubscribe', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Service::Keyword ) }
-      it "should return a stop keyword service" do
-        subject.type.should eql "stop"
-      end
-    end
-
-    describe "given a vendor and an account and keyword: 'plunder'" do
-      before do
-        @account = create(:account_with_sms, :shared, prefix: 'pirate')
-        @account.create_command!('plunder', params: build(:forward_command_parameters).to_hash, command_type: 'forward')
-      end
-      subject{ Keyword.get_keyword( 'plunder', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of Keyword }
-      it "should be the plunder keyword" do
-        expect(subject.name).to eql("plunder")
-      end
-    end
-
-    describe "given a vendor and an account and keyword: 'nothing' " do
-      subject{ Keyword.get_keyword( 'nothing', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keyword ) }
-      it "should return the default keyword" do
-        subject.should eql @account.default_keyword
-      end
-    end
-
-    describe "given an account with a default keyword and the message: 'nothing'" do
-      subject { Keyword.get_keyword( 'nothing', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keyword ) }
-      it "should be the default keyword" do
-        subject.should eql @account.default_keyword
-      end
-    end
-
-  end
 end

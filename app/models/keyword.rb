@@ -21,19 +21,6 @@ class Keyword < ActiveRecord::Base
 
   scope :custom, ->{ where.not(name: RESERVED_KEYWORDS) }
 
-  # returns either a keyword service instance for the case where we're getting something in
-  # on a shared vendor, or an instance of an account keyword
-  def self.get_keyword keyword_name, vendor, account_id
-    account = Account.find(account_id) if account_id
-    type = self.special_name(keyword_name)
-    if type
-      Service::Keyword.new(type, account, vendor)
-    else
-      keyword = account.keywords.where(name: keyword_name).custom.first if account
-      keyword || account.try(:default_keyword) || Service::Keyword.new('help', account, vendor)
-    end
-  end
-
   def self.stop?(text)
     # Message is a stop request if it starts with a stop word.
     !!(text =~ /^\s*(#{STOP_WORDS.join("|")})(\s|$)/i)
@@ -80,12 +67,6 @@ class Keyword < ActiveRecord::Base
   end
 
   private
-
-  def self.special_name(text)
-    return 'start' if START_WORDS.include?(text)
-    return 'stop' if STOP_WORDS.include?(text)
-    return 'help' if HELP_WORDS.include?(text)
-  end
 
   def sanitize_name(n)
     self.class.sanitize_string(n)

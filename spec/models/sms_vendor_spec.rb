@@ -51,7 +51,7 @@ describe SmsVendor do
   describe '#create_inbound_message!' do
     it 'creates an inbound message' do
       vendor.stubs(:accounts).returns([])
-      expect { vendor.create_inbound_message!(from: from, body: 'msg', special_keyword: Service::Keyword.new('help') ) }.to change { vendor.inbound_messages.count }.by 1
+      expect { vendor.create_inbound_message!(from: from, body: 'msg', keyword: nil ) }.to change { vendor.inbound_messages.count }.by 1
     end
   end
 

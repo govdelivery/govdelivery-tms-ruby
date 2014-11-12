@@ -8,7 +8,6 @@ describe InboundSmsParser do
     context "sms_body: 'abc' yields:" do
       subject{ InboundSmsParser.parse 'abc', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Keyword) }
       its(:message)    { should be_blank }
       its(:account_id) { should eql(account.id) }
     end
@@ -16,11 +15,10 @@ describe InboundSmsParser do
     context "sms_body: 'blah gibberish with CAPS and ٸ unicode' yields:" do
       subject{ InboundSmsParser.parse 'blah gibberish with CAPS and ٸ unicode', account.sms_vendor }
       its(:prefix)     { should be_blank }
-      its(:keyword)    { should be_instance_of(Service::Keyword) }
       its(:message)    { should eql('blah gibberish with caps and ٸ unicode') }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.type.should eql 'help'
+        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
@@ -31,7 +29,6 @@ describe InboundSmsParser do
     context "sms_body: 'abc xyz' yields:" do
       subject{ InboundSmsParser.parse 'abc xyz', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Keyword) }
       its(:message)    { should be_blank }
       its(:account_id) { should eql(account.id) }
     end
@@ -39,7 +36,6 @@ describe InboundSmsParser do
     context "sms_body: 'abc xyz wut' yields:" do
       subject{ InboundSmsParser.parse 'abc xyz wut', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Keyword) }
       its(:message)    { should eql('wut') }
       its(:account_id) { should eql(account.id) }
     end
@@ -47,55 +43,50 @@ describe InboundSmsParser do
     context "sms_body: 'xyz' yields:" do
       subject{ InboundSmsParser.parse 'xyz', account.sms_vendor }
       its(:prefix)     { should be_blank }
-      its(:keyword)    { should be_instance_of(Service::Keyword) }
       its(:message)    { should eql('xyz') }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.type.should eql 'help'
+        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
     context "sms_body: 'help I fell down' yields:" do
       subject{ InboundSmsParser.parse 'help I fell down', account.sms_vendor }
       its(:prefix)     { should be_blank }
-      its(:keyword)    { should be_instance_of(Service::Keyword) }
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.type.should eql 'help'
+        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
     context "sms_body: 'abc help I fell down' yields:" do
       subject{ InboundSmsParser.parse 'abc help I fell down', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Service::Keyword) }
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should eql(account.id) }
       it "should respond with help" do
-        subject.keyword.type.should eql 'help'
+        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
     context "sms_body: 'abc unsubscribe' yields:" do
       subject{ InboundSmsParser.parse 'abc unsubscribe me@you.com', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
-      its(:keyword)    { should be_instance_of(Service::Keyword) }
       its(:message)    { should eql('me@you.com') }
       its(:account_id) { should eql(account.id) }
       it "should respond with stop" do
-        subject.keyword.type.should eql 'stop'
+        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_STOP_TEXT
       end
     end
 
     context "blank sms_body: ' ' yields:" do
       subject{ InboundSmsParser.parse ' ', account.sms_vendor }
       its(:prefix)     { should eql(nil) }
-      its(:keyword)    { should be_instance_of(Service::Keyword) }
       its(:message)    { should be_blank }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.type.should eql 'help'
+        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 

@@ -19,17 +19,15 @@ class TwilioRequestsController < ApplicationController
 
 
     #parse it
-    prefix, keyword, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
-    Rails.logger.debug "parsed keyword: #{keyword.try(:name) || keyword.class.name}"
+    prefix, keyword_service, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
 
     #store it
     inbound_msg = vendor.create_inbound_message!({ from:  command_parameters.from,
                                                    to:    command_parameters.to,
                                                    body:  command_parameters.sms_body,
                                                    account_id: account_id,  #used for scoped reporting, can be blank
-                                                   keyword: keyword.is_a?(Keyword) ? keyword : nil,
-                                                   special_keyword: keyword.is_a?(Keyword) ? nil : keyword,
-                                                   keyword_response: keyword.try(:response_text)})
+                                                   keyword: keyword_service.keyword,
+                                                   keyword_response: keyword_service.response_text})
 
     # respond to it (now and/or later)
     if inbound_msg.ignored? # to not respond to auto responses
@@ -39,7 +37,7 @@ class TwilioRequestsController < ApplicationController
       command_parameters.merge!(account_id: account_id,
                                 sms_tokens: message.split,
                                 inbound_message_id: inbound_msg.id)
-      response_text  = SmsReceiver.respond_to_sms!(keyword, command_parameters)
+      response_text = keyword_service.respond!(command_parameters)
     end
 
     # if response_text is empty, twillio will not send a response
