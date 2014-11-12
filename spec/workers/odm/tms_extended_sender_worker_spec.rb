@@ -13,7 +13,7 @@ if defined?(JRUBY_VERSION)
       s
     end
     let(:email_message) do
-      msg = account.email_messages.new({'body' => '[[foo]] msg body',
+      msg = account.email_messages.new({'body'                   => '[[foo]] msg body',
                                         'subject'                => '[[foo]] msg subject',
                                         'from_name'              => 'Emailing Cat',
                                         'from_email'             => 'from@cat.com',
@@ -43,11 +43,11 @@ if defined?(JRUBY_VERSION)
       end
     }
     let (:params) do
-       p ={'message_id' => 11, 'account_id' => account.id}
-       p
+      p ={'message_id' => 11, 'account_id' => account.id}
+      p
     end
     let (:odm_v2) { mock(' Odm::TmsExtendedSenderWorker::ODMv2') }
-    let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2)}
+    let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2) }
 
     context 'dynamic_queue_key' do
       it 'should work with subject' do
@@ -121,7 +121,7 @@ if defined?(JRUBY_VERSION)
         EmailMessage.expects(:find).with(11).returns(email_message)
         Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
         odm_v2.expects(:send_message).raises(Java::java::lang::Exception.new("hello Exception"))
-  
+
         exception_check(worker, "hello Exception", params)
       end
 
@@ -133,6 +133,21 @@ if defined?(JRUBY_VERSION)
         odm_v2.expects(:send_message).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new("hello TMSFault", nil))
 
         exception_check(worker, "ODM Error: hello TMSFault", params)
+      end
+    end
+
+    context "can't connect to the DB after sending message" do
+      it 'should retry marking message as sending' do
+        email_message.stubs(:queued?).returns(true)
+        ExtendedMessage.expects(:new).returns(extended_message)
+        EmailMessage.expects(:find).with(11).returns(email_message)
+        Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
+        odm_v2.expects(:send_message).returns('ack1234')
+
+        worker.class.expects(:mark_sending).raises(ActiveRecord::ConnectionTimeoutError.new('oopz'))
+        worker.class.expects(:delay).returns(mock('DelayedClass', mark_sending: 'jid'))
+
+        worker.perform(params)
       end
     end
   end

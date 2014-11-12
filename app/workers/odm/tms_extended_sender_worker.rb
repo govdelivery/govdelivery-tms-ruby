@@ -38,8 +38,17 @@ module Odm
         end
       end
       ack = odm.send_message(credentials(vendor), msg)
-      message.sending!(nil, ack)
+      begin
+        self.class.mark_sending(message, ack)
+      rescue ActiveRecord::ConnectionTimeoutError => e
+        self.class.delay(retry: 10).mark_sending(message.id, ack)
+      end
       logger.debug("Sent EmailMessage #{message.to_param} (account #{account.name}, admin #{message.user_id}) to ODM")
+    end
+
+    def self.mark_sending(message_or_id, ack)
+      message_or_id = EmailMessage.find(email_message_id) unless message_or_id.is_a?(EmailMessage)
+      message_or_id.sending!(nil, ack)
     end
 
     private

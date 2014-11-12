@@ -80,14 +80,15 @@ describe Twilio::SenderWorker do
         twilio_calls = mock
         twilio_calls.expects(:create).returns(OpenStruct.new(:sid => 'abc123', :status => 'completed'))
         Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
-        ex = RuntimeError.new('this could be anything')
-        subject.expects(:complete_recipient!).raises(ex)
+        ex = ActiveRecord::ConnectionTimeoutError.new('this could be anything')
+        subject.class.expects(:complete_recipient!).raises(ex)
+        subject.class.expects(:delay).returns(mock('DelayedClass', complete_recipient!: 'jid'))
         expect { subject.perform(
           message_id: message.id,
           message_class: message.class.name,
           recipient_id: message.recipients.first.id,
           callback_url: 'http://localhost')
-        }.to raise_exception(RuntimeError, 'this could be anything')
+        }.to raise_exception(ActiveRecord::ConnectionTimeoutError, 'this could be anything')
       end
     end
 

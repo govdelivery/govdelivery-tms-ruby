@@ -26,9 +26,9 @@ module Twilio
         vendor, message, recipient = nil
         ActiveRecord::Base.connection_pool.with_connection do
           message, recipient = find_message_and_recipient(options)
-          vendor = message.vendor
+          vendor             = message.vendor
         end
-        client   = vendor.delivery_mechanism
+        client = vendor.delivery_mechanism
         logger.debug { "Sending message to #{recipient.phone}" }
         response = client.deliver(message, recipient, callback_url, message_url)
       rescue Twilio::REST::RequestError => e
@@ -41,10 +41,15 @@ module Twilio
       end
 
       logger.info { "Response from Twilio was #{response.inspect}" }
-      complete_recipient!(recipient, response.status, response.sid)
+      begin
+        self.class.complete_recipient!(recipient, response.status, response.sid)
+      rescue ActiveRecord::ConnectionTimeoutError => e
+        self.class.delay(retry: 10).complete_recipient!(recipient, response.status, response.sid)
+        raise e
+      end
     end
 
-    def complete_recipient!(recipient, status, sid)
+    def self.complete_recipient!(recipient, status, sid)
       transition = Service::TwilioResponseMapper.recipient_callback(status)
       recipient.send(transition, sid)
     end
