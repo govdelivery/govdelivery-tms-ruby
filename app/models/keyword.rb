@@ -6,12 +6,11 @@ class Keyword < ActiveRecord::Base
   STOP_WORDS  = %w(stop stopall unsubscribe cancel end quit) # we treat stopall and stop the same
   START_WORDS = %w(start yes)
   HELP_WORDS = %w(help info)
-  RESERVED_KEYWORDS = STOP_WORDS + START_WORDS + HELP_WORDS
+  DEFAULT_WORDS = %w(default)
+  RESERVED_KEYWORDS = STOP_WORDS + START_WORDS + HELP_WORDS + DEFAULT_WORDS
 
   has_many :inbound_messages, inverse_of: :keyword
   has_many :commands, dependent: :delete_all
-
-  scope :default, -> { where(is_default: true) }
 
   belongs_to :account
   validates_presence_of :name
@@ -20,22 +19,18 @@ class Keyword < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => [:account_id]
   validates_length_of :response_text, :maximum => 160
 
-  after_save :reset_defaults
-  after_create :reset_defaults
+  scope :custom, ->{ where.not(name: RESERVED_KEYWORDS) }
 
+  # returns either a keyword service instance for the case where we're getting something in
+  # on a shared vendor, or an instance of an account keyword
   def self.get_keyword keyword_name, vendor, account_id
     account = Account.find(account_id) if account_id
-    case
-    when START_WORDS.include?(keyword_name)
-      Keywords::Start.new(account, vendor)
-    when STOP_WORDS.include?(keyword_name)
-      Keywords::Stop.new(account, vendor)
-    when HELP_WORDS.include?(keyword_name)
-      Keywords::Help.new(account)
-    when account && (keyword = account.keywords.where(name: keyword_name).first).present?
-      keyword
+    type = self.special_name(keyword_name)
+    if type
+      Service::Keyword.new(type, account, vendor)
     else
-      account.try(:default_keyword) || Keywords::Help.new(account)
+      keyword = account.keywords.where(name: keyword_name).custom.first if account
+      keyword || account.try(:default_keyword) || Service::Keyword.new('help', account, vendor)
     end
   end
 
@@ -77,28 +72,19 @@ class Keyword < ActiveRecord::Base
   end
 
   def special?
-    false
+    RESERVED_KEYWORDS.include? self.name
   end
 
   def default?
-    !!self.is_default
-  end
-
-  def make_default!
-    self.is_default = true
-    self.save
+    DEFAULT_WORDS.include? self.name
   end
 
   private
 
-  def reset_defaults
-    if self.is_default
-      sibling_keywords.update_all({is_default: false})
-    end
-  end
-
-  def sibling_keywords
-    Keyword.where(account_id: self.account.id).where(Keyword.arel_table[:id].not_eq(self.id))
+  def self.special_name(text)
+    return 'start' if START_WORDS.include?(text)
+    return 'stop' if STOP_WORDS.include?(text)
+    return 'help' if HELP_WORDS.include?(text)
   end
 
   def sanitize_name(n)

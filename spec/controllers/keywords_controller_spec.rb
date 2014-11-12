@@ -14,7 +14,9 @@ describe KeywordsController do
 
   context "Listing keywords" do
     before do
-      Account.any_instance.expects(:custom_keywords).returns(keywords)
+      custom = mock()
+      custom.expects(:custom).returns(keywords)
+      Account.any_instance.expects(:keywords).returns(custom)
     end
     it "should show keywords" do
       get :index
@@ -89,7 +91,9 @@ describe KeywordsController do
 
   def mock_finder(id)
     find = mock()
+    custom_keywords = mock()
     find.expects(:find).with(id).returns(keywords.first)
-    Account.any_instance.expects(:custom_keywords).returns(find)
+    custom_keywords.expects(:custom).returns(find)
+    Account.any_instance.expects(:keywords).returns(custom_keywords)
   end
 end

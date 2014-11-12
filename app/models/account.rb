@@ -58,13 +58,22 @@ class Account < ActiveRecord::Base
     !!self.send("#{feature}_vendor")
   end
 
-  ['stop', 'help'].each do |name|
+  ['start', 'stop', 'help'].each do |name|
     define_method(name) do |command_parameters|
       keyword = self.send(:"#{name}_keyword")
       keyword.commands.each do |command|
         command.call(command_parameters)
       end if keyword
     end
+
+    define_method("#{name}_keyword") do
+      keywords.where(name: name).first
+    end
+  end
+  alias_method :help!, :help
+
+  def default_keyword
+    keywords.where(name: 'default').first
   end
 
   def transformer_with_type(type)
@@ -91,6 +100,7 @@ class Account < ActiveRecord::Base
 
   def start!(command_parameters)
     stop_requests.where(phone: command_parameters.from).delete_all #its ok if it doesn't exist
+    start(command_parameters)
   end
 
   def from_email_allowed?(email)
@@ -123,21 +133,11 @@ class Account < ActiveRecord::Base
     super
   end
 
-  def default_keyword
-    self.keywords.default.first
-  end
-
-  def stop_keyword
-    keywords.where(name: Keyword::STOP_WORDS).first
-  end
-
-  def help_keyword
-    keywords.where(name: Keyword::HELP_WORDS).first
-  end
-
   protected
 
   def create_base_keywords!
+    keywords.create!(name: 'default')
+    keywords.create!(name: 'start')
     keywords.create!(name: 'stop')
     keywords.create!(name: 'help')
   end

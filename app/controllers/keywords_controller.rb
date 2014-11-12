@@ -6,7 +6,7 @@ class KeywordsController < ApplicationController
   feature :sms
 
   def index
-    @keywords = @account.custom_keywords
+    @keywords = @account.keywords.custom
   end
 
   def show
@@ -29,6 +29,6 @@ class KeywordsController < ApplicationController
 
   private
   def find_keyword
-    @keyword = @account.custom_keywords.find(params[:id])
+    @keyword = @account.keywords.custom.find(params[:id])
   end
 end

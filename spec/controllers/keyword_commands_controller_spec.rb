@@ -63,7 +63,6 @@ describe KeywordCommandsController do
     end
 
     it "should be able to create a command on the default keyword" do
-      keyword.make_default!
       post :create, keyword_id: 'default', command: valid_params
       response.response_code.should == 201
     end

@@ -55,7 +55,6 @@ FactoryGirl.define do
 
       after(:create) do |account, evaluator|
         keywords = create_list(:keyword, 3, account: account)
-        keywords.first.make_default!
 
         create_list(:dcm_subscribe_command, 1, keyword: keywords[0],
                     params: CommandParameters.new(dcm_account_code: evaluator.dcm_account_codes.first, dcm_topic_codes: ['foo']), command_type: :dcm_subscribe)

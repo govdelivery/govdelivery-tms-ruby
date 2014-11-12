@@ -50,31 +50,22 @@ describe Keyword do
     end
   end
 
-  context 'special keywords' do
+  context 'special keyword services' do
     let (:account) { create(:account_with_sms) }
     before do
       account.help_keyword.create_command!( params: build(:forward_command_parameters), command_type: :forward )
       account.stop_keyword.create_command!( params: build(:forward_command_parameters), command_type: :forward )
+      account.start_keyword.create_command!( params: build(:forward_command_parameters), command_type: :forward )
     end
 
-    describe 'Help' do
-      subject { Keywords::Help.new(account) }
-
-      context '#execute_commands' do
-        it 'should call Account#help' do
-          account.expects(:help)
-          subject.execute_commands(build(:forward_command_parameters))
-        end
-      end
-    end
-
-    describe 'Stop' do
-      subject { Keywords::Stop.new(account, account.sms_vendor) }
-
-      context '#execute_commands' do
-        it 'should call Account#stop!' do
-          account.expects(:stop!)
-          subject.execute_commands(build(:forward_command_parameters))
+    ['help','stop','start'].each do |type|
+      describe type do
+        subject { Service::Keyword.new(type, account, account.sms_vendor) }
+        context '#execute_commands' do
+          it "should call Account##{type}!" do
+            account.expects(:"#{type}!")
+            subject.execute_commands(build(:forward_command_parameters))
+          end
         end
       end
     end
@@ -117,8 +108,7 @@ describe Keyword do
 
     it 'an account default keyword can have a forward command' do
       account = create(:account_with_sms)
-      keyword = create(:keyword, account: account)
-      keyword.make_default!
+      keyword = account.default_keyword
       CommandType::Forward.any_instance.expects(:perform_async!).with(kind_of(CommandParameters))
 
       keyword.create_command!(params: {
@@ -168,43 +158,68 @@ describe Keyword do
     before { @account = create(:account_with_sms) }
     describe 'given only a vendor' do
       subject{ Keyword.get_keyword nil, build(:sms_vendor), nil }
-      it { should be_instance_of(Keywords::Help) }
+      it { should be_instance_of(Service::Keyword) }
+      it "should return a help keyword service" do
+        subject.type.should eql "help"
+      end
     end
 
     describe 'given a vendor and an account_id' do
       subject{ Keyword.get_keyword( nil, build(:sms_vendor), @account.id ) }
-      it { should be_instance_of(Keywords::Help) }
+      it { should be_instance_of(Keyword) }
+      it "should return the account's default keyword" do
+        subject.should eql @account.default_keyword
+      end
     end
 
     describe 'given a vendor and an account without sms' do
       before { @account = create(:account) }
       subject{ Keyword.get_keyword( nil, build(:sms_vendor), @account.id ) }
-      it { should be_instance_of(Keywords::Help) }
+      it { should be_instance_of( Keyword ) }
+      it "should be the default keyword" do
+        subject.should eql @account.default_keyword
+      end
     end
 
     describe "given a vendor and an account and keyword: 'help' " do
       subject{ Keyword.get_keyword( 'help', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::Help) }
+      it { should be_instance_of( Service::Keyword ) }
+      it "should return a help keyword service" do
+        subject.type.should eql "help"
+      end
     end
 
     describe "given a vendor and an account and keyword: 'stop' " do
       subject{ Keyword.get_keyword( 'stop', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::Stop) }
+      it { should be_instance_of( Service::Keyword ) }
+      it "should return a stop keyword service" do
+        subject.type.should eql "stop"
+      end
     end
 
     describe "given a vendor and keyword: 'start' " do
       subject{ Keyword.get_keyword( 'start', build(:sms_vendor), nil) }
-      it { should be_instance_of( Keywords::Start) }
+      it { should be_instance_of( Service::Keyword ) }
+      it "should return a start keyword service" do
+        subject.type.should eql "start"
+      end
     end
 
-    describe "given a vendor and an account keyword: 'start' because there is no AccountStart " do
+    describe "given a vendor and an account keyword: 'start' " do
       subject{ Keyword.get_keyword( 'start', build(:sms_vendor), @account.id) }
-      it { should be_instance_of( Keywords::Start) }
+      it { should be_instance_of( Service::Keyword ) }
+      it "should return a start keyword service" do
+        subject.type.should eql "start"
+      end
+
     end
 
     describe "given a vendor and an account and keyword: 'unsubscribe' " do
       subject{ Keyword.get_keyword( 'unsubscribe', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::Stop) }
+      it { should be_instance_of( Service::Keyword ) }
+      it "should return a stop keyword service" do
+        subject.type.should eql "stop"
+      end
     end
 
     describe "given a vendor and an account and keyword: 'plunder'" do
@@ -221,15 +236,17 @@ describe Keyword do
 
     describe "given a vendor and an account and keyword: 'nothing' " do
       subject{ Keyword.get_keyword( 'nothing', build(:sms_vendor), @account.id ) }
-      it { should be_instance_of( Keywords::Help) }
+      it { should be_instance_of( Keyword ) }
+      it "should return the default keyword" do
+        subject.should eql @account.default_keyword
+      end
     end
 
     describe "given an account with a default keyword and the message: 'nothing'" do
-      before { @account.keywords.first.make_default! }
       subject { Keyword.get_keyword( 'nothing', build(:sms_vendor), @account.id ) }
       it { should be_instance_of( Keyword ) }
       it "should be the default keyword" do
-        expect(subject.name).to eql @account.default_keyword.name
+        subject.should eql @account.default_keyword
       end
     end
 

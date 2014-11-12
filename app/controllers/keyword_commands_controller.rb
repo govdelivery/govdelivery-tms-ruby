@@ -28,22 +28,16 @@ class KeywordCommandsController < ApplicationController
   private
 
   def find_keyword
-    @keyword = special_keyword || default_keyword || @account.keywords.find(params[:keyword_id])
+    @keyword = special_keyword || @account.keywords.find(params[:keyword_id])
   end
 
-  # shouldn't this handle stop, stopall, unsubscribe, cancel, end, quit, start, yes, help, and info a la keyword.rb?
   def special_keyword
-    name = ['stop', 'help'].select { |k| k == params[:keyword_id] }.first
-    Keywords.const_get(name.camelize).new(@account) if name
-  end
-
-  def default_keyword
-    @account.default_keyword if params[:keyword_id] == 'default'
+    name = ['stop', 'start', 'help', 'default'].select { |k| k == params[:keyword_id] }.first
+    @account.keywords.where(name: name).first
   end
 
   def find_command
     @command = @keyword.commands.find(params[:id])
   end
-
 
 end

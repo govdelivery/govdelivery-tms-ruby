@@ -12,7 +12,7 @@ describe TwilioRequestsController do
     end
     it 'should respond with stop text' do
       post :create, params
-      assigns(:response).response_text.should == Keywords::DEFAULT_STOP_TEXT
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
     end
     it 'should persist a stop request' do
       expect{post :create, params}
@@ -38,7 +38,7 @@ describe TwilioRequestsController do
     end
     it 'should respond with default response text' do
       post :create, params
-      assigns(:response).response_text.should == Keywords::DEFAULT_HELP_TEXT
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_HELP_TEXT
       assigns(:response).response_text.should_not be_nil
     end
     it 'should persist an inbound message' do
@@ -58,7 +58,7 @@ describe TwilioRequestsController do
     end
     it 'should respond with vendor stop text' do
       post :create, params
-      assigns(:response).response_text.should == Keywords::DEFAULT_STOP_TEXT
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
     end
     it 'should persist an inbound message' do
       expect{post :create, params}.to change{vendor.inbound_messages.count}.by 1

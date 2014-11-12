@@ -20,18 +20,20 @@ describe TwilioRequestsController, '#create' do
       SmsVendor.any_instance.expects(:stop!).with(kind_of(CommandParameters))
       post :create, twilio_request_params('STOP', @vendor)
       response.response_code.should eq(201)
-      assigns(:response).response_text.should == Keywords::DEFAULT_STOP_TEXT
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
     end
 
     it "responds to 'HELP' with vendor help text" do
       post :create, twilio_request_params('HELP', @vendor)
       response.response_code.should eq(201)
-      assigns(:response).response_text.should == Keywords::DEFAULT_HELP_TEXT
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_HELP_TEXT
     end
 
     it "responds to: 'GIBBERISH' with account default response text" do
       account = create_account 'pirate', 'plunder', @vendor
-      account.keywords.create(name: 'booty', response_text: "Aye! Ye got me booty!").make_default!
+      default_keyword = account.default_keyword
+      default_keyword.response_text = "Aye! Ye got me booty!"
+      default_keyword.save
       post :create, twilio_request_params('GIBBERISH', @vendor)
       response.response_code.should eq(201)
       assigns(:response).response_text.should == "Aye! Ye got me booty!"
@@ -62,24 +64,29 @@ describe TwilioRequestsController, '#create' do
       context "an account WITHOUT custom stop text, help text, or default response text" do
         it "responds to 'pirate stop' with vendor stop text" do
           post :create, @params.merge('Body' => 'pirate stop')
-          assigns(:response).response_text.should eql( Keywords::DEFAULT_STOP_TEXT )
+          assigns(:response).response_text.should eql( Service::Keyword::DEFAULT_STOP_TEXT )
         end
         it "responds to 'pirate help' with vendor help text" do
           post :create, @params.merge('Body' => 'pirate help')
-          assigns(:response).response_text.should eql( Keywords::DEFAULT_HELP_TEXT )
+          assigns(:response).response_text.should eql( Service::Keyword::DEFAULT_HELP_TEXT )
         end
         it "responds to 'pirate nothin' with account help text" do
           post :create, @params.merge('Body' => 'pirate nothin')
-          assigns(:response).response_text.should eql( Keywords::DEFAULT_HELP_TEXT )
+          assigns(:response).response_text.should be_nil
         end
       end
 
       context "an account WITH custom stop text, help text, and default response text" do
         before :each do
-          @account.stop_text = 'oh sorry'
-          @account.help_text = 'maybe later'
-          @account.keywords.create(name: "custom", response_text: 'wat').make_default!
-          @account.save!
+          stop_keyword = @account.stop_keyword
+          stop_keyword.response_text = 'oh sorry'
+          stop_keyword.save
+          help_keyword = @account.help_keyword
+          help_keyword.response_text = 'maybe later'
+          help_keyword.save
+          default_keyword = @account.default_keyword
+          default_keyword.response_text = 'wat'
+          default_keyword.save
         end
         it "responds to 'pirate stop' with account stop text" do
           post :create, @params.merge('Body' => 'pirate stop')
