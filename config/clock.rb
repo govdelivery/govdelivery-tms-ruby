@@ -12,9 +12,6 @@ module Clockwork
     Sidekiq.logger.error(error)
   end
 
-  every(5.minutes, 'Messages::CheckMessagesForCompletion')
-  every(5.minutes, 'MarkOldRecipientsAsInconclusive')
-
   every(1.minutes, 'Sidekiq::RateLimitedQueue::LockInvalidator')
 
   if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
@@ -26,11 +23,15 @@ module Clockwork
   end
 
   if Rails.configuration.twilio_polling_enabled
-    polling_hours = [0, 4, 8, 12, 16, 20]
-    every(1.day, 'Twilio::SmsPollingWorker', at: polling_hours.map { |hh| "#{hh}:15" })
-    every(1.day, 'Twilio::VoicePollingWorker', at: polling_hours.map { |hh| "#{hh}:45" })
+    every(1.hour, 'Twilio::SmsPollingWorker', :at => '**:15')
+    every(1.hour, 'Twilio::VoicePollingWorker', :at => '**:45')
   end
 
+  every(1.hour, 'MarkOldRecipientsAsInconclusive', :at => '**:30')
+
+  ['**:00', '**:30'].each do |time|
+    every(1.hour, 'Messages::CheckMessagesForCompletion', :at => time)
+  end
 
   begin
     Rails.configuration.custom_report_account_id

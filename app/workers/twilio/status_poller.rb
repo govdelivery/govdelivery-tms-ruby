@@ -10,6 +10,7 @@ module Twilio
 
     def perform(*args)
       self.recipient_class.to_poll.find_each do |recipient|
+        recipient.failed! and next if recipient.ack.nil?
         begin
           client = get_client(recipient.vendor.username, recipient.vendor.password)
           twilio_message = client.get(recipient.ack)
