@@ -29,6 +29,10 @@ describe Service::Keyword do
           account.expects(:try).with(:"#{type}!", "stuff").returns(true)
           subject.respond!("stuff")
         end
+
+        it "should return false on default?" do
+          subject.default?.should == false
+        end
       end
     end
   end
@@ -57,8 +61,13 @@ describe Service::Keyword do
 
     it "respond! should call execute_commands on the keyword" do
       subject.stubs(:keyword).returns(@keyword)
+      subject.expects(:response_text)
       @keyword.expects(:try).with(:execute_commands, "stuff")
       subject.respond!("stuff")
+    end
+
+    it "should return false on default?" do
+      subject.default?.should == false
     end
   end
 
@@ -73,8 +82,13 @@ describe Service::Keyword do
     it "respond! should call execute_commands on the default keyword" do
       keyword = account.default_keyword
       subject.stubs(:keyword).returns(keyword)
+      subject.expects(:response_text)
       keyword.expects(:try).with(:execute_commands, "stuff")
       subject.respond!("stuff")
+    end
+
+    it "should return true on default?" do
+      subject.default?.should == true
     end
   end
 
@@ -98,6 +112,10 @@ describe Service::Keyword do
           SmsVendor.any_instance.expects(:try).with(:"#{type}!", "stuff")
           subject.respond!("stuff")
         end
+
+        it "should return false on default?" do
+          subject.default?.should == false
+        end
       end
     end
   end
@@ -120,6 +138,10 @@ describe Service::Keyword do
       SmsVendor.any_instance.expects(:try).times(0)
       Account.any_instance.expects(:try).times(0)
       subject.respond!("stuff")
+    end
+
+    it "should return true on default?" do
+      subject.default?.should == true
     end
   end
 

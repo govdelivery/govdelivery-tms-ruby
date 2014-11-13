@@ -6,26 +6,22 @@
 module Service
   class Keyword
 
-    attr_reader :keyword, :type, :account, :vendor
+    attr_reader :keyword, :type, :account, :vendor, :text
 
     DEFAULT_STOP_TEXT = "You will no longer receive SMS messages."
     DEFAULT_START_TEXT = "Welcome to GovDelivery SMS Alerts. Msg&data rates may apply. Reply HELP for help, STOP to cancel. http://govdelivery.com/wireless for more help. 5 msg/wk."
     DEFAULT_HELP_TEXT = "This service is provided by GovDelivery. If you are a customer in need of assistance, please contact customer support."
 
     def initialize(text, account_id = nil, vendor = nil)
-      account = Account.find(account_id) if account_id
+      @text = text
       @type = special_name(text)
-      @account = account
-      @keyword = if account && @type
-        account.keywords.where(name: @type).first
-      elsif account
-        account.keywords.where(name: text).custom.first || account.default_keyword
-      end
+      @account = Account.find(account_id) if account_id
+      @keyword = get_keyword(text)
       @vendor = vendor
     end
 
     def default?
-      !!@keyword.try(:default?) || !(@keyword || @type)
+      !!self.keyword.try(:default?) || vendor_default?
     end
 
     def respond!(command_parameters)
@@ -34,24 +30,28 @@ module Service
     end
 
     def response_text
-      return DEFAULT_HELP_TEXT unless @keyword || @type
-      @keyword.try(:response_text) || (@type && self.class.const_get("DEFAULT_#{@type.upcase}_TEXT"))
+      return DEFAULT_HELP_TEXT if vendor_default?
+      self.keyword.try(:response_text) || (self.type && self.class.const_get("DEFAULT_#{self.type.upcase}_TEXT"))
     end
 
     private
 
+    def vendor_default?
+      !(self.keyword || self.type)
+    end
+
+    def get_keyword(text)
+      return unless @account
+      @account.keywords.where(name: self.type || self.text).first || self.account.default_keyword
+    end
+
     def execute_commands(command_parameters)
-      if @type
-        self.account.try(:"#{@type}!", command_parameters) || self.vendor.try(:"#{@type}!", command_parameters)
-      else
-        self.keyword.try(:execute_commands, command_parameters)
-      end
+      target = self.account || self.vendor
+      self.type ? target.try(:"#{self.type}!", command_parameters) : self.keyword.try(:execute_commands, command_parameters)
     end
 
     def special_name(text)
-      return 'start' if ::Keyword::START_WORDS.include?(text)
-      return 'stop' if ::Keyword::STOP_WORDS.include?(text)
-      return 'help' if ::Keyword::HELP_WORDS.include?(text)
+      ['start', 'stop', 'help'].detect { |name| ::Keyword.const_get("#{name.upcase}_WORDS").include? text }
     end
   end
 end
