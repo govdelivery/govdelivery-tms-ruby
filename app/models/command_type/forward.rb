@@ -21,10 +21,11 @@ module CommandType
     # this will get called in the background
     def process_response(account, params, http_response)
       command_action = super
-      transformer = account.transformer_with_type(command_action.content_type)
+      content_type = command_action.content_type.split(";").first # handle character encodings
+      transformer = account.transformer_with_type(content_type)
       # check content type against expected to prevent garbage from going to user
       if !transformer.nil? && command_action.success?
-        transformed_content = transformer.transform(command_action.response_body, command_action.content_type)
+        transformed_content = transformer.transform(command_action.response_body, content_type)
         build_message(account, params.from, transformed_content)
       elsif command_action.content_type.include?('text/plain') && command_action.success?
         build_message(account, params.from, command_action.response_body)
