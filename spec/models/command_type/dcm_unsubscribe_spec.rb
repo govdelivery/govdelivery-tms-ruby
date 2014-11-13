@@ -28,7 +28,7 @@ describe CommandType::DcmUnsubscribe do
 
   it 'can be created through the account' do
     account = create(:account_with_sms, dcm_account_codes: ['xyz', 'uvw'])
-    account.create_command!('Keywords::AccountStop',
+    account.create_command!('stop',
                             command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
     account.create_command!('désabonner',
                             command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )

@@ -14,9 +14,7 @@ describe KeywordsController do
 
   context "Listing keywords" do
     before do
-      custom = mock()
-      custom.expects(:custom).returns(keywords)
-      Account.any_instance.expects(:keywords).returns(custom)
+      Account.any_instance.expects(:keywords).returns(keywords)
     end
     it "should show keywords" do
       get :index
@@ -81,7 +79,11 @@ describe KeywordsController do
   context "Deleting a keyword" do
     before do
       keywords.first.expects(:destroy)
-      mock_finder('twelve')
+      find = mock()
+      custom = mock()
+      custom.expects(:custom).returns(find)
+      find.expects(:find).with('twelve').returns(keywords.first)
+      Account.any_instance.expects(:keywords).returns(custom)
       delete :destroy, :id => 'twelve'
     end
     it "should work" do
@@ -91,9 +93,7 @@ describe KeywordsController do
 
   def mock_finder(id)
     find = mock()
-    custom_keywords = mock()
     find.expects(:find).with(id).returns(keywords.first)
-    custom_keywords.expects(:custom).returns(find)
-    Account.any_instance.expects(:keywords).returns(custom_keywords)
+    Account.any_instance.expects(:keywords).returns(find)
   end
 end

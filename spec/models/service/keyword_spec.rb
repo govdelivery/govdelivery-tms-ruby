@@ -109,6 +109,7 @@ describe Service::Keyword do
         end
 
         it "respond! should call #{type}! on vendor" do
+          SmsVendor.any_instance.expects(:try).with(:"#{type}_text")
           SmsVendor.any_instance.expects(:try).with(:"#{type}!", "stuff")
           subject.respond!("stuff")
         end
@@ -117,6 +118,41 @@ describe Service::Keyword do
           subject.default?.should == false
         end
       end
+    end
+  end
+
+  describe 'with a vendor with custom response text, no account, and special text' do
+    ['stop', 'help', 'start'].each do |type|
+      context type do
+
+        let (:vendor) do
+          vendor = account.sms_vendor
+          vendor.send(:"#{type}_text=", 'custom')
+          vendor.save!
+          vendor
+        end
+
+        subject { Service::Keyword.new(type, nil, vendor) }
+
+        it "responds with #{type}_text" do
+          subject.response_text.should eql 'custom'
+        end
+      end
+    end
+  end
+
+  describe 'with a vendor with custom response text, no account, and no special text', test: true do
+    let (:vendor) do
+      vendor = account.sms_vendor
+      vendor.help_text = "custom"
+      vendor.save!
+      vendor
+    end
+
+    subject { Service::Keyword.new("random", nil, vendor) }
+
+    it "should respond with the custom help_text" do
+      subject.response_text.should eql 'custom'
     end
   end
 
@@ -135,7 +171,7 @@ describe Service::Keyword do
     end
 
     it "respond! should be a noop" do
-      SmsVendor.any_instance.expects(:try).times(0)
+      SmsVendor.any_instance.expects(:try).with(:help_text)
       Account.any_instance.expects(:try).times(0)
       subject.respond!("stuff")
     end

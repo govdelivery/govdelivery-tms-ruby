@@ -4,14 +4,14 @@ require 'thor'
 
 class CreateCommand < Thor
 
-  # bin/create_command.rb CUKEAUTO_QC_AUTOMATED Keywords::AccountDefault \
+  # bin/create_command.rb CUKEAUTO_QC_AUTOMATED default \
   #   --command_type forward \
   #   --url tomale.com \
   #   --http_method get \
   #   --from_param_name user \
   #   --sms_body_param_name req
 
-  desc 'create_command ACCOUNT_NAME KEYWORD_NAME', 'find or create keyword, then create command on it; use Keywords::{classname} for special kewyords etc: Keywords::AccountDefault'
+  desc 'create_command ACCOUNT_NAME KEYWORD_NAME', 'find or create keyword, then create command on it; use "start", "stop", "help", or "default" for special keywords'
   #CommandParameters::PARAMS
   class_option :sms_body_param_name
   class_option :command_type

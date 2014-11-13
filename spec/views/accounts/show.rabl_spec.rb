@@ -12,8 +12,6 @@ describe 'accounts/show.rabl' do
            voice_vendor:          voice_vendor,
            ipaws_vendor:          ipaws_vendor,
            email_vendor:          email_vendor,
-           stop_text:             'seriously stopped',
-           help_text:             'seriously helped',
            default_response_text: 'seriously default',
            dcm_account_codes:     ['so', 'rad'])
   end
@@ -33,8 +31,6 @@ describe 'accounts/show.rabl' do
                           :email_vendor_id,
                           :sms_vendor_id,
                           :ipaws_vendor_id,
-                          :help_text,
-                          :stop_text,
                           :default_response_text,
                           :sid).
                       with_arrays(:dcm_account_codes).

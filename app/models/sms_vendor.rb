@@ -2,6 +2,8 @@ class SmsVendor < ActiveRecord::Base
   include Vendor
   include PhoneVendor
 
+  attr_accessible :stop_text, :help_text, :start_text
+
   has_many :stop_requests, :foreign_key => 'vendor_id', :dependent => :delete_all
   has_many :inbound_messages, -> { order("#{InboundMessage.table_name}.created_at DESC") }, :inverse_of => :vendor, :foreign_key => 'vendor_id', :dependent => :delete_all
   has_many :sms_prefixes, :dependent => :destroy

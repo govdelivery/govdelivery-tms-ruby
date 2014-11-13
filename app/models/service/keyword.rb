@@ -30,11 +30,15 @@ module Service
     end
 
     def response_text
-      return DEFAULT_HELP_TEXT if vendor_default?
-      self.keyword.try(:response_text) || (self.type && self.class.const_get("DEFAULT_#{self.type.upcase}_TEXT"))
+      return self.vendor.try(:help_text) || DEFAULT_HELP_TEXT if vendor_default?
+      self.keyword.try(:response_text) || (self.type && vendor_response_text)
     end
 
     private
+
+    def vendor_response_text
+      self.vendor.try(:"#{self.type}_text") || self.class.const_get("DEFAULT_#{self.type.upcase}_TEXT")
+    end
 
     def vendor_default?
       !(self.keyword || self.type)

@@ -42,7 +42,7 @@ class Account < ActiveRecord::Base
   validates :name, presence: true, length: {maximum: 255}, uniqueness: true
   validates :sid, presence: true
   validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
-  validate :validate_sms_prefixes
+  validate :validate_sms_prefixes, :validate_sms_vendor
   # ONE: HYRULE, TWO: STRONGMAIL
   validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
                                 message: "%{value} is not a valid link_encoder" }
@@ -169,6 +169,12 @@ class Account < ActiveRecord::Base
 
   def shared_sms_vendor?
     sms_vendor && sms_vendor.shared?
+  end
+
+  def validate_sms_vendor
+    if sms_vendor_id_changed? && sms_vendor && sms_vendor.accounts.count > 0 && !sms_vendor.shared?
+      errors.add(:shared_vendor, "Vendor specified is not shared and already has one account")
+    end
   end
 
   def validate_sms_prefixes

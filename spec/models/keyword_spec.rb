@@ -34,14 +34,19 @@ describe Keyword do
 
     before do
       subject.save!
+      vendor = subject.account.sms_vendor
+      vendor.shared = true
+      vendor.save!
       @new_keyword = Keyword.new(:name => subject.name)
       @new_keyword.account = subject.account
     end
+
     specify { @new_keyword.should be_invalid }
 
     context "and same vendor but different account_id" do
       before do
-        @new_keyword.account = create(:account, sms_vendor: subject.account.sms_vendor)
+        sms_prefix = create(:sms_prefix, sms_vendor: subject.account.sms_vendor)
+        @new_keyword.account = create(:account, sms_prefixes: [sms_prefix], sms_vendor: subject.account.sms_vendor)
       end
       specify do
         @new_keyword.should be_valid

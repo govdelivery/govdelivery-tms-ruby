@@ -11,19 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141111224544) do
+ActiveRecord::Schema.define(version: 20141113194206) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "stop_handler_id",                    precision: 38, scale: 0
     t.integer  "voice_vendor_id",                    precision: 38, scale: 0
     t.integer  "email_vendor_id",                    precision: 38, scale: 0
     t.integer  "sms_vendor_id",                      precision: 38, scale: 0
     t.string   "dcm_account_codes",     limit: 4000
-    t.string   "help_text"
-    t.string   "stop_text"
     t.integer  "ipaws_vendor_id",                    precision: 38, scale: 0
     t.string   "default_response_text"
     t.string   "sid",                   limit: 32,                            null: false
@@ -57,12 +54,11 @@ ActiveRecord::Schema.define(version: 20141111224544) do
 
   create_table "commands", force: true do |t|
     t.string   "name"
-    t.string   "params",           limit: 4000
+    t.string   "params",       limit: 4000
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "event_handler_id",              precision: 38, scale: 0
-    t.string   "command_type",                                           null: false
-    t.integer  "keyword_id",                    precision: 38, scale: 0
+    t.string   "command_type",                                       null: false
+    t.integer  "keyword_id",                precision: 38, scale: 0
   end
 
   add_index "commands", ["keyword_id"], name: "index_commands_on_keyword_id", tablespace: "tsms_indx01"
@@ -139,11 +135,6 @@ ActiveRecord::Schema.define(version: 20141111224544) do
     t.string   "opens_sequence"
   end
 
-  create_table "event_handlers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "from_addresses", force: true do |t|
     t.integer  "account_id",     precision: 38, scale: 0
     t.string   "from_email"
@@ -179,17 +170,12 @@ ActiveRecord::Schema.define(version: 20141111224544) do
   end
 
   create_table "keywords", force: true do |t|
-    t.integer  "account_id",                   precision: 38, scale: 0
-    t.string   "name",             limit: 160,                          null: false
+    t.integer  "account_id",                precision: 38, scale: 0
+    t.string   "name",          limit: 160,                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "vendor_id",                    precision: 38, scale: 0
-    t.integer  "event_handler_id",             precision: 38, scale: 0
-    t.string   "response_text",    limit: 160
-    t.boolean  "is_default",                   precision: 1,  scale: 0
+    t.string   "response_text", limit: 160
   end
-
-  add_index "keywords", ["vendor_id", "account_id", "LOWER(\"NAME\")"], name: "i_key_ven_id_acc_id_low", unique: true, tablespace: "tsms_indx01"
 
   create_table "sms_messages", force: true do |t|
     t.string   "body"
@@ -237,6 +223,7 @@ ActiveRecord::Schema.define(version: 20141111224544) do
     t.string   "stop_text",                                     default: "You will no longer receive SMS messages.",                                                                               null: false
     t.boolean  "shared",                precision: 1, scale: 0, default: false,                                                                                                                    null: false
     t.string   "default_response_text"
+    t.string   "start_text"
   end
 
   add_index "sms_vendors", ["from_phone"], name: "i_sms_vendors_from_phone", unique: true, tablespace: "tsms_indx01"

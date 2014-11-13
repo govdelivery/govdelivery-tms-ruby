@@ -23,25 +23,25 @@ class CreateVendor
   def boot_rails
     require File.expand_path("../../config/environment", __FILE__)
   end
-  
+
   def parse_options(argv)
     argv[0] = '--help' unless argv[0]
     @options = {}
     OptionParser.new do |opts|
       opts.banner = <<-USAGE
-Usage: 
+Usage:
   #{__FILE__} [options]
 
-Examples: 
+Examples:
 
   List All Vendors
     #{__FILE__} -l
 
   Create Sms Vendor
     #{__FILE__} -t SmsVendor -n "INSURE Short Code" -u "ACcc41a7e742457806f26d91a1ea19de9f" -p "331b3a44b5067a3c02013a6cfaa18b1c" -f "467873" -w "TwilioMessageWorker" -h "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." -s "You are opted out from Medicare Alerts. No more messages will be sent. Reply HELP for help or Help@govdelivery.com. Msg&Data rates may apply."
-    
+
   Create Voice Vendor
-    #{__FILE__} -t VoiceVendor -n "651-433-6258" -u "ACcc41a7e742457806f26d91a1ea19de9f" -p "331b3a44b5067a3c02013a6cfaa18b1c" -f "651-433-6258" -w "TwilioVoiceWorker" 
+    #{__FILE__} -t VoiceVendor -n "651-433-6258" -u "ACcc41a7e742457806f26d91a1ea19de9f" -p "331b3a44b5067a3c02013a6cfaa18b1c" -f "651-433-6258" -w "TwilioVoiceWorker"
 
   Create Email Vendor
     #{__FILE__} -t EmailVendor -n "ODM" -w "Odm::TmsExtendedSenderWorker"
@@ -78,6 +78,9 @@ USAGE
       opts.on("-s", "--stop_text Vendor Stop Text") do |p|
         @options[:vendor_stop_text] = p.to_s
       end
+      opts.on("-S", "--start_text Vendor Start Text") do |p|
+        @options[:vendor_start_text] = p.to_s
+      end
       opts.on("-a", "--shared", "Indicate if this SMS vendor is shared or exclusive.  If you pass this argument, the SMS vendor will be shared.") do |p|
         @options[:shared] = true
       end
@@ -93,7 +96,7 @@ USAGE
 
     end.parse!(argv)
   end
-    
+
   def out(str)
     puts(str) unless RAILS_ENV == 'test'
   end
@@ -108,14 +111,15 @@ USAGE
     v.worker = @options[:vendor_worker]
     v.help_text = @options[:vendor_help_text]
     v.stop_text = @options[:vendor_stop_text]
+    v.start_text = @options[:vendor_start_text]
     v.shared = !!@options[:shared]
 
     v.save
-    
+
     if(v.errors)
       puts v.errors.messages
     else
-      puts "Created SmsVendor id: " + v.id.to_s 
+      puts "Created SmsVendor id: " + v.id.to_s
     end
 
   end
@@ -134,7 +138,7 @@ USAGE
     if(v.errors)
       puts v.errors.messages
     else
-      puts "Created VoiceVendor id: " + v.id.to_s 
+      puts "Created VoiceVendor id: " + v.id.to_s
     end
 
   end
@@ -150,7 +154,7 @@ USAGE
     if(v.errors)
       puts v.errors.messages
     else
-      puts "Created EmailVendor id: " + v.id.to_s 
+      puts "Created EmailVendor id: " + v.id.to_s
     end
 
   end
@@ -172,27 +176,27 @@ USAGE
   def list_vendors
 
     puts "SmsVendor.all\n";
-    SmsVendor.all.each { |v| 
-      puts "\tid: " + v.id.to_s + "\n" 
-      puts "\tname: " + v.name + "\n" 
-      puts "\tfrom_phone: " + v.from_phone.to_s + "\n" 
+    SmsVendor.all.each { |v|
+      puts "\tid: " + v.id.to_s + "\n"
+      puts "\tname: " + v.name + "\n"
+      puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
       puts "\tshared: " + v.shared.to_s + "\n"
       puts "\n"
     }
 
     puts "VoiceVendor.all\n";
-    VoiceVendor.all.each { |v| 
-      puts "\tid: " + v.id.to_s + "\n" 
-      puts "\tname: " + v.name + "\n" 
-      puts "\tfrom_phone: " + v.from_phone.to_s + "\n" 
+    VoiceVendor.all.each { |v|
+      puts "\tid: " + v.id.to_s + "\n"
+      puts "\tname: " + v.name + "\n"
+      puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
       puts "\n"
     }
 
     puts "EmailVendor.all\n";
-    EmailVendor.all.each { |v| 
-      puts "\tid: " + v.id.to_s + "\n" 
-      puts "\tname: " + v.name + "\n" 
-      puts "\tworker: " + v.worker.to_s + "\n" 
+    EmailVendor.all.each { |v|
+      puts "\tid: " + v.id.to_s + "\n"
+      puts "\tname: " + v.name + "\n"
+      puts "\tworker: " + v.worker.to_s + "\n"
       puts "\n"
     }
 

@@ -37,7 +37,7 @@ class KeywordsCLI < Thor
     end
   end
 
-  # example 'response_text CUKEAUTO_QC_AUTOMATED  Keywords::AccountDefault For CUKE HELP, visit www.govdelivery.com'
+  # example 'response_text CUKEAUTO_QC_AUTOMATED  default For CUKE HELP, visit www.govdelivery.com'
   desc 'set_response_text ACCOUNT_NAME KEYWORD_NAME *RESPONSE_TEXT',
   'anything after KEYWORD_NAME will be used as text'
   def set_response_text(account_name, keyword_name, *response_text_words)

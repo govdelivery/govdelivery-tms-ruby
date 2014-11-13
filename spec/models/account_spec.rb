@@ -173,4 +173,14 @@ describe Account do
       end
     end
   end
+
+  it 'should validate that it cannot be added to a non-shared vendor who already has an account' do
+    second_account = create(:account_with_sms)
+    vendor = create(:sms_vendor)
+    account = create(:account_with_sms, sms_vendor: vendor)
+    vendor.shared = false
+    vendor.save!
+    second_account.sms_vendor = vendor
+    second_account.valid?.should == false
+  end
 end
