@@ -160,7 +160,7 @@ USAGE
     tputs "email vendor:", account.email_vendor_id.to_s
     tputs "ipaws vendor:", account.ipaws_vendor_id.to_s
     ['default', 'help', 'stop', 'start'].each do |type|
-      tputs "#{type} text:", account.send(:"#{type}_keyword").response_text if account.send(:"#{type}_keyword").response_text
+      tputs "#{type} text:", account.send(:"#{type}_keyword").response_text if account.send(:"#{type}_keyword").try(:response_text)
     end
     if(account.email_vendor_id)
       tputs "default from email:", account.default_from_address.from_email.to_s
