@@ -44,12 +44,12 @@ describe CommandType::Forward do
     subject.process_response(account, command_params, http_response)
   end
 
-  it 'will use a transformer if there is one associated to the account with a matching content type' do
+  it 'will use a transformer if there is one associated to the account with a matching content type, regardless of encoding' do
     transformer = mock()
     command_action.stubs(:success?).returns(true)
-    command_action.stubs(:content_type).returns("application/json")
+    command_action.stubs(:content_type).returns("application/json; charset=utf-8")
     account.expects(:transformer_with_type).with("application/json").returns(transformer)
-    transformer.expects(:transform).with(command_action.response_body, command_action.content_type).once
+    transformer.expects(:transform).with(command_action.response_body, "application/json").once
     subject.expects(:build_message).once
     subject.process_response(account, command_params, http_response)
   end
