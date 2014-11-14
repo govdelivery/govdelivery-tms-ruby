@@ -5,7 +5,7 @@ class CreateAccount
   def run_from_options(argv)
     parse_options(argv)
     boot_rails
-    
+
     if(@options[:list])
       list_accounts
     elsif(@options[:account_id])
@@ -19,21 +19,21 @@ class CreateAccount
   def boot_rails
     require File.expand_path("../../config/environment", __FILE__)
   end
-  
+
   def parse_options(argv)
     argv[0] = '--help' unless argv[0]
     @options = {}
     OptionParser.new do |opts|
       opts.banner = <<-USAGE
-Usage: 
+Usage:
   #{__FILE__} [options]
 
-Examples: 
+Examples:
 
   List All Accounts
     #{__FILE__} -l
 
-  Show An Account 
+  Show An Account
     #{__FILE__} -i 123
 
   Create Account with exclusive SMS vendor
@@ -47,7 +47,7 @@ Examples:
 
   Create Account with IPAWS vendor
     #{__FILE__} -n "IPAWS Test Account" -a 10026
-    
+
 Options:
 USAGE
       opts.on("-l", "--list", "List Accounts") do |p|
@@ -86,6 +86,12 @@ USAGE
       opts.on("-s", "--stop_text [STOP_TEXT]", "Optional, defaults to sms vendor stop text") do |p|
         @options[:stop_text] = p
       end
+      opts.on("-S", "--start_text [START_TEXT]", "Optional, defaults to sms vendor start text") do |p|
+        @options[:start_text] = p
+      end
+      opts.on("-D", "--default_text [DEFAULT_TEXT]", "Optional, defaults to sms vendor help text") do |p|
+        @options[:default_text] = p
+      end
       opts.on("-d", "--dcm_account_codes ACCOUNTCODES") do |p|
         @options[:dcm_account_codes] = p.split(/,/)
       end
@@ -94,7 +100,7 @@ USAGE
       end
     end.parse!(argv)
   end
-    
+
   def out(str)
     puts(str) unless RAILS_ENV == 'test'
   end
@@ -107,8 +113,6 @@ USAGE
     a.email_vendor_id = @options[:account_email_vendor]
     a.ipaws_vendor_id = @options[:account_ipaws_vendor]
     a.dcm_account_codes = @options[:dcm_account_codes]
-    a.help_text = @options[:help_text]
-    a.stop_text = @options[:stop_text]
     # create an sms prefix if the sms vendor is shared
     if(@options[:sms_prefix] && SmsVendor.find(@options[:account_sms_vendor]).shared?)
       a.sms_prefixes.build(:prefix=>@options[:sms_prefix])
@@ -122,13 +126,19 @@ USAGE
         :is_default   => true
       })
     end
- 
+
     a.save
 
     if(!a.errors.empty?)
       puts a.errors.messages
     else
-      puts "Created Account id: " + a.id.to_s 
+      ['default', 'help', 'stop', 'start'].each do |type|
+        next unless @options[:"#{type}_text"]
+        keyword = a.send(:"#{type}_keyword")
+        keyword.response_text = @options[:"#{type}_text"]
+        keyword.save
+      end
+      puts "Created Account id: " + a.id.to_s
       display_account(a)
     end
 
@@ -149,14 +159,11 @@ USAGE
     tputs "voice vendor:", account.voice_vendor_id.to_s
     tputs "email vendor:", account.email_vendor_id.to_s
     tputs "ipaws vendor:", account.ipaws_vendor_id.to_s
-    if(account.help_text)
-      tputs "help text:", account.help_text
+    ['default', 'help', 'stop', 'start'].each do |type|
+      tputs "#{type} text:", account.send(:"#{type}_keyword").response_text if account.send(:"#{type}_keyword").response_text
     end
-    if(account.stop_text)
-      tputs "stop text:", account.stop_text
-    end
-    if(account.email_vendor_id) 
-      tputs "default from email:", account.default_from_address.from_email.to_s 
+    if(account.email_vendor_id)
+      tputs "default from email:", account.default_from_address.from_email.to_s
       tputs "default reply-to:", account.default_from_address.reply_to.to_s
       tputs "default errors-to:", account.default_from_address.errors_to.to_s
     end
@@ -171,8 +178,6 @@ USAGE
     puts "\t#{key.ljust(30)}#{value}"
   end
 end
-
-
 
 if __FILE__ == $0
   CreateAccount.new.run_from_options(ARGV)

@@ -92,14 +92,14 @@ describe Account do
       it 'can create a command on a keyword on the fly' do
         account = create(:account_with_sms)
         command = account.create_command!('fly', params: build(:forward_command_parameters), command_type: 'forward')
-        command.keyword.vendor.should eql(account.sms_vendor)
+        command.keyword.account.should eql(account)
       end
     end
     context "calling stop" do
       it 'should call commands' do
         account = create(:account_with_sms, dcm_account_codes: ['ACCOUNT_CODE'])
         account.stop_keyword.should_not be_nil
-        command_params = mock(:account_id= => true )
+        command_params = mock()
         params = CommandParameters.new(dcm_account_codes: ['ACCOUNT_CODE'])
         account.stop_keyword.create_command!(params: params, command_type: :dcm_unsubscribe)
         Keyword.any_instance.expects(:execute_commands).never
@@ -141,19 +141,6 @@ describe Account do
     a.should be_valid
   end
 
-  describe 'special keywords' do
-    subject{ create(:account_with_sms) }
-    its(:stop_keyword){ should be_instance_of(Keywords::AccountStop) }
-    its(:help_keyword){ should be_instance_of(Keywords::AccountHelp) }
-    its(:default_keyword){ should be_instance_of(Keywords::AccountDefault) }
-    its(:keywords) { should have(3).keywords }
-    its(:custom_keywords) { should have(0).keywords }
-    it 'should have 1 custom keyword after one keyword has been created' do
-      subject.keywords.create! name: 'wazzup'
-      subject.custom_keywords.should have(1).keywords
-    end
-  end
-
   it 'has some sugar for the EN peeps' do
     account = create(:account_with_sms)
     account.keywords.create!(name: 'what')
@@ -184,8 +171,16 @@ describe Account do
       (@tables - direct_tables).each do |table|
         expect(ActiveRecord::Base.connection.select_value("select count(*) from #{table}")).to eq 0
       end
-
-
     end
+  end
+
+  it 'should validate that it cannot be added to a non-shared vendor who already has an account' do
+    second_account = create(:account_with_sms)
+    vendor = create(:sms_vendor)
+    account = create(:account_with_sms, sms_vendor: vendor)
+    vendor.shared = false
+    vendor.save!
+    second_account.sms_vendor = vendor
+    second_account.valid?.should == false
   end
 end

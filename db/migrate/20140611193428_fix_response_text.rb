@@ -1,6 +1,9 @@
 class FixResponseText < ActiveRecord::Migration
   def up
-    Keywords::AccountDefault.delete_all # start over
+    begin
+      Keywords::AccountDefault.delete_all # start over
+    rescue
+    end
 
     Account.all.select{ |a| a.sms_vendor.present? }.each do |account|
       rt = account.read_attribute(:help_text) || Keywords::DEFAULT_HELP_TEXT
@@ -13,7 +16,11 @@ class FixResponseText < ActiveRecord::Migration
       account.help_keyword.update_attribute(:response_text, ht)
     end
 
-    Keywords::VendorDefault.delete_all # start over
+    begin
+      Keywords::VendorDefault.delete_all # start over
+    rescue
+    end
+
     SmsVendor.all.each do |sms_vendor|
       rt = sms_vendor.read_attribute(:help_text) || Keywords::DEFAULT_HELP_TEXT
       sms_vendor.create_default_keyword!(response_text: rt) if sms_vendor.default_keyword.nil?

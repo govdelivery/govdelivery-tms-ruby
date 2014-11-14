@@ -48,24 +48,10 @@ describe SmsVendor do
     end
   end
 
-  describe '#create_keyword!' do
-    it 'creates a keyword' do
-      vendor.accounts << account
-      account.keywords.count.should eql(3)
-      expect { vendor.create_keyword!(:account => account, :name => 'foobar2') }.to change { vendor.keywords.count }.by 1
-      vendor.keywords.count.should eql(8) # 4 special keywords plus 4 account keywords
-    end
-
-    it "sets the keyword's vendor to itself" do
-      kw = vendor.create_keyword!(:account => account, :name => 'foobar')
-      kw.vendor.should == vendor
-    end
-  end
-
   describe '#create_inbound_message!' do
     it 'creates an inbound message' do
       vendor.stubs(:accounts).returns([])
-      expect { vendor.create_inbound_message!(from: from, body: 'msg', keyword: vendor.default_keyword) }.to change { vendor.inbound_messages.count }.by 1
+      expect { vendor.create_inbound_message!(from: from, body: 'msg', keyword: nil ) }.to change { vendor.inbound_messages.count }.by 1
     end
   end
 
@@ -88,14 +74,6 @@ describe SmsVendor do
         vendor.start!(command_parameters)
       }.to change { vendor.stop_requests.count }.by -1
     end
-  end
-
-  describe 'special keywords' do
-    subject{ create(:sms_vendor) }
-    its(:stop_keyword){ should be_instance_of(Keywords::VendorStop) }
-    its(:start_keyword){ should be_instance_of(Keywords::VendorStart) }
-    its(:help_keyword){ should be_instance_of(Keywords::VendorHelp) }
-    its(:default_keyword){ should be_instance_of(Keywords::VendorDefault) }
   end
 
 end

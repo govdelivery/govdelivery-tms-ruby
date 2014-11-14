@@ -102,7 +102,7 @@ if Rails.env.development? || Rails.env.ci?
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
   omg.dcm_account_codes = Set.new(['ACME', 'VANDELAY'])
   omg.save!
-  omg.create_command!('Keywords::AccountStop', params: CommandParameters.new(dcm_account_codes: ['ACME', 'VANDELAY']), command_type: :dcm_unsubscribe)
+  omg.create_command!('stop', params: CommandParameters.new(dcm_account_codes: ['ACME', 'VANDELAY']), command_type: :dcm_unsubscribe)
 
   # SERVICES FOO => POST to http://localhost/forward
   Keyword.delete_all

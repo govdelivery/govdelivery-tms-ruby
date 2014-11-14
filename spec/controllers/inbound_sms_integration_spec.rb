@@ -12,7 +12,7 @@ describe TwilioRequestsController do
     end
     it 'should respond with stop text' do
       post :create, params
-      assigns(:response).response_text.should == vendor.stop_keyword.response_text
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
     end
     it 'should persist a stop request' do
       expect{post :create, params}
@@ -23,7 +23,7 @@ describe TwilioRequestsController do
         .to change{vendor.inbound_messages.count}.by 1
     end
     it 'executes a command' do
-      account.create_command!( 'Keywords::AccountStop', :params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]),
+      account.create_command!( 'stop', :params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]),
                            :command_type => :dcm_unsubscribe)
       Command.any_instance.expects(:call)
       post :create, params
@@ -38,7 +38,7 @@ describe TwilioRequestsController do
     end
     it 'should respond with default response text' do
       post :create, params
-      assigns(:response).response_text.should == vendor.default_keyword.response_text
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_HELP_TEXT
       assigns(:response).response_text.should_not be_nil
     end
     it 'should persist an inbound message' do
@@ -58,20 +58,20 @@ describe TwilioRequestsController do
     end
     it 'should respond with vendor stop text' do
       post :create, params
-      assigns(:response).response_text.should eql(vendor.stop_keyword.response_text)
+      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
     end
     it 'should persist an inbound message' do
       expect{post :create, params}.to change{vendor.inbound_messages.count}.by 1
     end
     it 'should execute commands on its accounts' do
-      account.create_command!( 'Keywords::AccountStop',
+      account.create_command!( 'stop',
                                params: build(:unsubscribe_command_parameters),
                                command_type: :dcm_unsubscribe)
       Command.any_instance.expects(:call)
       post :create, params
     end
     it 'should create a stop request' do
-      command = account.create_command!( 'Keywords::AccountStop',
+      command = account.create_command!( 'stop',
                               params: build(:unsubscribe_command_parameters),
                               command_type: :dcm_unsubscribe)
       expect {

@@ -3,7 +3,10 @@ require_relative '../../../app/transformers/eta_spot'
 
 describe CommandWorkers::ForwardWorker do
   let(:account){ create(:account_with_sms) }
-  let(:command){ create(:forward_command, keyword: account.default_keyword) }
+  let(:command) do
+    keyword = account.keywords.create(name: 'worker')
+    create(:forward_command, keyword: keyword)
+  end
   let(:options) { {url: "http://dudes.ruby",
                    http_method: "post",
                    username: nil,

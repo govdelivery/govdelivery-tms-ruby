@@ -6,8 +6,8 @@ module InboundSmsParser
     san_string = sanitize_string(sms_body)
     account_id = find_account_id(san_string.split.first,vendor)
     prefix, rest = extract_prefix(san_string, vendor)
-    keyword, message = extract_keyword(rest, vendor, account_id)
-    ParsedSms.new [prefix, keyword, message, account_id]
+    keyword_service, message = extract_keyword(rest, vendor, account_id)
+    ParsedSms.new [prefix, keyword_service, message, account_id]
   end
 
 
@@ -40,14 +40,13 @@ module InboundSmsParser
   # returns [nil, message, nil] or [keyword, message, account_id]
   def extract_keyword(s, vendor, account_id)
     first_word, *rest = s.split
-    keyword = Keyword.get_keyword(first_word, vendor, account_id)
-    if keyword.default?
-      [keyword, s, account_id] #return the full string, no keyword found
+    keyword_service = Service::Keyword.new(first_word, account_id, vendor)
+    if keyword_service.default?
+      [keyword_service, s, account_id] #return the full string, no keyword found
     else
-      [keyword, rest.join(' '), account_id]
+      [keyword_service, rest.join(' '), account_id]
     end
   end
-
 
   class NoAccount < Exception; end
 

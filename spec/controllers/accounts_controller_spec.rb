@@ -18,7 +18,6 @@ describe AccountsController, :type => :controller do
       before do
         post :create,
              account:      {name:                  'yesss',
-                            stop_handler_id:       nil,
                             voice_vendor_id:       create(:voice_vendor).id,
                             email_vendor_id:       create(:email_vendor).id,
                             sms_vendor_id:         create(:sms_vendor).id,
@@ -35,7 +34,6 @@ describe AccountsController, :type => :controller do
         @account.email_vendor.should_not be nil
         @account.ipaws_vendor.should_not be nil
         @account.voice_vendor.should_not be nil
-        #@account.stop_handler.should_not be nil
       end
 
       it 'should succeed' do

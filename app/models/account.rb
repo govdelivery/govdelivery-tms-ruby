@@ -2,18 +2,16 @@ require 'set'
 
 class Account < ActiveRecord::Base
   attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :ipaws_vendor,
-                  :sms_vendor_id, :email_vendor_id, :voice_vendor_id, :ipaws_vendor_id, :stop_handler_id,
+                  :sms_vendor_id, :email_vendor_id, :voice_vendor_id, :ipaws_vendor_id,
                   :from_address, :dcm_account_codes
 
   belongs_to :email_vendor
   belongs_to :sms_vendor
 
-  #Temporary
-  belongs_to :stop_handler, class_name: 'EventHandler'
   belongs_to :voice_vendor
   belongs_to :ipaws_vendor, class_name: 'IPAWS::Vendor'
 
-  has_many :commands, dependent: :destroy
+  has_many :commands, through: :keywords
   has_many :keywords, dependent: :destroy
   has_many :email_messages, dependent: :delete_all
   has_many :email_recipients, through: :email_messages, source: :recipients
@@ -33,13 +31,7 @@ class Account < ActiveRecord::Base
   has_many :from_addresses, inverse_of: :account, dependent: :destroy
   has_one :default_from_address, -> { where(is_default: true) }, class_name: FromAddress
 
-  has_one :stop_keyword,    class_name: Keywords::AccountStop
-  has_one :help_keyword,    class_name: Keywords::AccountHelp
-  has_one :default_keyword, class_name: Keywords::AccountDefault
-  # special keywords need to be kept in the database for configurability and trackability
-  after_save( :create_stop_keyword!, if: ->{ self.stop_keyword.nil? && self.sms_vendor.present? } )
-  after_save( :create_help_keyword!, if: ->{ self.help_keyword.nil? && self.sms_vendor.present? } )
-  after_save( :create_default_keyword!, if: ->{ self.default_keyword.nil? && self.sms_vendor.present? } )
+  after_create :create_base_keywords!
 
   serialize :dcm_account_codes, Set
   delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, to: :default_from_address
@@ -50,7 +42,7 @@ class Account < ActiveRecord::Base
   validates :name, presence: true, length: {maximum: 255}, uniqueness: true
   validates :sid, presence: true
   validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
-  validate :validate_sms_prefixes
+  validate :validate_sms_prefixes, :validate_sms_vendor
   # ONE: HYRULE, TWO: STRONGMAIL
   validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
                                 message: "%{value} is not a valid link_encoder" }
@@ -66,9 +58,22 @@ class Account < ActiveRecord::Base
     !!self.send("#{feature}_vendor")
   end
 
-  def stop(command_parameters)
-    command_parameters.account_id = self.id
-    stop_keyword.commands.each { |a| a.call(command_parameters) }
+  ['start', 'stop', 'help'].each do |name|
+    define_method(name) do |command_parameters|
+      keyword = self.send(:"#{name}_keyword")
+      keyword.commands.each do |command|
+        command.call(command_parameters)
+      end if keyword
+    end
+
+    define_method("#{name}_keyword") do
+      keywords.where(name: name).first
+    end
+  end
+  alias_method :help!, :help
+
+  def default_keyword
+    keywords.where(name: 'default').first
   end
 
   def transformer_with_type(type)
@@ -93,12 +98,13 @@ class Account < ActiveRecord::Base
     stop(command_parameters)
   end
 
-  def from_email_allowed?(email)
-    !email.nil? && from_addresses.where("lower(from_email) = ?", email.downcase).count == 1
+  def start!(command_parameters)
+    stop_requests.where(phone: command_parameters.from).delete_all #its ok if it doesn't exist
+    start(command_parameters)
   end
 
-  def custom_keywords
-    keywords.custom
+  def from_email_allowed?(email)
+    !email.nil? && from_addresses.where("lower(from_email) = ?", email.downcase).count == 1
   end
 
   # some sugar for working with keywords on the console
@@ -129,6 +135,13 @@ class Account < ActiveRecord::Base
 
   protected
 
+  def create_base_keywords!
+    keywords.create!(name: 'default')
+    keywords.create!(name: 'start')
+    keywords.create!(name: 'stop')
+    keywords.create!(name: 'help')
+  end
+
   def generate_sid
     loop do
       self.sid = SecureRandom.hex(16)
@@ -156,6 +169,12 @@ class Account < ActiveRecord::Base
 
   def shared_sms_vendor?
     sms_vendor && sms_vendor.shared?
+  end
+
+  def validate_sms_vendor
+    if sms_vendor_id_changed? && sms_vendor && sms_vendor.accounts.count > 0 && !sms_vendor.shared?
+      errors.add(:shared_vendor, "Vendor specified is not shared and already has one account")
+    end
   end
 
   def validate_sms_prefixes

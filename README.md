@@ -67,50 +67,43 @@ Two-Way SMS
 
 Here, GOV311 is used but any short code of a shared vendor will work
 
-### Keywords:VendorDefault
+### Vendors
 
--   text "gibberish" to GOV311
--   responds with help text by default
+-   vendors can have their custom responses modified via help_text, stop_text, and start_text
+-   vendors will call their associated account's stop and start commands when texted 'stop' or 'start'
+-   non-shared vendors will delegate all special keywords to their single account
 
-### Keywords::VendorHelp
+### Accounts with prefixes (examples)
 
--   text "help" or "info" to GOV311
--   responds with help text by default
+#### 'default'
 
-### Keywords::VendorStop
+-   text "[prefix] gibberish" to GOV311
+-   responds with help text by default or vendor help_text if set
+-   update default_keyword.response_text to change
+-   account's default keyword commands will be executed
 
--   text any of stop,stopall,unsubscribe,cancel,end,quit to GOV311
--   responds with stop text by default
--   phone number will be added to vendor's blacklist (stop requests table)
--   each command on each account's stop keyword (Keywords::AccountStop) will be executed (to remove from dcm)
+#### 'help'
 
-### Keywords::VendorStart
+-   text "[prefix] help" or "[prefix] info" to GOV311
+-   responds with help text by default or vendor help_text if set
+-   update help_keyword.response_text to change
+-   account's help keyword commands will be executed
 
--   text "start" or "yes" to GOV311
--   responds with start text by default
--   phone number will be removed from vendor's blacklist (stop requests table)
+#### 'stop'
 
-### Keywords::AccountDefault
+-   text any of stop,stopall,unsubscribe,cancel,end,quit with a prefix to GOV311
+-   responds with stop text by default or vendor stop_text if set
+-   phone number will be added to account's blacklist (stop requests table)
+-   update stop_keyword.response_text to change
+-   account's stop keyword commands will be executed
 
-Here, BART is used but any prefix will work
+#### 'start'
 
--   text "bart gibberish" to GOV311
--   text "gibberish" to private short code or number
--   responds with help text by default
--   the response text should be removed if a forward command is created (only forward command responds)
-
-### Keywords::AccountHelp
-
--   text "bart help" to GOV311
--   text "help" to private short code or number
--   responds with help text by default
-
-### Keywords::AccountStop
-
--   text "bart stop" to GOV311
--   text "stop" to private short code or number
--   requires the addition of commands upon account creation (e.g.: dcm unsubscribe)
--   see DCM Unsubscribe Command below
+-   text "start" or "yes" with prefix to GOV311
+-   responds with start text by default or vendor start_text if set
+-   phone number will be removed from account's blacklist (stop requests table)
+-   update start_keyword.response_text to change
+-   account's start keyword commands will be executed
 
 ## Custom Keywords
 
@@ -141,7 +134,7 @@ if more than 500 characters, or status code above 299 are returned the action wi
     # and only a 200ish response of type 'text/html' (and less than 500 chars) will be sent to the user number
 
     # to foward everything use the default keyword, it will catch anything that doesn't match existing keywords
-    account.create_command('Keywords::AccountDefault', command_type: 'forward', params: forward_params)
+    account.create_command('default', command_type: 'forward', params: forward_params)
 
     # be sure to remove the response text because the forward command will respond
     account.default_keyword.update_attribute :response_text, nil
@@ -164,7 +157,7 @@ a wireless subscription will be created if no argument is given
 
 ### With DCM Unsubscribe Command
 
-it makes sense to put this command on keyword: "Keywords::AccountStop"
+it makes sense to put this command on keyword: "stop"
 but it can be put on other custom keywords
 
 it must be created manually for every account
@@ -172,7 +165,7 @@ it must be created manually for every account
 it will delete the subscription from the DCM account
 
     # must be dcm_account_codes PLURAL!
-    account.create_command!('Keywords::AccountStop',
+    account.create_command!('stop',
                             command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
     account.create_command!('désabonner',
                             command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )

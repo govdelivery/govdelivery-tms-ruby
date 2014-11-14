@@ -1,6 +1,6 @@
 class Command < ActiveRecord::Base
-  belongs_to :account
   belongs_to :keyword
+  delegate :account, to: :keyword
 
   # TEMPORARY for data migration
   belongs_to :event_handler
@@ -65,7 +65,7 @@ class Command < ActiveRecord::Base
   end
 
   def validate_command
-    return unless account
+    return unless keyword && account
     if !(CommandType[self.command_type.to_sym] rescue nil)
       errors.add(:command_type, 'is invalid')
     elsif (cmd_errors = CommandType[self.command_type].validate_params(params, self.account)).any?
@@ -79,11 +79,7 @@ class Command < ActiveRecord::Base
     if keyword.nil?
       errors.add(:keyword, 'keyword required')
     elsif account.nil?
-      if keyword.special?
-        #ok for vendor keyword commands, i.e.: stop, help, deafault
-      else
-        errors.add(:account, 'account required for custom commands')
-      end
+      errors.add(:account, 'account required')
     end
   end
 end

@@ -11,24 +11,6 @@ FactoryGirl.define do
       end
 
       factory :custom_keyword, class: Keyword
-      factory :account_stop, class: Keywords::AccountStop
-      factory :account_help, class: Keywords::AccountHelp
-      factory :account_default, class: Keywords::AccountDefault
     end
   end
-
-  trait :special do
-    skip_create
-  end
-
-  # this is not a factory because vendor's cannot have keywords
-  # except for the special ones
-  trait :vendor_keyword do
-    vendor factory: :sms_vendor
-  end
-
-  factory :vendor_stop, class: Keywords::VendorStop, traits: [:vendor_keyword, :special]
-  factory :vendor_help, class: Keywords::VendorHelp, traits: [:vendor_keyword, :special]
-  factory :vendor_default, class: Keywords::VendorDefault, traits: [:vendor_keyword, :special]
-
 end

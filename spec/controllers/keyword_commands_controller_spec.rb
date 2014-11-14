@@ -4,7 +4,7 @@ describe KeywordCommandsController do
   let(:vendor)  { create(:sms_vendor, :name => 'name', :username => 'username', :password => 'secret', :worker => 'LoopbackMessageWorker') }
   let(:account) { vendor.accounts.create! :name=> "HELLO ACCOUNT" }
   let(:user)    { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:keyword) { create(:keyword, vendor: vendor, account: account ) }
+  let(:keyword) { create(:keyword, account: account ) }
   let(:command) { Command.new(:command_type => :dcm_subscribe, :name => "ALLIGATORZ") }
   let(:commands) { [stub(:name => "Hello New York")] }
 

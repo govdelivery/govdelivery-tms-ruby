@@ -32,13 +32,12 @@ class KeywordCommandsController < ApplicationController
   end
 
   def special_keyword
-    name = ['stop', 'help', 'default'].select { |k| k == params[:keyword_id] }.first
-    @account.send "#{name}_keyword" if name
+    name = ['stop', 'start', 'help', 'default'].select { |k| k == params[:keyword_id] }.first
+    @account.keywords.where(name: name).first
   end
 
   def find_command
     @command = @keyword.commands.find(params[:id])
   end
-
 
 end
