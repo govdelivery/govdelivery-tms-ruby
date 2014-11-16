@@ -47,7 +47,7 @@ And(/^I send an SMS to create a subscription on TMS$/) do
 
   #encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(sample_subscriber_number)
-  sleep(3)
+  sleep(10)
 
   #delete tms/xact keyword and command entirely
   @keyword.delete
