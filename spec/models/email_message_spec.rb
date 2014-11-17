@@ -86,8 +86,8 @@ describe EmailMessage do
         end
         it 'should send and set ack' do
           email.ready!.should be true
-          email.recipients.first.sending?.should be true
           email.sending!(nil, 'dummy_id').should be true
+          email.recipients.first.sending?.should be true
           email.reload.ack.should eq('dummy_id')
         end
 
@@ -103,8 +103,9 @@ describe EmailMessage do
             email.recipients.first.mark_sent!.should be true
 
             message = EmailMessage.without_message.find(email.id)
-            message.has_attribute?(:macros).should be false
-            message.complete!.should be true
+            expect(message.has_attribute?(:macros)).to be false
+            expect(message.complete!).to be true
+            expect(message.completed_at).to_not be_nil
           end
         end
       end

@@ -174,6 +174,7 @@ describe SmsMessage do
           before do
             message.recipients.find_by_phone('6515551215').sent!('doing stuff!')
             message.complete!.should be true
+            expect(message.completed_at).to_not be nil
           end
 
           it 'should be completed at some time' do

@@ -27,6 +27,8 @@ class EmailMessage < ActiveRecord::Base
 
   def on_sending(ack=nil)
     self.ack||=ack
+    # ODM vendor sends batch with all recips in message, mark all as sending
+    self.recipients.with_new_status.update_all(status: 'sending', sent_at: Time.now)
     super
   end
 
@@ -73,11 +75,6 @@ class EmailMessage < ActiveRecord::Base
   end
 
   protected
-
-  # ODM EmailVendor sends in batches, so we put everything into sending state as part of the state transition
-  def prepare_recipients
-    self.recipients.with_new_status.update_all(status: 'sending', sent_at: Time.now)
-  end
 
   def from_email_allowed?
     unless account.from_email_allowed?(self.from_email)
