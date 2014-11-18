@@ -58,7 +58,7 @@ while [ $# -gt 0 ]; do
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift
 	    ;;
-	checkout|purge-checkouts)
+	checkout|checkout-sync|purge-checkouts)
 	    actions[${#actions[@]}]="$1"         ## push on end of actions
 	    shift;
 	    ;;
