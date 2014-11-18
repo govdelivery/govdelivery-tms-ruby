@@ -59,6 +59,13 @@ def xact_token(account_type = :live)
         :integration => '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE',
         :stage => 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
       }
+    when :bart
+      tokens = {
+        :development => ENV['XACT_BART_TOKEN'],
+        :qc => xact_token(:loopback),
+        :integration => xact_token(:loopback),
+        :stage => xact_token(:loopback)
+      }
   end
 
   token = tokens[environment]
@@ -100,7 +107,7 @@ def xact_account(account_type = :live)
       account[:voice_vendor_username] = twilio_test_test_account_creds[:sid]
       account[:voice_vendor_password] = twilio_test_test_account_creds[:token]
       account[:voice_phone_sid] = nil
-    when :loopback
+    when :loopback, :bart
       account[:sms_phone] = '+15559999999'
       account[:sms_vendor_username] = 'loopbacks_account_sms_username'
       account[:sms_vendor_password] = 'dont care'

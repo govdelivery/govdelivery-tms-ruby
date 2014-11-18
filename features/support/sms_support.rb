@@ -11,7 +11,7 @@
 #  )
 #end
 
-After('@2waystatic') do |scenario|
+After('@keyword') do |scenario|
   if not scenario.failed?
     STDOUT.puts "Deleting keyword created for this test"
     @keyword.delete

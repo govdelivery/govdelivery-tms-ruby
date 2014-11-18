@@ -12,8 +12,16 @@ Feature: XACT SMS 2-Way tests.
 		#Then I should receive a STOP response
 		#And a my subscription should be removed
 
-    @2waystatic
+    @keyword
     Scenario: XACT 2-Way SMS to receive static content
         Given A keyword with static content is configured for an TMS account
         And I send that keyword as an SMS to TMS
         Then I should receive static content
+
+    @keyword
+    Scenario: XACT 2-Way SMS Real Time Query of Bart
+      Given I have an XACT account for BART
+      And I register the keyword BART
+      And I register the BART forward command
+      When I text 'BART 12th' to the BART account
+      Then I should receive BART content as a response
