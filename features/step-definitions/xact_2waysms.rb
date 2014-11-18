@@ -34,6 +34,7 @@ And(/^I send an SMS to create a subscription on TMS$/) do
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
   end
+
   #create tms/xact twilio request
   payload = {}
   payload['To'] = xact_account(:live)[:sms_phone]
@@ -44,23 +45,25 @@ And(/^I send an SMS to create a subscription on TMS$/) do
     req.url "/twilio_requests.xml"
     req.body = payload
   end
+
   #encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(sample_subscriber_number)
-  sleep(3)
+  sleep(10)
 
   #delete tms/xact keyword and command entirely
   @keyword.delete
 end
 
 Then(/^a subscription should be created$/) do
-  user
+  user #dcm credentials
   @request.url = dcm_base64_url + @base64
   @data = HTTPI.get(@request)
+  puts @request.url
   @response = MultiXml.parse(@data.raw_body)
   
   #some output that can be turned on/off if needed to verify things manually
-  # ap @response
-  # puts @response['subscriber']['phone']
+  ap @response
+  puts @response['subscriber']['phone']
 
   #verifying if subscriber is present
   if @response['subscriber']['phone'] == sample_subscriber_number[2...12] #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
@@ -172,10 +175,6 @@ And(/^my subscription should be removed$/) do
   end
   ap @resp
 end
-
-
-#===STATIC========================================>
-
 
 
 #===STATIC========================================>
