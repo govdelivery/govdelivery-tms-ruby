@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
+require 'configatron/core'
 require 'tms_client'
 require 'multi_xml'
 
@@ -30,6 +31,10 @@ def xact_url
   raise "No XACT URL defined for environment #{environment}" if !url
   url
 end
+
+# Set general configuration options
+config = Configatron::RootStore.new
+config.xact_url = xact_url
 
 # Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
 #
