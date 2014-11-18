@@ -8,7 +8,7 @@ module Geckoboard
                     unique: true
 
     def perform(account_id, basename)
-      sql = subject_sends_sql(12, 5)
+      sql = subject_sends_sql(12, 10)
       sanitized_sql = EmailMessage.send(:sanitize_sql_for_conditions, [sql, account_id, account_id, account_id])
       result = ActiveRecord::Base.connection.select_all(sanitized_sql)
 

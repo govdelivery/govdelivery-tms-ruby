@@ -52,5 +52,9 @@ Xact::Application.configure do
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = ['+16514336311']
 
+  config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
+
+  config.custom_report_account_id = ENV['XACT_LOOPBACK_ID']
+
   Rails.logger.level = Log4r::DEBUG
 end
