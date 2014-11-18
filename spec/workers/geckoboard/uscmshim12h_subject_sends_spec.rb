@@ -16,7 +16,7 @@ describe Geckoboard::Uscmshim12hSubjectSends do
     end_time = Time.now.beginning_of_hour
     start_time = end_time - 12.hours
     time_range = start_time.to_i...end_time.to_i
-    times = time_range.step(1.hour).map {|t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime("%H")}.sort
+    times = time_range.step(1.hour).map {|t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime("%H")}
 
     subject.expects(:write_to_file).with("name.json",{
       colors: ["#FCFFF5", "#D1DBBD", "#91AA9D", "#ACF0F2", "#EB7F00"],
