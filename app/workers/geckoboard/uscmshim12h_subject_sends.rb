@@ -72,7 +72,7 @@ module Geckoboard
         data[subject] << count
         xlabels << timestamp.in_time_zone(timezone).strftime('%H')
       end
-      xlabels.uniq!.sort!
+      xlabels.uniq!
 
       series = []
       data.each do |subject, counts|
