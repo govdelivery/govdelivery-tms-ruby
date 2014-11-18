@@ -53,7 +53,7 @@ case "${APP_ENV}" in
    dev)   AGE=1; DEL=14; ;;      # 2 weeks
    qc)    AGE=1; DEL=7;  ;;      # 1 week
    int)   AGE=1; DEL=21; ;;      # 3 weeks
-   stg)   AGE=10; DEL=63; ;;      # 9 weeks
+   stg)   AGE=2; DEL=63; ;;      # 9 weeks
    prod)  AGE=2; DEL=112; ;;     # 16 weeks
    *)     AGE=2; DEL=183; ;;     # No environment available... using prod
 esac
