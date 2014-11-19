@@ -49,10 +49,10 @@ module Xact
     # config.i18n.default_locale = :de
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding                                    = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password, :auth_token]
+    config.filter_parameters                           += [:password, :auth_token]
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
@@ -63,13 +63,13 @@ module Xact
     # config.active_record.schema_format = :sql
 
     # Enable the asset pipeline
-    config.assets.enabled = true
+    config.assets.enabled                              = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
+    config.assets.version                              = '1.0'
 
     # This is only used to write urls
-    config.protocol = 'https'
+    config.protocol                                    = 'https'
 
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
     # Rack::SSL has to come before ActionDispatch::Cookies!
@@ -78,44 +78,47 @@ module Xact
     config.middleware.use ActionDispatch::Session::CookieStore
 
 
-    redis_config = YAML::load_file(Rails.root.join('config/redis.yml'))[Rails.env]
-    config.cache_store = :redis_store, redis_config['url'], {pool_size: 7}
+    config.cache_store            = :redis_store, ENV['REDIS_URI'], {pool_size: 7}
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
-    config.sidekiq = {
+    config.sidekiq                = {
       default: {
-        url: "#{redis_config['url']}/#{redis_config['sidekiq_db']}",
-        namespace: redis_config['sidekiq_namespace']
+        url:       ENV['REDIS_URI'],
+        namespace: 'xact'
       },
-      client: {size: 20},
-      server: {}
+      client:  {size: 20},
+      server:  {}
     }
 
     # ODM stats jobs fetch content in batches of this size
-    config.odm_stats_batch_size = 500
-
-    # Twilio test credentials
-    config.twilio_test_username = 'ACc66477e37af9ebee0f12b349c7b75117'
-    config.twilio_test_password = '5b1c96ca034d474c6d4b68f8d05c99f5'
+    config.odm_stats_batch_size   = 500
 
     # Messages sent via Twilio that we haven't heard back about should be finalized
     config.twilio_minimum_polling_age = 1.hour
     config.twilio_delivery_timeout    = 4.hours
 
     config.dcm = [{
-      username: 'product@govdelivery.com',
-      password: 'retek01!',
-      api_root: 'http://evolution.local:3001'
-    }]
+                    username: ENV['DCM_USERNAME'],
+                    password: ENV['DCM_PASSWORD'],
+                    api_root: ENV['DCM_URI']
+                  }]
 
     config.twilio_polling_enabled = true
-    config.odm_polling_enabled = true
-    config.colorize_logging = false
+    config.odm_polling_enabled    = true
+    config.colorize_logging       = false
+
+    config.fema_url            = ENV['FEMA_URI']
+
+    # qc ODM
+    config.odm_polling_enabled = false
+    config.odm_endpoint        = "#{ENV['ODM_URI']}/service/TMSExtended?wsdl"
+    config.odm_username        = ENV['ODM_USERNAME']
+    config.odm_password        = ENV['ODM_PASSWORD']
 
     # override Rack exception application handling of exception status codes
-    config.exceptions_app = self.routes
+    config.exceptions_app      = self.routes
 
-    routes.default_url_options = {host: "#{Rails.env.to_s}-tms.govdelivery.com", protocol: 'https'}
+    routes.default_url_options     = {host: "#{Rails.env.to_s}-tms.govdelivery.com", protocol: 'https'}
 
     # Threshold (in minutes) under which multiple inbound messages from a
     # user will be ignored.  This is to prevent auto-response messages
@@ -126,15 +129,15 @@ module Xact
     config.auto_response_threshold = 0.5
 
     # Controls whether this environment will publish/subscribe to Kafka
-    config.analytics = HashWithIndifferentAccess.new(
-      YAML.load_file(Rails.root.join('config/analytics.yml'))[Rails.env])
+    config.analytics               = {
+      enabled:    ENV['ANALYTICS_ENABLED']=='true',
+      kafkas:     ENV['ANALYTICS_KAFKAS'].split(','),
+      zookeepers: ENV['ANALYTICS_ZOOKEEPERS'].split(','),
+    }
 
     # Default log level is INFO
-    config.logger =
-      Rails.logger =
-      ActiveRecord::Base.logger =
-        Log4r::Logger['default']
-    Rails.logger.level = Log4r::INFO
+    config.logger                  = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default']
+    Rails.logger.level             = Log4r::INFO
 
     config.default_message_timeout = 2.days
   end

@@ -33,11 +33,6 @@ Xact::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
-  config.odm_host = "http://nowhere:65080"
-  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
-  config.odm_username = 'doesnt'
-  config.odm_password = 'matter'
-
   routes.default_url_options = {host: 'test.host'}
 
   # Used to determine whether to send the callback_url parameter when sending
@@ -47,10 +42,7 @@ Xact::Application.configure do
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
-  config.dcm_urls = []
   config.shared_phone_numbers = []
-
-  config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 
   Rails.logger.level = Log4r::DEBUG
 end

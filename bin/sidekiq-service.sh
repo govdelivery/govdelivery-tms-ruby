@@ -25,6 +25,7 @@ JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPe
 
 # Source Application settings
 . /etc/sysconfig/${app} || exit 5
+. /etc/sysconfig/xact || exit 5
 
 if [[ -z "$environment" ]]; then
     echo "no environment set!"

@@ -7,6 +7,8 @@ require 'celluloid/test'
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
+FakeWeb.allow_net_connect = false
+
 RSpec.configure do |config|
   config.include ActionView::TestCase::Behavior, file_path: %r{spec/presenters}
   config.mock_with :mocha

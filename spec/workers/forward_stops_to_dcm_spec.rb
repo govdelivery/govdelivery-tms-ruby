@@ -1,11 +1,4 @@
-# Even when requiring AR and Rails, using explicit requires is 3x faster than
-# just `require 'rails_helper'`
-require 'spec_helper'
-require 'sidekiq'
-require 'active_record'
-require 'rails'
-require_relative '../../app/models/keyword'
-require_relative '../../app/workers/forward_stops_to_dcm'
+require 'rails_helper'
 
 describe ForwardStopsToDcm do
   context '.should_forward?' do

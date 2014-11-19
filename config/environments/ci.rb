@@ -26,16 +26,6 @@ Xact::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 
-  config.twilio_username = 'ACcc41a7e742457806f26d91a1ea19de9f'
-  config.twilio_password = '331b3a44b5067a3c02013a6cfaa18b1c'
-  config.twilio_number = '+15551112222'
-
-  # qc ODM
-  config.odm_host = "http://qc-tms1.visi.gdi:65080"
-  config.odm_endpoint = "#{config.odm_host}/service/TMSExtended?wsdl"
-  config.odm_username = 'gd3'
-  config.odm_password = 'R0WG38piNv5NRK0DT8mq04fU'
-
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
@@ -47,5 +37,12 @@ Xact::Application.configure do
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = []
 
-  config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
+  config.sidekiq = {
+    default: {
+      url:       "redis://it-buildbox1.office.gdi:6379/2",
+      namespace: 'xact'
+    },
+    client:  {size: 20},
+    server:  {}
+  }
 end

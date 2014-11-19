@@ -1,9 +1,8 @@
-if Rails.configuration.analytics[:enabled]
-  conf = Rails.configuration.analytics
+if (conf = Rails.configuration.analytics) && conf[:enabled]
 
   YaketyYak.configure do |y|
-    y.kafkas     = conf['kafkas']
-    y.zookeepers = conf['zookeepers']
+    y.kafkas     = conf[:kafkas]
+    y.zookeepers = conf[:zookeepers]
   end
 
   YaketyYak.logger = Rails.logger

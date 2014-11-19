@@ -15,7 +15,6 @@
 /log/*.log
 /tmp
 /config/database.yml
-.env
 .vagrant/
 .tags
 .tags_sorted_by_file
