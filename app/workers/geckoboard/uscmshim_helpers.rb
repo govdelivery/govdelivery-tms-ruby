@@ -37,7 +37,7 @@ module Geckoboard
       'Eastern Time (US & Canada)'
     end
 
-    def subject_sends_by_hour(account_id, number_of_subject_lines=5, hours = 12, model_klass = EmailMessage)
+    def subject_sends_by_hour(account_id, number_of_subject_lines=5, hours=12, model_klass=EmailMessage)
       binds = {
         account_id: account_id,
         hours: hours,

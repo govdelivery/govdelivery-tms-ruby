@@ -8,7 +8,7 @@ module Geckoboard
                     unique: true
 
     def perform(account_id, basename)
-      result = subject_sends_by_hour(account_id, 5)
+      result = subject_sends_by_hour(account_id, 10)
 
       data = {}
       xlabels = []
