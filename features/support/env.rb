@@ -34,7 +34,7 @@ end
 
 # Set general configuration options
 config = Configatron::RootStore.new
-config.xact_url = xact_url
+config.xact.url = xact_url
 
 # Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
 #
