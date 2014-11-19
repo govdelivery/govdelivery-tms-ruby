@@ -101,5 +101,41 @@ module Geckoboard
       sanitized_sql = model_klass.send(:sanitize_sql_for_conditions, [sql, binds])
       ActiveRecord::Base.connection.select_all(sanitized_sql)
     end
+
+    def series_colors
+      [
+        "#FCFFF5",
+        "#D1DBBD",
+        "#91AA9D",
+        "#ACF0F2",
+        "#EB7F00",
+        "#54AC92",
+        "#F1B60B",
+        "#097178",
+        "#9E4292",
+        "#9D21D9",
+        "#03DAF7",
+        "#DF9859",
+        "#362B7A",
+        "#318741",
+        "#ADECFC",
+        "#60F4BF",
+        "#B8F415",
+        "#D5C003",
+        "#A352A9",
+        "#457216",
+        "#E87EC2",
+        "#E7ADCC",
+        "#2A1EA1",
+        "#25477F",
+        "#1B48E6",
+        "#FDF6CB",
+        "#8A337F",
+        "#FAA194",
+        "#2B9731",
+        "#75DBDC",
+        "#2CA126"
+      ]
+    end
   end
 end
