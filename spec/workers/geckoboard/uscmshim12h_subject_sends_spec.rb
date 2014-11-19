@@ -19,7 +19,7 @@ describe Geckoboard::Uscmshim12hSubjectSends do
     times = time_range.step(1.hour).map {|t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime("%H")}
 
     subject.expects(:write_to_file).with("name.json",{
-      colors: ["#FCFFF5", "#D1DBBD", "#91AA9D", "#ACF0F2", "#EB7F00"],
+      colors: ["#FCFFF5", "#D1DBBD", "#91AA9D", "#ACF0F2", "#EB7F00", "#54AC92", "#F1B60B", "#097178", "#9E4292", "#9D21D9", "#03DAF7"],
       credits: {
         enabled: false
       },
