@@ -37,8 +37,13 @@ module Geckoboard
       'Eastern Time (US & Canada)'
     end
 
-    def subject_sends_sql(hours = 12, number_of_subject_lines=5)
-      trunc_fmt = 'HH24' # HH24 for hour of day, MI for minute of hour
+    def subject_sends_by_hour(account_id, number_of_subject_lines=5, hours = 12, model_klass = EmailMessage)
+      binds = {
+        account_id: account_id,
+        hours: hours,
+        number_of_subject_lines: number_of_subject_lines,
+        trunc_fmt: 'HH24' # HH24 for hour of day, MI for minute of hour
+      }
       sql = <<-EOL
         select fill_hours.subject,
                fill_hours.hour_of_day,
@@ -48,18 +53,18 @@ module Geckoboard
                    from (select subject
                            from (select subject
                                    from email_messages
-                                  where account_id = %s
-                                    and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(#{hours},'HOUR')) as date)
+                                  where account_id = :account_id
+                                    and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:hours,'HOUR')) as date)
                                   group by subject
                                   order by count(*) desc
                                 )
-                          where rownum <= #{number_of_subject_lines}
+                          where rownum <= :number_of_subject_lines
                           union all
                           select 'Other' as subject from dual
                         ) top5,
-                        (select trunc(cast(sys_extract_utc(systimestamp) as date), '#{trunc_fmt}') - (rownum/24) as hour_of_day
+                        (select trunc(cast(sys_extract_utc(systimestamp) as date), :trunc_fmt) - (rownum/24) as hour_of_day
                            from email_messages
-                          where rownum <= #{hours}
+                          where rownum <= :hours
                         ) twelve_hours -- cartesian here on purpose
                 ) fill_hours
           left join
@@ -67,24 +72,24 @@ module Geckoboard
                          all_data.hour_of_day,
                          nvl(sum(count_), 0) as count_
                     from (select subject,
-                                 trunc(created_at, '#{trunc_fmt}') as hour_of_day,
+                                 trunc(created_at, :trunc_fmt) as hour_of_day,
                                  count(*) as count_
                             from email_messages
-                           where account_id = %s
-                             and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(#{hours},'HOUR')) as date)
-                           group by subject, trunc(created_at, '#{trunc_fmt}')
-                           order by subject, trunc(created_at, '#{trunc_fmt}')
+                           where account_id = :account_id
+                             and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:hours,'HOUR')) as date)
+                           group by subject, trunc(created_at, :trunc_fmt)
+                           order by subject, trunc(created_at, :trunc_fmt)
                          ) all_data
                     left join
                          (select *
                             from (select subject
                                     from email_messages
-                                   where account_id = %s
-                                     and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(#{hours},'HOUR')) as date)
+                                   where account_id = :account_id
+                                     and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:hours,'HOUR')) as date)
                                    group by subject
                                    order by count(*) desc
                                  )
-                           where rownum <= #{number_of_subject_lines}
+                           where rownum <= :number_of_subject_lines
                          ) top5 on all_data.subject = top5.subject
                    group by nvl(top5.subject, 'Other'),
                             all_data.hour_of_day
@@ -93,6 +98,8 @@ module Geckoboard
          order by fill_hours.subject,
                   fill_hours.hour_of_day
       EOL
+      sanitized_sql = model_klass.send(:sanitize_sql_for_conditions, [sql, binds])
+      ActiveRecord::Base.connection.select_all(sanitized_sql)
     end
   end
 end
