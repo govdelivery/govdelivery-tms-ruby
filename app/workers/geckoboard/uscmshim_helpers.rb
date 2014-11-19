@@ -37,7 +37,7 @@ module Geckoboard
       'Eastern Time (US & Canada)'
     end
 
-    def subject_sends_by_unit(account_id, number_of_subject_lines=5, units=12, unit='hour', model_klass=EmailMessage)
+    def subject_sends_by_unit(account_id, number_of_subject_lines=5, unit='hour', units=12, model_klass=EmailMessage)
       if unit == 'hour' then
         trunc_fmt = 'HH24'
         interval = 'HOUR'
@@ -49,10 +49,10 @@ module Geckoboard
       end
       binds = {
         account_id: account_id,
-        period: hours,
+        period: units,
         number_of_subject_lines: number_of_subject_lines,
-        trunc_fmt: trunc_fmt # HH24 for hour of day, MI for minute of hour
-        interval: interval
+        trunc_fmt: trunc_fmt, # HH24 for hour of day, MI for minute of hour
+        interval: interval,
         normalize: normalize
       }
       sql = <<-EOL

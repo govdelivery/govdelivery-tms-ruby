@@ -39,6 +39,7 @@ module Clockwork
     every(1.day, 'Uscmshim12hSubjectSends', at: top_of_hour) { Geckoboard::Uscmshim12hSubjectSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_12h_subject_sends') }
     every(1.day, 'Uscmshim24hSends', at: top_of_hour) { Geckoboard::Uscmshim24hSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_24h_sends') }
     every(5.minutes, 'Uscmshim30mSends') { Geckoboard::Uscmshim30mSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_30m_sends') }
+    every(5.minutes, 'Uscmshim30mSubjectSends', at: top_of_hour) { Geckoboard::Uscmshim30mSubjectSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_30m_subject_sends') }
     every(1.day, 'UscmshimReporting', at: top_of_hour) { Geckoboard::UscmshimReporting.perform_async(Rails.configuration.custom_report_account_id, 'CREATED_AT', 'uscmshim_reporting') }
     every(1.day, 'UscmshimClicksReporting', at: top_of_hour) { Geckoboard::UscmshimEventsReporting.perform_async('clicks', Rails.configuration.custom_report_account_id, 'uscmshim_clicks_reporting') }
     every(1.day, 'UscmshimOpensReporting', at: top_of_hour) { Geckoboard::UscmshimEventsReporting.perform_async('opens', Rails.configuration.custom_report_account_id, 'uscmshim_opens_reporting') }
