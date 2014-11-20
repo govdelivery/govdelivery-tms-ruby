@@ -127,7 +127,7 @@ Then(/^I should receive a STOP response$/) do
     req.body = payload
   end
   ap @resp
-  sleep(10)
+  sleep(60)
 end
 
 And(/^my subscription should be removed$/) do
