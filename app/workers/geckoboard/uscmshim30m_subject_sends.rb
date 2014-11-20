@@ -1,7 +1,7 @@
 require 'base'
 
 module Geckoboard
-  class Uscmshim12hSubjectSends
+  class Uscmshim30mSubjectSends
     include UscmshimHelpers
     include Workers::Base
     sidekiq_options retry:  false,
@@ -9,14 +9,14 @@ module Geckoboard
 
     def perform(account_id, basename)
       num_of_subject_lines = 10
-      result = subject_sends_by_unit(account_id, num_of_subject_lines, 'hour', 12)
+      result = subject_sends_by_unit(account_id, num_of_subject_lines, 'minute', 30)
 
       data = {}
       xlabels = []
       result.rows.each do |subject, timestamp, count|
         data[subject] ||= []
         data[subject] << count
-        xlabels << timestamp.in_time_zone(timezone).strftime('%H')
+        xlabels << timestamp.in_time_zone(timezone).strftime('%M')
       end
       xlabels.uniq!
 
@@ -34,7 +34,7 @@ module Geckoboard
       end
 
       output = {
-        colors: series_colors[0..num_of_subject_lines], # Want to include num_of_subject_line + 1 colors, because Others
+        colors: series_colors[0..num_of_subject_lines],
         credits: {
           enabled: false
         },

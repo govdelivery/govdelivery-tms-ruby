@@ -37,12 +37,23 @@ module Geckoboard
       'Eastern Time (US & Canada)'
     end
 
-    def subject_sends_by_hour(account_id, number_of_subject_lines=5, hours=12, model_klass=EmailMessage)
+    def subject_sends_by_unit(account_id, number_of_subject_lines=5, unit='hour', units=12, model_klass=EmailMessage)
+      if unit == 'hour' then
+        trunc_fmt = 'HH24'
+        interval = 'HOUR'
+        normalize = 24
+      elsif unit == 'minute' then
+        trunc_fmt = 'MI'
+        interval = 'MINUTE'
+        normalize = 1440
+      end
       binds = {
         account_id: account_id,
-        hours: hours,
+        period: units,
         number_of_subject_lines: number_of_subject_lines,
-        trunc_fmt: 'HH24' # HH24 for hour of day, MI for minute of hour
+        trunc_fmt: trunc_fmt, # HH24 for hour of day, MI for minute of hour
+        interval: interval,
+        normalize: normalize
       }
       sql = <<-EOL
         select fill_hours.subject,
@@ -54,7 +65,7 @@ module Geckoboard
                            from (select subject
                                    from email_messages
                                   where account_id = :account_id
-                                    and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:hours,'HOUR')) as date)
+                                    and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:period, :interval)) as date)
                                   group by subject
                                   order by count(*) desc
                                 )
@@ -62,9 +73,9 @@ module Geckoboard
                           union all
                           select 'Other' as subject from dual
                         ) top5,
-                        (select trunc(cast(sys_extract_utc(systimestamp) as date), :trunc_fmt) - (rownum/24) as hour_of_day
+                        (select trunc(cast(sys_extract_utc(systimestamp) as date), :trunc_fmt) - (rownum/:normalize) as hour_of_day
                            from email_messages
-                          where rownum <= :hours
+                          where rownum <= :period
                         ) twelve_hours -- cartesian here on purpose
                 ) fill_hours
           left join
@@ -76,7 +87,7 @@ module Geckoboard
                                  count(*) as count_
                             from email_messages
                            where account_id = :account_id
-                             and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:hours,'HOUR')) as date)
+                             and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:period, :interval)) as date)
                            group by subject, trunc(created_at, :trunc_fmt)
                            order by subject, trunc(created_at, :trunc_fmt)
                          ) all_data
@@ -85,7 +96,7 @@ module Geckoboard
                             from (select subject
                                     from email_messages
                                    where account_id = :account_id
-                                     and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:hours,'HOUR')) as date)
+                                     and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(:period, :interval)) as date)
                                    group by subject
                                    order by count(*) desc
                                  )
