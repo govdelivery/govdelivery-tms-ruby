@@ -8,62 +8,8 @@ module Geckoboard
                     unique: true
 
     def perform(account_id, basename)
-      sql = <<-EOL
-        select fill_hours.subject,
-               fill_hours.hour_of_day,
-               nvl(count_, 0) as count_
-          from ( select top5.subject,
-                        twelve_hours.hour_of_day
-                   from (select subject
-                           from (select subject
-                                   from email_messages
-                                  where account_id = %s
-                                    and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(12,'HOUR')) as date)
-                                  group by subject
-                                  order by count(*) desc
-                                )
-                          where rownum <= 5
-                          union all
-                          select 'Other' as subject from dual
-                        ) top5,
-                        (select trunc(cast(sys_extract_utc(systimestamp) as date), 'HH24') - (rownum/24) as hour_of_day
-                           from email_messages
-                          where rownum <= 12
-                        ) twelve_hours -- cartesian here on purpose
-                ) fill_hours
-          left join
-                ( select nvl(top5.subject, 'Other') as subject,
-                         all_data.hour_of_day,
-                         nvl(sum(count_), 0) as count_
-                    from (select subject,
-                                 trunc(created_at, 'HH24') as hour_of_day,
-                                 count(*) as count_
-                            from email_messages
-                           where account_id = %s
-                             and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(12,'HOUR')) as date)
-                           group by subject, trunc(created_at, 'HH24')
-                           order by subject, trunc(created_at, 'HH24')
-                         ) all_data
-                    left join
-                         (select *
-                            from (select subject
-                                    from email_messages
-                                   where account_id = %s
-                                     and created_at > cast(sys_extract_utc(systimestamp-numtodsinterval(12,'HOUR')) as date)
-                                   group by subject
-                                   order by count(*) desc
-                                 )
-                           where rownum <= 5
-                         ) top5 on all_data.subject = top5.subject
-                   group by nvl(top5.subject, 'Other'),
-                            all_data.hour_of_day
-                ) rollup_ on fill_hours.subject = rollup_.subject
-                         and fill_hours.hour_of_day = rollup_.hour_of_day
-         order by fill_hours.subject,
-                  fill_hours.hour_of_day
-      EOL
-      sanitized_sql = EmailMessage.send(:sanitize_sql_for_conditions, [sql, account_id, account_id, account_id])
-      result = ActiveRecord::Base.connection.select_all(sanitized_sql)
+      num_of_subject_lines = 10
+      result = subject_sends_by_hour(account_id, num_of_subject_lines)
 
       data = {}
       xlabels = []
@@ -88,7 +34,7 @@ module Geckoboard
       end
 
       output = {
-        colors: ["#FCFFF5", "#D1DBBD", "#91AA9D", "#ACF0F2", "#EB7F00"],
+        colors: series_colors[0..num_of_subject_lines], # Want to include num_of_subject_line + 1 colors, because Others
         credits: {
           enabled: false
         },
