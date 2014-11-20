@@ -1,7 +1,7 @@
 require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
-require 'configatron/core'
+require 'configatron'
 require 'tms_client'
 require 'multi_xml'
 
@@ -16,6 +16,19 @@ options = {
     :inspector => true,
 }
 Capybara::Poltergeist::Driver.new(app, options)
+end
+
+def environment
+  environments = [
+    :development,
+    :qc,
+    :integration,
+    :stage,
+    :prod
+  ]
+  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
+  raise "Unsupported XACT Environment: #{env}" if !environments.include?(env)
+  env
 end
 
 def xact_url
@@ -33,8 +46,7 @@ def xact_url
 end
 
 # Set general configuration options
-config = Configatron::RootStore.new
-config.xact.url = xact_url
+configatron.xact.url = xact_url
 
 # Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
 #
@@ -257,8 +269,8 @@ def environment
   env
 end
 
-def tms_client(account_type = :live)
-  client = TMS::Client.new(xact_token(account_type), :api_root => xact_url)
+def tms_client(account_name)
+  client = TMS::Client.new(configatron.accounts[account_name].xact.user.token, :api_root => configatron.accounts[account_name].xact.url)
 end
 
 #

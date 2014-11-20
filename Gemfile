@@ -87,9 +87,10 @@ group :development do
 end
 
 group :test do
-  gem "fakeredis", require: "fakeredis/rspec"
+  gem "configatron"
+  gem "fakeredis", :require => "fakeredis/rspec"
   gem 'fakeweb'
-  gem 'mocha', require: false
+  gem 'mocha', :require => false
   gem 'shoulda-matchers'
   gem 'tms_client'
 end

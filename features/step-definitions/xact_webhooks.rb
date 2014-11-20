@@ -39,7 +39,7 @@ Then(/^a callback url exists for each event type$/) do
 end
 
 And(/^a callback url is registered for each event type$/) do
-  client = tms_client(:loopback)
+  client = tms_client('webhooks')
   @event_callback_uris.each do |key,value|
     webhook = client.webhooks.build(:url=>@capi.callbacks_domain + value, :event_type=>key)
     webhook.post
@@ -49,7 +49,7 @@ And(/^a callback url is registered for each event type$/) do
 end
 
 When(/^I send a message of each type to the magic address of each event state$/) do
-  client = tms_client(:loopback)
+  client = tms_client('webhooks')
   @messages = {}
   @messages[:email] = client.email_messages.build(:body=>'Webhooks Testing',:subject=>"#{$subject[1]}")
   puts 'Sending to the following Email Addresses'
