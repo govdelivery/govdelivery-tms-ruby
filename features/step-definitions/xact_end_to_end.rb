@@ -149,7 +149,7 @@ Then /^I go to Gmail to check for message delivery$/ do
           if p.content_type.include? "text/html"
             #puts "Body: " + p.body.decoded
             message_list[mail.subject] = p.body.decoded
-          end
+          end   
 
         }
       end
