@@ -214,7 +214,8 @@ end
 #===BART========================================>
 
 Given (/^I have an XACT account for BART$/) do
-  @client = tms_client(:bart)
+  @conf = configatron.accounts.sms_2way_bart
+  @client = tms_client(@conf)
 end
 
 Given (/^I register the keyword BART$/) do
@@ -240,15 +241,15 @@ Given (/^I register the BART forward command$/) do
 end
 
 When (/^I text 'BART 12th' to the BART account$/) do
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
   end
   payload = {}
-  payload['To'] = xact_account(:bart)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15005550006'
-  payload['AccountSid'] = xact_account(:bart)[:sms_vendor_username]
+  payload['AccountSid'] = @conf.sms.vendor.username
   payload['Body'] = "#{@bart_keyword} 12th"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
