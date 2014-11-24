@@ -7,6 +7,8 @@ sms_2way_subscribe = configatron.accounts.sms_2way_subscribe
 sms_2way_subscribe.xact.user.password             = 'retek01!'
 sms_2way_subscribe.xact.user.admin                = true
 
+sms_2way_subscribe.sms.phone.number                    = '+15559999999'
+sms_2way_subscribe.sms.phone.sid                       = nil
 sms_2way_subscribe.sms.vendor.username            = 'AC189315456a80a4d1d4f82f4a732ad77e'
 sms_2way_subscribe.sms.vendor.password            = '88e3775ad71e487c7c90b848a55a5c88'
 sms_2way_subscribe.sms.vendor.shared              = false

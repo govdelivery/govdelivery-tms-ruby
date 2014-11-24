@@ -24,7 +24,6 @@ Given(/^I create a subscription keyword and command$/) do
     #do not change the NAME param unless you want to break everything
     :name => "subscribe", 
     :params => dcm_params)
-  @command.post
   sleep(2)
 end
 
@@ -61,17 +60,20 @@ Then(/^a subscription should be created$/) do
   @data = HTTPI.get(@request)
   puts @request.url
   @response = MultiXml.parse(@data.raw_body)
-  
   #some output that can be turned on/off if needed to verify things manually
   ap @response
   puts @response['subscriber']['phone']
 
   #verifying if subscriber is present
-  if @response['subscriber']['phone'] == sample_subscriber_number[2...12] #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
-    puts 'Subscriber found, test passed'.green
-  else
-    fail 'Subscriber not found'.red
-  end    
+  begin
+    if @response['subscriber']['phone'] == sample_subscriber_number[2...12] #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
+      puts 'Subscriber found, test passed'.green
+    else
+      fail 'Subscriber not found'.red
+    end
+  rescue NoMethodError => e
+    fail JSON.pretty_generate(@response)
+  end
 
   #delete subscriber so we can reuse the phone number for the next test
   HTTPI.delete(@request)
