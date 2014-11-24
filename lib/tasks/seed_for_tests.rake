@@ -2,14 +2,16 @@ require 'fileutils'
 
 namespace :db do
 
+  # OMG Vendors
   loopback_vendors_config = {
       sms_vendor_name: 'Loopback SMS Sender',
       voice_vendor_name: 'Loopback Voice Sender',
       email_vendor_name: 'Email Loopback Sender'
   }
 
+  # General Loopback Vendor
   loopbacks_account_vendors_config = {
-    sms_vendor_name: 'Loopbacks Account SMS Vendor',
+    sms_vendor_name: 'Loopback Shared SMS Vendor',
     voice_vendor_name: 'Loopbacks Account Voice Vendor',
     email_vendor_name: 'Email Loopback Sender'
   }
@@ -164,7 +166,8 @@ namespace :db do
         worker: 'LoopbackSmsWorker',
         username: 'loopbacks_account_sms_username',
         password: 'dont care',
-        from: '+15559999999'
+        from: '+15559999999',
+        shared: true
       }
     )
 
@@ -185,14 +188,16 @@ namespace :db do
   end # :create_loopback_vendors
 
 
-  desc 'Create an Account that has all Loopback Vendors.'
-  task :create_all_loopbacks_account => :environment do |t|
+  desc 'Create an Account for testing Webhooks'
+  task :create_webhooks_test_account => :environment do |t|
 
     Rake::Task['db:create_loopbacks_account_vendors'].invoke
 
+    sms_shared_vendor = VoiceVendor.find_by(name: loopbacks_account_vendors_config[:voice_vendor_name])
+
     account_config = {
-        name: Rails.env.capitalize + " Loopbacks Account",
-        voice_vendor: VoiceVendor.find_by(name: loopbacks_account_vendors_config[:voice_vendor_name]),
+        name: Rails.env.capitalize + " Webhooks Test Account",
+        voice_vendor: sms_shared_vendor,
         sms_vendor: SmsVendor.find_by(name: loopbacks_account_vendors_config[:sms_vendor_name]),
         email_vendor: EmailVendor.find_by(name: loopbacks_account_vendors_config[:email_vendor_name])
     }
@@ -219,6 +224,12 @@ namespace :db do
       end
       }
     )
+
+    if lba.sms_prefixes.find_by(prefix: "webhooks").blank?
+      sms_prefix = lba.sms_prefixes.build(:prefix => "webhooks", :sms_vendor => sms_shared_vendor)
+      sms_prefix.save!
+      puts "SMS Prefix created for #{account_config[:name]}"
+    end
 
     if lba.users.empty?
       user = lba.users.build(user_config)
