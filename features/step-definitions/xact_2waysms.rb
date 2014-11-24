@@ -15,7 +15,8 @@ require 'multi_xml'
 
 
 Given(/^I create a subscription keyword and command$/) do
-  client = tms_client(:live)
+  @conf = configatron.accounts.sms_2way_subscribe
+  client = tms_client(@conf)
   @keyword = client.keywords.build(:name => keyword_params, :response_text => keyword_params)
   @keyword.post
   @command = @keyword.commands.build(
@@ -29,7 +30,7 @@ end
 
 And(/^I send an SMS to create a subscription on TMS$/) do
   #create connection to XACT
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -37,9 +38,9 @@ And(/^I send an SMS to create a subscription on TMS$/) do
 
   #create tms/xact twilio request
   payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = sample_subscriber_number
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
+  payload['AccountSid'] = @conf.sms.vendor.username
   payload['Body'] = subscribe_command
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
