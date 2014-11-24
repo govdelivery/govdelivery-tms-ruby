@@ -46,7 +46,12 @@ def xact_url
 end
 
 # Set general configuration options
-configatron.xact.url = xact_url
+configatron.xact.url                                = xact_url
+configatron.test_support.twilio.phone.number        = '+15183004174'
+configatron.test_support.twilio.phone.sid           = 'PN53d0531f78bf8061549b953c6619b753'
+configatron.test_support.twilio.account.sid         = 'AC189315456a80a4d1d4f82f4a732ad77e'
+configatron.test_support.twilio.account.token       = '88e3775ad71e487c7c90b848a55a5c88'
+configatron.test_support.twilio.account.twilio_test = false
 
 # Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
 #
@@ -203,14 +208,6 @@ end
 
 def callbacks_api_sms_root
   'http://xact-webhook-callbacks.herokuapp.com/api/v3/sms/'
-end
-
-# Number for the Test Support App to send/receive (or these tests to send on the behalf of)
-def twilio_test_support_number
-  {
-    :phone => '+15183004174',
-    :sid => 'PN53d0531f78bf8061549b953c6619b753'
-  }
 end
 
 def twilio_test_account_creds

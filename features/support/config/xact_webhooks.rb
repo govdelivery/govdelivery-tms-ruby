@@ -33,7 +33,7 @@ case environment
     webhooks.xact.account.id = '10200'
     webhooks.xact.user.token = '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE'
     webhooks.xact.user.email_address = 'int-loopback@govdelivery.com'
-  when :integration
+  when :stage
     webhooks.xact.account.id = '10862'
     webhooks.xact.user.token = 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
     webhooks.xact.user.email_address = 'stage-loopback@govdelivery.com'
