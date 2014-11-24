@@ -269,8 +269,8 @@ def environment
   env
 end
 
-def tms_client(account_name)
-  client = TMS::Client.new(configatron.accounts[account_name].xact.user.token, :api_root => configatron.accounts[account_name].xact.url)
+def tms_client(conf)
+    client = TMS::Client.new(conf.xact.user.token, :api_root => conf.xact.url)
 end
 
 #
