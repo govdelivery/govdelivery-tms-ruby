@@ -24,70 +24,6 @@ def expected_link_prefix
     end
 end
 
-def imap_opts
-    if ENV['XACT_ENV'] == 'qc'
-        imap_opts = {
-        :address    => 'imap.gmail.com',
-        :port       => 993,
-        :user_name  => 'canari11dd@gmail.com',
-        :password   => 'govdel01!', 
-        :enable_ssl => true
-      }
-    elsif ENV['XACT_ENV'] == 'integration'
-      imap_opts = {
-        :address    => 'imap.gmail.com',
-        :port       => 993,
-        :user_name  => 'canari9dd@gmail.com',
-        :password   => 'govdel01!', 
-        :enable_ssl => true
-      } 
-    elsif ENV['XACT_ENV'] == 'stage'
-      imap_opts = {
-        :address    => 'imap.gmail.com',
-        :port       => 993,
-        :user_name  => 'canari7dd@gmail.com',
-        :password   => 'govdel01!', 
-        :enable_ssl => true
-      }
-    elsif ENV['XACT_ENV'] == 'prod'
-      imap_opts = {
-        :address    => 'imap.gmail.com',
-        :port       => 993,
-        :user_name  => 'canari8dd@gmail.com',
-        :password   => 'govdel01!', 
-        :enable_ssl => true
-      }
-    end  
-end  
-
-def xact_opts
-    if ENV['XACT_ENV'] == 'qc'
-      xact_opts = {
-        :user_name  => 'cukeautoqc@govdelivery.com',
-        :password   => 'govdel01',
-        :recipient  => 'canari11dd@gmail.com'
-      }
-    elsif ENV['XACT_ENV'] == 'integration'
-      xact_opts = {
-        :user_name  => 'cukeautoint@govdelivery.com',
-        :password   => 'govdel01',
-        :recipient  => 'canari9dd@gmail.com'
-      }
-    elsif ENV['XACT_ENV'] == 'stage'
-      xact_opts = {
-        :user_name  => 'cukestage@govdelivery.com',
-        :password   => 'govdel01',
-        :recipient  => 'canari7dd@gmail.com'
-      }
-    elsif ENV['XACT_ENV'] == 'prod'
-      xact_opts = {
-        :user_name  => 'CUKEPROD@govdelivery.com',
-        :password   => 'GovDel01',
-        :recipient  => 'canari8dd@gmail.com'
-      }
-    end 
-end  
-
 def path
     if ENV['XACT_ENV'] == 'qc'
       'https://qc-tms.govdelivery.com/messages/email'
@@ -99,6 +35,8 @@ def path
       'https://tms.govdelivery.com/messages/email'
     end
 end
+
+conf = configatron.accounts.email_endtoend
 
 #globals to generate unique variables
 #email
@@ -116,7 +54,13 @@ When /^I POST a new EMAIL message to TMS$/ do
 
   email_body = "This is a test for end to end email delivery. <a href=\\\"#{expected_link}\\\">With a link</a>"
   xact_helper = XACTHelper.new
-  xact_helper.send_email(xact_opts[:user_name], xact_opts[:password], expected_subject, email_body, xact_opts[:recipient], path)
+  xact_helper.send_email(
+    conf.xact.user.email_address,
+    conf.xact.user.password,
+    expected_subject,
+    email_body,
+    conf.gmail.imap.user_name,
+    path)
 end
 
 
@@ -139,7 +83,7 @@ Then /^I go to Gmail to check for message delivery$/ do
       STDOUT.puts "Logging into Gmail IMAP looking for subject: #{expected_subject}"
 
       Mail.defaults do
-        retriever_method :imap, imap_opts
+        retriever_method :imap, conf.gmail.imap.to_h
       end
        
       emails = Mail.find(:what => :last, :count => 1000, :order => :dsc)
@@ -188,6 +132,11 @@ Then /^I go to Gmail to check for message delivery$/ do
   end
 
   cleaner = IMAPCleaner.new
-  cleaner.clean_inbox(imap_opts[:address], imap_opts[:port], imap_opts[:enable_ssl], imap_opts[:user_name], imap_opts[:password])
-  STDOUT.puts 'Cleaned inbox'.green
+  cleaner.clean_inbox(
+    conf.gmail.imap.address,
+    conf.gmail.imap.port,
+    conf.gmail.imap.enable_ssl,
+    conf.gmail.imap.user_name,
+    conf.gmail.imap.password)
+  puts 'Cleaned inbox'.green
 end 
