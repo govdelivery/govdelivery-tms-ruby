@@ -19,15 +19,15 @@ case environment
     sms_2way_bart.xact.user.token             = ENV['XACT_SMS2WAYBART_USER_TOKEN']
     sms_2way_bart.xact.user.email_address     = 'development-sms_2way_bart-test@govdelivery.com'
   when :qc
-    sms_2way_bart.xact.account.id             = '10460'
-    sms_2way_bart.xact.user.token             = 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL'
-    sms_2way_bart.xact.user.email_address     = 'qc-loopback@govdelivery.com'
+    sms_2way_bart.xact.account.id             = '10522'
+    sms_2way_bart.xact.user.token             = 'SvAsc6AkCq3x6uxxcYowpg5Y8Z9VJZdc'
+    sms_2way_bart.xact.user.email_address     = 'qc-sms_2way_bart-test@govdelivery.com'
   when :integration
-    sms_2way_bart.xact.account.id             = '10200'
-    sms_2way_bart.xact.user.token             = '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE'
-    sms_2way_bart.xact.user.email_address     = 'int-loopback@govdelivery.com'
+    sms_2way_bart.xact.account.id             = '10242'
+    sms_2way_bart.xact.user.token             = 'JDchCvYzmie2KLtf7q74dKezyBAaVJDx'
+    sms_2way_bart.xact.user.email_address     = 'integration-sms_2way_bart-test@govdelivery.com'
   when :stage
-    sms_2way_bart.xact.account.id             = '10862'
-    sms_2way_bart.xact.user.token             = 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
-    sms_2way_bart.xact.user.email_address     = 'stage-loopback@govdelivery.com'
+    sms_2way_bart.xact.account.id             = '10921'
+    sms_2way_bart.xact.user.token             = 'RK4nk6qCEtDxNBjx4KAtxuizz9Hityb3'
+    sms_2way_bart.xact.user.email_address     = 'stage-sms_2way_bart-test@govdelivery.com'
 end
