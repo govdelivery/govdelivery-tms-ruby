@@ -55,6 +55,4 @@ Xact::Application.configure do
   config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 
   config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
-
-  Rails.logger.level = Log4r::DEBUG
 end
