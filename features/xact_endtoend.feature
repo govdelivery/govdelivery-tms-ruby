@@ -7,6 +7,3 @@ Feature: XACT API PROD, STAGE, INT Email end to end tests.
 		When I POST a new EMAIL message to TMS
         Then I go to Gmail to check for message delivery
 
-
-
-
