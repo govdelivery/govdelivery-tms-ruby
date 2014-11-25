@@ -83,19 +83,104 @@ end
 
 
 Given(/^I send an SMS to opt out of receiving TMS messages$/) do
-  pending # express the regexp above with the code you wish you had
+  #subscribe first
+  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+    faraday.request     :url_encoded
+    faraday.response    :logger
+    faraday.adapter     Faraday.default_adapter
+  end
+
+  #create tms/xact twilio request
+  payload = {}
+  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['From'] = twilio_xact_test_number_2
+  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
+  payload['Body'] = subscribe_command_2
+  resp = conn.post do |req|
+    req.url "/twilio_requests.xml"
+    req.body = payload
+  end
+
+  #sleep to give subscription time to create in DCM
+  sleep(60)
 end
 
 Then(/^I should receive a STOP response$/) do
-  pending # express the regexp above with the code you wish you had
+  #begin stop request
+  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+    faraday.request     :url_encoded
+    faraday.response    :logger
+    faraday.adapter     Faraday.default_adapter
+  end
+
+  #create tms/xact twilio request
+  payload = {}
+  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['From'] = twilio_xact_test_number_2
+  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
+  payload['Body'] = stop_command
+  @resp = conn.post do |req|
+    req.url "/twilio_requests.xml"
+    req.body = payload
+  end
+  ap @resp
+  sleep(60)
 end
 
-And(/^a my subscription should be removed$/) do
-  pending # express the regexp above with the code you wish you had
+And(/^my subscription should be removed$/) do
+  #encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
+  @base64 = Base64.encode64(twilio_xact_test_number_2)
+
+  sleep(60)
+
+  #check to see if subscription was removed
+  user #dcm credentials
+  @request.url = dcm_base64_url + @base64
+  @data = HTTPI.get(@request)
+  puts @request.url
+  @response = MultiXml.parse(@data.raw_body)
+  
+  ap @response
+  #some output that can be turned on/off if needed to verify things manually
+  #puts @response['subscriber']['phone']
+
+  #verifying if subscriber is present
+  if @response['errors']['error'] = 'Subscriber not found' #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
+    puts 'Subscriber not found'.green
+  else
+    fail 'Subscriber found'.red
+  end 
+
+  sleep(10)
+
+  #begin start request so the test can essentially reset itself.
+  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+    faraday.request     :url_encoded
+    faraday.response    :logger
+    faraday.adapter     Faraday.default_adapter
+  end
+
+  #create tms/xact twilio request
+  payload = {}
+  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['From'] = twilio_xact_test_number_2
+  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
+  payload['Body'] = start_command
+  @resp = conn.post do |req|
+    req.url "/twilio_requests.xml"
+    req.body = payload
+  end
+  ap @resp
 end
 
 
 #===STATIC========================================>
+
+
+
+#===STATIC========================================>
+
+
 
 Given (/^A keyword with static content is configured for an TMS account$/) do
   client = tms_client(:loopback)
