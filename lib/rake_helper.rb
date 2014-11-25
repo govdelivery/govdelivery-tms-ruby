@@ -105,4 +105,5 @@ def create_test_account(test_name, account_vendors_config)
 
   puts "#{user_config[:name]} Auth Token: "
   puts "\t#{token}"
+  return lba
 end

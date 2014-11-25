@@ -254,7 +254,8 @@ When (/^I text 'BART 12th' to the BART account$/) do
   payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15005550006'
   payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@bart_keyword} 12th"
+  payload['Body'] = "#{@conf.sms.prefix} #{@bart_keyword} 12th"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload

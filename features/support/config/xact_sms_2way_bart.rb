@@ -8,24 +8,16 @@ sms_2way_bart = configatron.accounts.sms_2way_bart
 # Common or default values for SMS 2Way Static Response test accounts across environments
 sms_2way_bart.xact.user.password              = 'retek01!'
 sms_2way_bart.xact.user.admin                 = true
-sms_2way_bart.sms.phone.number                = '+15559999999'
-sms_2way_bart.sms.phone.sid                   = nil
-sms_2way_bart.sms.vendor.username             = 'loopbacks_account_sms_username'
-sms_2way_bart.sms.vendor.password             = 'dont care'
-sms_2way_bart.sms.vendor.shared               = false
-sms_2way_bart.sms.vendor.twilio_test          = false
-sms_2way_bart.sms.prefix                      = nil
-sms_2way_bart.voice.phone.number              = '+15559999999'
-sms_2way_bart.voice.phone.sid                 = nil
-sms_2way_bart.voice.vendor.username           = 'loopbacks_account_voice_username'
-sms_2way_bart.voice.vendor.password           = 'dont care'
-sms_2way_bart.voice.twilio_test               = false
+
+sms_2way_bart.sms                             = configatron.sms_vendor.loopback.clone()
+sms_2way_bart.voice                           = configatron.voice_vendor.loopback.clone()
+sms_2way_bart.sms.prefix                      = 'sms_2way_bart'
 
 case environment
   when :development
     sms_2way_bart.xact.account.id             = ENV['XACT_SMS2WAYBART_ACCOUNT_ID']
     sms_2way_bart.xact.user.token             = ENV['XACT_SMS2WAYBART_USER_TOKEN']
-    sms_2way_bart.xact.user.email_address     = 'development-loopback@govdelivery.com'
+    sms_2way_bart.xact.user.email_address     = 'development-sms_2way_bart-test@govdelivery.com'
   when :qc
     sms_2way_bart.xact.account.id             = '10460'
     sms_2way_bart.xact.user.token             = 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL'
