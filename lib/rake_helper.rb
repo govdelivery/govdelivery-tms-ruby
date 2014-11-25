@@ -7,6 +7,14 @@ def shared_loopback_vendors_config
   }
 end
 
+def shared_twilio_valid_test_vendors_config
+  loopbacks_account_vendors_config = {
+    sms_vendor_name: 'Test - Shared Twilio Valid Test SMS Vendor',
+    voice_vendor_name: 'Test - Shared Loopback Voice Vendor',
+    email_vendor_name: 'Test - Shared Loopback Email Vendor'
+  }
+end
+
 def set_record_config(r, config)
   config.each do |k,v|
     r.send("#{k}=", v)

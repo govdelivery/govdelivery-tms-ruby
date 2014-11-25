@@ -155,4 +155,22 @@ namespace :db do
       }
     )
   end # :create_loopback_vendors
+
+  # Creates the Shared Twilio Valid Test Testing Vendor
+  desc 'Create the Shared Twilio Valid Test Testing Vendor.'
+  task :create_shared_twilio_valid_test_vendor => :environment do |t|
+
+    sms_twil_valid_test = create_or_verify_by_name(SmsVendor, {
+        name: shared_twilio_valid_test_vendors_config[:sms_vendor_name],
+        worker: 'TwilioMessageWorker',
+        username: 'ACc66477e37af9ebee0f12b349c7b75117',
+        password: '5b1c96ca034d474c6d4b68f8d05c99f5',
+        from: '+15005550006',   # The ONE number to send a text from that Twilio Test consideres valid: http://www.twilio.com/docs/api/rest/test-credentials
+        shared: true
+      }
+    )
+    sms_twil_valid_test.shared = true
+    sms_twil_valid_test.save!
+  end # :create_loopback_vendors
+
 end # :db namespace
