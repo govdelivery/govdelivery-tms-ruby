@@ -36,7 +36,7 @@ end
 
 def create_test_account(test_name, account_vendors_config)
   sms_shared_vendor = SmsVendor.find_by(name: account_vendors_config[:sms_vendor_name])
-  sms_prefix_str = test_name.downcase
+  sms_prefix_str = test_name.downcase.tr(' ', '_')
 
 
   account_config = {
@@ -47,14 +47,14 @@ def create_test_account(test_name, account_vendors_config)
   }
 
   account_email_addresses_config = {
-    from_email: Rails.env + "-#{test_name.downcase}-test@govdelivery.com",
-    errors_to: Rails.env + "-#{test_name.downcase}-errors@govdelivery.com",
-    reply_to: Rails.env + "#{test_name.downcase}-reply@govdelivery.com",
+    from_email: Rails.env + "-#{test_name.downcase.tr(' ', '_')}-test@govdelivery.com",
+    errors_to: Rails.env + "-#{test_name.downcase.tr(' ', '_')}-errors@govdelivery.com",
+    reply_to: Rails.env + "#{test_name.downcase.tr(' ', '_')}-reply@govdelivery.com",
     is_default: true
   }
 
   user_config = {
-    email: Rails.env + "-#{test_name.downcase}-test@govdelivery.com",
+    email: Rails.env + "-#{test_name.downcase.tr(' ', '_')}-test@govdelivery.com",
     password: "retek01!",
     admin: false
   }
@@ -68,15 +68,15 @@ def create_test_account(test_name, account_vendors_config)
         lba.from_addresses.build(account_email_addresses_config)
         puts "\tCreated"
       end
+
+      if lba.sms_prefixes.find_by(prefix: sms_prefix_str).blank?
+        sms_prefix = lba.sms_prefixes.build(:prefix => sms_prefix_str, :sms_vendor => sms_shared_vendor)
+        sms_prefix.save!
+        puts "SMS Prefix created for #{account_config[:name]}: #{sms_prefix.prefix}"
+      end
     }
   )
   puts "#{account_config[:name]} Account Number: #{lba.id}"
-
-  if lba.sms_prefixes.find_by(prefix: sms_prefix_str).blank?
-    sms_prefix = lba.sms_prefixes.build(:prefix => sms_prefix_str, :sms_vendor => sms_shared_vendor)
-    sms_prefix.save!
-    puts "SMS Prefix created for #{account_config[:name]}: #{sms_prefix.prefix}"
-  end
 
   user = lba.users.find_by(email: user_config[:email])
   if user.nil?

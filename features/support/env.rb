@@ -54,13 +54,13 @@ configatron.test_support.twilio.account.sid           = 'AC189315456a80a4d1d4f82
 configatron.test_support.twilio.account.token         = '88e3775ad71e487c7c90b848a55a5c88'
 configatron.test_support.twilio.account.twilio_test   = false
 
-configatron.sms_vendor.loopback.phone.number          = '+15552287439',   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+configatron.sms_vendor.loopback.phone.number          = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
 configatron.sms_vendor.loopback.vendor.username       = 'shared_loopback_sms_username'
 configatron.sms_vendor.loopback.vendor.password       = 'dont care'
 configatron.sms_vendor.loopback.vendor.shared         = true
 configatron.sms_vendor.loopback.vendor.twilio_test    = false
 
-configatron.voice_vendor.loopback.phone.number        = '+15552287439',   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey configatron.sms_vendor.loopback.vendor.username       = 'shared_loopback_sms_username'
+configatron.voice_vendor.loopback.phone.number        = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey configatron.sms_vendor.loopback.vendor.username       = 'shared_loopback_sms_username'
 configatron.voice_vendor.loopback.vendor.password     = 'dont care'
 configatron.voice_vendor.loopback.vendor.twilio_test  = false
 

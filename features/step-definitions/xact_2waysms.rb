@@ -199,7 +199,7 @@ Given (/^I send that keyword as an SMS to TMS$/) do
   payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15555555555'
   payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = @keyword.name
+  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
