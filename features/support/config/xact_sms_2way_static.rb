@@ -19,15 +19,15 @@ case environment
     sms_2way_static.xact.user.token             = ENV['XACT_SMS2WAYSTATIC_USER_TOKEN']
     sms_2way_static.xact.user.email_address     = 'development-sms_2way_static-test@govdelivery.com'
   when :qc
-    sms_2way_static.xact.account.id             = '10460'
-    sms_2way_static.xact.user.token             = 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL'
+    sms_2way_static.xact.account.id             = '10521'
+    sms_2way_static.xact.user.token             = 'LpJjoSXCreAXUQrjrCpL6fGePWrCrsMP'
     sms_2way_static.xact.user.email_address     = 'qc-sms_2way_static-test@govdelivery.com'
   when :integration
-    sms_2way_static.xact.account.id             = '10200'
-    sms_2way_static.xact.user.token             = '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE'
+    sms_2way_static.xact.account.id             = '10221'
+    sms_2way_static.xact.user.token             = 'QFKWugoA5x4VaVxZBwqgpfwXivAy18z9'
     sms_2way_static.xact.user.email_address     = 'integration-sms_2way_static-test@govdelivery.com'
   when :stage
-    sms_2way_static.xact.account.id             = '10862'
-    sms_2way_static.xact.user.token             = 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
+    sms_2way_static.xact.account.id             = '11040'
+    sms_2way_static.xact.user.token             = '1ToqN9B129KNkaBp8Fy3XJiuDvncnEhp'
     sms_2way_static.xact.user.email_address     = 'stage-sms_2way_static-test@govdelivery.com'
 end
