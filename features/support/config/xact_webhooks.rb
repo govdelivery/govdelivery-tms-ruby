@@ -17,15 +17,15 @@ case environment
     webhooks.xact.user.token = ENV['XACT_WEBHOOK_USER_TOKEN']
     webhooks.xact.user.email_address = 'development-webhooks-test@govdelivery.com'
   when :qc
-    webhooks.xact.account.id = '10460'
-    webhooks.xact.user.token = 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL'
+    webhooks.xact.account.id = '10520'
+    webhooks.xact.user.token = 'i38CvrkGeDypJnijfGz9zd1EUZkzctYg'
     webhooks.xact.user.email_address = 'qc-webhooks-test@govdelivery.com'
   when :integration
-    webhooks.xact.account.id = '10200'
-    webhooks.xact.user.token = '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE'
-    webhooks.xact.user.email_address = 'int-webhooks-test@govdelivery.com'
+    webhooks.xact.account.id = '10220'
+    webhooks.xact.user.token = 'pnJRwcsTU59dHiNKFvRC5qZnHTq5F1nU'
+    webhooks.xact.user.email_address = 'integration-webhooks-test@govdelivery.com'
   when :stage
-    webhooks.xact.account.id = '10862'
-    webhooks.xact.user.token = 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
+    webhooks.xact.account.id = '11020'
+    webhooks.xact.user.token = 'XX298RJyjk5pnLRRDyxaBArz6ocBcCEo'
     webhooks.xact.user.email_address = 'stage-webhooks-test@govdelivery.com'
 end

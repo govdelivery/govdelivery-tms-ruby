@@ -126,8 +126,8 @@ namespace :db do
     )
   end # :create_loopback_vendors
 
-  # Creates the Loopbacks Account vendors
-  desc 'Create all the vendors for the  Loopbacks account.'
+  # Creates the Shared Loopback Testing Vendors
+  desc 'Create all the shared testing loopback vendors.'
   task :create_shared_loopback_vendors => :environment do |t|
 
     sms_loopback = create_or_verify_by_name(SmsVendor, {
