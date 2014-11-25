@@ -71,4 +71,6 @@ Xact::Application.configure do
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = []
   config.custom_report_account_id = 10040
+
+  config.log_level = :warn # this is actually INFO because Log4r is terrible (see railties bootstrap.rb)
 end

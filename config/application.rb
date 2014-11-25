@@ -135,10 +135,7 @@ module Xact
       zookeepers: ENV['ANALYTICS_ZOOKEEPERS'].split(','),
     }
 
-    # Default log level is INFO
-    config.logger                  = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default']
-    Rails.logger.level             = Log4r::INFO
-
-    config.default_message_timeout = 2.days
+    # Default log level is DEBUG
+    config.logger    = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default']
   end
 end
