@@ -40,7 +40,8 @@ And(/^I send an SMS to create a subscription on TMS$/) do
   payload['To'] = @conf.sms.phone.number
   payload['From'] = sample_subscriber_number
   payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = subscribe_command
+  payload['Body'] = "#{@conf.sms.prefix} #{subscribe_command}"
+  puts "Mocking text '#{payload['Body']}' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
