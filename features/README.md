@@ -22,6 +22,7 @@ vendors exist on each testing environment. Again, these accounts were created vi
 
 
 *All SMS Vendors are Shared vendors (.shared? == true)*
+
 | SMS Vendor Name                              	        | Notes                                                           	        |
 |--------------------------------------------	        |---------------------------------------------------------------------------|
 | Test - Shared Loopback SMS Vendor          	        | Makes no attempt to actually send SMSs.                                   |
