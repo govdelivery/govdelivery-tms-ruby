@@ -4,7 +4,7 @@ configatron.accounts.email_endtoend.xact.url = configatron.xact.url
 email_endtoend = configatron.accounts.email_endtoend
 
 # Common or default values for Email End-to-End test accounts across environments
-email_endtoend.xact.user.password             = 'govdel01'
+email_endtoend.xact.user.password             = 'retek01!'
 email_endtoend.xact.user.admin                = false
 
 email_endtoend.sms                             = configatron.sms_vendors.loopback.clone()
@@ -23,26 +23,23 @@ case environment
     email_endtoend.xact.user.email_address    = 'development-email_end_to_end-test@govdelivery.com'
 
   when :qc
-    email_endtoend.xact.account.id            = '10120'
-    email_endtoend.xact.user.token            = 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp'
-    email_endtoend.xact.user.email_address    = 'cukeautoqc@govdelivery.com'
+    email_endtoend.xact.account.id            = '10541'
+    email_endtoend.xact.user.token            = 'LLovBHFaaNY2buT3PxxbCPszaANkywDh'
+    email_endtoend.xact.user.email_address    = 'qc-email_end_to_end-test@govdelivery.com'
 
     email_endtoend.gmail.imap.user_name       = 'canari11dd@gmail.com'
 
   when :integration
-    email_endtoend.xact.account.id            = '10060'
-    email_endtoend.xact.user.token            = 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL'
-    email_endtoend.xact.user.email_address    = 'cukeautoint@govdelivery.com'
-
-    email_endtoend.voice.vendor.username      = 'AC189315456a80a4d1d4f82f4a732ad77e'
-    email_endtoend.voice.vendor.password      = '88e3775ad71e487c7c90b848a55a5c88'
+    email_endtoend.xact.account.id            = '10243'
+    email_endtoend.xact.user.token            = 'NqSCMTYEewtqNNbMNG7pbs6hZPYy3RyM'
+    email_endtoend.xact.user.email_address    = 'integration-email_end_to_end-test@govdelivery.com'
 
     email_endtoend.gmail.imap.user_name       = 'canari9dd@gmail.com'
 
   when :stage
-    email_endtoend.xact.account.id            = '10360'
-    email_endtoend.xact.user.token            = 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
-    email_endtoend.xact.user.email_address    = 'cukestage@govdelivery.com'
+    email_endtoend.xact.account.id            = '10940'
+    email_endtoend.xact.user.token            = 'aNYMWXsgqeppQyqGFKPqWLenEFBqAWZ5'
+    email_endtoend.xact.user.email_address    = 'stage-email_end_to_end-test@govdelivery.com'
 
     email_endtoend.gmail.imap.user_name       = 'canari7dd@gmail.com'
 
