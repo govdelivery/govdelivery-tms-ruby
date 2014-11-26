@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'rake_helper'
 
 namespace :db do
@@ -12,6 +11,6 @@ namespace :db do
     # Create the SMS 2-Way Static Content test account
     create_test_account("SMS 2Way Static", shared_loopback_vendors_config)
 
-  end # :create_webhooks_test_account
+  end # :create_sms_2way_static_test_account
 
 end # :db namespace

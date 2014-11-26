@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'rake_helper'
 
 namespace :db do
@@ -33,6 +32,6 @@ namespace :db do
 
     puts
 
-  end # :create_webhooks_test_account
+  end # :create_sms_2way_bart_test_account
 
 end # :db namespace

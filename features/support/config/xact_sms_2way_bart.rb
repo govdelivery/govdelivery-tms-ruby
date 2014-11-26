@@ -9,8 +9,8 @@ sms_2way_bart = configatron.accounts.sms_2way_bart
 sms_2way_bart.xact.user.password              = 'retek01!'
 sms_2way_bart.xact.user.admin                 = true
 
-sms_2way_bart.sms                             = configatron.sms_vendor.loopback.clone()
-sms_2way_bart.voice                           = configatron.voice_vendor.loopback.clone()
+sms_2way_bart.sms                             = configatron.sms_vendors.loopback.clone()
+sms_2way_bart.voice                           = configatron.voice_vendors.loopback.clone()
 sms_2way_bart.sms.prefix                      = 'sms_2way_bart'
 
 case environment

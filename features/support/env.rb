@@ -54,21 +54,21 @@ configatron.test_support.twilio.account.sid           = 'AC189315456a80a4d1d4f82
 configatron.test_support.twilio.account.token         = '88e3775ad71e487c7c90b848a55a5c88'
 configatron.test_support.twilio.account.twilio_test   = false
 
-configatron.sms_vendor.loopback.phone.number          = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
-configatron.sms_vendor.loopback.vendor.username       = 'shared_loopback_sms_username'
-configatron.sms_vendor.loopback.vendor.password       = 'dont care'
-configatron.sms_vendor.loopback.vendor.shared         = true
-configatron.sms_vendor.loopback.vendor.twilio_test    = false
+configatron.sms_vendors.loopback.phone.number          = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+configatron.sms_vendors.loopback.vendor.username       = 'shared_loopback_sms_username'
+configatron.sms_vendors.loopback.vendor.password       = 'dont care'
+configatron.sms_vendors.loopback.vendor.shared         = true
+configatron.sms_vendors.loopback.vendor.twilio_test    = false
 
-configatron.voice_vendor.loopback.phone.number        = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey configatron.sms_vendor.loopback.vendor.username       = 'shared_loopback_sms_username'
-configatron.voice_vendor.loopback.vendor.password     = 'dont care'
-configatron.voice_vendor.loopback.vendor.twilio_test  = false
+configatron.voice_vendors.loopback.phone.number        = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+configatron.voice_vendors.loopback.vendor.password     = 'dont care'
+configatron.voice_vendors.loopback.vendor.twilio_test  = false
 
-configatron.sms_vendor.twilio_test.phone.number       = '+15005550006'
-configatron.sms_vendor.twilio_test.vendor.username    = 'ACc66477e37af9ebee0f12b349c7b75117'
-configatron.sms_vendor.twilio_test.vendor.password    = '5b1c96ca034d474c6d4b68f8d05c99f5'
-configatron.sms_vendor.twilio_test.vendor.shared      = false
-configatron.sms_vendor.twilio_test.vendor.twilio_test = true
+configatron.sms_vendors.twilio_test.phone.number       = '+15005550006'
+configatron.sms_vendors.twilio_test.vendor.username    = 'ACc66477e37af9ebee0f12b349c7b75117'
+configatron.sms_vendors.twilio_test.vendor.password    = '5b1c96ca034d474c6d4b68f8d05c99f5'
+configatron.sms_vendors.twilio_test.vendor.shared      = false
+configatron.sms_vendors.twilio_test.vendor.twilio_test = true
 
 # Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
 #

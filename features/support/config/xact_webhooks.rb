@@ -7,8 +7,8 @@ webhooks = configatron.accounts.webhooks
 webhooks.xact.user.password = 'retek01!'
 webhooks.xact.user.admin = false
 
-webhooks.sms = configatron.sms_vendor.loopback.clone()
-webhooks.voice = configatron.voice_vendor.loopback.clone()
+webhooks.sms = configatron.sms_vendors.loopback.clone()
+webhooks.voice = configatron.voice_vendors.loopback.clone()
 webhooks.sms.prefix = 'webhooks'
 
 case environment

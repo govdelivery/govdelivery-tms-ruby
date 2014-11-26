@@ -9,8 +9,8 @@ sms_2way_static = configatron.accounts.sms_2way_static
 sms_2way_static.xact.user.password              = 'retek01!'
 sms_2way_static.xact.user.admin                 = false
 
-sms_2way_static.sms                             = configatron.sms_vendor.loopback.clone()
-sms_2way_static.voice                           = configatron.voice_vendor.loopback.clone()
+sms_2way_static.sms                             = configatron.sms_vendors.loopback.clone()
+sms_2way_static.voice                           = configatron.voice_vendors.loopback.clone()
 sms_2way_static.sms.prefix                      = 'sms_2way_static'
 
 case environment
