@@ -6,11 +6,11 @@ Feature: XACT SMS 2-Way tests.
 		And I send an SMS to create a subscription on TMS
 		Then a subscription should be created
 
-	#@2waystop
-	#Scenario: XACT 2-Way SMS to Subscribe
-		#Given I send an SMS to opt out of receiving TMS messages
-		#Then I should receive a STOP response
-		#And a my subscription should be removed
+	@2waystop
+	Scenario: XACT 2-Way SMS to Stop
+		Given I send an SMS to opt out of receiving TMS messages
+		Then I should receive a STOP response
+		And my subscription should be removed
 
     @keyword
     Scenario: XACT 2-Way SMS to receive static content

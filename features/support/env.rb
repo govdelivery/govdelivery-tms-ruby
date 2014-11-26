@@ -210,6 +210,35 @@ def twilio_test_test_account_creds
   }
 end
 
+# Number to use to send SMSs to Xact
+def twilio_xact_test_number
+    if ENV['XACT_ENV'] == 'qc'
+      {
+      :phone => '+16519684981',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    elsif ENV['XACT_ENV'] == 'integration'
+      {
+      :phone => '+16122550428',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    elsif ENV['XACT_ENV'] == 'stage'
+      {
+      :phone => '+16124247727',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    elsif ENV['XACT_ENV'] == 'prod'
+      {
+      :phone => '+16124247727',
+      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
+      }
+    end
+end
+
+def twilio_xact_test_number_2
+  '+17014842689'
+end
+
 def environment
   environments = [
     :development,
@@ -266,6 +295,26 @@ def subscribe_command
     end
 end
 
+def subscribe_command_2
+    if ENV['XACT_ENV'] == 'qc'
+      'cuke subscribe'
+    elsif ENV['XACT_ENV'] == 'integration'
+      'cukeint subscribe'
+    elsif ENV['XACT_ENV'] == 'stage'
+      'cuke subscribe'
+    elsif ENV['XACT_ENV'] == 'prod'
+      'cuke subscribe'
+    end
+end
+
+def stop_command
+  'stop'
+end  
+
+def start_command
+  'start'
+end  
+
 #xact_2waysms - prints different param strings according to environment variable passed
 def dcm_params
     if ENV['XACT_ENV'] == 'qc'
@@ -311,30 +360,6 @@ def user
     end
 end
 
-# Number to use to send SMSs to Xact
-def twilio_xact_test_number
-    if ENV['XACT_ENV'] == 'qc'
-      {
-      :phone => '+16519684981',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    elsif ENV['XACT_ENV'] == 'integration'
-      {
-      :phone => '+16122550428',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    elsif ENV['XACT_ENV'] == 'stage'
-      {
-      :phone => '+16124247727',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    elsif ENV['XACT_ENV'] == 'prod'
-      {
-      :phone => '+16124247727',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    end
-end
 
 def sample_subscriber_number
   '+16126158635'
