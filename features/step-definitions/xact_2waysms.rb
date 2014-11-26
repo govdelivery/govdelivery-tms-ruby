@@ -88,6 +88,8 @@ end
 
 Given(/^I send an SMS to opt out of receiving TMS messages$/) do
   #subscribe first
+  @conf = configatron.accounts.sms_2way_subscribe
+  client = tms_client(@conf)
   conn = Faraday.new(:url => "#{xact_url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger

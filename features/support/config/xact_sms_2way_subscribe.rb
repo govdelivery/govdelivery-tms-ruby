@@ -5,7 +5,7 @@ sms_2way_subscribe = configatron.accounts.sms_2way_subscribe
 
 # Common or default values for SMS 2way Subscribe test accounts across environments
 sms_2way_subscribe.xact.user.password             = 'retek01!'
-sms_2way_subscribe.xact.user.admin                = true
+sms_2way_subscribe.xact.user.admin                = false
 
 sms_2way_subscribe.sms                            = configatron.sms_vendors.twilio_valid_test.clone()
 sms_2way_subscribe.voice                          = configatron.voice_vendors.loopbacks.clone()
