@@ -77,15 +77,21 @@ module Xact
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
 
+    redis_hash = {}
+    sentinels = ENV['REDIS_SENTINEL_URIS'].split(",").map(&:strip) if ENV['REDIS_SENTINEL_URIS']
+    if sentinels.blank?
+      redis_hash[:url] = ENV['REDIS_URI']
+    else
+      redis_hash[:sentinels] = sentinels
+      redis_hash[:master_name] = "master"
+      redis_hash[:failover_reconnect_timeout] = 6
+    end
 
-    config.cache_store            = :redis_store, ENV['REDIS_URI'], {pool_size: 7}
+    config.cache_store            = :redis_store, redis_hash, {pool_size: 7}
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq                = {
-      default: {
-        url:       ENV['REDIS_URI'],
-        namespace: 'xact'
-      },
+      default: redis_hash.merge({namespace: 'xact'}),
       client:  {size: 20},
       server:  {}
     }

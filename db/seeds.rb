@@ -11,11 +11,11 @@
 #   rake db:seed
 ##
 
-raise "TWILIO_SID not set" unless twilio_username = ENV['TWILIO_SID']
-raise "TWILIO_TOKEN not set" unless twilio_password = ENV['TWILIO_TOKEN']
-raise "TWILIO_NUMBER not set" unless twilio_number = ENV['TWILIO_NUMBER']
-raise "TWILIO_TEST_SID not set" unless twilio_test_username = ENV['TWILIO_TEST_SID']
-raise "TWILIO_TEST_TOKEN not set" unless twilio_test_password = ENV['TWILIO_TEST_TOKEN']
+raise "TWILIO_SID not set" unless twilio_username = ENV['TWILIO_SID'].try(:dup)
+raise "TWILIO_TOKEN not set" unless twilio_password = ENV['TWILIO_TOKEN'].try(:dup)
+raise "TWILIO_NUMBER not set" unless twilio_number = ENV['TWILIO_NUMBER'].try(:dup)
+raise "TWILIO_TEST_SID not set" unless twilio_test_username = ENV['TWILIO_TEST_SID'].try(:dup)
+raise "TWILIO_TEST_TOKEN not set" unless twilio_test_password = ENV['TWILIO_TEST_TOKEN'].try(:dup)
 
 twilio_sms_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Sender')
 twilio_sms_sender.update_attributes(
@@ -114,7 +114,6 @@ if Rails.env.development? || Rails.env.ci?
   Keyword.delete_all
   kw = Keyword.new(name: 'SERVICES')
   kw.account = omg
-  kw.vendor = omg.sms_vendor
   kw.save!
   kw.create_command!(params: CommandParameters.new(
     username: "example@evotest.govdelivery.com",
@@ -126,14 +125,12 @@ if Rails.env.development? || Rails.env.ci?
   # SUBSCRIBE ANTHRAX => evolution API request to localhost:3001
   kw = Keyword.new(name: 'SUBSCRIBE')
   kw.account = omg
-  kw.vendor = omg.sms_vendor
   kw.save!
   kw.create_command!(params: CommandParameters.new(dcm_account_code: "ACME", dcm_topic_codes: ['ANTRHAX']), command_type: :dcm_subscribe)
 
   # Respond to "DONKEY" with "hee-haw!"
   kw = Keyword.new(name: "DONKEY", response_text: "hee-haw!")
   kw.account = omg
-  kw.vendor = omg.sms_vendor
   kw.save!
 
   # Make the product user (admin)
