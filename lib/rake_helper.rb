@@ -10,6 +10,13 @@ end
 def shared_twilio_valid_test_vendors_config
   config = shared_loopback_vendors_config
   config[:sms_vendor_name] = 'Test - Shared Twilio Valid Test SMS Vendor'
+  return config
+end
+
+def shared_twilio_invalid_number_test_vendors_config
+  config = shared_loopback_vendors_config
+  config[:sms_vendor_name] = 'Test - Shared Twilio Invalid Number Test SMS Vendor'
+  return config
 end
 
 def set_record_config(r, config)

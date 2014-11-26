@@ -46,6 +46,11 @@ def xact_url
 end
 
 # Set general configuration options
+twilio_test_credentials = {
+  sid: 'ACc66477e37af9ebee0f12b349c7b75117',
+  token: '5b1c96ca034d474c6d4b68f8d05c99f5'
+}
+
 configatron.xact.url                                  = xact_url
 
 configatron.test_support.twilio.phone.number          = '+15183004174'
@@ -64,11 +69,17 @@ configatron.voice_vendors.loopback.phone.number        = '+15552287439'   # 1-55
 configatron.voice_vendors.loopback.vendor.password     = 'dont care'
 configatron.voice_vendors.loopback.vendor.twilio_test  = false
 
-configatron.sms_vendors.twilio_test.phone.number       = '+15005550006'
-configatron.sms_vendors.twilio_test.vendor.username    = 'ACc66477e37af9ebee0f12b349c7b75117'
-configatron.sms_vendors.twilio_test.vendor.password    = '5b1c96ca034d474c6d4b68f8d05c99f5'
-configatron.sms_vendors.twilio_test.vendor.shared      = false
-configatron.sms_vendors.twilio_test.vendor.twilio_test = true
+configatron.sms_vendors.twilio_valid_test.phone.number       = '+15005550006'
+configatron.sms_vendors.twilio_valid_test.vendor.username    = twilio_test_credentials[:sid]
+configatron.sms_vendors.twilio_valid_test.vendor.password    = twilio_test_credentials[:token]
+configatron.sms_vendors.twilio_valid_test.vendor.shared      = true
+configatron.sms_vendors.twilio_valid_test.vendor.twilio_test = true
+
+configatron.sms_vendors.twilio_invalid_test.phone.number       = '+15005550001'
+configatron.sms_vendors.twilio_invalid_test.vendor.username    = twilio_test_credentials[:sid]
+configatron.sms_vendors.twilio_invalid_test.vendor.password    = twilio_test_credentials[:token]
+configatron.sms_vendors.twilio_invalid_test.vendor.shared      = true
+configatron.sms_vendors.twilio_invalid_test.vendor.twilio_test = true
 
 # Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
 #

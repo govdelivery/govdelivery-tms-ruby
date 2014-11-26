@@ -19,19 +19,21 @@ vendors exist on each testing environment. Again, these accounts were created vi
 |                                               | Has magic recipient email addresses to force recipient states.    |
 
 
-| SMS Vendor Name                              	| Phone Number 	| Notes                                                                                            	|
-|--------------------------------------------	|--------------	|------------------------------------------------------------------------------------------------	|
-| Test - Shared Loopback SMS Vendor          	| +15552287439 	| Makes no attempt to actually send SMSs.                                                           |
-|                                               |               | Has magic recipient phone numbers to force recipient states.                                               	|
-| Test - Shared Twilio Valid Test SMS Vendor 	| +15005550006 	| Uses Twilio test credentials to test integration with Twilio without actually sending messages.   |
-|                                               |               | Only phone number from which a 'valid' transaction can occur.                                   	|                                                                                                                                                      	|
 *All SMS Vendors are Shared vendors (.shared? == true)*
+| SMS Vendor Name                              	        | Notes                                                           	        |
+|--------------------------------------------	        |---------------------------------------------------------------------------|
+| Test - Shared Loopback SMS Vendor          	        | Makes no attempt to actually send SMSs.                                   |
+|                                                       | Has magic recipient phone numbers to force recipient states.              |
+| Test - Shared Twilio Valid Test SMS Vendor 	        | Uses Twilio test credentials. Doesn't actually send messages.             |
+|                                                       | Only phone number from which a 'valid' transaction can occur.             |                                                                                                                                                      	|
+| Test - Shared Twilio Invalid Number Test SMS Vendor   | Uses Twilio test credentials. Doesn't actually send messages.             |
+|                                                       | Transactions from this number return invalid phone number from Twilio.    |
 
 
-| Voice Vendor Name                             | Phone Number  | Notes                                                             |
-|--------------------------------------------   |---------------|-------------------------------------------------------------------|
-| Test - Shared Loopback Voice Vendor           | +15552287439  | Makes no attempt to actually make a call.                         |
-|                                               |               | Has magic recipient phone numbers to force recipient states.      |
+| Voice Vendor Name                             | Notes                                                             |
+|--------------------------------------------   |-------------------------------------------------------------------|
+| Test - Shared Loopback Voice Vendor           | Makes no attempt to actually make a call.                         |
+|                                               | Has magic recipient phone numbers to force recipient states.      |
 
 ## Creating A New Account
 
