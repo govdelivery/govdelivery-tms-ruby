@@ -48,7 +48,26 @@ end
 # Set general configuration options
 twilio_test_credentials = {
   sid: 'ACc66477e37af9ebee0f12b349c7b75117',
-  token: '5b1c96ca034d474c6d4b68f8d05c99f5'
+  token: '5b1c96ca034d474c6d4b68f8d05c99f5',
+}
+
+twilio_live_credentials = {
+  sid: 'AC189315456a80a4d1d4f82f4a732ad77e',
+  token: '88e3775ad71e487c7c90b848a55a5c88'
+}
+
+twilio_live_numbers = {
+  development: '+16514336311',
+  qc: '+16519684981',
+  integration: '+16122550428',
+  stage: '+16124247727'
+}
+
+twilio_live_phone_sids = {
+  development: 'PN06416578aa730a3e8f0fd3865ce9c458',
+  qc: 'PN732e0d02edf9e1fdd61a3606ac030e34',
+  integration: 'PN32087052fc8c8cc15e312a70b704eef9',
+  stage: 'PNe896243b192ff04674538f3aa11ea839'
 }
 
 configatron.xact.url                                  = xact_url
@@ -80,6 +99,19 @@ configatron.sms_vendors.twilio_invalid_test.vendor.username    = twilio_test_cre
 configatron.sms_vendors.twilio_invalid_test.vendor.password    = twilio_test_credentials[:token]
 configatron.sms_vendors.twilio_invalid_test.vendor.shared      = true
 configatron.sms_vendors.twilio_invalid_test.vendor.twilio_test = true
+
+configatron.sms_vendors.live.phone.number                       = twilio_live_numbers[environment]
+configatron.sms_vendors.live.phone.sid                          = twilio_live_phone_sids[environment]
+configatron.sms_vendors.live.vendor.username                    = twilio_live_credentials[:sid]
+configatron.sms_vendors.live.vendor.password                    = twilio_live_credentials[:token]
+configatron.sms_vendors.live.vendor.shared                      = true
+configatron.sms_vendors.live.vendor.twilio_test                 = false
+
+configatron.voice_vendors.live.phone.number                     = twilio_live_numbers[environment]
+configatron.voice_vendors.live.phone.sid                        = twilio_live_phone_sids[environment]
+configatron.voice_vendors.live.vendor.username                  = twilio_live_credentials[:sid]
+configatron.voice_vendors.live.vendor.password                  = twilio_live_credentials[:token]
+configatron.voice_vendors.live.vendor.twilio_test               = false
 
 # Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
 #

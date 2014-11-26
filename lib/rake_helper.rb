@@ -32,6 +32,13 @@ def shared_live_email_vendors_config
   return config
 end
 
+def shared_live_phone_vendors_config
+  config = shared_loopback_vendors_config
+  config[:sms_vendor_name] = 'Test - Shared Live SMS Vendor'
+  config[:voice_vendor_name] = 'Test - Shared Live Voice Vendor'
+  return config
+end
+
 def set_record_config(r, config)
   config.each do |k,v|
     r.send("#{k}=", v)

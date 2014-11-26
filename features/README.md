@@ -30,12 +30,14 @@ vendors exist on each testing environment. Again, these accounts were created vi
 |                                                       | Only phone number from which a 'valid' transaction can occur.             |                                                                                                                                                      	|
 | Test - Shared Twilio Invalid Number Test SMS Vendor   | Uses Twilio test credentials. Doesn't actually send messages.             |
 |                                                       | Transactions from this number return invalid phone number from Twilio.    |
+| Test - Shared Live SMS Vendor                         | Can actually send SMSs. Each environment has it's own Live number.        |
 
 
 | Voice Vendor Name                             | Notes                                                             |
 |--------------------------------------------   |-------------------------------------------------------------------|
 | Test - Shared Loopback Voice Vendor           | Makes no attempt to actually make a call.                         |
 |                                               | Has magic recipient phone numbers to force recipient states.      |
+| Test - Shared Live Voice Vendor               | Can actually send SMSs. Each environment has it's own Live number.|
 
 ## Creating A New Account
 

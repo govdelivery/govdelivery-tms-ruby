@@ -8,6 +8,18 @@ namespace :db do
       token: '5b1c96ca034d474c6d4b68f8d05c99f5'
   }
 
+  twilio_live_credentials = {
+      sid: 'AC189315456a80a4d1d4f82f4a732ad77e',
+      token: '88e3775ad71e487c7c90b848a55a5c88'
+  }
+
+  twilio_live_numbers = {
+      'development' => '+16514336311',
+      'qc' => '+16519684981',
+      'integration' => '+16122550428',
+      'stage' => '+16124247727'
+  }
+
   # OMG Vendors
   loopback_vendors_config = {
       sms_vendor_name: 'Loopback SMS Sender',
@@ -194,5 +206,32 @@ namespace :db do
     sms_twil_invalid_number_test.shared = true
     sms_twil_invalid_number_test.save!
   end # :create_shared_twilio_invalid_number_test_vendor
+
+  desc 'Create the Shared Live Phone Vendors.'
+  task :create_shared_live_phone_vendors => :environment do |t|
+
+    sms_live_test = create_or_verify_by_name(SmsVendor, {
+        name: shared_live_phone_vendors_config[:sms_vendor_name],
+        worker: 'TwilioMessageWorker',
+        username: twilio_live_credentials[:sid],
+        password: twilio_live_credentials[:token],
+        from: twilio_live_numbers[Rails.env],   # Each environment has it's own live number for testing
+        shared: true
+      }
+    )
+    sms_live_test.shared = true
+    sms_live_test.save!
+
+    voice_live_test = create_or_verify_by_name(VoiceVendor, {
+        name: shared_live_phone_vendors_config[:voice_vendor_name],
+        worker: 'TwilioMessageWorker',
+        username: twilio_live_credentials[:sid],
+        password: twilio_live_credentials[:token],
+        from: twilio_live_numbers[Rails.env]   # Each environment has it's own live number for testing
+      }
+    )
+
+  end # :create_shared_twilio_invalid_number_test_vendor
+
 
 end # :db namespace
