@@ -19,6 +19,19 @@ def shared_twilio_invalid_number_test_vendors_config
   return config
 end
 
+def shared_live_email_vendors_config
+  config = shared_loopback_vendors_config
+  case Rails.env
+    when "qc"
+      config[:email_vendor_name] = 'ODM Sender'
+    when "integration", "stage"
+      config[:email_vendor_name] = 'TMS Extended Sender'
+    else
+      config[:email_vendor_name] = 'Test - Shared ODM Email Vendor'
+  end
+  return config
+end
+
 def set_record_config(r, config)
   config.each do |k,v|
     r.send("#{k}=", v)
