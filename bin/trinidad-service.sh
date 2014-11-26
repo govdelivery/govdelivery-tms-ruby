@@ -29,12 +29,12 @@ JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPe
 pid_dir=$(dirname $pid_file)
 restart_file="${pid_dir}/restart-trinidad.txt"
 
-if [[ -z "$environment" ]]; then
+if [[ -z "$APP_ENVIRONMENT" ]]; then
     echo "no environment set!"
     exit 5
 fi
 
-export RAILS_ENV=$environment
+export RAILS_ENV=$APP_ENVIRONMENT
 log_file="${app_path}/log/${app}.log"
 
 status () {
