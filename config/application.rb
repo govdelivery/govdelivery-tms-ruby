@@ -137,9 +137,9 @@ module Xact
     # Controls whether this environment will publish/subscribe to Kafka
     config.analytics               = {
       enabled:    ENV['ANALYTICS_ENABLED']=='true',
-      kafkas:     ENV['ANALYTICS_KAFKAS'],
-      zookeepers: ENV['ANALYTICS_ZOOKEEPERS'],
-      }
+      kafkas:     ENV['ANALYTICS_KAFKAS'].split(','),
+      zookeepers: ENV['ANALYTICS_ZOOKEEPERS'].split(','),
+    }
 
     # Default log level is DEBUG
     config.logger    = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default']
