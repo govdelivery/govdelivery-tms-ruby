@@ -301,6 +301,7 @@ GEM
       sexp_processor (~> 4.1)
     rubyntlm (0.3.4)
     sass (3.4.8)
+    send_nsca (0.5.0)
     sexp_processor (4.4.4)
     shoulda-matchers (2.7.0)
       activesupport (>= 3.0.0)
@@ -451,6 +452,7 @@ DEPENDENCIES
   rspec-rails
   ruby-debug
   ruby-oci8
+  send_nsca
   shoulda-matchers
   sidekiq-failures
   sidekiq-pro

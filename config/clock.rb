@@ -18,6 +18,7 @@ module Clockwork
     every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')
     every(5.minutes, 'Odm::TmsExtendedOpensWorker')
     every(5.minutes, 'Odm::TmsExtendedClicksWorker')
+    every(5.minutes, 'NscaStatusWorker')
   else
     warn('ODM polling is disabled')
   end
