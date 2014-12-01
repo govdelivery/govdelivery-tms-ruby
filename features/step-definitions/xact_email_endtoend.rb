@@ -75,6 +75,7 @@ Then /^I go to Gmail to check for message delivery$/ do
   iter = 0
 
   while (msg_found == false && iter < num_iterations)
+    STDOUT.puts "Have waited #{wait_time * iter} seconds".blue
     STDOUT.puts "Waiting for #{wait_time} more seconds"
     sleep(wait_time)
     iter += 1
@@ -85,9 +86,9 @@ Then /^I go to Gmail to check for message delivery$/ do
       Mail.defaults do
         retriever_method :imap, conf.gmail.imap.to_h
       end
-       
+
       emails = Mail.find(:what => :last, :count => 1000, :order => :dsc)
-         
+
       emails.each do |mail|
         mail.parts.map { |p| 
           if p.content_type.include? "text/html"
@@ -98,7 +99,7 @@ Then /^I go to Gmail to check for message delivery$/ do
         }
       end
 
-    rescue Exception => e
+    rescue => e
       STDOUT.puts "Error interacting with Gmail IMAP (will retry in #{wait_time} seconds): " + e.message
       STDOUT.puts e.backtrace
     ensure

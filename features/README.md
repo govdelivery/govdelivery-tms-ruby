@@ -94,5 +94,6 @@ Just set the email/voice/sms attribute of the account's config to a clone of the
 
 # Fuctions
 
-- magic_emails - returns magic email addresses for the email loopbacks worker that will force specific states on recipients
-- magic_phone_numbers - returns magic phone numbers for the sms loopbacks worker that will force specific states on recipients
+- magic_addresses - returns magic addresses for the loopback workers that will force specific states on recipients.
+  Type of address is dependant on the message type provided. If :email, magic email addresses are returned. If :sms or :voice,
+  magic phone numbers are returned.
