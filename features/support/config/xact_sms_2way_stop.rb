@@ -17,17 +17,23 @@ case environment
     sms_2way_stop.xact.user.token            = ENV['XACT_SMS2WAYSTOP_USER_TOKEN']
     sms_2way_stop.xact.user.email_address    = 'development-sms_2way_stop-test@govdelivery.com'
   when :qc
-    sms_2way_stop.xact.account.id            = '10542'
-    sms_2way_stop.xact.user.token            = 'oxyyRazrUSiUU7eyMkhwf5yDMmUCuFRq'
-    sms_2way_stop.xact.user.email_address    = 'qc-sms_2way_stop-test@govdelivery.com'
+    sms_2way_stop.xact.account.id               = '10542'
+    sms_2way_stop.xact.account.dcm_account_id   = ['CUKEAUTO_QC']
+    sms_2way_stop.xact.account.dcm_topic_codes  = ["CUKEAUTO_QC_SMS"]
+    sms_2way_stop.xact.user.token               = 'oxyyRazrUSiUU7eyMkhwf5yDMmUCuFRq'
+    sms_2way_stop.xact.user.email_address       = 'qc-sms_2way_stop-test@govdelivery.com'
 
   when :integration
-    sms_2way_stop.xact.account.id            = '10244'
-    sms_2way_stop.xact.user.token            = 'UpsxeBZ744xxqyAgZR8yZPZukeciycxr'
-    sms_2way_stop.xact.user.email_address    = 'integration-sms_2way_stop-test@govdelivery.com'
+    sms_2way_stop.xact.account.id               = '10244'
+    sms_2way_stop.xact.account.dcm_account_id   = ['CUKEAUTO_INT']
+    sms_2way_stop.xact.account.dcm_topic_codes  = ["CUKEAUTO_INT_SMS"]
+    sms_2way_stop.xact.user.token               = 'UpsxeBZ744xxqyAgZR8yZPZukeciycxr'
+    sms_2way_stop.xact.user.email_address       = 'integration-sms_2way_stop-test@govdelivery.com'
 
   when :stage
-    sms_2way_stop.xact.account.id            = '10943'
-    sms_2way_stop.xact.user.token            = 'szk9haJyp9t1unyV4o6qpnxxhwSs3s3z'
-    sms_2way_stop.xact.user.email_address    = 'stage-sms_2way_stop-test@govdelivery.com'
+    sms_2way_stop.xact.account.id               = '10943'
+    sms_2way_stop.xact.account.dcm_account_id   = ['CUKEAUTO_STAGE']
+    sms_2way_stop.xact.account.dcm_topic_codes  = ["CUKEAUTO_STAGE_SMS"]
+    sms_2way_stop.xact.user.token               = 'szk9haJyp9t1unyV4o6qpnxxhwSs3s3z'
+    sms_2way_stop.xact.user.email_address       = 'stage-sms_2way_stop-test@govdelivery.com'
 end

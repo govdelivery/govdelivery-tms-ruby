@@ -357,18 +357,6 @@ def keyword_params
     end
 end
 
-def subscribe_command
-    if ENV['XACT_ENV'] == 'qc'
-      'cuke qc_subscribe'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'cukeint int_subscribe'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'cuke stage_subscribe'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'cuke prod_subscribe'
-    end
-end
-
 def subscribe_command_2
     if ENV['XACT_ENV'] == 'qc'
       'cuke subscribe'
@@ -387,19 +375,6 @@ end
 
 def start_command
   'start'
-end  
-
-#xact_2waysms - prints different param strings according to environment variable passed
-def dcm_params
-    if ENV['XACT_ENV'] == 'qc'
-      {:dcm_account_code => "CUKEAUTO_QC", :dcm_topic_codes => ["CUKEAUTO_QC_SMS"]}
-    elsif ENV['XACT_ENV'] == 'integration'
-      {:dcm_account_code => "CUKEAUTO_INT", :dcm_topic_codes => ["CUKEAUTO_INT_SMS"]}
-    elsif ENV['XACT_ENV'] == 'stage'
-      {:dcm_account_code => "CUKEAUTO_STAGE", :dcm_topic_codes => ["CUKEAUTO_STAGE_SMS"]}
-    elsif ENV['XACT_ENV'] == 'prod'
-      {:dcm_account_code => "CUKEAUTO_PROD", :dcm_topic_codes => ["CUKEAUTO_PROD_SMS"]}
-    end
 end
 
 def dcm_base64_url

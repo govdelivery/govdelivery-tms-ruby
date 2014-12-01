@@ -17,13 +17,17 @@ require 'multi_xml'
 Given(/^I create a subscription keyword and command$/) do
   @conf = configatron.accounts.sms_2way_subscribe
   client = tms_client(@conf)
-  @keyword = client.keywords.build(:name => keyword_params, :response_text => keyword_params)
-  @keyword.post
+  @keyword = client.keywords.build(:name => "subscribe::#{random_string}", :response_text => "subscribe")
+  raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
     :command_type => :dcm_subscribe,
     #do not change the NAME param unless you want to break everything
     :name => "subscribe", 
-    :params => dcm_params)
+    :params => {:dcm_account_code => @conf.xact.account.dcm_account_id,
+                :dcm_topic_codes => @conf.xact.account.dcm_topic_codes})
+  raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
+
+
   sleep(2)
 end
 
@@ -40,11 +44,16 @@ And(/^I send an SMS to create a subscription on TMS$/) do
   payload['To'] = @conf.sms.phone.number
   payload['From'] = sample_subscriber_number
   payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{subscribe_command}"
+  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
   puts "Mocking text '#{payload['Body']}' to #{payload['To']}"
+  @payload = payload
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
+  end
+
+  if @resp.status == 500
+    raise "Error mocking text, received HTTP 500: #{@resp.body}"
   end
 
   #encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
@@ -81,10 +90,12 @@ Then(/^a subscription should be created$/) do
 end
 
 
+#===STOP========================================>
 
-Given(/^I send an SMS to opt out of receiving TMS messages$/) do
+
+Given(/^I am subscribed to receive TMS messages$/) do
   #subscribe first
-  @conf = configatron.accounts.sms_2way_subscribe
+  @conf = configatron.accounts.sms_2way_stop
   client = tms_client(@conf)
   conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
@@ -97,18 +108,36 @@ Given(/^I send an SMS to opt out of receiving TMS messages$/) do
   payload['To'] = @conf.sms.phone.number
   payload['From'] = twilio_xact_test_number_2
   payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{subscribe_command_2}"
+  payload['Body'] = "#{@conf.sms.prefix} subscribe"
   puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
   end
 
+  if resp.status == 500
+    raise "Error mocking text, received HTTP 500: #{resp.body}"
+  end
+
   #sleep to give subscription time to create in DCM
-  sleep(60)
+  sleep(10)
 end
 
-Then(/^I should receive a STOP response$/) do
+Given(/^I create a stop keyword and command$/) do
+  client = tms_client(@conf)
+  @keyword = client.keywords.build(:name => "stop::#{random_string}", :response_text => "stop")
+  raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
+  @command = @keyword.commands.build(
+    :command_type => :dcm_unsubscribe,
+    #do not change the NAME param unless you want to break everything
+    :name => "unsubscribe",
+    :params => {:dcm_account_codes => @conf.xact.account.dcm_account_id})
+  raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
+
+  sleep(2)
+end
+
+When(/^I send an SMS to opt out of receiving TMS messages$/) do
   #begin stop request
   conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
@@ -121,14 +150,24 @@ Then(/^I should receive a STOP response$/) do
   payload['To'] = @conf.sms.phone.number
   payload['From'] = twilio_xact_test_number_2
   payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{stop_command}"
+  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
   puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
   end
-  ap @resp
-  sleep(60)
+
+  if @resp.status == 500
+    raise "Error mocking text, received HTTP 500: #{@resp.body}"
+  end
+end
+
+Then(/^I should receive a STOP response$/) do
+  resp_xml = Hash.from_xml @resp.body
+  if resp_xml['Response']['Sms'] != 'stop'
+    ap @resp
+    raise 'Did not receive STOP response'
+  end
 end
 
 And(/^my subscription should be removed$/) do
@@ -153,29 +192,7 @@ And(/^my subscription should be removed$/) do
     puts 'Subscriber not found'.green
   else
     fail 'Subscriber found'.red
-  end 
-
-  sleep(10)
-
-  #begin start request so the test can essentially reset itself.
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
-    faraday.request     :url_encoded
-    faraday.response    :logger
-    faraday.adapter     Faraday.default_adapter
   end
-
-  #create tms/xact twilio request
-  payload = {}
-  payload['To'] = @conf.sms.phone.number
-  payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{stop_command}"
-  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
-  @resp = conn.post do |req|
-    req.url "/twilio_requests.xml"
-    req.body = payload
-  end
-  ap @resp
 end
 
 #===STATIC========================================>

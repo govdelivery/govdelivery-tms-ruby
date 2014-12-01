@@ -10,8 +10,15 @@ namespace :db do
     Rake::Task['db:create_shared_twilio_valid_test_vendor'].invoke
 
     # Create the SMS 2-Way Static Content test account
-    create_test_account("SMS 2Way Subscribe", shared_twilio_valid_test_vendors_config)
+    a = create_test_account("SMS 2Way Subscribe", shared_twilio_valid_test_vendors_config)
 
+    if !a.dcm_account_codes.include?(dcm_account_id)
+      puts "Adding DCM Account Code '#{dcm_account_id}'"
+      a.dcm_account_codes.add(dcm_account_id)
+      a.save!
+    else
+      puts "Found DCM Account Code '#{dcm_account_id}'"
+    end
   end # :create_sms_2way_subscribe_test_account
 
 end # :db namespace

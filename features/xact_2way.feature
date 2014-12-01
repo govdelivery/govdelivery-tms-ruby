@@ -8,7 +8,9 @@ Feature: XACT SMS 2-Way tests.
 
 	@2waystop
 	Scenario: XACT 2-Way SMS to Stop
-		Given I send an SMS to opt out of receiving TMS messages
+		Given I am subscribed to receive TMS messages
+        And I create a stop keyword and command
+        When I send an SMS to opt out of receiving TMS messages
 		Then I should receive a STOP response
 		And my subscription should be removed
 

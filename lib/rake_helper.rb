@@ -39,6 +39,28 @@ def shared_live_phone_vendors_config
   return config
 end
 
+def dcm_account_id
+  case Rails.env
+    when "qc"
+      "CUKEAUTO_QC"
+    when "integration"
+      "CUKEAUTO_INT"
+    when "stage"
+      "CUKEAUTO_STAGE"
+  end
+end
+
+def dcm_topic_codes
+  case Rails.env
+    when "qc"
+      ["CUKEAUTO_QC_SMS"]
+    when "integration"
+      ["CUKEAUTO_INT_SMS"]
+    when "stage"
+      ["CUKEAUTO_STAGE_SMS"]
+  end
+end
+
 def set_record_config(r, config)
   config.each do |k,v|
     r.send("#{k}=", v)
