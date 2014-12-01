@@ -9,6 +9,8 @@ require 'rack/ssl'
 # set up logging
 require File.expand_path("../logging", __FILE__)
 
+require File.join(File.expand_path("../../lib", __FILE__), 'gov_delivery', 'host')
+
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require(*Rails.groups(:assets => %w(development test)))
@@ -143,9 +145,9 @@ module Xact
 
     # Default log level is DEBUG
     config.logger    = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default']
-    
-    hostname = `hostname`.strip.split('.')
-    config.datacenter_env = hostname[0]
-    config.datacenter_location = hostname[-2]
+
+    host                       = GovDelivery::Host.new
+    config.datacenter_location = host.datacenter
+    config.datacenter_env      = host.env
   end
 end
