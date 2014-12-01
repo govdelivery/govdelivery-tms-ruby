@@ -29,7 +29,7 @@ end
 
 And(/^I send an SMS to create a subscription on TMS$/) do
   #create connection to XACT
-  conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
+  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -82,15 +82,11 @@ end
 
 
 
-#===STOP========================================>
-
-
-
 Given(/^I send an SMS to opt out of receiving TMS messages$/) do
   #subscribe first
   @conf = configatron.accounts.sms_2way_subscribe
   client = tms_client(@conf)
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -98,10 +94,11 @@ Given(/^I send an SMS to opt out of receiving TMS messages$/) do
 
   #create tms/xact twilio request
   payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
-  payload['Body'] = subscribe_command_2
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} #{subscribe_command_2}"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
@@ -113,7 +110,7 @@ end
 
 Then(/^I should receive a STOP response$/) do
   #begin stop request
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -121,10 +118,11 @@ Then(/^I should receive a STOP response$/) do
 
   #create tms/xact twilio request
   payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
-  payload['Body'] = stop_command
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} #{stop_command}"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
@@ -151,7 +149,7 @@ And(/^my subscription should be removed$/) do
   #puts @response['subscriber']['phone']
 
   #verifying if subscriber is present
-  if @response['errors']['error'] = 'Subscriber not found' #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
+  if @response['errors']['error'] = 'Subscriber not found'
     puts 'Subscriber not found'.green
   else
     fail 'Subscriber found'.red
@@ -168,18 +166,17 @@ And(/^my subscription should be removed$/) do
 
   #create tms/xact twilio request
   payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
-  payload['Body'] = start_command
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} #{stop_command}"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
   end
   ap @resp
 end
-
-
 
 #===STATIC========================================>
 
