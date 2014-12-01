@@ -30,6 +30,7 @@ module Message
     end
 
     scope :without_message, -> { select(*(self.attribute_names-['body', 'subject', 'macros', 'play_url', 'say_text'])) }
+    scope :not_yet_sending, -> { where(status: ['new', 'queued']) }
 
     # don't raise an error if complete! fails
     def complete_with_exception_handler!
