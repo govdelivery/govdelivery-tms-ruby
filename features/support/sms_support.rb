@@ -1,4 +1,4 @@
-#require 'twilio-ruby'
+require 'colored'
 
 
 #Before('@2waystatic') do |scenario|
@@ -13,7 +13,7 @@
 
 After('@keyword') do |scenario|
   if not scenario.failed?
-    STDOUT.puts "Deleting keyword created for this test"
+    STDOUT.puts "Deleting keyword created for this test".blue
     @keyword.delete
   end
 end
