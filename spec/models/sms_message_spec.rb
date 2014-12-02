@@ -143,7 +143,7 @@ describe SmsMessage do
       expect { message.responding! }.to raise_error(AASM::InvalidTransition)
     end
 
-    it 'should get canceled' do
+    it 'should get canceled and set all recipients to cancelled' do
       expect(message.cancel!).to be true
       expect(message.completed_at).to_not be nil
       message.recipients.reload.each do |rcpt|
@@ -157,7 +157,7 @@ describe SmsMessage do
         message.ready!.should be true
       end
 
-      it 'should get canceled' do
+      it 'should get canceled and set all recipients to cancelled' do
         expect(message.cancel!).to be true
         expect(message.completed_at).to_not be nil
         message.recipients.reload.each do |rcpt|
