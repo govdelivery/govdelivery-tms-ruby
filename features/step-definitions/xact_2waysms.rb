@@ -15,6 +15,8 @@ require 'multi_xml'
 
 
 Given(/^I create a subscription keyword and command$/) do
+  next if dev_not_live?
+
   @conf = configatron.accounts.sms_2way_subscribe
   client = tms_client(@conf)
   @keyword = client.keywords.build(:name => "subscribe::#{random_string}", :response_text => "subscribe")
@@ -32,6 +34,8 @@ Given(/^I create a subscription keyword and command$/) do
 end
 
 And(/^I send an SMS to create a subscription on TMS$/) do
+  next if dev_not_live?
+
   #create connection to XACT
   conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
@@ -62,6 +66,8 @@ And(/^I send an SMS to create a subscription on TMS$/) do
 end
 
 Then(/^a subscription should be created$/) do
+  next if dev_not_live?
+
   user #dcm credentials
   @request.url = dcm_base64_url + @base64
   @data = HTTPI.get(@request)
@@ -91,6 +97,8 @@ end
 
 
 Given(/^I am subscribed to receive TMS messages$/) do
+  next if dev_not_live?
+
   #subscribe first
   @conf = configatron.accounts.sms_2way_stop
   client = tms_client(@conf)
@@ -121,6 +129,8 @@ Given(/^I am subscribed to receive TMS messages$/) do
 end
 
 Given(/^I create a stop keyword and command$/) do
+  next if dev_not_live?
+
   client = tms_client(@conf)
   @keyword = client.keywords.build(:name => "stop::#{random_string}", :response_text => "stop")
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
@@ -135,6 +145,8 @@ Given(/^I create a stop keyword and command$/) do
 end
 
 When(/^I send an SMS to opt out of receiving TMS messages$/) do
+  next if dev_not_live?
+
   #begin stop request
   conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
@@ -160,6 +172,8 @@ When(/^I send an SMS to opt out of receiving TMS messages$/) do
 end
 
 Then(/^I should receive a STOP response$/) do
+  next if dev_not_live?
+
   resp_xml = Hash.from_xml @resp.body
   if resp_xml['Response']['Sms'] != 'stop'
     ap @resp
@@ -168,6 +182,8 @@ Then(/^I should receive a STOP response$/) do
 end
 
 And(/^my subscription should be removed$/) do
+  next if dev_not_live?
+
   #encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(twilio_xact_test_number_2)
 

@@ -1,3 +1,5 @@
+require 'colored'
+
 Before() do |scenario|
   @capi = Callbacks_API_Client.new(callbacks_api_root)
   @webhooks = []
@@ -5,7 +7,7 @@ end
 
 
 Before('@Dev-Safety') do |scenario|
-  STDOUT.puts "\tSkipping on Dev with Non-Live Account" if dev_not_live?
+  STDOUT.puts "\tSkipping on Dev with Non-Live Account".red if dev_not_live?
 end
 
 # Set our Twilio test account to have no callbacks when we are done

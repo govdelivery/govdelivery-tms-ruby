@@ -195,7 +195,7 @@ end
 def dev_not_live?
   return false unless environment == :development
 
-  return sms_endtoend.xact.user.token.nil?
+  return !(configatron.xact.has_key?('user') && configatron.xact.user.has_key?('token'))
 end
 
 def dcm_base64_url
