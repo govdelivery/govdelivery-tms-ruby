@@ -131,12 +131,12 @@ Then /^I go to Gmail to check for message delivery$/ do
   iter = 0
 
   while (msg_found == false && iter < num_iterations)
-    puts "Waiting for #{wait_time} more seconds"
+    STDOUT puts "Waiting for #{wait_time} more seconds"
     sleep(wait_time)
     iter += 1
 
     begin
-      puts "Logging into Gmail IMAP looking for subject: #{expected_subject}"
+      STDOUT puts "Logging into Gmail IMAP looking for subject: #{expected_subject}"
 
       Mail.defaults do
         retriever_method :imap, imap_opts
@@ -155,8 +155,8 @@ Then /^I go to Gmail to check for message delivery$/ do
       end
 
     rescue Exception => e
-      puts "Error interacting with Gmail IMAP (will retry in #{wait_time} seconds): " + e.message
-      puts e.backtrace
+      STDOUT puts "Error interacting with Gmail IMAP (will retry in #{wait_time} seconds): " + e.message
+      STDOUT puts e.backtrace
     ensure
       #imap.logout
       #imap.disconnect
@@ -189,5 +189,5 @@ Then /^I go to Gmail to check for message delivery$/ do
 
   cleaner = IMAPCleaner.new
   cleaner.clean_inbox(imap_opts[:address], imap_opts[:port], imap_opts[:enable_ssl], imap_opts[:user_name], imap_opts[:password])
-  puts 'Cleaned inbox'.green
+  STDOUT puts 'Cleaned inbox'.green
 end 
