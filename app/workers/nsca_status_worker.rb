@@ -15,7 +15,7 @@ class NscaStatusWorker
         return_code: count==0 ? SendNsca::STATUS_OK : SendNsca::STATUS_WARNING,
         status:      "Status #{count==0 ? 'OK' : 'WARNING'}: #{count} records"
       }
-      Rails.logger.debug("SendNsca::NscaConnection -- #{args.inspect}")
+      logger.debug("SendNsca::NscaConnection -- #{args.inspect}")
       SendNsca::NscaConnection.new(args).send_nsca
     end
   end
