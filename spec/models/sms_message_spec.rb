@@ -143,9 +143,27 @@ describe SmsMessage do
       expect { message.responding! }.to raise_error(AASM::InvalidTransition)
     end
 
+    it 'should get canceled' do
+      expect(message.cancel!).to be true
+      expect(message.completed_at).to_not be nil
+      message.recipients.reload.each do |rcpt|
+        expect(rcpt.status).to eq 'canceled'
+        expect(rcpt.completed_at).to_not be nil
+      end
+    end
+
     context 'a valid ready transition from new to queued' do
       before do
         message.ready!.should be true
+      end
+
+      it 'should get canceled' do
+        expect(message.cancel!).to be true
+        expect(message.completed_at).to_not be nil
+        message.recipients.reload.each do |rcpt|
+          expect(rcpt.status).to eq 'canceled'
+          expect(rcpt.completed_at).to_not be nil
+        end
       end
 
       it 'should work' do
@@ -205,7 +223,7 @@ describe SmsMessage do
 
   it 'should have counts for all states in recipient_state_counts' do
     message = account.sms_messages.create!(:body => 'short body')
-    counts = message.recipient_counts
+    counts  = message.recipient_counts
     EmailRecipient.aasm.states.map(&:to_s).each do |state|
       expect(counts[state]).to eq 0
     end
