@@ -131,12 +131,12 @@ Then /^I go to Gmail to check for message delivery$/ do
   iter = 0
 
   while (msg_found == false && iter < num_iterations)
-    STDOUT puts "Waiting for #{wait_time} more seconds"
+    STDOUT.puts "Waiting for #{wait_time} more seconds"
     sleep(wait_time)
     iter += 1
 
     begin
-      STDOUT puts "Logging into Gmail IMAP looking for subject: #{expected_subject}"
+      STDOUT.puts "Logging into Gmail IMAP looking for subject: #{expected_subject}"
 
       Mail.defaults do
         retriever_method :imap, imap_opts
@@ -155,8 +155,8 @@ Then /^I go to Gmail to check for message delivery$/ do
       end
 
     rescue Exception => e
-      STDOUT puts "Error interacting with Gmail IMAP (will retry in #{wait_time} seconds): " + e.message
-      STDOUT puts e.backtrace
+      STDOUT.puts "Error interacting with Gmail IMAP (will retry in #{wait_time} seconds): " + e.message
+      STDOUT.puts e.backtrace
     ensure
       #imap.logout
       #imap.disconnect
@@ -164,7 +164,7 @@ Then /^I go to Gmail to check for message delivery$/ do
 
     if message_list[expected_subject]
       msg_found = true
-      puts "Message #{expected_subject} found after #{wait_time * iter} seconds".green
+      STDOUT.puts "Message #{expected_subject} found after #{wait_time * iter} seconds".green
       doc = Nokogiri::HTML(message_list[expected_subject])
 
       if(doc)
@@ -174,7 +174,7 @@ Then /^I go to Gmail to check for message delivery$/ do
           if(link_tester.test_link(link["href"], expected_link, expected_link_prefix))
             link_redirect_works = true
             link_in_email = link["href"]
-            puts "Link #{link["href"]} redirects to #{expected_link}".green
+            STDOUT.puts "Link #{link["href"]} redirects to #{expected_link}".green
           end
         end
       end
@@ -189,5 +189,5 @@ Then /^I go to Gmail to check for message delivery$/ do
 
   cleaner = IMAPCleaner.new
   cleaner.clean_inbox(imap_opts[:address], imap_opts[:port], imap_opts[:enable_ssl], imap_opts[:user_name], imap_opts[:password])
-  STDOUT puts 'Cleaned inbox'.green
+  STDOUT.puts 'Cleaned inbox'.green
 end 
