@@ -260,6 +260,8 @@ GEM
       redis-actionpack (~> 4)
       redis-activesupport (~> 4)
       redis-store (~> 1.1.0)
+    redis-sentinel (1.5.0)
+      redis
     redis-store (1.1.4)
       redis (>= 2.2)
     request_exception_handler (0.5.0)
@@ -445,6 +447,7 @@ DEPENDENCIES
   rails-erd
   redis-activesupport (= 4.0.0.2)
   redis-rails
+  redis-sentinel
   redis-store (= 1.1.4)
   request_exception_handler
   rspec-collection_matchers
