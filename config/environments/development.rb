@@ -54,5 +54,5 @@ Xact::Application.configure do
 
   config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 
-  config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
+  config.odm_polling_enabled = false
 end

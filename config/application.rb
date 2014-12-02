@@ -118,7 +118,6 @@ module Xact
     config.fema_url            = ENV['FEMA_URI']
 
     # qc ODM
-    config.odm_polling_enabled = false
     config.odm_endpoint        = "#{ENV['ODM_URI']}/service/TMSExtended?wsdl"
     config.odm_username        = ENV['ODM_USERNAME']
     config.odm_password        = ENV['ODM_PASSWORD']
@@ -149,5 +148,7 @@ module Xact
     host                       = GovDelivery::Host.new
     config.datacenter_location = host.datacenter
     config.datacenter_env      = host.env
+
+    config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
   end
 end

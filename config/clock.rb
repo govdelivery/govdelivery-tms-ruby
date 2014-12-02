@@ -13,12 +13,12 @@ module Clockwork
   end
 
   every(1.minutes, 'Sidekiq::RateLimitedQueue::LockInvalidator')
+  every(5.minutes, 'NscaStatusWorker')
 
   if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
     every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')
     every(5.minutes, 'Odm::TmsExtendedOpensWorker')
     every(5.minutes, 'Odm::TmsExtendedClicksWorker')
-    every(5.minutes, 'NscaStatusWorker')
   else
     warn('ODM polling is disabled')
   end
@@ -35,7 +35,7 @@ module Clockwork
   end
 
   begin
-    Rails.configuration.custom_report_account_id
+    raise "Rails.configuration.custom_report_account_id not set" unless Rails.configuration.custom_report_account_id
     top_of_hour = (0..23).map { |hh| "#{hh}:00" }
     every(1.day, 'Uscmshim12hSubjectSends', at: top_of_hour) { Geckoboard::Uscmshim12hSubjectSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_12h_subject_sends') }
     every(1.day, 'Uscmshim24hSends', at: top_of_hour) { Geckoboard::Uscmshim24hSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_24h_sends') }
@@ -44,10 +44,9 @@ module Clockwork
     every(1.day, 'UscmshimReporting', at: top_of_hour) { Geckoboard::UscmshimReporting.perform_async(Rails.configuration.custom_report_account_id, 'CREATED_AT', 'uscmshim_reporting') }
     every(1.day, 'UscmshimClicksReporting', at: top_of_hour) { Geckoboard::UscmshimEventsReporting.perform_async('clicks', Rails.configuration.custom_report_account_id, 'uscmshim_clicks_reporting') }
     every(1.day, 'UscmshimOpensReporting', at: top_of_hour) { Geckoboard::UscmshimEventsReporting.perform_async('opens', Rails.configuration.custom_report_account_id, 'uscmshim_opens_reporting') }
-  rescue NoMethodError => e
+  rescue => e
     Rails.logger.warn("Not scheduling custom reporting jobs: #{e}")
   end
-
 
 end
 
