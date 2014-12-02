@@ -44,4 +44,6 @@ Xact::Application.configure do
   # XACT and DCM (GOV311) - XACT-175
   config.shared_phone_numbers = []
   config.odm_polling_enabled = false
+
+  config.nsca_password = 'fake'
 end

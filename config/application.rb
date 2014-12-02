@@ -148,6 +148,7 @@ module Xact
     host                       = GovDelivery::Host.new
     config.datacenter_location = host.datacenter
     config.datacenter_env      = host.env
+    config.nsca_password       = ENV['NSCA_PASSWORD']
 
     config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
   end

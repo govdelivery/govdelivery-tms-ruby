@@ -3,8 +3,18 @@ class NscaStatusWorker
   sidekiq_options queue: :sender, unique: true, retry: false, unique_job_expiration: 1.hour
 
   def perform(*args)
-    env = Rails.configuration.datacenter_env
-    loc = Rails.configuration.datacenter_location
+    env  = Rails.configuration.datacenter_env
+    loc  = Rails.configuration.datacenter_location
+    pass = Rails.configuration.nsca_password
+    case
+      when env.nil?
+        logger.warn("NscaStatusWorker: datacenter_env not set") and return false
+      when loc.nil?
+        logger.warn("NscaStatusWorker: datacenter_location not set") and return false
+      when pass.nil?
+        logger.warn("NscaStatusWorker: nsca_password not set") and return false
+    end
+
     checks.each do |service, scope|
       count = scope.count
       args  = {
@@ -13,7 +23,8 @@ class NscaStatusWorker
         hostname:    'xact',
         service:     service,
         return_code: count==0 ? SendNsca::STATUS_OK : SendNsca::STATUS_WARNING,
-        status:      "Status #{count==0 ? 'OK' : 'WARNING'}: #{count} records"
+        status:      "Status #{count==0 ? 'OK' : 'WARNING'}: #{count} records",
+        password:    pass
       }
       logger.debug("SendNsca::NscaConnection -- #{args.inspect}")
       SendNsca::NscaConnection.new(args).send_nsca
