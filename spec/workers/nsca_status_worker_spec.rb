@@ -24,7 +24,7 @@ RSpec.describe NscaStatusWorker, :type => :worker do
       hostname:    'xact',
       service:     'dummy',
       return_code: SendNsca::STATUS_WARNING,
-      status:      "Status OK: 1 records"
+      status:      "Status WARNING: 1 records"
     }
     SendNsca::NscaConnection.expects(:new).with(args).returns(mock('nsca', send_nsca: true))
     worker.perform
