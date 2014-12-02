@@ -1,20 +1,21 @@
 require 'rake_helper'
 
-namespace :test do
+namespace :db do
 
-  desc 'Create an Account for testing SMS 2-Way BART'
-  task :create_sms_2way_bart_test_account => :environment do |t|
+  desc 'Create an Account for testing SMS 2-Way ACEtrain'
+  task :create_sms_2way_acetrain_test_account => :environment do |t|
 
     # Make sure the shared loopback vendors exist
     Rake::Task['db:create_shared_loopback_vendors'].invoke
+    Rake::Task['db:create_shared_twilio_valid_test_vendor'].invoke
 
     # Create the SMS 2-Way Static Content test account
-    a = create_test_account("SMS 2Way BART", shared_loopback_vendors_config)
+    a = create_test_account("SMS 2Way ACEtrain", shared_twilio_valid_test_vendors_config)
 
     # Set the transformer
     transformer_config = {
-      content_type: 'text/plain',
-      transformer_class: 'bart'
+      content_type: 'application/json',
+      transformer_class: 'etaspot'
     }
 
     transformer = a.transformers.find_by(content_type: transformer_config[:content_type])
@@ -32,6 +33,6 @@ namespace :test do
 
     puts
 
-  end # :create_sms_2way_bart_test_account
+  end # :create_sms_2way_acetrain_test_account
 
 end # :db namespace
