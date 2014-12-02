@@ -39,7 +39,7 @@ def shared_live_phone_vendors_config
   return config
 end
 
-def dcm_account_id
+def seed_dcm_account_id
   case Rails.env
     when "qc"
       "CUKEAUTO_QC"
@@ -50,7 +50,7 @@ def dcm_account_id
   end
 end
 
-def dcm_topic_codes
+def seed_dcm_topic_codes
   case Rails.env
     when "qc"
       ["CUKEAUTO_QC_SMS"]

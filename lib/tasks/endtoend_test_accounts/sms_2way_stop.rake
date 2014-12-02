@@ -12,12 +12,12 @@ namespace :db do
     # Create the SMS 2-Way Static Content test account
     a = create_test_account("SMS 2Way Stop", shared_twilio_valid_test_vendors_config)
 
-    if !a.dcm_account_codes.include?(dcm_account_id)
-      puts "Adding DCM Account Code '#{dcm_account_id}'"
-      a.dcm_account_codes.add(dcm_account_id)
+    if !a.dcm_account_codes.include?(seed_dcm_account_id)
+      puts "Adding DCM Account Code '#{seed_dcm_account_id}'"
+      a.dcm_account_codes.add(seed_dcm_account_id)
       a.save!
     else
-      puts "Found DCM Account Code '#{dcm_account_id}'"
+      puts "Found DCM Account Code '#{seed_dcm_account_id}'"
     end
 
     keyword = a.keywords.find_by_name('subscribe')
@@ -36,8 +36,8 @@ namespace :db do
         name: 'subscribe',
         command_type: :dcm_subscribe,
         params:{
-          dcm_account_code: dcm_account_id,
-          dcm_topic_codes: dcm_topic_codes
+          dcm_account_code: seed_dcm_account_id,
+          dcm_topic_codes: seed_dcm_topic_codes
         })
       command.save!
     else
