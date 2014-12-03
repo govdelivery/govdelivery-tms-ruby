@@ -11,6 +11,7 @@ module Message
       state :queued
       state :sending
       state :completed
+      state :canceled
 
       event :ready do
         transitions from: :new, to: :queued, guard: :create_recipients, on_transition: [:process_blacklist!, :prepare_recipients]
@@ -26,6 +27,10 @@ module Message
 
       event :complete do
         transitions from: :sending, to: :completed, guard: :check_complete, on_transition: :on_complete
+      end
+
+      event :cancel do
+        transitions from: [:new, :queued], to: :canceled, on_transition: :on_cancel
       end
     end
 
@@ -150,6 +155,11 @@ module Message
 
   def on_complete
     self.completed_at = recipients.sent.order('completed_at DESC').first.completed_at rescue Time.now
+  end
+
+  def on_cancel
+    recipients.update_all(status: 'canceled', completed_at: Time.now)
+    self.completed_at = Time.now
   end
 
   def has_valid_async_recipients?
