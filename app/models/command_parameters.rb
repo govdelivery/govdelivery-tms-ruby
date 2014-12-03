@@ -67,7 +67,7 @@ class CommandParameters
       # instance_variable_get is being used to avoid any mutations caused by
       # lazy getters (i.e. ones with default values)
       hsh.merge(p => instance_variable_get("@#{p}"))
-    end.keep_if{|k,v| v.present? }
+    end.keep_if{|k,v| !v.nil? }
   end
 
   def to_s
