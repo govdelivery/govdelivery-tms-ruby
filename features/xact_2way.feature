@@ -20,10 +20,18 @@ Feature: XACT SMS 2-Way tests.
     And I send that keyword as an SMS to TMS
     Then I should receive static content
 
-  @keyword
+  @keyword @bart
   Scenario: XACT 2-Way SMS Real Time Query of Bart
     Given I have an XACT account for BART
     And I register the keyword BART
     And I register the BART forward command
     When I text 'BART 12th' to the BART account
     Then I should receive BART content as a response
+
+  @keyword @acetrain
+  Scenario: XACT 2-Way SMS Real Time Query of ACETrain
+    Given I have an XACT account for ACETrain
+    And I register the keyword frmnt
+    And I register the ACETrain forward command
+    When I text 'frmnt' to the ACETrain account
+    Then I should receive ACETrain content as a response
