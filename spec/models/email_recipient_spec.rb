@@ -134,11 +134,10 @@ describe EmailRecipient do
       }
     }
     before do
-      # do this in SQL to get as close to boundaries as possible
       # less than a day ago
-      messages[0].recipients.update_all('sent_at = sysdate - ((24*60*60)-1)/(24*60*60)')
+      messages[0].recipients.update_all(sent_at: 23.hours.ago)
       # more than a day ago
-      messages[1].recipients.update_all('sent_at = sysdate - ((24*60*60)+1)/(24*60*60)')
+      messages[1].recipients.update_all(sent_at: 25.hours.ago)
     end
 
     it 'only finds recipients in sending status' do
