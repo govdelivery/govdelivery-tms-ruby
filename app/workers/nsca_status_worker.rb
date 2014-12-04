@@ -35,8 +35,8 @@ class NscaStatusWorker
   # noinspection RubyStringKeysInHashInspection
   def checks
     max_not_yet_sending_age = 30.minutes.ago
-    max_email_sending_age   = 24.hours.ago
-    max_twilio_sending_age  = 6.hours.ago
+    max_email_sending_age   = (Rails.configuration.email_delivery_timeout+3.hours).ago
+    max_twilio_sending_age  = (Rails.configuration.twilio_delivery_timeout+2.hours).ago
 
     {
       'Unsent email messages'       => EmailMessage.not_yet_sending.where('sent_at IS NULL OR created_at < ?', max_not_yet_sending_age),
