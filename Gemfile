@@ -1,5 +1,5 @@
 source "http://prod-rubygems1-ep.tops.gdi"
-source "https://ed5779be:de10e893@www.mikeperham.com/rubygems/"
+source "https://ed5779be:de10e893@gems.contribsys.com/"
 source 'https://rubygems.org'
 
 gem 'aasm'

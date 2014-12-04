@@ -1,6 +1,6 @@
 GEM
   remote: http://prod-rubygems1-ep.tops.gdi/
-  remote: https://ed5779be:de10e893@www.mikeperham.com/rubygems/
+  remote: https://ed5779be:de10e893@gems.contribsys.com/
   remote: https://rubygems.org/
   specs:
     aasm (3.4.0)
