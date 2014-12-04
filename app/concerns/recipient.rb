@@ -60,7 +60,8 @@ module Recipient
     scope :to_send, ->(vendor_id) { where(nil) }
     scope :with_new_status, -> { where(status: 'new') }
     scope :incomplete, -> { where(status: Recipient.incomplete_statuses) }
-    scope :timeout_expired, -> { sending.where('sent_at < sysdate - ?/(24*60*60)', self.delivery_timeout) }
+
+    scope :timeout_expired, -> { sending.where("sent_at < ?", self.delivery_timeout.ago) }
 
     attr_accessible :message_id, :vendor_id, :vendor
 
