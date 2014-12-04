@@ -2,7 +2,7 @@ class EmailRecipient < ActiveRecord::Base
   include Recipient
   include Personalized
 
-  self.delivery_timeout = 24.hours
+  self.delivery_timeout = Rails.configuration.email_delivery_timeout
 
   attr_accessible :email
   validates_presence_of :message, :unless => :skip_message_validation

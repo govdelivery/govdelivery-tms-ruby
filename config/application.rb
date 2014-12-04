@@ -104,7 +104,7 @@ module Xact
     # Messages sent via Twilio that we haven't heard back about should be finalized
     config.twilio_minimum_polling_age = 1.hour
     config.twilio_delivery_timeout    = 4.hours
-    config.cancelable_message_timeout = 48.hours
+    config.email_delivery_timeout = 24.hours
 
     config.dcm = [{
                     username: ENV['DCM_USERNAME'],
