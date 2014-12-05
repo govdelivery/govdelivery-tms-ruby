@@ -74,4 +74,14 @@ describe CommandParameters do
     command_parameters.from_param_name.should eq("from_param_name value")
     command_parameters.strip_keyword.should eq("strip_keyword value")
   end
+
+  it ".to_hash should include params with empty and false values" do
+    empty_parameters.sms_tokens = []
+    empty_parameters.sms_body = ""
+    empty_parameters.strip_keyword = false
+
+    empty_parameters.to_hash[:sms_tokens].should eq([])
+    empty_parameters.to_hash[:sms_body].should eq("")
+    empty_parameters.to_hash[:strip_keyword].should eq(false)
+  end
 end
