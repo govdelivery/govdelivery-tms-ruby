@@ -35,3 +35,11 @@ Feature: XACT SMS 2-Way tests.
     And I register the ACETrain forward command
     When I text 'frmnt' to the ACETrain account
     Then I should receive ACETrain content as a response
+
+  @keyword @cdc
+  Scenario: XACT 2-Way SMS Real Time Query of CDC's KnowIt
+    Given I have an XACT account for CDC
+    And I register the keyword knowit
+    And I register the CDC forward command
+    When I text 'knowit 55102' to the CDC account
+    Then I should receive CDC content as a response
