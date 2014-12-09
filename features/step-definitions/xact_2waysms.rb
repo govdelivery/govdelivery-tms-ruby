@@ -15,21 +15,29 @@ require 'multi_xml'
 
 
 Given(/^I create a subscription keyword and command$/) do
-  client = tms_client(:live)
-  @keyword = client.keywords.build(:name => keyword_params, :response_text => keyword_params)
-  @keyword.post
+  next if dev_not_live?
+
+  @conf = configatron.accounts.sms_2way_subscribe
+  client = tms_client(@conf)
+  @keyword = client.keywords.build(:name => "subscribe::#{random_string}", :response_text => "subscribe")
+  raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
     :command_type => :dcm_subscribe,
     #do not change the NAME param unless you want to break everything
     :name => "subscribe", 
-    :params => dcm_params)
-  @command.post
+    :params => {:dcm_account_code => @conf.xact.account.dcm_account_id,
+                :dcm_topic_codes => @conf.xact.account.dcm_topic_codes})
+  raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
+
+
   sleep(2)
 end
 
 And(/^I send an SMS to create a subscription on TMS$/) do
+  next if dev_not_live?
+
   #create connection to XACT
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -37,54 +45,64 @@ And(/^I send an SMS to create a subscription on TMS$/) do
 
   #create tms/xact twilio request
   payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = sample_subscriber_number
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
-  payload['Body'] = subscribe_command
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
+  puts "Mocking text '#{payload['Body']}' to #{payload['To']}"
+  @payload = payload
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
   end
 
+  if @resp.status == 500
+    raise "Error mocking text, received HTTP 500: #{@resp.body}"
+  end
+
   #encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(sample_subscriber_number)
   sleep(10)
-
-  #delete tms/xact keyword and command entirely
-  @keyword.delete
 end
 
 Then(/^a subscription should be created$/) do
+  next if dev_not_live?
+
   user #dcm credentials
   @request.url = dcm_base64_url + @base64
   @data = HTTPI.get(@request)
   puts @request.url
   @response = MultiXml.parse(@data.raw_body)
-  
   #some output that can be turned on/off if needed to verify things manually
   ap @response
   puts @response['subscriber']['phone']
 
   #verifying if subscriber is present
-  if @response['subscriber']['phone'] == sample_subscriber_number[2...12] #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
-    puts 'Subscriber found, test passed'.green
-  else
-    fail 'Subscriber not found'.red
-  end    
+  begin
+    if @response['subscriber']['phone'] == sample_subscriber_number[2...12] #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
+      puts 'Subscriber found, test passed'.green
+    else
+      fail 'Subscriber not found'.red
+    end
+  rescue NoMethodError => e
+    fail JSON.pretty_generate(@response)
+  end
 
   #delete subscriber so we can reuse the phone number for the next test
   HTTPI.delete(@request)
 end
 
 
-
 #===STOP========================================>
 
 
+Given(/^I am subscribed to receive TMS messages$/) do
+  next if dev_not_live?
 
-Given(/^I send an SMS to opt out of receiving TMS messages$/) do
   #subscribe first
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  @conf = configatron.accounts.sms_2way_stop
+  client = tms_client(@conf)
+  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -92,22 +110,45 @@ Given(/^I send an SMS to opt out of receiving TMS messages$/) do
 
   #create tms/xact twilio request
   payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
-  payload['Body'] = subscribe_command_2
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} subscribe"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
   end
 
+  if resp.status == 500
+    raise "Error mocking text, received HTTP 500: #{resp.body}"
+  end
+
   #sleep to give subscription time to create in DCM
-  sleep(60)
+  sleep(10)
 end
 
-Then(/^I should receive a STOP response$/) do
+Given(/^I create a stop keyword and command$/) do
+  next if dev_not_live?
+
+  client = tms_client(@conf)
+  @keyword = client.keywords.build(:name => "stop::#{random_string}", :response_text => "stop")
+  raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
+  @command = @keyword.commands.build(
+    :command_type => :dcm_unsubscribe,
+    #do not change the NAME param unless you want to break everything
+    :name => "unsubscribe",
+    :params => {:dcm_account_codes => @conf.xact.account.dcm_account_id})
+  raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
+
+  sleep(2)
+end
+
+When(/^I send an SMS to opt out of receiving TMS messages$/) do
+  next if dev_not_live?
+
   #begin stop request
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -115,19 +156,34 @@ Then(/^I should receive a STOP response$/) do
 
   #create tms/xact twilio request
   payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
-  payload['Body'] = stop_command
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
   end
-  ap @resp
-  sleep(60)
+
+  if @resp.status == 500
+    raise "Error mocking text, received HTTP 500: #{@resp.body}"
+  end
+end
+
+Then(/^I should receive a STOP response$/) do
+  next if dev_not_live?
+
+  resp_xml = Hash.from_xml @resp.body
+  if resp_xml['Response']['Sms'] != 'stop'
+    ap @resp
+    raise 'Did not receive STOP response'
+  end
 end
 
 And(/^my subscription should be removed$/) do
+  next if dev_not_live?
+
   #encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(twilio_xact_test_number_2)
 
@@ -145,57 +201,36 @@ And(/^my subscription should be removed$/) do
   #puts @response['subscriber']['phone']
 
   #verifying if subscriber is present
-  if @response['errors']['error'] = 'Subscriber not found' #about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
+  if @response['errors']['error'] = 'Subscriber not found'
     puts 'Subscriber not found'.green
   else
     fail 'Subscriber found'.red
-  end 
-
-  sleep(10)
-
-  #begin start request so the test can essentially reset itself.
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
-    faraday.request     :url_encoded
-    faraday.response    :logger
-    faraday.adapter     Faraday.default_adapter
   end
-
-  #create tms/xact twilio request
-  payload = {}
-  payload['To'] = xact_account(:live)[:sms_phone]
-  payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = xact_account(:live)[:sms_vendor_username]
-  payload['Body'] = start_command
-  @resp = conn.post do |req|
-    req.url "/twilio_requests.xml"
-    req.body = payload
-  end
-  ap @resp
 end
-
-
 
 #===STATIC========================================>
 
 
 
 Given (/^A keyword with static content is configured for an TMS account$/) do
-  client = tms_client(:loopback)
+  @conf = configatron.accounts.sms_2way_static
+  client = tms_client(@conf)
   @keyword = client.keywords.build(:name => random_string, :response_text => random_string)
   @keyword.post
 end
 
 Given (/^I send that keyword as an SMS to TMS$/) do
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
   end
   payload = {}
-  payload['To'] = xact_account(:loopback)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15555555555'
-  payload['AccountSid'] = xact_account(:loopback)[:sms_vendor_username]
-  payload['Body'] = @keyword.name
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload
@@ -206,14 +241,15 @@ Then (/^I should receive static content$/) do
   twiml = Hash.from_xml @resp.body
   received_content = twiml['Response']['Sms']
   expected_content = @keyword.response_text
-  raise "Received incorrect content: '#{received_content}', expected: '#{expected_content}', keyword url: #{xact_url}#{@keyword.href}" if received_content != expected_content
+  raise "Received incorrect content: '#{received_content}', expected: '#{expected_content}', keyword url: #{@conf.xact.url}#{@keyword.href}" if received_content != expected_content
 end
 
 
 #===BART========================================>
 
 Given (/^I have an XACT account for BART$/) do
-  @client = tms_client(:bart)
+  @conf = configatron.accounts.sms_2way_bart
+  @client = tms_client(@conf)
 end
 
 Given (/^I register the keyword BART$/) do
@@ -239,16 +275,17 @@ Given (/^I register the BART forward command$/) do
 end
 
 When (/^I text 'BART 12th' to the BART account$/) do
-  conn = Faraday.new(:url => "#{xact_url}") do |faraday|
+  conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
   end
   payload = {}
-  payload['To'] = xact_account(:bart)[:sms_phone]
+  payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15005550006'
-  payload['AccountSid'] = xact_account(:bart)[:sms_vendor_username]
-  payload['Body'] = "#{@bart_keyword} 12th"
+  payload['AccountSid'] = @conf.sms.vendor.username
+  payload['Body'] = "#{@conf.sms.prefix} #{@bart_keyword} 12th"
+  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
     req.body = payload

@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
+require 'configatron'
 require 'tms_client'
 require 'multi_xml'
 
@@ -17,6 +18,19 @@ options = {
 Capybara::Poltergeist::Driver.new(app, options)
 end
 
+def environment
+  environments = [
+    :development,
+    :qc,
+    :integration,
+    :stage,
+    :prod
+  ]
+  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
+  raise "Unsupported XACT Environment: #{env}" if !environments.include?(env)
+  env
+end
+
 def xact_url
   urls = {
     :development => "http://localhost:3000",
@@ -31,95 +45,74 @@ def xact_url
   url
 end
 
-# Returns the appropriate XACT token based on the type of account that should be used, and the environment being tested.
-#
-# If the XACT_TOKEN environment variable is set, that will be returned regardless of the account type or the test environment.
-#
-# +account_type+:: :live or :loopback - Determines whether to use an account that sends messages or an account that does not.
-def xact_token(account_type = :live)
-  return ENV['XACT_TOKEN'] if ENV['XACT_TOKEN']
+# Set general configuration options
+twilio_test_credentials = {
+  sid: 'ACc66477e37af9ebee0f12b349c7b75117',
+  token: '5b1c96ca034d474c6d4b68f8d05c99f5',
+}
 
-  case account_type
-    when :live
-      tokens = {
-        :development => ENV['XACT_LIVE_TOKEN'],
-        :qc => 'gqaGqJJ696x3MrG7CLCHqx4zNTGmyaEp',
-        :integration => 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL',
-        :stage => 'd6pAps9Xw3gqf6yxreHbwonpmb9JywV3'
-      }
-    when :twilio_test
-      tokens = {
-        :development => ENV['XACT_TWILIO_TEST_TOKEN'],
-        :qc => 'Br7wEWVPPpGFbwdJMZSDezKEJaYXCpgT'
-      }
-    when :loopback
-      tokens = {
-        :development => ENV['XACT_LOOPBACK_TOKEN'],
-        :qc => 'sXNsShoQRX1X5qa5ZuegCzL7hUpebSdL',
-        :integration => '7SxUtWmkq5Lsjnw2s5rxJULqrHs37AbE',
-        :stage => 'CtyXxoinsNHujmfFd2qhKRJvDBMNqmPm'
-      }
-    when :bart
-      tokens = {
-        :development => ENV['XACT_BART_TOKEN'],
-        :qc => xact_token(:loopback),
-        :integration => xact_token(:loopback),
-        :stage => xact_token(:loopback)
-      }
-  end
+twilio_live_credentials = {
+  sid: 'AC189315456a80a4d1d4f82f4a732ad77e',
+  token: '88e3775ad71e487c7c90b848a55a5c88'
+}
 
-  token = tokens[environment]
-  raise "No XACT Token defined for environment #{environment} and account type #{account_type}" if !token
-  token
-end
+twilio_live_numbers = {
+  development: '+16514336311',
+  qc: '+16519684981',
+  integration: '+16122550428',
+  stage: '+16124247727'
+}
 
-# Returns a hash with credentials and info for an Xact account, based on the environment being tested and the type of
-# account requested.
-#
-# Returned hash includes:
-# * token - Xact user token for API access
-# * xact_url - URL to the Xact instance being tested
-# * sms_phone - Phone number of the SMS Vendor of the account
-# * sms_vendor_username - Twilio Account SID of the SMS Vendor, or mock SID for loopbacks account
-# * sms_vendor_password - Twilio token of the SMS Vendor, or mock password for loopbacks account
-# * sms_phone_sid - Twilio SID of of the SMS phone number
-# * voice_phone | voice_vendor_username | voice_vendor_password | voice_phone_sid - The type of info as above, but for Voice Vendors
-def xact_account(account_type = :live)
-  account = {}
-  account[:token] = xact_token(account_type)
-  account[:xact_url] = xact_url
-  case account_type
-    when :live
-      account[:sms_phone] = twilio_xact_test_number[:phone]
-      account[:sms_vendor_username] = twilio_test_account_creds[:sid]
-      account[:sms_vendor_password] = twilio_test_account_creds[:token]
-      account[:sms_phone_sid] = twilio_xact_test_number[:sid]
-      account[:voice_phone] = twilio_xact_test_number[:phone]
-      account[:voice_vendor_username] = twilio_test_account_creds[:sid]
-      account[:voice_vendor_password] = twilio_test_account_creds[:token]
-      account[:voice_phone_sid] = twilio_xact_test_number[:sid]
-    when :twilio_test
-      account[:sms_phone] = '+15005550006'
-      account[:sms_vendor_username] = twilio_test_test_account_creds[:sid]
-      account[:sms_vendor_password] = twilio_test_test_account_creds[:token]
-      account[:sms_phone_sid] = nil
-      account[:voice_phone] = '+15005550006'
-      account[:voice_vendor_username] = twilio_test_test_account_creds[:sid]
-      account[:voice_vendor_password] = twilio_test_test_account_creds[:token]
-      account[:voice_phone_sid] = nil
-    when :loopback, :bart
-      account[:sms_phone] = '+15559999999'
-      account[:sms_vendor_username] = 'loopbacks_account_sms_username'
-      account[:sms_vendor_password] = 'dont care'
-      account[:sms_phone_sid] = nil
-      account[:voice_phone] = '+15559999999'
-      account[:voice_vendor_username] = 'loopbacks_account_voice_username'
-      account[:voice_vendor_password] = 'dont care'
-      account[:voice_phone_sid] = nil
-  end
+twilio_live_phone_sids = {
+  development: 'PN06416578aa730a3e8f0fd3865ce9c458',
+  qc: 'PN732e0d02edf9e1fdd61a3606ac030e34',
+  integration: 'PN32087052fc8c8cc15e312a70b704eef9',
+  stage: 'PNe896243b192ff04674538f3aa11ea839'
+}
 
-  return account
-end
+configatron.xact.url                                  = xact_url
+
+configatron.test_support.twilio.phone.number          = '+15183004174'
+configatron.test_support.twilio.phone.sid             = 'PN53d0531f78bf8061549b953c6619b753'
+configatron.test_support.twilio.account.sid           = 'AC189315456a80a4d1d4f82f4a732ad77e'
+configatron.test_support.twilio.account.token         = '88e3775ad71e487c7c90b848a55a5c88'
+configatron.test_support.twilio.account.twilio_test   = false
+
+configatron.sms_vendors.loopback.phone.number          = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+configatron.sms_vendors.loopback.vendor.username       = 'shared_loopback_sms_username'
+configatron.sms_vendors.loopback.vendor.password       = 'dont care'
+configatron.sms_vendors.loopback.vendor.shared         = true
+configatron.sms_vendors.loopback.vendor.twilio_test    = false
+
+configatron.voice_vendors.loopback.phone.number        = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+configatron.voice_vendors.loopback.vendor.password     = 'dont care'
+configatron.voice_vendors.loopback.vendor.twilio_test  = false
+
+configatron.sms_vendors.twilio_valid_test.phone.number       = '+15005550006'
+configatron.sms_vendors.twilio_valid_test.vendor.username    = twilio_test_credentials[:sid]
+configatron.sms_vendors.twilio_valid_test.vendor.password    = twilio_test_credentials[:token]
+configatron.sms_vendors.twilio_valid_test.vendor.shared      = true
+configatron.sms_vendors.twilio_valid_test.vendor.twilio_test = true
+
+configatron.sms_vendors.twilio_invalid_test.phone.number       = '+15005550001'
+configatron.sms_vendors.twilio_invalid_test.vendor.username    = twilio_test_credentials[:sid]
+configatron.sms_vendors.twilio_invalid_test.vendor.password    = twilio_test_credentials[:token]
+configatron.sms_vendors.twilio_invalid_test.vendor.shared      = true
+configatron.sms_vendors.twilio_invalid_test.vendor.twilio_test = true
+
+configatron.sms_vendors.live.phone.number                       = twilio_live_numbers[environment]
+configatron.sms_vendors.live.phone.sid                          = twilio_live_phone_sids[environment]
+configatron.sms_vendors.live.vendor.username                    = twilio_live_credentials[:sid]
+configatron.sms_vendors.live.vendor.password                    = twilio_live_credentials[:token]
+configatron.sms_vendors.live.vendor.shared                      = true
+configatron.sms_vendors.live.vendor.twilio_test                 = false
+
+configatron.voice_vendors.live.phone.number                     = twilio_live_numbers[environment]
+configatron.voice_vendors.live.phone.sid                        = twilio_live_phone_sids[environment]
+configatron.voice_vendors.live.vendor.username                  = twilio_live_credentials[:sid]
+configatron.voice_vendors.live.vendor.password                  = twilio_live_credentials[:token]
+configatron.voice_vendors.live.vendor.twilio_test               = false
+
 
 def message_types
   message_types = [
@@ -138,6 +131,17 @@ def event_types
     :inconclusive,
     :canceled
   ]
+end
+
+def magic_addresses(message_type)
+  case message_type
+    when :email
+      magic_emails
+    when :sms
+      magic_phone_numbers
+    when :voice
+      magic_phone_numbers
+  end
 end
 
 def magic_emails
@@ -163,17 +167,6 @@ def magic_phone_numbers
   }
 end
 
-def magic_addresses(message_type)
-  case message_type
-    when :email
-      magic_emails
-    when :sms
-      magic_phone_numbers
-    when :voice
-      magic_phone_numbers
-  end
-end
-
 def status_for_address(magic_addresses, address)
   matches = magic_addresses.select {|status, magic_address| magic_address == address}
   status = matches ? matches.first.first : nil
@@ -188,72 +181,12 @@ def callbacks_api_sms_root
   'http://xact-webhook-callbacks.herokuapp.com/api/v3/sms/'
 end
 
-# Number for the Test Support App to send/receive (or these tests to send on the behalf of)
-def twilio_test_support_number
-  {
-    :phone => '+15183004174',
-    :sid => 'PN53d0531f78bf8061549b953c6619b753'
-  }
-end
-
-def twilio_test_account_creds
-  {
-    :sid => 'AC189315456a80a4d1d4f82f4a732ad77e',
-    :token => '88e3775ad71e487c7c90b848a55a5c88'
-  }
-end
-
-def twilio_test_test_account_creds
-  {
-    :sid => 'ACc66477e37af9ebee0f12b349c7b75117',
-    :token => '5b1c96ca034d474c6d4b68f8d05c99f5'
-  }
-end
-
-# Number to use to send SMSs to Xact
-def twilio_xact_test_number
-    if ENV['XACT_ENV'] == 'qc'
-      {
-      :phone => '+16519684981',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    elsif ENV['XACT_ENV'] == 'integration'
-      {
-      :phone => '+16122550428',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    elsif ENV['XACT_ENV'] == 'stage'
-      {
-      :phone => '+16124247727',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    elsif ENV['XACT_ENV'] == 'prod'
-      {
-      :phone => '+16124247727',
-      :sid => 'AC189315456a80a4d1d4f82f4a732ad77e'
-      }
-    end
-end
-
 def twilio_xact_test_number_2
   '+17014842689'
 end
 
-def environment
-  environments = [
-    :development,
-    :qc,
-    :integration,
-    :stage,
-    :prod
-  ]
-  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
-  raise "Unsupported XACT Environment: #{env}" if !environments.include?(env)
-  env
-end
-
-def tms_client(account_type = :live)
-  client = TMS::Client.new(xact_token(account_type), :api_root => xact_url)
+def tms_client(conf)
+    client = TMS::Client.new(conf.xact.user.token, :api_root => conf.xact.url)
 end
 
 #
@@ -262,70 +195,7 @@ end
 def dev_not_live?
   return false unless environment == :development
 
-  begin
-    xact_token(:live)
-    return false
-  rescue
-
-    return true
-  end
-end
-
-def keyword_params
-    if ENV['XACT_ENV'] == 'qc'
-      "qc_subscribe"
-    elsif ENV['XACT_ENV'] == 'integration'
-      "int_subscribe"
-    elsif ENV['XACT_ENV'] == 'stage'
-      "stage_subscribe"
-    elsif ENV['XACT_ENV'] == 'prod'
-      "prod_subscribe"
-    end
-end
-
-def subscribe_command
-    if ENV['XACT_ENV'] == 'qc'
-      'cuke qc_subscribe'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'cukeint int_subscribe'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'cuke stage_subscribe'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'cuke prod_subscribe'
-    end
-end
-
-def subscribe_command_2
-    if ENV['XACT_ENV'] == 'qc'
-      'cuke subscribe'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'cukeint subscribe'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'cuke subscribe'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'cuke subscribe'
-    end
-end
-
-def stop_command
-  'stop'
-end  
-
-def start_command
-  'start'
-end  
-
-#xact_2waysms - prints different param strings according to environment variable passed
-def dcm_params
-    if ENV['XACT_ENV'] == 'qc'
-      {:dcm_account_code => "CUKEAUTO_QC", :dcm_topic_codes => ["CUKEAUTO_QC_SMS"]}
-    elsif ENV['XACT_ENV'] == 'integration'
-      {:dcm_account_code => "CUKEAUTO_INT", :dcm_topic_codes => ["CUKEAUTO_INT_SMS"]}
-    elsif ENV['XACT_ENV'] == 'stage'
-      {:dcm_account_code => "CUKEAUTO_STAGE", :dcm_topic_codes => ["CUKEAUTO_STAGE_SMS"]}
-    elsif ENV['XACT_ENV'] == 'prod'
-      {:dcm_account_code => "CUKEAUTO_PROD", :dcm_topic_codes => ["CUKEAUTO_PROD_SMS"]}
-    end
+  return !(configatron.xact.has_key?('user') && configatron.xact.user.has_key?('token'))
 end
 
 def dcm_base64_url

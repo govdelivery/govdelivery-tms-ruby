@@ -66,6 +66,7 @@ GEM
     coderay (1.1.0)
     colored (1.2)
     columnize (0.8.9)
+    configatron (4.2.1)
     connection_pool (2.1.0)
     countries (0.9.3)
       currencies (~> 0.4.2)
@@ -410,6 +411,7 @@ DEPENDENCIES
   capybara
   clockwork
   colored
+  configatron
   cucumber
   dcm_client
   devise

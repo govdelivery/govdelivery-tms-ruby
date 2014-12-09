@@ -87,6 +87,7 @@ group :development do
 end
 
 group :test do
+  gem "configatron"
   gem "fakeredis", require: "fakeredis/rspec"
   gem 'fakeweb'
   gem 'mocha', require: false

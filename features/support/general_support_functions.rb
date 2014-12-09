@@ -1,3 +1,5 @@
+require 'colored'
+
 Before() do |scenario|
   @capi = Callbacks_API_Client.new(callbacks_api_root)
   @webhooks = []
@@ -5,13 +7,16 @@ end
 
 
 Before('@Dev-Safety') do |scenario|
-  STDOUT.puts "\tSkipping on Dev with Non-Live Account" if dev_not_live?
+  STDOUT.puts "\tSkipping on Dev with Non-Live Account".red if dev_not_live?
 end
 
 # Set our Twilio test account to have no callbacks when we are done
 After('@Twilio') do |scenario|
-  twil = Twilio::REST::Client.new twilio_test_account_creds[:sid], twilio_test_account_creds[:token]
-  twil.account.incoming_phone_numbers.get(twilio_test_support_number[:sid]).update(
+  twil = Twilio::REST::Client.new(
+    configatron.test_support.twilio.account.sid,
+    configatron.test_support.twilio.account.token
+  )
+  twil.account.incoming_phone_numbers.get(configatron.test_support.twilio.phone.sid).update(
     :voice_url => '',
     :sms_url => ''
   )

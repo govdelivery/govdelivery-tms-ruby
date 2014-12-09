@@ -10,12 +10,14 @@ $bt.store(1, Time.new.to_s + "::" + rand(100000).to_s)
 
 Given (/^I have a user who can receive SMS messages$/)do
   @sms_receiver_uri = @capi.create_callback_uri(:sms, "#{environment.to_s} SMS Receiver")
-  #@sms_receiver_uri = '/api/v3/sms/3781'
   @sms_receiver_full_uri = @capi.callbacks_domain + @sms_receiver_uri
 
 
-  twil = Twilio::REST::Client.new twilio_test_account_creds[:sid], twilio_test_account_creds[:token]
-  twil.account.incoming_phone_numbers.get(twilio_test_support_number[:sid]).update(
+  twil = Twilio::REST::Client.new(
+    configatron.test_support.twilio.account.sid,
+    configatron.test_support.twilio.account.token
+  )
+  twil.account.incoming_phone_numbers.get(configatron.test_support.twilio.phone.sid).update(
     :voice_url => @sms_receiver_full_uri,
     :sms_url => @sms_receiver_full_uri
   )
@@ -24,10 +26,10 @@ end
 Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
-  client = tms_client
+  client = tms_client(configatron.accounts.sms_endtoend)
   message = client.sms_messages.build(:body=>"#{$bt[1]}")
-  message.recipients.build(:phone=>twilio_test_support_number[:phone])
-  puts twilio_test_support_number[:phone]
+  message.recipients.build(:phone=> configatron.test_support.twilio.phone.number)
+  puts configatron.test_support.twilio.phone.number
   message.post
   message.recipients.collection.detect{|r| r.errors }
   @message = message
@@ -54,7 +56,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
       backoff_check(check, check_condition, "for the test user to receive the message I sent")
     rescue => e
       msg = "Message I sent: '#{condition}'\n"
-      msg += "Message URL: #{xact_url + @message.href}\n"
+      msg += "Message URL: #{configatron.xact.url + @message.href}\n"
       msg += "Test user callback URL: #{@sms_receiver_full_uri}\n"
       msg += "Payloads the test user received: #{JSON.pretty_generate(payloads)}"
       raise $!, "#{$!}\n#{msg}"

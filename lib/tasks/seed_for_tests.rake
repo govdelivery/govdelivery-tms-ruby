@@ -1,43 +1,31 @@
 require 'fileutils'
+require 'rake_helper'
 
 namespace :db do
 
+  twilio_test_credentials = {
+      sid: 'ACc66477e37af9ebee0f12b349c7b75117',
+      token: '5b1c96ca034d474c6d4b68f8d05c99f5'
+  }
+
+  twilio_live_credentials = {
+      sid: 'AC189315456a80a4d1d4f82f4a732ad77e',
+      token: '88e3775ad71e487c7c90b848a55a5c88'
+  }
+
+  twilio_live_numbers = {
+      'development' => '+16514336311',
+      'qc' => '+16519684981',
+      'integration' => '+16122550428',
+      'stage' => '+16124247727'
+  }
+
+  # OMG Vendors
   loopback_vendors_config = {
       sms_vendor_name: 'Loopback SMS Sender',
       voice_vendor_name: 'Loopback Voice Sender',
       email_vendor_name: 'Email Loopback Sender'
   }
-
-  loopbacks_account_vendors_config = {
-    sms_vendor_name: 'Loopbacks Account SMS Vendor',
-    voice_vendor_name: 'Loopbacks Account Voice Vendor',
-    email_vendor_name: 'Email Loopback Sender'
-  }
-
-
-  def create_or_verify_by_name(klass, config, pre_save = nil)
-    r = klass.find_by(name: config[:name])
-    if r
-      puts "Verifying #{config[:name]}"
-      config.each do |k,v|
-        r.send("#{k}=", v)
-      end
-      if r.changed?
-        puts "\tSetting #{r.name} to #{r.changes}"
-        pre_save.call(r) if pre_save
-        r.save!
-      end
-      puts "Verified"
-    else
-      r = klass.new(config)
-      puts "Creating #{config[:name]}"
-      pre_save.call(r) if pre_save
-      r.save!
-      puts "Created"
-    end
-    puts
-    r
-  end
 
 
   desc 'Seed database for testing. This creates and saves the mock data for the xact_rest_tests_followup'
@@ -155,86 +143,95 @@ namespace :db do
     )
   end # :create_loopback_vendors
 
-  # Creates the Loopbacks Account vendors
-  desc 'Create all the vendors for the  Loopbacks account.'
-  task :create_loopbacks_account_vendors => :environment do |t|
+  # Creates the Shared Loopback Testing Vendors
+  desc 'Create all the shared testing loopback vendors.'
+  task :create_shared_loopback_vendors => :environment do |t|
 
     sms_loopback = create_or_verify_by_name(SmsVendor, {
-        name: loopbacks_account_vendors_config[:sms_vendor_name],
+        name: shared_loopback_vendors_config[:sms_vendor_name],
         worker: 'LoopbackSmsWorker',
-        username: 'loopbacks_account_sms_username',
+        username: 'shared_loopback_sms_username',
         password: 'dont care',
-        from: '+15559999999'
+        from: '+15552287439',   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+        shared: true
       }
     )
 
     voice_loopback = create_or_verify_by_name(VoiceVendor,{
-        name: loopbacks_account_vendors_config[:voice_vendor_name],
+        name: shared_loopback_vendors_config[:voice_vendor_name],
         worker: 'LoopbackVoiceWorker',
-        username: 'loopbacks_account_voice_username',
+        username: 'shared_loopback_voice_username',
         password: 'dont care',
-        from: '+15559999999'
+        from: '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
       }
     )
 
     email_loopback = create_or_verify_by_name(EmailVendor, {
-        name: loopbacks_account_vendors_config[:email_vendor_name],
+        name: shared_loopback_vendors_config[:email_vendor_name],
         worker: 'LoopbackEmailWorker'
       }
     )
   end # :create_loopback_vendors
 
+  # Creates the Shared Twilio Valid Test Testing Vendor
+  desc 'Create the Shared Twilio Valid Test Testing Vendor.'
+  task :create_shared_twilio_valid_test_vendor => :environment do |t|
 
-  desc 'Create an Account that has all Loopback Vendors.'
-  task :create_all_loopbacks_account => :environment do |t|
+    sms_twil_valid_test = create_or_verify_by_name(SmsVendor, {
+        name: shared_twilio_valid_test_vendors_config[:sms_vendor_name],
+        worker: 'TwilioMessageWorker',
+        username: twilio_test_credentials[:sid],
+        password: twilio_test_credentials[:token],
+        from: '+15005550006',   # The ONE number to send a text from that Twilio Test consideres valid: http://www.twilio.com/docs/api/rest/test-credentials
+        shared: true
+      }
+    )
+    sms_twil_valid_test.shared = true
+    sms_twil_valid_test.save!
+  end # :create_shared_twilio_valid_test_vendor
 
-    Rake::Task['db:create_loopbacks_account_vendors'].invoke
+  # Creates the Shared Twilio Invalid Number Test Testing Vendor
+  desc 'Create the Shared Twilio Invalid Number Test Testing Vendor.'
+  task :create_shared_twilio_invalid_number_test_vendor => :environment do |t|
 
-    account_config = {
-        name: Rails.env.capitalize + " Loopbacks Account",
-        voice_vendor: VoiceVendor.find_by(name: loopbacks_account_vendors_config[:voice_vendor_name]),
-        sms_vendor: SmsVendor.find_by(name: loopbacks_account_vendors_config[:sms_vendor_name]),
-        email_vendor: EmailVendor.find_by(name: loopbacks_account_vendors_config[:email_vendor_name])
-    }
+    sms_twil_invalid_number_test = create_or_verify_by_name(SmsVendor, {
+        name: shared_twilio_invalid_number_test_vendors_config[:sms_vendor_name],
+        worker: 'TwilioMessageWorker',
+        username: twilio_test_credentials[:sid],
+        password: twilio_test_credentials[:token],
+        from: '+15005550001',   # The ONE number to send a text from that Twilio Test consideres invalid: http://www.twilio.com/docs/api/rest/test-credentials
+        shared: true
+      }
+    )
+    sms_twil_invalid_number_test.shared = true
+    sms_twil_invalid_number_test.save!
+  end # :create_shared_twilio_invalid_number_test_vendor
 
-    account_email_addresses_config = {
-        from_email: Rails.env + '-tms_dev@evotest.govdelivery.com',
-        errors_to: Rails.env + '-errors@evotest.govdelivery.com',
-        reply_to: Rails.env + '-reply@evotest.govdelivery.com',
-        is_default: true
-    }
+  desc 'Create the Shared Live Phone Vendors.'
+  task :create_shared_live_phone_vendors => :environment do |t|
 
-    user_config = {
-        account_name: Rails.env.capitalize + " Loopbacks Account",
-        email: Rails.env + "-loopback@govdelivery.com",
-        password: "retek01!",
-        admin: true
-    }
+    sms_live_test = create_or_verify_by_name(SmsVendor, {
+        name: shared_live_phone_vendors_config[:sms_vendor_name],
+        worker: 'TwilioMessageWorker',
+        username: twilio_live_credentials[:sid],
+        password: twilio_live_credentials[:token],
+        from: twilio_live_numbers[Rails.env],   # Each environment has it's own live number for testing
+        shared: true
+      }
+    )
+    sms_live_test.shared = true
+    sms_live_test.save!
 
-    lba = create_or_verify_by_name(Account, account_config, lambda{ |lba|
-      if lba.from_addresses.empty?
-        puts "\tCreating #{lba.name} From Addresses"
-        lba.from_addresses.build(account_email_addresses_config)
-        puts "\tCreated"
-      end
+    voice_live_test = create_or_verify_by_name(VoiceVendor, {
+        name: shared_live_phone_vendors_config[:voice_vendor_name],
+        worker: 'TwilioMessageWorker',
+        username: twilio_live_credentials[:sid],
+        password: twilio_live_credentials[:token],
+        from: twilio_live_numbers[Rails.env]   # Each environment has it's own live number for testing
       }
     )
 
-    if lba.users.empty?
-      user = lba.users.build(user_config)
-      user.admin = true
-      user.save
-      puts "User created for #{account_config[:name]}"
-      puts "\tEmail Addr:\t #{user.email}"
-      puts "\tPassword:\t #{user.password}"
-      puts
-    end
+  end # :create_shared_twilio_invalid_number_test_vendor
 
-    token = lba.users.first.authentication_tokens.first.token
-
-    puts "Loopbacks Account User Auth Token: "
-    puts "\t#{token}"
-    puts
-  end # :create_all_loopbacks_account
 
 end # :db namespace
