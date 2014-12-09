@@ -92,7 +92,7 @@ Just set the email/voice/sms attribute of the account's config to a clone of the
     configatron.accounts.funky_test.voice = configatron.voice_vendors.loopbacks.clone()
     configatron.accounts.funky_test.sms = configation.sms_vendors.loopbacks.clone()
 
-# Fuctions
+# Functions
 
 - magic_addresses - returns magic addresses for the loopback workers that will force specific states on recipients.
   Type of address is dependant on the message type provided. If :email, magic email addresses are returned. If :sms or :voice,

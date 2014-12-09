@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'rake_helper'
 
-namespace :db do
+namespace :test do
 
   desc 'Create an Account for testing Webhooks'
   task :create_webhooks_test_account => :environment do |t|

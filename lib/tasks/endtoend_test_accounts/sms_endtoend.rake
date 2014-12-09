@@ -1,6 +1,6 @@
 require 'rake_helper'
 
-namespace :db do
+namespace :test do
 
   desc 'Create an Account for testing SMS End-to-End'
   task :create_sms_endtoend_test_account => :environment do |t|

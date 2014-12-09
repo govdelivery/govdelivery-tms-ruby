@@ -88,9 +88,9 @@ end
 
 group :test do
   gem "configatron"
-  gem "fakeredis", :require => "fakeredis/rspec"
+  gem "fakeredis", require: "fakeredis/rspec"
   gem 'fakeweb'
-  gem 'mocha', :require => false
+  gem 'mocha', require: false
   gem 'shoulda-matchers'
   gem 'tms_client'
 end

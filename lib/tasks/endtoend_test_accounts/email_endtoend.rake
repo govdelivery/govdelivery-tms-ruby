@@ -1,6 +1,6 @@
 require 'rake_helper'
 
-namespace :db do
+namespace :test do
 
   desc 'Create an Account for end-to-end testing of sending email'
   task :create_email_endtoend_test_account => :environment do |t|
