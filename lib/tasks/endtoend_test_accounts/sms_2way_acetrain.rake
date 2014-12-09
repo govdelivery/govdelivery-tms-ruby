@@ -1,6 +1,6 @@
 require 'rake_helper'
 
-namespace :db do
+namespace :test do
 
   desc 'Create an Account for testing SMS 2-Way ACEtrain'
   task :create_sms_2way_acetrain_test_account => :environment do |t|
