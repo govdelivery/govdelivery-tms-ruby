@@ -244,37 +244,80 @@ Then (/^I should receive static content$/) do
   raise "Received incorrect content: '#{received_content}', expected: '#{expected_content}', keyword url: #{@conf.xact.url}#{@keyword.href}" if received_content != expected_content
 end
 
+#===Common-2-Way-Real-Time-Steps================>
 
-#===BART========================================>
+def agency_command_params(agency)
+  case agency.downcase
+    when "bart"
+      {
+        :url => 'http://ws.sfbart.org/sms/request.aspx',
+        :http_method => 'get',
+        :from_param_name => 'user',
+        :sms_body_param_name => 'req',
+        :strip_keyword => true
+      }
+    when "acetrain"
+      {
+        :url => 'http://acerailpublic.etaspot.net/service.php?service=get_stop_etas&stopID=156&includeSMS=1&token=TESTING',
+        :http_method => 'get',
+        :from_param_name => 'from',
+        :sms_body_param_name => 'smsText',
+        :strip_keyword => false
+      }
+  end
+end
 
-Given (/^I have an XACT account for BART$/) do
-  @conf = configatron.accounts.sms_2way_bart
+def agency_test(agency, check)
+  case agency.downcase
+    when "bart"
+      expected_condition = 200
+      {:condition => Proc.new{
+        actions = check.call()
+        actions.any? do |action|
+          action.status == expected_condition && !action.response_body.blank?
+        end
+        },
+       :msg => "Expected to receive HTTP Status #{expected_condition} and expected to receive non-blank response_text"
+      }
+    when "acetrain"
+      expected_condition = 200
+      {:condition => Proc.new {
+        actions = check.call()
+        actions.any? do |action|
+          body_hash = JSON.parse(action.response_body)
+          action.status == expected_condition && body_hash.fetch("get_stop_etas", []).fetch(0, {}).has_key?("smsText")
+        end
+        },
+       :msg => "Expected to receive HTTP Status #{expected_condition} and expected response_text with smsText attribute"
+      }
+  end
+end
+
+Given (/^I have an XACT account for (.+)$/) do |agency|
+  @conf = configatron.accounts["sms_2way_#{agency.downcase}"]
   @client = tms_client(@conf)
 end
 
-Given (/^I register the keyword BART$/) do
+Given (/^I register the keyword (.+)$/) do |agency|
   # Register a unique keyword each time, so that test failures can save the keyword for review without concern for future test keyword collisions
-  @bart_keyword = "BART#{random_string}"
-  @keyword = @client.keywords.build(:name => @bart_keyword)
-  raise "Could not create #{@bart_keyword} keyword: #{@keyword.errors}" unless @keyword.post
+  @agency_keyword = "#{agency.downcase}#{random_string}"
+  @keyword = @client.keywords.build(:name => @agency_keyword)
+  raise "Could not create #{@agency_keyword} keyword: #{@keyword.errors}" unless @keyword.post
 end
 
-Given (/^I register the BART forward command$/) do
+Given (/^I register the (.+) forward command$/) do |agency|
   @command = @keyword.commands.build(
-    :name => "BART Forwarding",
-    :params => {
-      :url => 'http://ws.sfbart.org/sms/request.aspx',
-      :http_method => 'get',
-      :from_param_name => 'user',
-      :sms_body_param_name => 'req',
-      :strip_keyword => true
-    },
+    :name => "#{agency} Forwarding",
+    :params => agency_command_params(agency),
     :command_type => :forward
   )
   raise "Could not create Forwarding command: #{@command.errors}" unless @command.post
 end
 
-When (/^I text 'BART 12th' to the BART account$/) do
+When (/^I text '(.+)' to the (.+) account$/) do |message, agency|
+  # Don't actually care about the keyword that is passed to this test
+  message = message.split[1..-1].join(" ")
+
   conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
@@ -284,7 +327,7 @@ When (/^I text 'BART 12th' to the BART account$/) do
   payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15005550006'
   payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{@bart_keyword} 12th"
+  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name} #{message}"
   puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url "/twilio_requests.xml"
@@ -292,32 +335,67 @@ When (/^I text 'BART 12th' to the BART account$/) do
   end
 end
 
-Then (/^I should receive BART content as a response$/) do
+#===BART========================================>
+
+#Then (/^I should receive BART content as a response$/) do
+#  # TODO Can we find the actual message that XACT sent back?
+#  passed = false
+#  expected_status = 200
+
+#  check = Proc.new do
+#    # The API does not provide the command_actions relation on a command if there are no command actions
+#    # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
+#    # by the time the test wants to check for one.
+#    begin
+#      @command.get
+#      @command.command_actions.get
+#      @actions = @command.command_actions.collection
+#    rescue NoMethodError => e
+#      next
+#    end
+#    passed = @actions.any? do |action|
+#      action.status == expected_status && !action.response_body.blank?
+#    end
+#  end
+#  check_condition = Proc.new{passed}
+#  begin
+#    backoff_check(check, check_condition, "for BART to send an acceptable response")
+#  rescue => e
+#    msg = "Expected to receive HTTP Status #{expected_status} and expected to receive non-blank response_text"
+#    msg += "Command URL: #{@command.href}"
+#    raise $!, "#{$!}\n#{msg}"
+#  end
+#end
+
+
+
+#===ACETrain========================================>
+
+Then (/^I should receive (.+) content as a response$/) do |agency_name|
   # TODO Can we find the actual message that XACT sent back?
-  passed = false
-  expected_status = 200
 
   check = Proc.new do
     # The API does not provide the command_actions relation on a command if there are no command actions
     # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
     # by the time the test wants to check for one.
+    actions = []
     begin
       @command.get
       @command.command_actions.get
-      @actions = @command.command_actions.collection
+      actions = @command.command_actions.collection
     rescue NoMethodError => e
-      next
     end
-    passed = @actions.any? do |action|
-      action.status == expected_status && !action.response_body.blank?
-    end
+    actions
   end
-  check_condition = Proc.new{passed}
+
+  test = agency_test(agency_name, check)
+
   begin
-    backoff_check(check, check_condition, "for BART to send an acceptable response")
+    backoff_check(test[:condition], "for #{agency_name} to send an acceptable response")
   rescue => e
-    msg = "Expected to receive HTTP Status #{expected_status} and expected to receive non-blank response_text"
-    msg += "Command URL: #{@command.href}"
+    msg = test[:msg]
+    msg += "\nCommand URL: #{@command.href}"
     raise $!, "#{$!}\n#{msg}"
   end
 end
+

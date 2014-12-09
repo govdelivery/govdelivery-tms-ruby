@@ -45,15 +45,17 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
     passed = false
     payloads = []
     condition = "#{$bt[1]}"
-    check = Proc.new do
+
+
+    check_condition = Proc.new{
       payloads = @capi.get(@sms_receiver_uri)
       passed = payloads["payloads"].any? {|payload_info|
         payload_info['body'] == condition
       }
-    end
-    check_condition = Proc.new{passed}
+      passed
+    }
     begin
-      backoff_check(check, check_condition, "for the test user to receive the message I sent")
+      backoff_check(check_condition, "for the test user to receive the message I sent")
     rescue => e
       msg = "Message I sent: '#{condition}'\n"
       msg += "Message URL: #{configatron.xact.url + @message.href}\n"

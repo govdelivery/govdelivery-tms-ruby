@@ -83,20 +83,20 @@ Then(/^the callback registered for each event state should receive a POST referr
 
   recipients_built = Hash[message_types.map {|message_type| [message_type,false]}]
 
-  check = Proc.new do
+  condition = Proc.new {
     @messages.each do |message_type, message|
       if not recipients_built[message_type]
         begin
           recipients_built[message_type] = message.recipients.get
         rescue TMS::Request::InProgress
-          puts "Recipient list for #{message_type} is not ready"
+          STDOUT.puts "Recipient list for #{message_type} is not ready"
         end
       end
     end
-  end
+    recipients_built.all?{|message_type, built| built}
+  }
 
-  condition = Proc.new {recipients_built.all?{|message_type, built| built}}
-  backoff_check(check, condition, "build recipients list")
+  backoff_check(condition, "build recipients list")
 
   @messages.each do |message_type, message|
     message.recipients.collection.each do |recipient|
@@ -104,9 +104,12 @@ Then(/^the callback registered for each event state should receive a POST referr
       address = recipient.attributes[:email] ? recipient.attributes[:email] : recipient.attributes[:phone]
       expected_status = status_for_address(magic_addresses(message_type), address)
 
-      check = Proc.new {recipient.get}
-      condition = Proc.new {expected_status == recipient.attributes[:status].to_sym}
-      backoff_check(check, condition, "arrive at expected status")
+      condition = Proc.new {
+        recipient.get
+        expected_status == recipient.attributes[:status].to_sym
+      }
+
+      backoff_check(condition, "arrive at expected status")
 
       # Given recipient should now be in the status we expected it to be
 
@@ -116,32 +119,37 @@ Then(/^the callback registered for each event state should receive a POST referr
       puts "#{message_type} | Expected Status: #{expected_status} | Current Status: #{recipient.attributes[:status]} | Message URL: #{recipient.href}"
       puts "\tChecking webhook registered for #{expected_status}: #{event_callback_uri}"
 
-      check = Proc.new {event_callback = @capi.get(event_callback_uri)}
-      condition = Proc.new {event_callback["payload_count"] >= @messages.count}
-      backoff_check(check, condition, "have at least 1 payload per message type at callback endpoint for #{message_type} #{recipient.href}")
+      condition = Proc.new {
+        event_callback = @capi.get(event_callback_uri)
+        event_callback["payload_count"] >= @messages.count
+      }
+
+      backoff_check(condition, "have at least 1 payload per message type at callback endpoint for #{message_type} #{recipient.href}")
 
       raise "Callback endpoint for #{message_type} #{recipient.href} should have non-nil payloads\n#{message_type}-#{status} callback endpoint: #{event_callback}" if event_callback["payloads"].nil?
 
       # Callback URI should have received all of the payloads we expected by now
 
-      passed = false
       payloads = []
-      check = Proc.new do
+
+      check_condition = Proc.new{
+        passed = false
         condition = (environment == :integration ? xact_url.sub('int-', 'integration-') : xact_url) + recipient.href
         payloads = []
         event_callback["payloads"].each do |payload_info|
           payloads << @capi.get(payload_info["url"])
           passed = payloads.any?{|payload| payload["payload"]["recipient_url"] == condition}
         end
-      end
-      check_condition = Proc.new{passed}
+        passed
+      }
+
       begin
-        backoff_check(check, check_condition, "have all the payloads expected")
+        backoff_check(check_condition, "have all the payloads expected")
       rescue => e
         webhooks = tms_client(configatron.accounts.webhooks).webhooks
         webhooks.get
         registered_hooks = webhooks.collection.map{|hook| hook.attributes}
-        msg = "#{expected_status} callback endpoint does not have a payload referring to #{condition}\n"
+        msg = "'#{expected_status}' callback endpoint does not have a payload referring to '#{condition}'\n"
         msg += "payloads: #{JSON.pretty_generate(payloads)} \n"
         msg += "registered webhooks: #{PP.pp(registered_hooks, '')}"
         raise $!, "#{$!}\n#{msg}"

@@ -12,7 +12,7 @@ require 'colored'
 #end
 
 After('@keyword') do |scenario|
-  if !scenario.failed? && !dev_not_live?
+  if !scenario.failed? && defined?(@keyword)
     STDOUT.puts "Deleting keyword created for this test".blue
     @keyword.delete
   end

@@ -30,7 +30,7 @@ After('@Test-Support-App') do |scenario|
   end
 end
 
-def backoff_check(check, condition, desc)
+def backoff_check(condition, desc)
 
   slept_time = 0
   min = 0
@@ -43,7 +43,6 @@ def backoff_check(check, condition, desc)
     sleep(sleep_time)
     slept_time += sleep_time
 
-    check.call()
     break if condition.call()
     raise "#{desc} has taken too long. Have waited #{slept_time} seconds" if x >= max
   end
