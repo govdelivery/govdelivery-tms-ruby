@@ -2,20 +2,13 @@ require 'rails_helper'
 
 describe SmsRecipient do
   subject {
-    v         = create(:sms_vendor)
-    m         = SmsMessage.new(:body => 'short body')
-    a         = Account.create(:name => 'account', :sms_vendor => v)
-    u         = User.create(:email => 'admin@get-endorsed-by-bens-mom.com', :password => 'retek01!')
-    u.account = a
-    m.account = a
-    r         = SmsRecipient.new
-    r.message = m
-    r.vendor  = v
-    r
+    vendor  = create(:sms_vendor)
+    account = create(:account, name: 'account', sms_vendor: vendor)
+    message = create(:sms_message, body: 'short body', account: account)
+    create(:sms_recipient, message: message, vendor: vendor)
   }
 
-  its(:phone) { should be_nil }
-  it { should_not be_valid } # validates_presence_of :phone
+  it { should validate_presence_of :phone } # validates_presence_of :phone
 
   describe "when phone is not a number" do
     before do
@@ -77,18 +70,17 @@ describe SmsRecipient do
     let(:account) { create(:account, sms_vendor: vendor, name: 'account') }
     let(:messages) {
       [1, 2].map { |x|
-        m = create(:sms_message, account: account, body: "body #{x}")
-        r = m.recipients.create!(phone: "1612555123#{x}")
-        r.sending!('doo')
-        m.ready!
-        m.sending!
-        m
+        message = create(:sms_message, account: account, body: "body #{x}")
+        recipient = message.recipients.create!(phone: "1612555123#{x}")
+        recipient.sending!('doo')
+        message.ready!
+        message.sending!
+        message
       }
     }
     before do
-      # do this in SQL to get as close to boundaries as possible
-      messages[0].recipients.update_all("sent_at = sysdate - #{5.hours.to_i}/(24*60*60)")
-      messages[1].recipients.update_all("sent_at = sysdate - #{3.hours.to_i}/(24*60*60)")
+      messages[0].recipients.update_all(sent_at: 5.hour.ago)
+      messages[1].recipients.update_all(sent_at: 3.hours.ago)
     end
 
     it 'only finds recipients in sending status' do
