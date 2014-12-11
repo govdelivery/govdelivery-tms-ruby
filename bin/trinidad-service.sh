@@ -23,8 +23,8 @@ JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote
 JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPermSize=256m"
 
 # Source Application settings
-[[-f /etc/sysconfig/trinidad.sh]] && source /etc/sysconfig/trinidad.sh
-[[-f /etc/sysconfig/xact.sh]] && source /etc/sysconfig/xact.sh
+test -f /etc/sysconfig/trinidad.sh && source /etc/sysconfig/trinidad.sh
+test -f /etc/sysconfig/xact.sh && source /etc/sysconfig/xact.sh
 
 pid_dir=$(dirname $pid_file)
 restart_file="${pid_dir}/restart-trinidad.txt"
