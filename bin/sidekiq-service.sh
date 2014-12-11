@@ -24,8 +24,8 @@ JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPe
 
 
 # Source Application settings
-test /etc/sysconfig/sidekiq.sh && source /etc/sysconfig/sidekiq.sh
-test /etc/sysconfig/xact.sh && source /etc/sysconfig/xact.sh
+test -f /etc/sysconfig/sidekiq.sh && source /etc/sysconfig/sidekiq.sh
+test -f /etc/sysconfig/xact.sh && source /etc/sysconfig/xact.sh
 
 if [[ -z "$environment" ]]; then
     echo "no environment set!"
