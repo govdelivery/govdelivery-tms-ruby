@@ -4,7 +4,7 @@
 
 ### BEGIN INIT INFO
 # Provides: Sidekiq
-# Required-Start: 
+# Required-Start:
 # Defalt-Start: 2 3 4 5
 # Default-Stop: 0 1 6
 # Description: Sidekiq Ruby Background Job Proccessing
@@ -24,8 +24,7 @@ JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPe
 
 
 # Source Application settings
-. /etc/sysconfig/${app} || exit 5
-. /etc/sysconfig/xact.sh || exit 5
+. /etc/sysconfig/xact_service.sh || exit 5
 
 if [[ -z "$environment" ]]; then
     echo "no environment set!"
@@ -37,48 +36,48 @@ log_file="${app_path}/log/${app}.log"
 
 status () {
     RETVAL=0
-    
+
     pid=""
     if [[ -f "$pid_file" ]]; then
-	pid=$(cat "$pid_file")
+        pid=$(cat "$pid_file")
     fi
-    
+
     if [[ -z $pid ]]; then  ## no known pid
-	
-	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep ${app})
-	if [[ $? -eq 0 ]]; then
-	    echo "PID file not found, but ${app_name} processes are running!"
-	    echo "$UNMANAGED"
-	    return 10
-	else
-	    echo "${app_name} not running"
-	    return 1
-	fi;
-	
+
+        UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep ${app})
+        if [[ $? -eq 0 ]]; then
+            echo "PID file not found, but ${app_name} processes are running!"
+            echo "$UNMANAGED"
+            return 10
+        else
+            echo "${app_name} not running"
+            return 1
+        fi;
+
     else  ## have an expected pid
-	
-	MANAGED=$(ps -f --pid $pid --ppid $pid)
-	if [[ $? -eq 0 ]]; then
-	    echo "${app_name} Process:"
-	    echo "$MANAGED"
-	else
-	    echo "PID file exists, but no managed ${app_name} process found. Removing pid file"
-	    rm $pid_file
-	    let RETVAL++
-	fi
-	
-	CHILDREN=$(ps -f --ppid $pid)
-	if [[ $? -eq 0 ]]; then
-	    echo "${app_name} Children:"
-	    echo "$CHILDREN"
-	fi
-	
-	UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep -v $pid | grep ${app})
-	if [[ $? -eq 0 ]]; then
-	    echo "Found unmanaged ${app_name} processes!"
-	    echo "$UNMANAGED"
-	    let RETVAL+=10
-	fi;
+
+        MANAGED=$(ps -f --pid $pid --ppid $pid)
+        if [[ $? -eq 0 ]]; then
+            echo "${app_name} Process:"
+            echo "$MANAGED"
+        else
+            echo "PID file exists, but no managed ${app_name} process found. Removing pid file"
+            rm $pid_file
+            let RETVAL++
+        fi
+
+        CHILDREN=$(ps -f --ppid $pid)
+        if [[ $? -eq 0 ]]; then
+            echo "${app_name} Children:"
+            echo "$CHILDREN"
+        fi
+
+        UNMANAGED=$(ps -f -u "${user}" | grep -v grep | grep -v $pid | grep ${app})
+        if [[ $? -eq 0 ]]; then
+            echo "Found unmanaged ${app_name} processes!"
+            echo "$UNMANAGED"
+            let RETVAL+=10
+        fi;
     fi
     return $RETVAL
 }
@@ -88,9 +87,9 @@ start () {
     [[ $(whoami) == "root" ]] || { echo "Must be root"; exit 2; }
 
     status > /dev/null
-    if [[ $? -eq 0 ]]; then 
-	echo "${app_name} already running"
-	return 0
+    if [[ $? -eq 0 ]]; then
+        echo "${app_name} already running"
+        return 0
     fi
 
     echo "Starting ${app_name}"
@@ -99,11 +98,11 @@ start () {
 
     pid_dir=$(dirname $pid_file)
     if [[ ! -d $pid_dir ]]; then
-	echo "Creating pid_dir: ${pid_dir}"
-	mkdir "${pid_dir}" || exit 5
-	chown "${user}" "${pid_dir}" || exit 5
+        echo "Creating pid_dir: ${pid_dir}"
+        mkdir "${pid_dir}" || exit 5
+        chown "${user}" "${pid_dir}" || exit 5
     fi
-    
+
     cd "${app_path}" || exit 5
 
     umask 0003;
@@ -121,20 +120,20 @@ start () {
     status
     RETVAL=$?
     if [[ $RETVAL -ne 0 ]]; then
-	echo "${app_name} failed to start"
+        echo "${app_name} failed to start"
     fi;
-    
+
     return ${RETVAL}
 }
 
 ### Tell sidekiq to stop accepting new jobs.
-quiet () {   
+quiet () {
     status > /dev/null
-    if [[ $? -eq 1 ]]; then 
-	echo "Sidekiq is not running"
-	return 0
+    if [[ $? -eq 1 ]]; then
+        echo "Sidekiq is not running"
+        return 0
     fi
-    
+
     cd "${app_path}" || exit 5
     su ${user} -s /bin/sh -c "bundle exec sidekiqctl quiet \"${pid_file}\" ${deadline_timeout}"
     RETVAL=$?
@@ -146,11 +145,11 @@ stop () {
     [[ $(whoami) == "root" ]] || { echo "Must be root"; exit 2; }
 
     status > /dev/null
-    if [[ $? -eq 1 ]]; then 
-	echo "${app_name} is not running"
-	return 0
+    if [[ $? -eq 1 ]]; then
+        echo "${app_name} is not running"
+        return 0
     fi
-    
+
     echo "Stopping ${app_name}"
     echo "$(date) Stopping ${app_name}" >> "${log_file}"
 
@@ -158,26 +157,26 @@ stop () {
     su ${user} -s /bin/sh -c "bundle exec sidekiqctl stop \"${pid_file}\" ${deadline_timeout}"
     RETVAL=$?
     if [[ $RETVAL -ne 0 ]]; then
-	echo "Problem with Stop"
-	return $RETVAL
+        echo "Problem with Stop"
+        return $RETVAL
     fi;
 
     i=10
     RETVAL=0
     while [[ i -gt 0 && $RETVAL -ne 1 ]]; do
-	sleep 1
-	status > /dev/null
-	RETVAL=$?
-	let i--
+        sleep 1
+        status > /dev/null
+        RETVAL=$?
+        let i--
     done
 
     if [[ $RETVAL -eq 1 ]]; then
-	echo "${app_name} stopped"
-	return 0
+        echo "${app_name} stopped"
+        return 0
     else
-	echo "${app_name} failed to stop correctly"
-	return 1
-    fi;    
+        echo "${app_name} failed to stop correctly"
+        return 1
+    fi;
     return 0
 }
 
@@ -186,25 +185,25 @@ stop () {
 case "$1" in
   start)
         start
-	RETVAL=$?
-	;;
+        RETVAL=$?
+        ;;
  quiet)
-	quiet
-	RETVAL=$?
-	;;
+        quiet
+        RETVAL=$?
+        ;;
   stop)
         stop
-	RETVAL=$?
+        RETVAL=$?
         ;;
   status)
-        status 
-	RETVAL=$?
+        status
+        RETVAL=$?
         ;;
   restart)
-	quiet
+        quiet
         stop
         start
-	RETVAL=$?
+        RETVAL=$?
         ;;
   *)
         echo $"Usage: $0 {start|stop|restart|status}"
@@ -212,4 +211,3 @@ case "$1" in
 esac
 
 exit ${RETVAL}
-
