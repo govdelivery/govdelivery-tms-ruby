@@ -264,6 +264,15 @@ def agency_command_params(agency)
         :sms_body_param_name => 'smsText',
         :strip_keyword => false
       }
+    when "cdc"
+      {
+        :url => 'https://qc-knowit.herokuapp.com',
+        :http_method => 'post',
+        :from_param_name => 'from',
+        :sms_body_param_name => 'sms_body',
+        :strip_keyword => true
+      }
+
   end
 end
 
@@ -289,6 +298,18 @@ def agency_test(agency, check)
         end
         },
        :msg => "Expected to receive HTTP Status #{expected_condition} and expected response_text with smsText attribute"
+      }
+    when "cdc"
+      expected_condition = 200
+      {:condition => Proc.new{
+        actions = check.call()
+        actions.any? do |action|
+          action.status == expected_condition &&
+            !action.response_body.blank? &&
+            !action.response_body.include?('We are sorry, but the message you sent is not valid.')
+        end
+      },
+       :msg => "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
       }
   end
 end
