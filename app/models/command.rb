@@ -20,11 +20,15 @@ class Command < ActiveRecord::Base
 
   has_many :command_actions, dependent: :destroy
 
-  # Execute this command with the provided options, merging in the commands "params" column.
+  # Execute this command with the provided options and additional parameters
   def call(command_parameters=CommandParameters.new)
     command_parameters.command_id = self.id
-    command_parameters.merge!(self.params)
     command_strategy.perform_async!(command_parameters)
+  end
+
+  def process_response(job_params, http_response)
+    params.merge!(job_params)
+    command_strategy.process_response(self.account, params, http_response)
   end
 
   # Grab the executable portion of this command

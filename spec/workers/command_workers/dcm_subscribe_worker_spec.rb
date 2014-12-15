@@ -4,57 +4,78 @@ describe CommandWorkers::DcmSubscribeWorker do
   let(:account_code) { 'ACCOUNT_CODE' }
   let(:topic_codes) { ['TOPIC_CODE', 'TOPIC_2'] }
   let(:subscribe_args) { ['foo@bar.com'] }
-
-  let(:command) { stub('Command', process_response: nil) }
-  let(:account) { stub('account', id: 100, to_param: 100) }
-
-  let(:http_response) { stub(status: 200) }
-  let(:http_failure_response) { stub(status: 422) }
-  let(:http_404_response) { stub(status: 404) }
   let(:client) { mock('dcm_client') }
 
+  let(:account) { create(:account) }
+  let(:command) do
+    create(:dcm_subscribe_command,
+           keyword: account.stop_keyword,
+           params:  build(:subscribe_command_parameters))
+  end
+
+  let(:http_response) do
+    stub('http_response',
+         status:  200,
+         headers: {'Content-Type' => 'andrew/json'},
+         body:    'foo')
+  end
+
+  let(:http_404_response) do
+    stub('http_response_404',
+         status:  404,
+         headers: {'Content-Type' => 'andrew/json'},
+         body:    'nope')
+  end
+
+  let(:http_failure_response) do
+    stub('http_response_422',
+         status:  422,
+         headers: {'Content-Type' => 'andrew/json'},
+         body:    'error: you suck')
+  end
+
+  let(:options) do
+    {
+      from:               "+12222222222",
+      inbound_message_id: create(:inbound_message).id,
+      command_id:         command.id
+    }.merge(build(:subscribe_command_parameters).to_hash)
+  end
+
   subject do
-    w = CommandWorkers::DcmSubscribeWorker.new
-    w.stubs(:command).returns(command)
-    w.stubs(:account).returns(account)
-    w
+    CommandWorkers::DcmSubscribeWorker.new
   end
 
   context 'error handling' do
 
     it 'passes options to the subscribe command' do
-      opts = build(:subscribe_command_parameters, from: '5' ).to_hash
-      subject.expects(:request_subscription).with(kind_of(DCMClient::Client), '1+5', kind_of(CommandParameters))
-      subject.perform(opts)
+      subject.expects(:request_subscription).with(kind_of(DCMClient::Client), '1+5', kind_of(CommandParameters)).returns(http_response)
+      subject.perform(options.merge(from: '5'))
     end
 
     it 'ignores 422s' do
-      opts = build(:subscribe_command_parameters ).to_hash
-      subject.expects(:request_subscription).raises( DCMClient::Error::UnprocessableEntity.new("foo", http_failure_response) )
-      expect{ subject.perform(opts) }.to_not raise_error
+      subject.expects(:request_subscription).raises(DCMClient::Error::UnprocessableEntity.new("foo", http_failure_response))
+      expect { subject.perform(options.merge(from: '5')) }.to_not raise_error
     end
 
     it 'ignores 404s' do
-      opts = build(:subscribe_command_parameters ).to_hash
-      subject.expects(:request_subscription).raises( DCMClient::Error::NotFound.new("foo", http_404_response) )
-      expect{ subject.perform(opts) }.to_not raise_error
+      subject.expects(:request_subscription).raises(DCMClient::Error::NotFound.new("foo", http_404_response))
+      expect { subject.perform(options) }.to_not raise_error
     end
 
     it 'raises other dcm client errors' do
-      opts = build(:subscribe_command_parameters ).to_hash
-      subject.expects(:request_subscription).raises( DCMClient::Error.new('hi') )
-      expect{ subject.perform(opts) }.to raise_error(DCMClient::Error)
+      subject.expects(:request_subscription).raises(DCMClient::Error.new('hi'))
+      expect { subject.perform(options) }.to raise_error(DCMClient::Error)
     end
 
     it 'raises other exceptions' do
-      opts = build(:subscribe_command_parameters ).to_hash
-      subject.expects(:request_subscription).raises( Exception.new('hi') )
-      expect{ subject.perform(opts) }.to raise_error(Exception)
+      subject.expects(:request_subscription).raises(StandardError.new('hi'))
+      expect { subject.perform(options) }.to raise_error(StandardError)
     end
   end
 
   context 'multiple requests' do
-    subject{ CommandWorkers::DcmSubscribeWorker.new }
+    subject { CommandWorkers::DcmSubscribeWorker.new }
     it 'uses lowest status code' do
       subject.http_response = stub(status: 200)
       subject.http_response = stub(status: 404)
@@ -65,15 +86,15 @@ describe CommandWorkers::DcmSubscribeWorker do
   context "with subscribe args" do
 
     it 'should call email_subscribe on the DCM Client when argument has an asterisk' do
-      command_parameters = build(:subscribe_command_parameters, sms_tokens: ['em@il'] ) #sets email subscribe
+      command_parameters = build(:subscribe_command_parameters, sms_tokens: ['em@il']) #sets email subscribe
       client.expects(:email_subscribe).with('em@il', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
-      subject.request_subscription client, '', command_parameters
+      subject.request_subscription(client, '', command_parameters)
     end
 
     it 'should call wireless_subscribe on the DCM Client when argument does not have an asterisk' do
-      command_parameters = build(:subscribe_command_parameters, sms_tokens: ['n`email'] ) #sets email subscribe
+      command_parameters = build(:subscribe_command_parameters, sms_tokens: ['n`email']) #sets email subscribe
       client.expects(:wireless_subscribe).with('5', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
-      subject.request_subscription client, '5', command_parameters
+      subject.request_subscription(client, '5', command_parameters)
     end
   end
 

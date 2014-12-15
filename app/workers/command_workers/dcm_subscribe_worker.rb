@@ -13,15 +13,11 @@ module CommandWorkers
     # options: {"from"=>"+14445556666", "params"=>"ACME:TOPIC_1,TOPIC_2"}
     #
     def perform(opts)
-      Xact::Application.config.dcm.each do |config|
+      super do |options|
         begin
-
-
-          self.options       = opts
-          client             = DCMClient::Client.new(config)
+          client             = DCMClient::Client.new(Xact::Application.config.dcm)
           from_number        = PhoneNumber.new(options.from).dcm
           self.http_response = request_subscription(client, from_number, options)
-
 
         rescue DCMClient::Error::UnprocessableEntity, DCMClient::Error::NotFound => e
           # don't raise exception, so no retry
@@ -36,8 +32,6 @@ module CommandWorkers
           self.exception     = e
         end
       end
-
-      super
 
     ensure
       raise self.exception if self.exception

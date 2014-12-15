@@ -23,19 +23,16 @@ module CommandWorkers
     attr_writer :sms_service
 
     def perform(opts)
-      self.options       = opts
-
-      # hit the service before we do any database business
-      self.http_response = send_request
-      # message is returns from CommandType::Forward#process_response
-      # only one recipient is created
-      message            = super
+      callback_url = nil
+      message = super do |options|
+        self.http_response = send_request(options, self.command.params)
+        callback_url = options.callback_url
+      end
 
       if message
         recipient_id = message.first_recipient_id
         logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
-        # Send a text back to the user via twilio
-        send_response(message, recipient_id, options.callback_url)
+        send_response(message, recipient_id, callback_url)
       end
     end
 
@@ -52,22 +49,19 @@ module CommandWorkers
 
     end
 
-    def send_request
+    def send_request(options, command_params)
       response = nil
       begin
-        # If the command was configured to strip the keyword, we use sms_tokens
-        # (which is an array of tokens in the sms body, minus the detected keyword).  Otherwise,
-        # we pass along the body unmolested.
-        sms_body = options.strip_keyword ? options.sms_tokens.join(" ") : options.sms_body
-
-        response = http_service.send(options.http_method.downcase,
-                                     options.url,
-                                     options.username,
-                                     options.password,
+        sms_body = command_params.strip_keyword ? options.sms_tokens.join(" ") : options.sms_body
+        response = http_service.send(command_params.http_method.downcase,
+                                     command_params.url,
+                                     command_params.username,
+                                     command_params.password,
                                      {
-                                       options.from_param_name     => options.from,
-                                       options.sms_body_param_name => sms_body
+                                       command_params.from_param_name     => options.from,
+                                       command_params.sms_body_param_name => sms_body
                                      })
+
         if response.status == 0
           raise Faraday::Error::ConnectionFailed.new(nil,
                                                      body:    "Couldn't connect to #{@http_response.env[:url].to_s}",

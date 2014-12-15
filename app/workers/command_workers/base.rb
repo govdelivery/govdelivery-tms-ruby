@@ -1,4 +1,6 @@
 require 'app/workers/base'
+require 'app/transformers/base'
+
 module CommandWorkers
   module Base
     def self.included(base)
@@ -14,27 +16,19 @@ module CommandWorkers
 
     module InstanceMethods
       attr_accessor :http_service, :http_response, :exception
-      attr_reader :options
+      attr_reader :command
 
       def perform(opts)
-        command.process_response(self.account, self.options, self.http_response)
+        options = CommandParameters.new(opts)
+        @command = Command.includes(keyword: :account).find(options.command_id)
+        yield(options) if block_given?
+        @command.process_response(options, self.http_response)
       rescue Transformers::InvalidResponse => e
         Rails.logger.warn(e)
         Rails.logger.warn(e.message)
         nil
       end
 
-      def options=(opts)
-        @options = CommandParameters.new(opts)
-      end
-
-      def account
-        @account ||= Account.find(self.options.account_id)
-      end
-
-      def command
-        @command ||= Command.find(self.options.command_id)
-      end
     end
   end
 end

@@ -1,53 +1,65 @@
 require 'rails_helper'
 describe CommandWorkers::DcmUnsubscribeWorker do
-  let(:config) { [{:username => "foo", :password => "bar", :api_root => "http://example.com"},
-                  {:username => "foo", :password => "bar", :api_root => "http://example2.com"}] }
+  let(:config) { {:username => "foo", :password => "bar", :api_root => "http://example.com"} }
   let(:client) { mock('dcm_client') }
-  let(:command) { mock('Command', process_response: nil) }
-  let(:account) { stub('account', id: 100, to_param: 100) }
+  let(:account) { create(:account) }
+  let(:command) do
+    create(:dcm_unsubscribe_command,
+           keyword: account.stop_keyword,
+           params:  build(:unsubscribe_command_parameters,
+                          dcm_account_codes: Array(account.dcm_account_codes)))
+  end
 
-  let(:http_response) { stub(status: 200) }
-  let(:response_not_found){ stub(status: 404) }
+  let(:http_response) do
+    stub('http_response',
+         status:  200,
+         headers: {'Content-Type' => 'andrew/json'},
+         body:    'foo')
+  end
+
+  let(:response_not_found) do
+    stub('http_response_404',
+         status:  404,
+         headers: {'Content-Type' => 'andrew/json'},
+         body:    'nope')
+  end
+
+  let(:options) do
+    {
+      dcm_account_codes:  ["ACME"],
+      from:               "+12222222222",
+      inbound_message_id: create(:inbound_message).id,
+      command_id:         command.id
+    }
+  end
+
+  before(:each) do
+    Xact::Application.config.expects(:dcm).returns(config)
+  end
 
   subject do
-    w = CommandWorkers::DcmUnsubscribeWorker.new
-    w.stubs(:command).returns(command)
-    w.stubs(:account).returns(account)
-    w
+    CommandWorkers::DcmUnsubscribeWorker.new
   end
 
   describe 'perform with one account' do
     before do
-      Xact::Application.config.expects(:dcm).returns(config)
       client.expects(:delete_wireless_subscriber).with("1+2222222222", "ACME").returns(http_response)
-      client.expects(:delete_wireless_subscriber).with("1+2222222222", "ACME").returns(http_response)
-      DCMClient::Client.expects(:new).with(config[0]).returns(client)
-      DCMClient::Client.expects(:new).with(config[1]).returns(client)
+      DCMClient::Client.expects(:new).with(config).returns(client)
     end
-    specify { subject.perform({:dcm_account_codes => ["ACME"], :from => "+12222222222" }) }
+    specify { subject.perform(options) }
   end
 
   describe 'perform with two accounts and one 404' do
     before do
-      Xact::Application.config.expects(:dcm).returns(config)
-
-      client.expects(:delete_wireless_subscriber)
-        .with("1+2222222222", "ACME")
-        .raises(DCMClient::Error::NotFound.new('what', response_not_found))
       client.expects(:delete_wireless_subscriber)
         .with("1+2222222222", "VANDELAY")
         .raises(DCMClient::Error::NotFound.new("foo", response_not_found))
-
       client.expects(:delete_wireless_subscriber).with("1+2222222222", "ACME").returns(http_response)
-      client.expects(:delete_wireless_subscriber)
-        .with("1+2222222222", "VANDELAY")
-        .raises(DCMClient::Error::NotFound.new("foo", response_not_found))
 
-      DCMClient::Client.expects(:new).with(config[0]).returns(client)
-      DCMClient::Client.expects(:new).with(config[1]).returns(client)
+      DCMClient::Client.expects(:new).with(config).returns(client)
     end
-    specify do 
-      subject.perform({:dcm_account_codes => ["ACME","VANDELAY"], :from => "+12222222222" })
+    specify do
+      subject.perform(options.merge(dcm_account_codes: ["ACME", "VANDELAY"]))
       subject.http_response.status.should eq(200)
     end
   end

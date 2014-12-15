@@ -15,29 +15,26 @@ module CommandWorkers
     # options: {"from"=>"+14445556666", "params"=>"ACME,VANDELAY"}
     #
     def perform(opts)
-      self.options = opts
-
-      Xact::Application.config.dcm.each do |dcm_config|
-        client = DCMClient::Client.new(dcm_config)
+      super do |options|
+        client = DCMClient::Client.new(Xact::Application.config.dcm)
         number = PhoneNumber.new(options.from).dcm
 
         # take the HTTP response with the highest response code
-        #
-        options.dcm_account_codes.collect do |account_code|
+        options.dcm_account_codes.collect do |dcm_account_code|
           begin
-            self.http_response = client.delete_wireless_subscriber(number, account_code)
-          # we don't care if the DCM subscriber doesn't exist
+            self.http_response = client.delete_wireless_subscriber(number, dcm_account_code)
+              # we don't care if the DCM subscriber doesn't exist
           rescue DCMClient::Error::NotFound => e
             self.http_response = e.response
-          # store exception and mark job as failed even though we'll retry it
+              # store exception and mark job as failed even though we'll retry it
           rescue DCMClient::Error => e
             logger.error e.message
-            self.exception = e
+            self.exception     = e
             self.http_response = e.response
           end
         end
       end
-      super
+
     ensure
       raise self.exception if self.exception
     end

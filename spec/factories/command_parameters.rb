@@ -10,7 +10,7 @@ FactoryGirl.define do
     end
 
     factory :subscribe_command_parameters do
-      dcm_account_codes ["ACME","VANDELAY"]
+      dcm_account_code 'ACME'
       dcm_topic_codes ["ACME","VANDELAY"]
       command_type :dcm_subscribe
     end

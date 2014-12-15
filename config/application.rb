@@ -106,11 +106,11 @@ module Xact
     config.twilio_delivery_timeout    = 4.hours
     config.email_delivery_timeout = 24.hours
 
-    config.dcm = [{
-                    username: ENV['DCM_USERNAME'],
-                    password: ENV['DCM_PASSWORD'],
-                    api_root: ENV['DCM_URI']
-                  }]
+    config.dcm = {
+      username: ENV['DCM_USERNAME'],
+      password: ENV['DCM_PASSWORD'],
+      api_root: ENV['DCM_URI']
+    }
 
     config.twilio_polling_enabled = true
     config.odm_polling_enabled    = true

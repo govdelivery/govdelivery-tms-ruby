@@ -5,64 +5,60 @@ describe CommandWorkers::ForwardWorker do
   let(:account){ create(:account_with_sms) }
   let(:command) do
     keyword = account.keywords.create(name: 'worker')
-    create(:forward_command, keyword: keyword)
+    create(:forward_command,
+           keyword: keyword,
+           params:  {
+             url:                 "http://dudes.ruby",
+             http_method:         "post",
+             username:            nil,
+             password:            nil,
+             sms_body_param_name: "sms_body_d",
+             from_param_name:     "from_param"
+           })
   end
-  let(:options) { {url: "http://dudes.ruby",
-                   http_method: "post",
-                   username: nil,
-                   password: nil,
-                   from: "333",
-                   sms_body: "sms body",
-                   sms_tokens: ["sms", "body", "tokens"],
-                   account_id: account.id,
-                   command_id: command.id,
-                   inbound_message_id: create(:inbound_message),
-                   callback_url: "http://localhost",
-                   sms_body_param_name: "sms_body_d",
-                   from_param_name: "from_param"} }
+
+  let(:options) do
+    {
+      command_id:         command.id,
+      from:               "333",
+      sms_body:           "sms body",
+      sms_tokens:         ["sms", "body", "tokens"],
+      inbound_message_id: create(:inbound_message).id,
+      callback_url:       "http://localhost",
+    }
+  end
+
+  let(:http_response) do
+    stub('http_response',
+         status:  200,
+         headers: {'Content-Type' => 'andrew/json'},
+         body:    'foo')
+  end
 
   it 'creates one Twilio::SenderWorker job if command.process_response returns a message' do
-    Service::ForwardService.any_instance.expects(:send)
+    Service::ForwardService.any_instance.expects(:send).returns(http_response)
     Twilio::SenderWorker.expects(:perform_async).once
-    # this craziness is due to the use of super in the perform method
-    fake_command = build(:forward_command).tap{ |c|
-      c.expects(:process_response).
-        returns( build(:sms_message).tap{ |m|
-                  m.expects(:responding!)
-                  m.expects(:first_recipient_id).returns(1)
-                })
+    sms_message = build(:sms_message).tap { |m|
+      m.expects(:responding!)
+      m.expects(:first_recipient_id).returns(1)
     }
-    subject.expects( :command ).returns(fake_command)
-    subject.expects( :account ).returns(stub('account'))
+    Command.any_instance.expects(:process_response).returns(sms_message)
 
     subject.perform( options )
   end
 
   it 'does not create a Twilio::SenderWorker job if command.process_response does not return a message' do
-    Service::ForwardService.any_instance.expects(:send)
+    Service::ForwardService.any_instance.expects(:send).returns(http_response)
     Twilio::SenderWorker.expects(:perform_async).never
     # this craziness is due to the use of super in the perform method
-    fake_command = build(:forward_command).tap{ |c|
-      c.expects(:process_response).
-        returns( nil )
-    }
-    subject.expects( :command ).returns(fake_command)
-    subject.expects( :account ).returns(stub('account'))
-
+    Command.any_instance.expects(:process_response).returns(nil)
     subject.perform( options )
   end
 
   it 'does not create a Twilio::SenderWorker job if command.process_response blows up' do
-    Service::ForwardService.any_instance.expects(:send)
+    Service::ForwardService.any_instance.expects(:send).returns(http_response)
     Twilio::SenderWorker.expects(:perform_async).never
-    # this craziness is due to the use of super in the perform method
-    fake_command = build(:forward_command).tap { |c|
-      c.expects(:process_response).
-        raises(::Transformers::InvalidResponse, 'whoops')
-    }
-    subject.expects(:command).returns(fake_command)
-    subject.expects(:account).returns(stub('account'))
-
+    Command.any_instance.expects(:process_response).raises(::Transformers::InvalidResponse, 'whoops')
     subject.perform(options)
   end
 

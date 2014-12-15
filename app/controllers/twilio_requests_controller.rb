@@ -34,8 +34,7 @@ class TwilioRequestsController < ApplicationController
       Rails.logger.debug "ignoring message: #{inbound_msg.inspect}"
       response_text = nil
     else
-      command_parameters.merge!(account_id: account_id,
-                                sms_tokens: message.split,
+      command_parameters.merge!(sms_tokens: message.split,
                                 inbound_message_id: inbound_msg.id)
       response_text = keyword_service.respond!(command_parameters)
     end
