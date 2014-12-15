@@ -15,7 +15,7 @@ namespace :test do
     # Set the transformer
     transformer_config = {
       content_type: 'application/json',
-      transformer_class: 'etaspot'
+      transformer_class: 'eta_spot'
     }
 
     transformer = a.transformers.find_by(content_type: transformer_config[:content_type])
