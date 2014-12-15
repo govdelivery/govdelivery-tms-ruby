@@ -201,10 +201,10 @@ And(/^my subscription should be removed$/) do
   #puts @response['subscriber']['phone']
 
   #verifying if subscriber is present
-  if @response['errors']['error'] = 'Subscriber not found'
+  if @response['errors'] && @response['errors']['error'] == 'Subscriber not found'
     puts 'Subscriber not found'.green
   else
-    fail 'Subscriber found'.red
+    fail 'Subscriber found - Expected subscriber to not exist'.red
   end
 end
 
