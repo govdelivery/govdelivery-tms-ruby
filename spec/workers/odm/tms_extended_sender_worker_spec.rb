@@ -63,7 +63,7 @@ if defined?(JRUBY_VERSION)
       it 'should work' do
         email_message.stubs(:queued?).returns(true)
         account.link_encoder = nil
-        email_message.expects(:sending!).with(nil, 'dummy_id')
+        email_message.expects(:sending!).with('dummy_id')
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
         odm_v2.expects(:send_message).returns('dummy_id')
@@ -81,7 +81,7 @@ if defined?(JRUBY_VERSION)
       it 'should work' do
         account.link_encoder = 'TWO'
         email_message.stubs(:queued?).returns(true)
-        email_message.expects(:sending!).with(nil, 'dummy_id')
+        email_message.expects(:sending!).with('dummy_id')
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
         odm_v2.expects(:send_message).returns('dummy_id')

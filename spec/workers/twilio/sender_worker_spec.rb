@@ -44,19 +44,23 @@ describe Twilio::SenderWorker do
     end
 
     context "a send that returns a 400 from Twilio" do
-      it 'should fail the message but not the job' do
+      it 'should fail the recipient but not the job' do
         response = 400
         twilio_calls = mock
         twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
         client.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
         client.stubs(:account).returns(stub('calls', calls: twilio_calls))
         Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
-        expect { subject.perform(
-          message_id: message.id,
+        subject.perform(
+          message_id:    message.id,
           message_class: message.class.name,
-          recipient_id: message.recipients.first.id,
-          callback_url: 'http://localhost')
-        }.to change { message.recipients.where(:error_message => 'error').count }.by 1
+          recipient_id:  message.recipients.first.id,
+          callback_url:  'http://localhost')
+
+        recipient = message.recipients.first
+        expect(recipient.ack).to be nil
+        expect(recipient.status).to eq 'failed'
+        expect(recipient.error_message).to eq 'error'
       end
     end
 

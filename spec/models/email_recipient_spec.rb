@@ -54,6 +54,8 @@ describe EmailRecipient do
         subject.reload
         subject.failed!('ack', nil, 'this message is terrible')
         subject.failed?.should be true
+        subject.ack.should eq 'ack'
+        subject.error_message.should eq 'this message is terrible'
       end
     end
 

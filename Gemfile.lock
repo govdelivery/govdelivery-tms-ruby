@@ -3,7 +3,7 @@ GEM
   remote: https://ed5779be:de10e893@gems.contribsys.com/
   remote: https://rubygems.org/
   specs:
-    aasm (3.4.0)
+    aasm (4.0.5)
     actionmailer (4.1.5)
       actionpack (= 4.1.5)
       actionview (= 4.1.5)
