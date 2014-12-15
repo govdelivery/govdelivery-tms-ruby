@@ -36,7 +36,7 @@ class InboundMessage < ActiveRecord::Base
   # An inbound message associated with a custom keyword is always actionable.
   #
   def actionable?
-    return true unless keyword.special?
+    return true unless keyword.try(:special?)
 
     compare_date = self.created_at || DateTime.now
     table = self.class.arel_table
