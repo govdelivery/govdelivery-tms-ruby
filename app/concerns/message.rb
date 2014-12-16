@@ -14,23 +14,23 @@ module Message
       state :canceled
 
       event :ready do
-        transitions from: :new, to: :queued, guard: :create_recipients, on_transition: [:process_blacklist!, :prepare_recipients]
+        transitions from: :new, to: :queued, guard: :create_recipients, after: [:process_blacklist!, :prepare_recipients]
       end
 
       event :sending do
-        transitions from: :queued, to: :sending, on_transition: :on_sending
+        transitions from: :queued, to: :sending, after: :on_sending
       end
 
       event :responding do
-        transitions from: :new, to: :sending, guard: :has_recipients?, on_transition: :on_sending
+        transitions from: :new, to: :sending, guard: :has_recipients?, after: :on_sending
       end
 
       event :complete do
-        transitions from: :sending, to: :completed, guard: :check_complete, on_transition: :on_complete
+        transitions from: :sending, to: :completed, guard: :check_complete, after: :on_complete
       end
 
       event :cancel do
-        transitions from: [:new, :queued], to: :canceled, on_transition: :on_cancel
+        transitions from: [:new, :queued], to: :canceled, after: :on_cancel
       end
     end
 

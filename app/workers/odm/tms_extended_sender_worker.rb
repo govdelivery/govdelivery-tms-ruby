@@ -48,7 +48,7 @@ module Odm
 
     def self.mark_sending(message_or_id, ack)
       message_or_id = EmailMessage.find(email_message_id) unless message_or_id.is_a?(EmailMessage)
-      message_or_id.sending!(nil, ack)
+      message_or_id.sending!(ack)
     end
 
     private
