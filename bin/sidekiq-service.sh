@@ -136,7 +136,7 @@ quiet () {
     fi
 
     cd "${app_path}" || exit 5
-    su ${user} -s /bin/sh -c "bundle exec sidekiqctl quiet \"${pid_file}\" ${deadline_timeout}"
+    su ${user} -s /bin/sh -c "bundle exec bin/sidekiqctl quiet \"${pid_file}\" ${deadline_timeout}"
     RETVAL=$?
     return ${RETVAL}
 }
@@ -155,7 +155,7 @@ stop () {
     echo "$(date) Stopping ${app_name}" >> "${log_file}"
 
     cd "${app_path}" || exit 5
-    su ${user} -s /bin/sh -c "bundle exec sidekiqctl stop \"${pid_file}\" ${deadline_timeout}"
+    su ${user} -s /bin/sh -c "bundle exec bin/sidekiqctl stop \"${pid_file}\" ${deadline_timeout}"
     RETVAL=$?
     if [[ $RETVAL -ne 0 ]]; then
         echo "Problem with Stop"
