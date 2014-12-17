@@ -20,7 +20,7 @@ module CommandWorkers
         number = PhoneNumber.new(options.from).dcm
 
         # take the HTTP response with the highest response code
-        options.dcm_account_codes.collect do |dcm_account_code|
+        command.params.dcm_account_codes.collect do |dcm_account_code|
           begin
             self.http_response = client.delete_wireless_subscriber(number, dcm_account_code)
               # we don't care if the DCM subscriber doesn't exist

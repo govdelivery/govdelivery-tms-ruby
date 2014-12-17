@@ -26,7 +26,6 @@ describe CommandWorkers::DcmUnsubscribeWorker do
 
   let(:options) do
     {
-      dcm_account_codes:  ["ACME"],
       from:               "+12222222222",
       inbound_message_id: create(:inbound_message).id,
       command_id:         command.id
@@ -57,9 +56,14 @@ describe CommandWorkers::DcmUnsubscribeWorker do
       client.expects(:delete_wireless_subscriber).with("1+2222222222", "ACME").returns(http_response)
 
       DCMClient::Client.expects(:new).with(config).returns(client)
+      account = command.account
+      account.dcm_account_codes = ["ACME", "VANDELAY"].to_set
+      account.save!
+      command.params.dcm_account_codes = ["ACME", "VANDELAY"]
+      command.save!
     end
     specify do
-      subject.perform(options.merge(dcm_account_codes: ["ACME", "VANDELAY"]))
+      subject.perform(options)
       subject.http_response.status.should eq(200)
     end
   end

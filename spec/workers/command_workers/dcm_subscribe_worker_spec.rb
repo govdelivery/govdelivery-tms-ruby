@@ -39,8 +39,12 @@ describe CommandWorkers::DcmSubscribeWorker do
       from:               "+12222222222",
       inbound_message_id: create(:inbound_message).id,
       command_id:         command.id
-    }.merge(build(:subscribe_command_parameters).to_hash)
+    }
   end
+
+  let(:command_parameters){
+    build(:subscribe_command_parameters)
+  }
 
   subject do
     CommandWorkers::DcmSubscribeWorker.new
@@ -49,7 +53,7 @@ describe CommandWorkers::DcmSubscribeWorker do
   context 'error handling' do
 
     it 'passes options to the subscribe command' do
-      subject.expects(:request_subscription).with(kind_of(DCMClient::Client), '1+5', kind_of(CommandParameters)).returns(http_response)
+      DCMClient::Client.any_instance.expects(:wireless_subscribe).with('1+5', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
       subject.perform(options.merge(from: '5'))
     end
 
@@ -86,15 +90,15 @@ describe CommandWorkers::DcmSubscribeWorker do
   context "with subscribe args" do
 
     it 'should call email_subscribe on the DCM Client when argument has an asterisk' do
-      command_parameters = build(:subscribe_command_parameters, sms_tokens: ['em@il']) #sets email subscribe
+      options[:sms_tokens] = ['em@il']
       client.expects(:email_subscribe).with('em@il', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
-      subject.request_subscription(client, '', command_parameters)
+      subject.request_subscription(client, '', CommandParameters.new(options), command_parameters)
     end
 
     it 'should call wireless_subscribe on the DCM Client when argument does not have an asterisk' do
-      command_parameters = build(:subscribe_command_parameters, sms_tokens: ['n`email']) #sets email subscribe
+      options[:sms_tokens] = ['n`email']
       client.expects(:wireless_subscribe).with('5', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
-      subject.request_subscription(client, '5', command_parameters)
+      subject.request_subscription(client, '5', CommandParameters.new(options), command_parameters)
     end
   end
 

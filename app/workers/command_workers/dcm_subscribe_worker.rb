@@ -17,7 +17,7 @@ module CommandWorkers
         begin
           client             = DCMClient::Client.new(Xact::Application.config.dcm)
           from_number        = PhoneNumber.new(options.from).dcm
-          self.http_response = request_subscription(client, from_number, options)
+          self.http_response = request_subscription(client, from_number, options, command.params)
 
         rescue DCMClient::Error::UnprocessableEntity, DCMClient::Error::NotFound => e
           # don't raise exception, so no retry
@@ -37,12 +37,12 @@ module CommandWorkers
       raise self.exception if self.exception
     end
 
-    def request_subscription client, from_number, opts
-      if (email_address = extract_email(opts.sms_tokens || []))
+    def request_subscription client, from_number, options, command_parameters
+      if (email_address = extract_email(options.sms_tokens || []))
         # example: subscribe em@il
-        client.email_subscribe(email_address, opts.dcm_account_code, opts.dcm_topic_codes)
+        client.email_subscribe(email_address, command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
       else
-        client.wireless_subscribe(from_number, opts.dcm_account_code, opts.dcm_topic_codes)
+        client.wireless_subscribe(from_number, command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
       end
     end
 
