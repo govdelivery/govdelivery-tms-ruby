@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative '../config/environment'
 require 'thor'
-
+require 'csv'
 class KeywordsCLI < Thor
 
 
@@ -69,6 +69,23 @@ class KeywordsCLI < Thor
     keyword = get_keyword(account, keyword_name)
     keyword.commands.each do |command|
       puts command.name
+    end
+  end
+
+  desc 'bulk_create ACCOUNT_NAME FILE', "create many keywords at once using a keyword CSV file. The file format is:\n'KEYWORD_NAME','RESPONSE TEXT'"
+  def bulk_create(account_name, file)
+    account = get_account(account_name)
+    if !File.readable?(file)
+      raise Thor::Error.new("can't read #{file}")
+    end
+    CSV.foreach(file) do |l|
+      keyword_name, response_text = l[0..1]
+      keyword = account.keywords.build(name: keyword_name, response_text: response_text)
+      if keyword.save
+        say "successfully created #{keyword.name}", :green
+      else
+        say "errors creating #{keyword.name}: #{keyword.errors.full_messages.to_sentence}", :red
+      end
     end
   end
 
