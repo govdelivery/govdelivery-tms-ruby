@@ -17,11 +17,17 @@ Given(/^I attempt to create a reserved keyword (.*)$/) do |keyword|
   client = tms_client(@conf)
   @keyword = client.keywords.build(:name => keyword)
   keyword = @transformed_keyword
-    raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
+    STDOUT.puts @keyword.errors unless @keyword.post    
+end
 
-    if "#{@keyword.errors}".include?('reserved')
-      puts 'reserved'
-    end  
+Then(/^I should receive an reserved keyword message$/) do
+  @output = JSON.parse(@keyword.errors.to_json)
+
+    if @output.to_s.include?('reserved')
+      puts 'Keyword is reserved and therefore cannot be created.'.green
+    else
+      raise 'Keyword was created erroneously.'.red
+    end
 end
 
 
