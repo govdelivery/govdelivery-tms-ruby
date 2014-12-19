@@ -79,12 +79,13 @@ class KeywordsCLI < Thor
       raise Thor::Error.new("can't read #{file}")
     end
     CSV.foreach(file) do |l|
-      keyword_name, response_text = l[0..1]
-      keyword = account.keywords.build(name: keyword_name, response_text: response_text)
+      keyword_name, account_code, topic_code = l[0..2]
+      keyword = account.keywords.build(name: keyword_name)
+      keyword.commands.build(command_type: :dcm_subscribe, params: {dcm_account_code: account_code, dcm_topic_codes: [topic_code]})
       if keyword.save
-        say "successfully created #{keyword.name}", :green
+	 say "successfully created #{keyword.name}", :green
       else
-        say "errors creating #{keyword.name}: #{keyword.errors.full_messages.to_sentence}", :red
+	 say "errors creating #{keyword.name}: #{keyword.errors.full_messages.to_sentence}", :red
       end
     end
   end

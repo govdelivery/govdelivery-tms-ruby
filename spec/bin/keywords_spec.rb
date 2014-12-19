@@ -10,7 +10,7 @@ class KeywordsCLI
 end
 
 describe KeywordsCLI do
-  let(:account) { create(:account_with_sms) }
+  let(:account) { create(:account_with_sms, dcm_account_codes: Set.new(['PGXACT'])) }
   let(:keyword_csv) { File.expand_path("../../../test/fixtures/keyword_import.csv", __FILE__) }
   let(:keyword_csv_dup) { File.expand_path("../../../test/fixtures/keyword_import_dup.csv", __FILE__) }
 
@@ -20,6 +20,8 @@ describe KeywordsCLI do
       before = account.keywords.count
       cli.bulk_create(account.name, keyword_csv)
       expect(account.keywords.count).to eq(before + 3)
+      keyword=account.keywords.where(name:"hey").first
+      expect(keyword.commands.count).to eq(1)
     end
 
     it "should raise on non-existent bulk_create file" do
