@@ -23,14 +23,34 @@ class RecipientsController < ApplicationController
     render_recipient_subset(:opened)
   end
 
-  #sms,phone,email
+  #sms,voice,email
   def failed
     render_recipient_subset(:failed)
   end
 
-  #sms,phone,email
+  #sms,voice,email
   def sent
     render_recipient_subset(:sent)
+  end
+
+  #voice
+  def human
+    render_recipient_subset(:human)
+  end
+
+  #voice
+  def machine
+    render_recipient_subset(:machine)
+  end
+
+  #voice
+  def busy
+    render_recipient_subset(:busy)
+  end
+
+  #voice
+  def no_answer
+    render_recipient_subset(:no_answer)
   end
 
   protected
@@ -44,10 +64,10 @@ class RecipientsController < ApplicationController
   def find_message
     if params[:sms_id]
       @message = current_user.account_sms_messages.find(params[:sms_id])
-      set_phone_recipient_attributes
+      set_sms_recipient_attributes
     elsif params[:voice_id]
       @message = current_user.account_voice_messages.find(params[:voice_id])
-      set_phone_recipient_attributes
+      set_voice_recipient_attributes
     elsif params[:email_id]
       @message = current_user.account_email_messages.find(params[:email_id])
       set_email_recipient_attributes
@@ -60,8 +80,12 @@ class RecipientsController < ApplicationController
     end
   end
 
-  def set_phone_recipient_attributes
+  def set_sms_recipient_attributes
     @content_attributes = [:formatted_phone, :phone]
+  end
+
+  def set_voice_recipient_attributes
+    @content_attributes = [:formatted_phone, :phone, :secondary_status, :retries]
   end
 
   def set_email_recipient_attributes

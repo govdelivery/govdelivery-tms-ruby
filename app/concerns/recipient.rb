@@ -7,6 +7,9 @@
 #
 module Recipient
   extend ActiveSupport::Concern
+  class ShouldRetry < StandardError
+
+  end
 
   def incomplete_statuses
     ['new', 'sending']
@@ -50,6 +53,11 @@ module Recipient
       event :blacklist, after: :invoke_webhooks do
         transitions from: [:new, :sending], to: :blacklisted
       end
+
+      event :attempt do
+        transitions from: [:new, :sending], to: :sent, after: :finalize, unless: :should_retry?
+        transitions from: [:new, :sending], to: :failed, after: :finalize, unless: :should_retry?
+      end
     end
 
     attr_accessor :skip_message_validation
@@ -79,6 +87,7 @@ module Recipient
   end
 
   def sent!(ack, date_sent=nil)
+    puts date_sent
     mark_sent!(:sent, ack, date_sent)
   end
 
@@ -90,7 +99,7 @@ module Recipient
     cancel!(:canceled, ack)
   end
 
-  def ack!(ack=nil)
+  def ack!(ack=nil, *args)
     update_attribute(:ack, ack)
   end
 
@@ -115,5 +124,4 @@ module Recipient
   def set_vendor
     self.vendor ||= self.message.try(:vendor)
   end
-
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141217184138) do
+ActiveRecord::Schema.define(version: 20141218140730) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -266,19 +266,30 @@ ActiveRecord::Schema.define(version: 20141217184138) do
     t.string   "status",                                             default: "new", null: false
     t.datetime "sent_at"
     t.string   "say_text",     limit: 1000
+    t.integer  "max_retries",               precision: 38, scale: 0, default: 0,     null: false
+    t.integer  "retry_delay",               precision: 38, scale: 0, default: 300,   null: false
+  end
+
+  create_table "voice_recipient_retries", force: true do |t|
+    t.integer  "voice_message_id",   precision: 38, scale: 0, null: false
+    t.integer  "voice_recipient_id", precision: 38, scale: 0, null: false
+    t.datetime "completed_at"
+    t.string   "status"
+    t.string   "secondary_status"
   end
 
   create_table "voice_recipients", force: true do |t|
-    t.integer  "message_id",                  precision: 38, scale: 0,                 null: false
-    t.integer  "vendor_id",                   precision: 38, scale: 0
+    t.integer  "message_id",                   precision: 38, scale: 0,                 null: false
+    t.integer  "vendor_id",                    precision: 38, scale: 0
     t.string   "phone"
     t.string   "formatted_phone"
     t.string   "ack"
-    t.string   "error_message",   limit: 512
+    t.string   "error_message",    limit: 512
     t.datetime "sent_at"
     t.datetime "completed_at"
-    t.string   "status",                                               default: "new", null: false
+    t.string   "status",                                                default: "new", null: false
     t.datetime "created_at"
+    t.string   "secondary_status"
   end
 
   add_index "voice_recipients", ["message_id", "id"], name: "i_voi_rec_mes_id_id", tablespace: "tsms_indx01"

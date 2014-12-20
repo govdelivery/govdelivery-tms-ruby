@@ -32,6 +32,10 @@ FactoryGirl.define do
       end
     end
 
+    factory :account_with_voice do
+      voice_vendor factory: :voice_vendor
+    end
+
     factory :account_with_stuff do
       sms_vendor factory: :shared_sms_vendor
       email_vendor factory: :email_vendor

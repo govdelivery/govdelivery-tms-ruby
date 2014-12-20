@@ -13,7 +13,8 @@ class MessagePresenter < SimpleDelegator
     else
       {self: self_link,}.
         merge(recipient_action_links).
-        merge(email_links)
+        merge(email_links).
+        merge(voice_links)
     end
   end
 
@@ -25,6 +26,10 @@ class MessagePresenter < SimpleDelegator
 
   def email_links
     message_type == 'email' ? {clicked: clicked_link, opened: opened_link} : {}
+  end
+
+  def voice_links
+    message_type == 'voice' ? {human: human_link, machine: machine_link, busy: busy_link, no_answer: no_answer_link} : {}
   end
 
   private
@@ -48,6 +53,22 @@ class MessagePresenter < SimpleDelegator
 
   def sent_link
     context.send(:"sent_#{message_type}_recipients_path", :"#{message_type}_id" => @message.id)
+  end
+
+  def human_link
+    context.send(:"human_#{message_type}_recipients_path", :"#{message_type}_id" => @message.id)
+  end
+
+  def machine_link
+    context.send(:"machine_#{message_type}_recipients_path", :"#{message_type}_id" => @message.id)
+  end
+
+  def busy_link
+    context.send(:"busy_#{message_type}_recipients_path", :"#{message_type}_id" => @message.id)
+  end
+
+  def no_answer_link
+    context.send(:"no_answer_#{message_type}_recipients_path", :"#{message_type}_id" => @message.id)
   end
 
   def clicked_link

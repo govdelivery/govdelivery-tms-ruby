@@ -34,7 +34,7 @@ module Message
       end
     end
 
-    scope :without_message, -> { select(*(self.attribute_names-['body', 'subject', 'macros', 'play_url', 'say_text'])) }
+    scope :without_message, -> { select(*(self.attribute_names-['body', 'subject', 'macros', 'play_url', 'say_text', 'max_retries', 'retry_delay'])) }
     scope :not_yet_sending, -> { where(status: ['new', 'queued']) }
 
     # don't raise an error if complete! fails
@@ -189,6 +189,7 @@ module Message
   def recipient_state_counts
     groups = recipients.select('count(status) the_count, status').group('status').reorder('')
     h = Hash[groups.map { |r| [r.status, r.the_count] }]
+
     Hash[EmailRecipient.aasm.states.map(&:to_s).map { |s| [s, 0] }].merge(h)
   end
 end

@@ -5,8 +5,19 @@ class TwilioStatusCallbacksController < ApplicationController
   respond_to :xml
 
   def create
-    @recipient.send(@transition, @sid)
-    render :text => '', :status => 201
+    begin
+      @recipient.send(@transition, @sid, (@status_type if !@status_type.nil?))
+    rescue Recipient::ShouldRetry  #call came back as busy, no answer, or fail...retry
+      if @recipient.sending?
+        args = {message_id: @recipient.message.id,
+                recipient_id: @recipient.id,
+                message_url: twiml_url,
+                callback_url: twilio_status_callbacks_url(:format => :xml)}
+        @recipient.message.worker.perform_in(@recipient.message.retry_delay.seconds, args)
+      end
+    ensure
+      render :text => '', :status => 201
+    end
   end
 
   protected
@@ -19,6 +30,7 @@ class TwilioStatusCallbacksController < ApplicationController
                 ''
               end
     @transition = Service::TwilioResponseMapper.recipient_callback(@status)
+    @status_type = params.has_key?('AnsweredBy') ? params['AnsweredBy'] : nil # Twilio voice reports sent calls as answered by human or machine
   end
 
   def find_recipient
@@ -32,5 +44,4 @@ class TwilioStatusCallbacksController < ApplicationController
                  nil
                end
   end
-
 end

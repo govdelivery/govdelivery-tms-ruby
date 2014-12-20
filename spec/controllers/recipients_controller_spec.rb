@@ -11,7 +11,7 @@ describe RecipientsController do
     3.times.map { |i| message.recipients.build(:phone => (6125551200 + i).to_s) }
   end
   let(:voice_recipients) do
-    3.times.map { |i| voice_message.recipients.build(:phone => (6125551200 + i).to_s) }
+    3.times.map { |i| voice_message.recipients.build(:phone => (6125551200 + i).to_s, :status => :sending) }
   end
   let(:email_message) { user.email_messages.create(:subject => "subs", :from_name => 'dude', :body => 'hi') }
   let(:email_recipients) do
@@ -22,6 +22,8 @@ describe RecipientsController do
     sign_in user
     User.any_instance.stubs(:account_sms_messages).returns(stub(:find => message))
     SmsMessage.any_instance.stubs(:id).returns(1)
+    User.any_instance.stubs(:account_voice_messages).returns(stub(:find => voice_message))
+    VoiceMessage.any_instance.stubs(:id).returns(1)
   end
 
   [:opened, :clicked].each do |type|
@@ -78,7 +80,7 @@ describe RecipientsController do
       VoiceMessage.any_instance.expects(:recipients).returns(stub(:page => voice_recipients))
       get :index, :voice_id => 1, :format => :json
       assigns(:page).should eq(1)
-      assigns(:content_attributes).should match_array([:phone, :formatted_phone])
+      assigns(:content_attributes).should match_array([:phone, :formatted_phone, :secondary_status, :retries])
       response.headers['Link'].should =~ /next/
       response.headers['Link'].should =~ /last/
     end
@@ -141,6 +143,99 @@ describe RecipientsController do
         SmsMessage.any_instance.expects(:recipients).returns(stub(:find => stub(:find => recipients.first)))
 
         get :show, :sms_id => 1, :format => :json, :id=> 2
+        response.response_code.should == 200
+        assigns(:recipient).should_not be_nil
+      end
+    end
+  end
+
+  context 'VoiceMessage' do
+
+    context '#page' do
+      it 'should work' do
+        stub_pagination(recipients, 2, 5)
+        VoiceMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
+
+
+        get :index, :voice_id => 1, :format => :json, :page => 2
+        assigns(:page).should eq(2)
+        response.headers['Link'].should =~ /first/
+        response.headers['Link'].should =~ /prev/
+        response.headers['Link'].should =~ /next/
+        response.headers['Link'].should =~ /last/
+      end
+    end
+
+    context '#failed' do
+      it 'should show a failed send' do
+        voice_recipients.first.failed!
+        get :failed, voice_id: voice_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eq(1)
+        assigns(:recipients).first.status.should eql('failed')
+      end
+    end
+
+    context '#sent' do
+      it 'should show a successful send' do
+        voice_recipients.first.sent! :ack
+        get :sent, voice_id: voice_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eq(1)
+        assigns(:recipients).first.status.should eql('sent')
+      end
+    end
+
+    context '#human' do
+      it 'should show a human send' do
+        voice_recipients.first.sent! :ack, :human
+        get :human, voice_id: voice_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eq(1)
+        assigns(:recipients).first.status.should eql('sent')
+        assigns(:recipients).first.secondary_status.should eql('human')
+      end
+    end
+
+    context '#machine' do
+      it 'should show a machine send' do
+        voice_recipients.first.sent! :ack, :machine
+        get :machine, voice_id: voice_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eq(1)
+        assigns(:recipients).first.status.should eql('sent')
+        assigns(:recipients).first.secondary_status.should eql('machine')
+      end
+    end
+
+    context '#busy' do
+      it 'should show a busy send' do
+        voice_recipients.first.busy! :ack
+        get :busy, voice_id: voice_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eq(1)
+        assigns(:recipients).first.status.should eql('sent')
+        assigns(:recipients).first.secondary_status.should eql('busy')
+      end
+    end
+
+    context '#no_answer' do
+      it 'should show a no_answer send' do
+        voice_recipients.first.no_answer! :ack
+        get :no_answer, voice_id: voice_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eq(1)
+        assigns(:recipients).first.status.should eql('sent')
+        assigns(:recipients).first.secondary_status.should eql('no_answer')
+      end
+    end
+
+    context '#show' do
+      it 'should work' do
+        stub_pagination(recipients, 2, 5)
+        VoiceMessage.any_instance.expects(:recipients).returns(stub(:find => stub(:find => recipients.first)))
+
+        get :show, :voice_id => 1, :format => :json, :id=> 2
         response.response_code.should == 200
         assigns(:recipient).should_not be_nil
       end

@@ -24,6 +24,7 @@ module Service
           :from => message.vendor.from,
         }
         opts[:body] = message.body if message.respond_to?(:body)
+        opts[:IfMachine] = 'Continue' if message.respond_to?(:play_url) #if voice, use AMD
         opts.tap do |h|
           h[:StatusCallback] = callback_url if callback_url
           h[:url]            = message_url  if message_url
