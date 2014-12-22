@@ -1,5 +1,5 @@
 class KeywordCommandsController < ApplicationController
-  wrap_parameters :command, :include => [:params, :name, :command_type], :format => :json
+  wrap_parameters :command, include: [:params, :name, :command_type], format: [:json, :url_encoded_form]
 
   before_filter :find_user, :find_keyword
   before_filter :find_command, :only => [:show, :update, :destroy]

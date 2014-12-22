@@ -2,7 +2,7 @@ class SmsMessagesController < MessagesController
   include FeatureChecker
   feature :sms
 
-  wrap_parameters :message, :include => [:body, :recipients], :format => :json
+  wrap_parameters :message, include: [:body, :recipients], format: [:json, :url_encoded_form]
 
   protected
 

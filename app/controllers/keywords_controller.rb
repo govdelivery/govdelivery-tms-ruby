@@ -1,6 +1,6 @@
 class KeywordsController < ApplicationController
   include FeatureChecker
-  wrap_parameters :keyword, :include => [:name, :response_text], :format => :json
+  wrap_parameters :keyword, include: [:name, :response_text], format: [:json, :url_encoded_form]
   before_filter :find_user
   before_filter :find_keyword, :only => [:show, :update]
   feature :sms
