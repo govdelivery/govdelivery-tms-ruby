@@ -279,16 +279,17 @@ ActiveRecord::Schema.define(version: 20141218140730) do
   end
 
   create_table "voice_recipients", force: true do |t|
-    t.integer  "message_id",                  precision: 38, scale: 0,                 null: false
-    t.integer  "vendor_id",                   precision: 38, scale: 0
+    t.integer  "message_id",                   precision: 38, scale: 0,                 null: false
+    t.integer  "vendor_id",                    precision: 38, scale: 0
     t.string   "phone"
     t.string   "formatted_phone"
     t.string   "ack"
-    t.string   "error_message",   limit: 512
+    t.string   "error_message",    limit: 512
     t.datetime "sent_at"
     t.datetime "completed_at"
-    t.string   "status",                                               default: "new", null: false
+    t.string   "status",                                                default: "new", null: false
     t.datetime "created_at"
+    t.string   "secondary_status"
   end
 
   add_index "voice_recipients", ["message_id", "id"], name: "i_voi_rec_mes_id_id", tablespace: "tsms_indx01"
