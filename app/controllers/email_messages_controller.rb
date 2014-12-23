@@ -2,26 +2,27 @@ class EmailMessagesController < MessagesController
   include FeatureChecker
   feature :email
 
-  wrap_parameters :message, :include => [
-      :body, 
-      :click_tracking_enabled, 
-      :errors_to,
-      :from_email,
-      :from_name,
-      :macros,
-      :open_tracking_enabled, 
-      :recipients,
-      :reply_to, 
-      :subject, 
-    ], 
-    :format => :json
+  wrap_parameters :message,
+                  include: [
+                             :body,
+                             :click_tracking_enabled,
+                             :errors_to,
+                             :from_email,
+                             :from_name,
+                             :macros,
+                             :open_tracking_enabled,
+                             :recipients,
+                             :reply_to,
+                             :subject,
+                           ],
+                  format:  [:json, :url_encoded_form]
 
   protected
 
   def set_scope
-    @message_scope = if action_name == 'index' 
+    @message_scope = if action_name == 'index'
       current_user.email_messages_indexed
-    else 
+    else
       current_user.email_messages
     end
   end
@@ -31,11 +32,11 @@ class EmailMessagesController < MessagesController
     @content_attributes.concat([
       :body,
       :click_tracking_enabled,
-      :errors_to, 
+      :errors_to,
       :from_email,
       :from_name,
       :macros,
-      :open_tracking_enabled, 
+      :open_tracking_enabled,
       :reply_to
       ]) unless action_name=='index'
   end

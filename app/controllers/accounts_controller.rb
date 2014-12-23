@@ -18,13 +18,13 @@ class AccountsController < ApplicationController
                :help_text,
                :stop_text,
                :default_response_text
-             ], format: :json
+             ], format: [:json, :url_encoded_form]
 
   wrap_parameters :from_address,
                   include: [:from_email,
                             :reply_to,
                             :errors_to],
-                  format:  :json
+                  format:  [:json, :url_encoded_form]
 
   def index
     @accounts = Account.all
