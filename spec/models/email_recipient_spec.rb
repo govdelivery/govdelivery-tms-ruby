@@ -113,12 +113,12 @@ describe EmailRecipient do
       end
 
       it 'failed scope does not include canceled status' do
-        subject.canceled! :ack
+        subject.canceled!('ack')
         EmailRecipient.failed.should_not include(subject)
       end
 
       it 'sent scope includes sent status' do
-        subject.sent! :ack
+        subject.sent!('ack', nil)
         EmailRecipient.sent.should include(subject)
       end
     end

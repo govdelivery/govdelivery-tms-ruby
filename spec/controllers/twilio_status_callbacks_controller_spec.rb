@@ -142,7 +142,7 @@ describe TwilioStatusCallbacksController do
         response.response_code.should == 201
       end
       it "should update recipient status" do
-        recipient.sent?.should be true
+        recipient.failed?.should be true
       end
       it "should update recipient secondary status" do
         recipient.secondary_status.should eql('busy')
@@ -164,7 +164,7 @@ describe TwilioStatusCallbacksController do
         response.response_code.should == 201
       end
       it "should update recipient status" do
-        recipient.sent?.should be true
+        recipient.failed?.should be true
       end
       it "should update recipient secondary status" do
         recipient.secondary_status.should eql('no_answer')
@@ -186,11 +186,12 @@ describe TwilioStatusCallbacksController do
       it "should respond with accepted" do
         response.response_code.should == 201
       end
-      it "should update recipient status" do
+      it "should not update recipient status" do
         recipient.sent?.should be false
+        recipient.sending?.should be true
       end
       it "should update recipient secondary status" do
-        recipient.voice_recipient_retries.last.secondary_status.should eql('busy')
+        recipient.voice_recipient_attempts.last.description.should eql('busy')
       end
       it "should update retry count" do
         recipient.retries.should eql(1)
@@ -216,7 +217,7 @@ describe TwilioStatusCallbacksController do
         recipient.sent?.should be false
       end
       it "should update recipient secondary status" do
-        recipient.voice_recipient_retries.last.secondary_status.should eql('no_answer')
+        recipient.voice_recipient_attempts.last.description.should eql('no_answer')
       end
       it "should update retry count" do
         recipient.retries.should eql(1)

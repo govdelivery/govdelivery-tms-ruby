@@ -34,6 +34,7 @@ module Recipient
         transitions from: [:new, :sending], to: :sending, after: :acknowledge_sent
       end
 
+      # ack, sent_at, error_message, call_status (for voice)
       event :mark_sent, after: :invoke_webhooks do
         transitions from: [:new, :sending, :inconclusive], to: :sent, after: :finalize
       end
@@ -54,9 +55,8 @@ module Recipient
         transitions from: [:new, :sending], to: :blacklisted
       end
 
-      event :attempt do
-        transitions from: [:new, :sending], to: :sent, after: :finalize, unless: :should_retry?
-        transitions from: [:new, :sending], to: :failed, after: :finalize, unless: :should_retry?
+      event :mark_attempt do
+        transitions from: [:new, :sending], to: :failed, if: :retries_exhausted?, after: :finalize
       end
     end
 
@@ -82,38 +82,42 @@ module Recipient
     self.error_message = self.error_message[0..511] if error_message && error_message_changed? && error_message.to_s.length > 512
   end
 
-  def sending!(ack, *args)
+  def sending!(ack, *_)
     mark_sending!(:sending, ack)
   end
 
-  def sent!(ack, date_sent=nil)
-    puts date_sent
-    mark_sent!(:sent, ack, date_sent)
+  def sent!(ack, date_sent=nil, _=nil)
+    date_sent ||= Time.now
+    mark_sent!(:sent, ack, date_sent, nil, nil)
   end
 
   def failed!(ack=nil, completed_at=nil, error_message=nil)
-    fail!(:failed, ack, completed_at, error_message)
+    fail!(:failed, ack, completed_at, error_message, nil)
   end
 
-  def canceled!(ack, *args)
-    cancel!(:canceled, ack)
+  def canceled!(ack, *_)
+    cancel!(:canceled, ack, nil, nil, nil)
   end
 
-  def ack!(ack=nil, *args)
+  def ack!(ack=nil, *_)
     update_attribute(:ack, ack)
   end
 
   protected
+  def mark_attempt(*_)
+    # noop
+  end
+
   def invoke_webhooks(*_)
     message.account.webhooks.where(event_type: self.status).each do |webhook|
       webhook.invoke(self)
     end
   end
 
-  def finalize(*args)
-    self.ack           ||= args[0]
-    self.completed_at  = args[1] || Time.now
-    self.error_message = args[2]
+  def finalize(ack, completed_at, error_message, _)
+    self.ack           = ack if ack.present?
+    self.completed_at  = completed_at || Time.now
+    self.error_message = error_message
   end
 
   def acknowledge_sent(*args)

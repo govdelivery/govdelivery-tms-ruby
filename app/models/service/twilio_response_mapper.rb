@@ -4,10 +4,8 @@ module Service
       case twilio_status
         when 'queued', 'sending', 'ringing', 'in-progress'
           :sending!
-        when 'busy'
-          :busy!
-        when 'no-answer'
-          :no_answer!
+        when 'busy', 'no-answer'
+          :attempt!
         when 'sent', 'completed'
           :sent!
         when 'failed'
@@ -18,5 +16,15 @@ module Service
           :ack!
       end
     end
+
+    def self.secondary_status(twilio_status, answered_by)
+      case twilio_status
+        when 'busy', 'no-answer'
+          twilio_status.underscore
+        else
+          answered_by
+      end
+    end
+
   end
 end

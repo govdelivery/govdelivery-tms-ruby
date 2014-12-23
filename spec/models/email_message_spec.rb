@@ -100,7 +100,7 @@ describe EmailMessage do
             email.has_attribute?(:macros).should be true
             email.ready!.should be true
             email.sending!(nil, 'dummy_id').should be true
-            email.recipients.first.mark_sent!.should be true
+            email.recipients.first.sent!('ack', nil, nil).should be true
 
             message = EmailMessage.without_message.find(email.id)
             expect(message.has_attribute?(:macros)).to be false
@@ -110,15 +110,28 @@ describe EmailMessage do
         end
       end
 
-      # recipient filters
-      [:opened, :clicked, :failed, :sent].each do |type|
+      [:opened, :clicked].each do |type|
         context "with recips who #{type}" do
           before do
-            email.create_recipients([:email => 'tyler@dudes.com', :email => 'ben@dudees.com'])
+            email.create_recipients([{email: 'tyler@dudes.com'}, {email: 'ben@dudees.com'}])
 
             # one dude twice, the other not at all
             recip = email.recipients.reload.first
-            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
+            recip.send(:"#{type}!", "http://dudes.com/tyler", Time.now)
+          end
+          it { email.send(:"recipients_who_#{type}").count.should == 1 }
+        end
+      end
+
+      # recipient filters
+      [:failed, :sent].each do |type|
+        context "with recips who #{type}" do
+          before do
+            email.create_recipients([{email: 'tyler@dudes.com'}, {email: 'ben@dudees.com'}])
+
+            # one dude twice, the other not at all
+            recip = email.recipients.reload.first
+            recip.send(:"#{type}!", "email_ack", nil, nil)
           end
           it { email.send(:"recipients_who_#{type}").count.should == 1 }
         end

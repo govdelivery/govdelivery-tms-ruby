@@ -11,7 +11,7 @@ describe RecipientsController do
     3.times.map { |i| message.recipients.build(:phone => (6125551200 + i).to_s) }
   end
   let(:voice_recipients) do
-    3.times.map { |i| voice_message.recipients.build(:phone => (6125551200 + i).to_s, :status => :sending) }
+    3.times.map { |i| voice_message.recipients.create!(:phone => (6125551200 + i).to_s, :status => :sending) }
   end
   let(:email_message) { user.email_messages.create(:subject => "subs", :from_name => 'dude', :body => 'hi') }
   let(:email_recipients) do
@@ -178,7 +178,7 @@ describe RecipientsController do
 
     context '#sent' do
       it 'should show a successful send' do
-        voice_recipients.first.sent! :ack
+        voice_recipients.first.sent!('ack', nil, 'human')
         get :sent, voice_id: voice_message.id
         response.status.should eql(200)
         assigns(:recipients).count.should eq(1)
@@ -188,7 +188,7 @@ describe RecipientsController do
 
     context '#human' do
       it 'should show a human send' do
-        voice_recipients.first.sent! :ack, :human
+        voice_recipients.first.sent!('ack', nil, 'human')
         get :human, voice_id: voice_message.id
         response.status.should eql(200)
         assigns(:recipients).count.should eq(1)
@@ -199,7 +199,7 @@ describe RecipientsController do
 
     context '#machine' do
       it 'should show a machine send' do
-        voice_recipients.first.sent! :ack, :machine
+        voice_recipients.first.sent!(:ack, nil, :machine)
         get :machine, voice_id: voice_message.id
         response.status.should eql(200)
         assigns(:recipients).count.should eq(1)
@@ -210,23 +210,23 @@ describe RecipientsController do
 
     context '#busy' do
       it 'should show a busy send' do
-        voice_recipients.first.busy! :ack
+        voice_recipients.first.attempt!('ack', nil, :busy)
         get :busy, voice_id: voice_message.id
         response.status.should eql(200)
         assigns(:recipients).count.should eq(1)
-        assigns(:recipients).first.status.should eql('sent')
-        assigns(:recipients).first.secondary_status.should eql('busy')
+        assigns(:recipients).first.status.should eql('failed')
+        assigns(:recipients).first.secondary_status.should eq('busy')
       end
     end
 
     context '#no_answer' do
       it 'should show a no_answer send' do
-        voice_recipients.first.no_answer! :ack
+        voice_recipients.first.attempt!('ack', nil, :no_answer)
         get :no_answer, voice_id: voice_message.id
         response.status.should eql(200)
         assigns(:recipients).count.should eq(1)
-        assigns(:recipients).first.status.should eql('sent')
-        assigns(:recipients).first.secondary_status.should eql('no_answer')
+        assigns(:recipients).first.status.should eql('failed')
+        assigns(:recipients).first.secondary_status.should eq('no_answer')
       end
     end
 

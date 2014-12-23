@@ -1,64 +1,50 @@
 class VoiceRecipient < ActiveRecord::Base
   include PhoneRecipient
 
-  has_many :voice_recipient_retries
+  has_many :voice_recipient_attempts, -> { order('completed_at DESC') }
 
-  def sent!(ack, status_type=nil, date_sent=nil)
-    mark_sent!(:sent, ack, date_sent, nil, status_type)
+  def sent!(ack, date_sent, call_result)
+    date_sent||= Time.now
+    mark_sent!(:sent, ack, date_sent, nil, call_result)
   end
 
-  def busy!(ack, date_sent=nil)
+  def attempt!(ack, date_sent, call_result)
     begin
-      attempt!(:sent, ack, date_sent, nil, :busy)
+      mark_attempt!(nil, ack, date_sent, nil, call_result)
     rescue AASM::InvalidTransition
-      retry!(:sent, :busy)
+      record_attempt(ack, date_sent, call_result)
       raise Recipient::ShouldRetry
     end
   end
 
-  def no_answer!(ack, date_sent=nil)
-    begin
-      attempt!(:sent, ack, date_sent, nil, :no_answer)
-    rescue AASM::InvalidTransition
-      retry!(:sent, :no_answer)
-      raise Recipient::ShouldRetry
-    end
+  def retries_exhausted?
+    # the current retry count is one more than the number of retries so far
+    (retries+1) >= message.max_retries
   end
 
-  def failed!(ack=nil, completed_at=nil, error_message=nil)
-    begin
-      attempt!(:failed, ack, completed_at, error_message)
-    rescue AASM::InvalidTransition
-      retry!(:failed)
-      raise Recipient::ShouldRetry
-    end
+  def retries
+    voice_recipient_attempts.count
   end
 
-  def should_retry?
-    self.sending? && retries < message.max_retries
+  def secondary_status
+    voice_recipient_attempts.first.try(:description)
   end
 
-  # Record a retry for this recipient / voice message combination
-  def retry!(s, ss=nil)
-    voice_recipient_retries.build.tap do |vrr|
+  protected
+  def record_attempt(ack, date_sent, description)
+    voice_recipient_attempts.build.tap do |vrr|
       vrr.voice_message = message
-      vrr.completed_at = Time.now
-      vrr.status = s
-      vrr.secondary_status = ss
+      vrr.description   = description
+      vrr.ack           = ack
+      vrr.completed_at  = date_sent || Time.now
       vrr.save!
     end
   end
 
-  def retries
-    voice_recipient_retries.count
-  end
-
-  protected
-
-  def finalize(*args)
-    self.ack           ||= args[0]
-    self.completed_at  = args[1] || Time.now
-    self.error_message = args[2]
-    self.secondary_status = args[3]
+  def finalize(ack, completed_at, error_message, call_status)
+    self.ack = ack if ack.present?
+    record_attempt(ack, completed_at, call_status) if ack.present? && call_status.present?
+    self.completed_at  = completed_at || Time.now
+    self.error_message = error_message
   end
 end

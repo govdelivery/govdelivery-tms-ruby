@@ -20,13 +20,13 @@ describe VoiceMessage do
     it { subject.call_script.should_not be_nil }
 
     context 'recipient filters' do
-      [:failed, :sent].each do |type|
+      {failed: 'error_message', sent: "human"}.each do |type, arg|
         context "with recips who #{type}" do
           before do
             subject.recipients.create!(:phone => '5555555555')
 
             recip = subject.recipients.reload.first
-            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
+            recip.send(:"#{type}!", 'ack', nil, arg)
           end
           it { subject.send(:"recipients_who_#{type}").count.should == 1 }
         end

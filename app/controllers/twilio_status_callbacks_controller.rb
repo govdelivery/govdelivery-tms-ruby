@@ -1,12 +1,14 @@
 class TwilioStatusCallbacksController < ApplicationController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_user_from_token!
-  before_filter :get_status, :find_recipient
+  before_filter :find_recipient
   respond_to :xml
 
   def create
     begin
-      @recipient.send(@transition, @sid, (@status_type if !@status_type.nil?))
+      args = [@sid, nil]
+      args << secondary_status if params.has_key?('CallStatus')
+      @recipient.send(transition, *args)
     rescue Recipient::ShouldRetry  #call came back as busy, no answer, or fail...retry
       if @recipient.sending?
         args = {message_id: @recipient.message.id,
@@ -21,16 +23,12 @@ class TwilioStatusCallbacksController < ApplicationController
   end
 
   protected
-  def get_status
-    @status = if params.has_key?('SmsStatus')
-                params['SmsStatus']
-              elsif params.has_key?('CallStatus')
-                params['CallStatus']
-              else
-                ''
-              end
-    @transition = Service::TwilioResponseMapper.recipient_callback(@status)
-    @status_type = params.has_key?('AnsweredBy') ? params['AnsweredBy'] : nil # Twilio voice reports sent calls as answered by human or machine
+  def transition
+    Service::TwilioResponseMapper.recipient_callback(params['SmsStatus'] || params['CallStatus'] || '')
+  end
+
+  def secondary_status
+    Service::TwilioResponseMapper.secondary_status(params['CallStatus'], params['AnsweredBy'])
   end
 
   def find_recipient

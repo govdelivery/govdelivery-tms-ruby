@@ -270,26 +270,25 @@ ActiveRecord::Schema.define(version: 20141218140730) do
     t.integer  "retry_delay",               precision: 38, scale: 0, default: 300,   null: false
   end
 
-  create_table "voice_recipient_retries", force: true do |t|
-    t.integer  "voice_message_id",   precision: 38, scale: 0, null: false
-    t.integer  "voice_recipient_id", precision: 38, scale: 0, null: false
+  create_table "voice_recipient_attempts", force: true do |t|
+    t.integer  "voice_message_id",              precision: 38, scale: 0, null: false
+    t.integer  "voice_recipient_id",            precision: 38, scale: 0, null: false
     t.datetime "completed_at"
-    t.string   "status"
-    t.string   "secondary_status"
+    t.string   "ack"
+    t.string   "description",        limit: 50
   end
 
   create_table "voice_recipients", force: true do |t|
-    t.integer  "message_id",                   precision: 38, scale: 0,                 null: false
-    t.integer  "vendor_id",                    precision: 38, scale: 0
+    t.integer  "message_id",                  precision: 38, scale: 0,                 null: false
+    t.integer  "vendor_id",                   precision: 38, scale: 0
     t.string   "phone"
     t.string   "formatted_phone"
     t.string   "ack"
-    t.string   "error_message",    limit: 512
+    t.string   "error_message",   limit: 512
     t.datetime "sent_at"
     t.datetime "completed_at"
-    t.string   "status",                                                default: "new", null: false
+    t.string   "status",                                               default: "new", null: false
     t.datetime "created_at"
-    t.string   "secondary_status"
   end
 
   add_index "voice_recipients", ["message_id", "id"], name: "i_voi_rec_mes_id_id", tablespace: "tsms_indx01"
