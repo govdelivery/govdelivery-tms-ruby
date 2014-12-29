@@ -14,11 +14,44 @@ describe KeywordsController do
 
   context "Listing keywords" do
     before do
+      keywords.stubs(:page).returns(keywords)
+      keywords.stubs(:total_pages).returns(5)
       Account.any_instance.expects(:keywords).returns(keywords)
     end
-    it "should show keywords" do
-      get :index
+    it "should work on the first page" do
+      keywords.stubs(:current_page).returns(1)
+      keywords.stubs(:first_page?).returns(true)
+      keywords.stubs(:last_page?).returns(false)
+      get :index, :format=>:json
       response.response_code.should == 200
+      response.headers['Link'].should_not =~ /first/
+      response.headers['Link'].should_not =~ /prev/
+      response.headers['Link'].should =~ /next/
+      response.headers['Link'].should =~ /last/
+    end
+
+    it "should have all links" do
+      keywords.stubs(:current_page).returns(2)
+      keywords.stubs(:first_page?).returns(false)
+      keywords.stubs(:last_page?).returns(false)
+      get :index, :page => 2
+      response.response_code.should == 200
+      response.headers['Link'].should =~ /first/
+      response.headers['Link'].should =~ /prev/
+      response.headers['Link'].should =~ /next/
+      response.headers['Link'].should =~ /last/
+    end
+
+    it "should have prev and first links" do
+      keywords.stubs(:current_page).returns(3)
+      keywords.stubs(:first_page?).returns(false)
+      keywords.stubs(:last_page?).returns(true)
+      get :index, :page => 3
+      response.response_code.should == 200
+      response.headers['Link'].should =~ /first/
+      response.headers['Link'].should =~ /prev/
+      response.headers['Link'].should_not =~ /next/
+      response.headers['Link'].should_not =~ /last/
     end
   end
   context "Showing a keyword" do

@@ -14,11 +14,44 @@ describe KeywordCommandsController do
 
   context "Listing a keyword's commands" do
     before do
-      Keyword.any_instance.expects(:commands).returns([stub(:name => "FOO", :params => {:hi => "there"})])
-      get :index, :keyword_id => keyword.id, :format => :json
+      commands.stubs(:page).returns(commands)
+      commands.stubs(:total_pages).returns(5)
+      Keyword.any_instance.expects(:commands).returns(commands)
     end
-    it "should render a command" do
+    it "should work on the first page" do
+      commands.stubs(:current_page).returns(1)
+      commands.stubs(:first_page?).returns(true)
+      commands.stubs(:last_page?).returns(false)
+      get :index, :keyword_id => keyword.id
       response.response_code.should == 200
+      response.headers['Link'].should_not =~ /first/
+      response.headers['Link'].should_not =~ /prev/
+      response.headers['Link'].should =~ /next/
+      response.headers['Link'].should =~ /last/
+    end
+
+    it "should have all links" do
+      commands.stubs(:current_page).returns(2)
+      commands.stubs(:first_page?).returns(false)
+      commands.stubs(:last_page?).returns(false)
+      get :index, :keyword_id => keyword.id, :page => 2
+      response.response_code.should == 200
+      response.headers['Link'].should =~ /first/
+      response.headers['Link'].should =~ /prev/
+      response.headers['Link'].should =~ /next/
+      response.headers['Link'].should =~ /last/
+    end
+
+    it "should have prev and first links" do
+      commands.stubs(:current_page).returns(5)
+      commands.stubs(:first_page?).returns(false)
+      commands.stubs(:last_page?).returns(true)
+      get :index, :keyword_id => keyword.id, :page => 5
+      response.response_code.should == 200
+      response.headers['Link'].should =~ /first/
+      response.headers['Link'].should =~ /prev/
+      response.headers['Link'].should_not =~ /next/
+      response.headers['Link'].should_not =~ /last/
     end
   end
   context "Displaying an command" do

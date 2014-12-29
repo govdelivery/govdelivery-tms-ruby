@@ -3,10 +3,12 @@ class KeywordsController < ApplicationController
   wrap_parameters :keyword, include: [:name, :response_text], format: [:json, :url_encoded_form]
   before_filter :find_user
   before_filter :find_keyword, :only => [:show, :update]
+  before_filter :set_page, :only => :index
   feature :sms
 
   def index
-    @keywords = @account.keywords
+    @keywords = @account.keywords.page(@page)
+    set_link_header(@keywords)
   end
 
   def show
