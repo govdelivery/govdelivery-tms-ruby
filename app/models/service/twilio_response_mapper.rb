@@ -4,11 +4,9 @@ module Service
       case twilio_status
         when 'queued', 'sending', 'ringing', 'in-progress'
           :sending!
-        when 'busy', 'no-answer'
-          :attempt!
         when 'sent', 'completed'
           :sent!
-        when 'failed'
+        when 'failed', 'busy', 'no-answer'
           :failed!
         when 'canceled'
           :canceled!

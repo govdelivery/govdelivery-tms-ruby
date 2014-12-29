@@ -6,9 +6,7 @@ class TwilioStatusCallbacksController < ApplicationController
 
   def create
     begin
-      args = [@sid, nil]
-      args << secondary_status if params.has_key?('CallStatus')
-      @recipient.send(transition, *args)
+      @recipient.send(transition, @sid, nil, secondary_status)
     rescue Recipient::ShouldRetry  #call came back as busy, no answer, or fail...retry
       if @recipient.sending?
         args = {message_id: @recipient.message.id,

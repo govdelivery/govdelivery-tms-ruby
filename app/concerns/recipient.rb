@@ -35,28 +35,25 @@ module Recipient
       end
 
       # ack, sent_at, error_message, call_status (for voice)
-      event :mark_sent, after: :invoke_webhooks do
-        transitions from: [:new, :sending, :inconclusive], to: :sent, after: :finalize
+      event :mark_sent, after: [:finalize, :invoke_webhooks] do
+        transitions from: [:new, :sending, :inconclusive], to: :sent
       end
 
-      event :mark_inconclusive, after: :invoke_webhooks do
-        transitions from: [:new, :sending], to: :inconclusive, after: :finalize
+      event :mark_inconclusive, after: [:finalize, :invoke_webhooks] do
+        transitions from: [:new, :sending], to: :inconclusive
       end
 
-      event :fail, after: :invoke_webhooks do
-        transitions from: [:new, :sending, :inconclusive], to: :failed, after: :finalize
+      event :fail, after: [:finalize, :invoke_webhooks] do
+        transitions from: [:new, :inconclusive], to: :failed
+        transitions from: :sending, to: :failed, if: :retries_exhausted?
       end
 
-      event :cancel, after: :invoke_webhooks do
-        transitions from: [:new, :sending], to: :canceled, after: :finalize
+      event :cancel, after: [:finalize, :invoke_webhooks] do
+        transitions from: [:new, :sending], to: :canceled
       end
 
       event :blacklist, after: :invoke_webhooks do
         transitions from: [:new, :sending], to: :blacklisted
-      end
-
-      event :mark_attempt do
-        transitions from: [:new, :sending], to: :failed, if: :retries_exhausted?, after: :finalize
       end
     end
 
@@ -88,15 +85,15 @@ module Recipient
 
   def sent!(ack, date_sent=nil, _=nil)
     date_sent ||= Time.now
-    mark_sent!(:sent, ack, date_sent, nil, nil)
+    mark_sent!(:sent, ack, date_sent, nil)
   end
 
   def failed!(ack=nil, completed_at=nil, error_message=nil)
-    fail!(:failed, ack, completed_at, error_message, nil)
+    fail!(:failed, ack, completed_at, error_message)
   end
 
   def canceled!(ack, *_)
-    cancel!(:canceled, ack, nil, nil, nil)
+    cancel!(:canceled, ack, nil, nil)
   end
 
   def ack!(ack=nil, *_)
@@ -104,8 +101,8 @@ module Recipient
   end
 
   protected
-  def mark_attempt(*_)
-    # noop
+  def retries_exhausted?
+    true
   end
 
   def invoke_webhooks(*_)
@@ -114,14 +111,15 @@ module Recipient
     end
   end
 
-  def finalize(ack, completed_at, error_message, _)
+  def finalize(ack, completed_at, error_message)
     self.ack           = ack if ack.present?
     self.completed_at  = completed_at || Time.now
     self.error_message = error_message
+    self.save!
   end
 
-  def acknowledge_sent(*args)
-    self.ack     = args[0]
+  def acknowledge_sent(ack=nil, *_)
+    self.ack     = ack
     self.sent_at = Time.now
   end
 

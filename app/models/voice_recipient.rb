@@ -3,17 +3,19 @@ class VoiceRecipient < ActiveRecord::Base
 
   has_many :voice_recipient_attempts, -> { order('completed_at DESC') }
 
-  def sent!(ack, date_sent, call_result)
-    date_sent||= Time.now
-    mark_sent!(:sent, ack, date_sent, nil, call_result)
+  def sent!(ack, completed_at, call_result)
+    mark_sent!(:sent, ack, completed_at, call_result)
   end
 
-  def attempt!(ack, date_sent, call_result)
+  def failed!(ack=nil, completed_at=nil, error_message=nil)
     begin
-      mark_attempt!(nil, ack, date_sent, nil, call_result)
-    rescue AASM::InvalidTransition
-      record_attempt(ack, date_sent, call_result)
-      raise Recipient::ShouldRetry
+      fail!(:failed, ack, completed_at, error_message)
+    rescue AASM::InvalidTransition => e
+      if record_attempt(ack, completed_at, error_message)
+        raise Recipient::ShouldRetry
+      else
+        raise e
+      end
     end
   end
 
@@ -32,19 +34,19 @@ class VoiceRecipient < ActiveRecord::Base
 
   protected
   def record_attempt(ack, date_sent, description)
-    voice_recipient_attempts.build.tap do |vrr|
-      vrr.voice_message = message
-      vrr.description   = description
-      vrr.ack           = ack
-      vrr.completed_at  = date_sent || Time.now
-      vrr.save!
-    end
+    vrr               = voice_recipient_attempts.build
+    vrr.voice_message = message
+    vrr.description   = description
+    vrr.ack           = ack
+    vrr.completed_at  = date_sent || Time.now
+    vrr.save
   end
 
-  def finalize(ack, completed_at, error_message, call_status)
-    self.ack = ack if ack.present?
-    record_attempt(ack, completed_at, call_status) if ack.present? && call_status.present?
-    self.completed_at  = completed_at || Time.now
-    self.error_message = error_message
+  def finalize(ack, completed_at, status_or_error_message)
+    if ack.present? && status_or_error_message.present?
+      record_attempt(ack, completed_at, status_or_error_message)
+      status_or_error_message = nil
+    end
+    super(ack, completed_at, status_or_error_message)
   end
 end

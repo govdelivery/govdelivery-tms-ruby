@@ -210,7 +210,7 @@ describe RecipientsController do
 
     context '#busy' do
       it 'should show a busy send' do
-        voice_recipients.first.attempt!('ack', nil, :busy)
+        voice_recipients.first.failed!('ack', nil, :busy)
         get :busy, voice_id: voice_message.id
         response.status.should eql(200)
         assigns(:recipients).count.should eq(1)
@@ -221,7 +221,7 @@ describe RecipientsController do
 
     context '#no_answer' do
       it 'should show a no_answer send' do
-        voice_recipients.first.attempt!('ack', nil, :no_answer)
+        voice_recipients.first.failed!('ack', nil, :no_answer)
         get :no_answer, voice_id: voice_message.id
         response.status.should eql(200)
         assigns(:recipients).count.should eq(1)

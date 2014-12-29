@@ -80,9 +80,9 @@ describe VoiceRecipient do
       subject.save!
     end
 
-    context 'on first failure' do
+    context 'on first busy' do
       before do
-        expect { subject.attempt!('ack', nil, :busy) }.to raise_error(Recipient::ShouldRetry)
+        expect { subject.failed!('ack', nil, 'busy') }.to raise_error(Recipient::ShouldRetry)
       end
 
       it 'should retry if retries not exhausted' do
@@ -95,7 +95,7 @@ describe VoiceRecipient do
       end
 
       context 'and subsequent success' do
-        it 'record it' do
+        it 'should record it' do
           subject.sent!('ack1', nil, 'human')
           subject.reload
           expect(subject.vendor).to_not be_nil
@@ -107,9 +107,9 @@ describe VoiceRecipient do
         end
       end
 
-      context 'and a second failure' do
+      context 'and a second no_answer or busy' do
         it 'should not retry and transition to failed state' do
-          expect { subject.attempt!('ack1', nil, :no_answer) }.to_not raise_error
+          expect { subject.failed!('ack1', nil, :no_answer) }.to_not raise_error
           subject.reload
           expect(subject.vendor).to_not be_nil
           expect(subject.completed_at).to_not be_nil
