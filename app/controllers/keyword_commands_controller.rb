@@ -3,9 +3,11 @@ class KeywordCommandsController < ApplicationController
 
   before_filter :find_user, :find_keyword
   before_filter :find_command, :only => [:show, :update, :destroy]
+  before_filter :set_page, :only => :index
 
   def index
-    @commands = @keyword.commands
+    @commands = @keyword.commands.page(@page)
+    set_link_header(@commands)
   end
 
   def show
