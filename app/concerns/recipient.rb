@@ -43,9 +43,10 @@ module Recipient
         transitions from: [:new, :sending], to: :inconclusive
       end
 
-      event :fail, after: [:finalize, :invoke_webhooks] do
-        transitions from: [:new, :inconclusive], to: :failed
-        transitions from: :sending, to: :failed, if: :retries_exhausted?
+      event :fail, after: [:invoke_webhooks] do
+        transitions from: [:new, :inconclusive], to: :failed, after: :finalize
+        transitions from: :sending, to: :sending, if: -> { !retries_exhausted? }, after: :record_attempt
+        transitions from: :sending, to: :failed, if: :retries_exhausted?, after: :finalize
       end
 
       event :cancel, after: [:finalize, :invoke_webhooks] do

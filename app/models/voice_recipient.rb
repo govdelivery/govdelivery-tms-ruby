@@ -8,15 +8,8 @@ class VoiceRecipient < ActiveRecord::Base
   end
 
   def failed!(ack=nil, completed_at=nil, error_message=nil)
-    begin
-      fail!(:failed, ack, completed_at, error_message)
-    rescue AASM::InvalidTransition => e
-      if record_attempt(ack, completed_at, error_message)
-        raise Recipient::ShouldRetry
-      else
-        raise e
-      end
-    end
+    fail!(nil, ack, completed_at, error_message)
+    raise Recipient::ShouldRetry if self.sending?
   end
 
   def retries_exhausted?
