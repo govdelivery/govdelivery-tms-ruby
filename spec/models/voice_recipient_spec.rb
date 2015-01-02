@@ -94,6 +94,16 @@ describe VoiceRecipient do
         expect(subject.voice_recipient_attempts.where(ack: 'ack').count).to eq(1)
       end
 
+      it 'should update ack on sending retry' do
+        subject.sending!('ackretry')
+        subject.reload
+        expect(subject.vendor).to_not be_nil
+        expect(subject.completed_at).to be_nil
+        expect(subject.ack).to eq('ackretry')
+        expect(subject.sent?).to be false
+        expect(subject.voice_recipient_attempts.where(ack: 'ack').count).to eq(1)
+      end
+
       context 'and subsequent success' do
         it 'should record it' do
           subject.sent!('ack1', nil, 'human')
