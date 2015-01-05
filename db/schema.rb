@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(version: 20141218140730) do
   end
 
   create_table "keywords", force: true do |t|
-    t.integer  "account_id",                precision: 38, scale: 0
+    t.integer  "account_id",                precision: 38, scale: 0, null: false
     t.string   "name",          limit: 160,                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
