@@ -31,10 +31,14 @@ class Account < ActiveRecord::Base
   has_many :from_addresses, inverse_of: :account, dependent: :destroy
   has_one :default_from_address, -> { where(is_default: true) }, class_name: FromAddress
 
+  has_many :from_numbers, inverse_of: :account, dependent: :destroy
+  has_one :default_from_number, -> { where(is_default: true) }, class_name: FromNumber
+
   after_create :create_base_keywords!
 
   serialize :dcm_account_codes, Set
   delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, to: :default_from_address
+  delegate :from_number, to: :default_from_number
 
   before_validation :normalize_dcm_account_codes
   before_validation :generate_sid, on: :create
@@ -42,6 +46,7 @@ class Account < ActiveRecord::Base
   validates :name, presence: true, length: {maximum: 255}, uniqueness: true
   validates :sid, presence: true
   validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
+  validate :has_one_default_from_number, if: '!voice_vendor_id.blank?'
   validate :validate_sms_prefixes, :validate_sms_vendor
   # ONE: HYRULE, TWO: STRONGMAIL
   validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
@@ -164,6 +169,12 @@ class Account < ActiveRecord::Base
   def has_one_default_from_address
     unless from_addresses.find_all{|fa| fa.is_default? }.count == 1
       errors.add(:default_from_address, "cannot be nil")
+    end
+  end
+
+  def has_one_default_from_number
+    unless from_numbers.find_all{|fa| fa.is_default? }.count == 1
+      errors.add(:default_from_number, "cannot be nil")
     end
   end
 

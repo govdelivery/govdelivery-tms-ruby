@@ -3,7 +3,7 @@ class VoiceMessage < ActiveRecord::Base
   has_one :call_script
   has_many :voice_recipient_attempts
 
-  attr_accessible :play_url, :say_text, :retries, :retry_delay
+  attr_accessible :play_url, :say_text, :retries, :retry_delay, :from_number
   validates :play_url, presence: true, unless: ->(message) { message.say_text.present? }, on: :create
   validates :say_text, presence: true, unless: ->(message) { message.play_url.present? }, on: :create
 
