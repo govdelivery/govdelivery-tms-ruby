@@ -139,11 +139,46 @@ end
 
 
 Given(/^I verify the ability to disable open and click tracking in my EMAIL sends$/) do
-  pending # express the regexp above with the code you wish you had
+  @message = client.email_messages.build(:body => 'You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.', 
+                                         :subject => 'Regression Test email send',
+                                         :from_email => "#{from_email}",
+                                         :click_tracking_enabled => false,
+                                         :open_tracking_enabled => false)
+  @message.recipients.build(:email=>'regressiontest1@sink.govdelivery.com')
+  @message.recipients.build(:email=>'regressiontest2@sink.govdelivery.com')
+  STDOUT.puts @message.errors unless @message.post
+  email = @message.get
+
+  if email.response.body["click_tracking_enabled"] == false
+    puts 'click tracking disabled'.green
+  else
+    puts email.response.body["click_tracking_enabled"]
+    fail 'click tracking not disabled'.red
+  end
+
+  if email.response.body["open_tracking_enabled"] == false
+    puts 'open tracking disabled'.green
+  else
+    puts email.response.body["open_tracking_enabled"]
+    fail 'open tracking not disabled'.red
+  end
 end
 
 Given(/^I post a new EMAIL with message and recipient MACROS$/) do
-  pending # express the regexp above with the code you wish you had
+  @message = client.email_messages.build(:body => 'You have received this message as a result of feature testing within the GovDelivery [[city]] platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.', 
+                                         :subject => 'Regression Test email send',
+                                         :from_email => "#{from_email}",
+                                         :macros => {"city"=>"Saint Paul"})
+  @message.recipients.build(:email=>'regressiontest1@sink.govdelivery.com')
+  STDOUT.puts @message.errors unless @message.post
+  email = @message.get
+
+  if email.response.body["macros"] = '{"city"=>"Saint Paul"}'
+    puts 'macros enabled'.green
+  else
+    puts email.response.body["macros"]
+    fail 'no macros found'.red
+  end
 end
 
 Given(/^I post a new EMAIL message with an empty BODY produces an error$/) do
@@ -194,7 +229,29 @@ Given(/^I post a new EMAIL message with no RECIPIENTS produces an error$/) do
 end
 
 Given(/^I post a new EMAIL message and retrieve the list recipient counts\/states$/) do
-  pending # express the regexp above with the code you wish you had
+  @message = client.email_messages.build(:body => 'You have received this message as a result of feature testing within the GovDelivery [[city]] platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.', 
+                                         :subject => 'Regression Test email send',
+                                         :from_email => "#{from_email}",
+                                         :macros => {"city"=>"Saint Paul"})
+  @message.recipients.build(:email=>'regressiontest1@sink.govdelivery.com')
+  STDOUT.puts @message.errors unless @message.post
+  email = @message.get
+  
+#ap email.response.body
+
+  if email.response.body["_links"]["self"].include?("messages/email")
+    puts 'self found'.green
+  else
+    puts email.response.body["_links"]
+    fail 'self not found'.red
+  end
+
+  if email.response.body["_links"]["recipients"].include?("recipients")
+    puts 'recipients found'.green
+  else
+    puts email.response.body["_links"]
+    fail 'recipients not found'.red
+  end
 end
 
 Given(/^I post a new EMAIL message with HTML within the message body$/) do
@@ -207,7 +264,12 @@ Given(/^I post a new EMAIL message with HTML within the message body$/) do
 end
 
 Given(/^I post a new EMAIL message with inline CSS in the message$/) do
-  pending # express the regexp above with the code you wish you had
+  @message = client.email_messages.build(:body => 'A message with CSS. <div style=\"background-color:#c0c0c0; margin-left:auto; margin-right:auto; font-family: Arial, Helvetica, Tahoma; font-size: 14px; font-weight: 200;\"><img src=\"https://groups.govdelivery.com/inovem/sites/site10/custom/images/gd-logo_glow2.png\"><br>You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.<br></div>', 
+                                         :subject => 'Regression Test email send',
+                                         :from_email => "#{from_email}")
+  @message.recipients.build(:email=>'regressiontest1@sink.govdelivery.com')
+  @message.recipients.build(:email=>'govdelivery.com')
+  STDOUT.puts @message.errors unless @message.post
 end
 
 Given(/^I post a new EMAIL message with a VALID and INVALID RECIPIENT produces an email$/) do
