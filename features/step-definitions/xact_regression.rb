@@ -1,3 +1,6 @@
+#!/bin/env ruby
+#encoding: utf-8
+
 require 'tms_client'
 require 'colored'
 require 'json'
@@ -41,6 +44,29 @@ def from_email
     end
 end
 
+def account_code
+    if ENV['XACT_ENV'] == 'qc'
+      'CUKEAUTO_QC'
+    elsif ENV['XACT_ENV'] == 'integration'
+      'CUKEAUTO_INT'
+    elsif ENV['XACT_ENV'] == 'stage'
+      'CUKEAUTO_STAGE'
+    elsif ENV['XACT_ENV'] == 'prod'
+      'CUKEAUTO_PROD'
+    end
+end
+
+def topic_code
+    if ENV['XACT_ENV'] == 'qc'
+      'CUKEAUTO_QC_SMS'
+    elsif ENV['XACT_ENV'] == 'integration'
+      'CUKEAUTO_INT_SMS'
+    elsif ENV['XACT_ENV'] == 'stage'
+      'CUKEAUTO_STAGE_SMS'
+    elsif ENV['XACT_ENV'] == 'prod'
+      'CUKEAUTO_PROD_SMS'
+    end
+end
 
 #@QC-2453
 Given(/^I create a new keyword with a text response$/) do
@@ -91,24 +117,25 @@ Given(/^I create a new subscribe keyword and command$/) do
   @keyword.post
   @command = @keyword.commands.build(
             :name => "#{$s[1]}", 
-            :params => {:dcm_account_code => 'CUKEAUTO_QC', :dcm_topic_codes => ['CUKEAUTO_QC_SMS']},
+            :params => {:dcm_account_code => "#{account_code}", :dcm_topic_codes => ["#{topic_code}"]},
             :command_type => :dcm_subscribe)
   @command.post
 end
-Then(/^I should be able to delete the subscribe keyword$/) do
+And(/^I should be able to delete the subscribe keyword$/) do
   @command.delete
   @keyword.delete
 end
+
 Given(/^I create a new unsubscribe keyword and command$/) do
   @keyword = client.keywords.build(:name => "#{$s[1]}")
   @keyword.post
   @command = @keyword.commands.build(
             :name => "#{$s[1]}", 
-            :params => {:dcm_account_codes => ['CUKEAUTO_QC'], :dcm_topic_codes => ['CUKEAUTO_QC_SMS']},
+            :params => {:dcm_account_codes => ["#{account_code}"], :dcm_topic_codes => ["#{topic_code}"]},
             :command_type => :dcm_unsubscribe)
   @command.post
 end  
-Then(/^I should be able to delete the unsubscribe keyword$/) do
+And(/^I should be able to delete the unsubscribe keyword$/) do
   @command.delete
   @keyword.delete
 end
@@ -324,5 +351,104 @@ Given(/^I post a new EMAIL message with an invalid FROM_EMAIL produces an error$
     fail 'error not found'.red
   end
 end
+
+
+
+#================1976 tests===============>
+
+
+
+
+Given(/^I post a new SMS message with too many characters$/) do
+  @message = client.sms_messages.build(:body=>'PtFGdBXk65tYERi9yKuOAxPInGJQPrNeaIdNJ7YlLeEAxglMeoxaufoKTxJZUOEOkXo5jO84cFIyeUGHdywK2mOnUy2JM6Q9vdd2Plpce8mZFvWdtUQJgVQSDTOUwFUkLkHOLIXqGHE24CBJlTZmxOE2HuyVqYRof')
+  @message.recipients.build(:phone=>'5551112222')
+  STDOUT.puts @message.errors unless @message.post
+  if @message.errors["body"] == ["is too long (maximum is 160 characters)"]
+    puts 'error found'.green
+  else
+    fail 'error not found'.red
+  end
+end
+
+Given(/^I post a new SMS message with the correct number of characters$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'5551112222')
+  STDOUT.puts @message.errors unless @message.post
+end
+
+Given(/^I post a new SMS message with the correct number of characters to a formatted phone number$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'(555) 111-2222')
+  STDOUT.puts @message.errors unless @message.post
+end
+
+Given(/^I post a new SMS message and retrieve the message details$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'5551112222')
+  STDOUT.puts @message.errors unless @message.post
+
+  sms = @message.get
+  if sms.response.body["_links"]["self"].include?("messages/sms")
+    puts 'message details found'.green
+  else
+    fail 'message details not found'.red
+  end    
+end
+
+Given(/^I post a new SMS message and retrieve the recipient details$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'5551112222')
+  STDOUT.puts @message.errors unless @message.post
+  sms = @message.get
+
+  if sms.response.body["_links"].include?("recipients")
+    puts 'recipient details found'.green
+  else
+    fail 'recipient details not found'.red
+  end
+end
+
+Given(/^I post a new SMS message to multiple recipients$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'5551112222')
+  @message.recipients.build(:phone=>'5551112223')
+  STDOUT.puts @message.errors unless @message.post
+end
+
+Given(/^I post a new SMS message to an empty recipient$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'')
+  STDOUT.puts @message.errors unless @message.post
+    if @message.errors["recipients"] == ["must contain at least one valid recipient"]
+    puts 'error found'.green
+  else
+    fail 'error not found'.red
+  end
+end
+
+Given(/^I post a new SMS message to invalid recipients I should not receive failed recipients$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'55A')
+  STDOUT.puts @message.errors unless @message.post
+end
+
+Given(/^I post a new SMS message with duplicate recipients$/) do
+  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'5551112222')
+  @message.recipients.build(:phone=>'5551112222')
+  @message.recipients.build(:phone=>'5551112222')
+  @message.recipients.build(:phone=>'5551112222')
+  @message.recipients.build(:phone=>'5551112222')
+  STDOUT.puts @message.errors unless @message.post
+end
+
+Given(/^I post a new SMS message which contains special characters$/) do
+  @message = client.sms_messages.build(:body=>'You í á é ñ ó ú ü ¿ ¡ received this message as a result of feature testing special characters within the GovDelivery platform.')
+  @message.recipients.build(:phone=>'5551112222')
+  STDOUT.puts @message.errors unless @message.post
+end
+
+
+
 
 
