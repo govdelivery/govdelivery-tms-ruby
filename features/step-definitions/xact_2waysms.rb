@@ -24,7 +24,7 @@ Given(/^I create a subscription keyword and command$/) do
   @command = @keyword.commands.build(
     :command_type => :dcm_subscribe,
     #do not change the NAME param unless you want to break everything
-    :name => "subscribe", 
+    :name => "subscribe",
     :params => {:dcm_account_code => @conf.xact.account.dcm_account_id,
                 :dcm_topic_codes => @conf.xact.account.dcm_topic_codes})
   raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
@@ -195,7 +195,7 @@ And(/^my subscription should be removed$/) do
   @data = HTTPI.get(@request)
   puts @request.url
   @response = MultiXml.parse(@data.raw_body)
-  
+
   ap @response
   #some output that can be turned on/off if needed to verify things manually
   #puts @response['subscriber']['phone']
@@ -247,33 +247,19 @@ end
 #===Common-2-Way-Real-Time-Steps================>
 
 def agency_command_params(agency)
-  case agency.downcase
+  url = case agency.downcase
     when "bart"
-      {
-        :url => 'http://ws.sfbart.org/sms/request.aspx',
-        :http_method => 'get',
-        :from_param_name => 'user',
-        :sms_body_param_name => 'req',
-        :strip_keyword => true
-      }
+      'https://xact-services-stage.heroku.com/bart'
     when "acetrain"
-      {
-        :url => 'http://acerailpublic.etaspot.net/service.php?service=get_stop_etas&stopID=156&includeSMS=1&token=TESTING',
-        :http_method => 'get',
-        :from_param_name => 'from',
-        :sms_body_param_name => 'smsText',
-        :strip_keyword => false
-      }
+      'https://xact-services-stage.heroku.com/acetrain'
     when "cdc"
-      {
-        :url => 'https://qc-knowit.herokuapp.com',
-        :http_method => 'post',
-        :from_param_name => 'from',
-        :sms_body_param_name => 'sms_body',
-        :strip_keyword => true
-      }
-
+      'https://xact-services-stage.heroku.com/knowit'
   end
+  {
+    url:           url,
+    http_method:   'post',
+    strip_keyword: true
+  }
 end
 
 def agency_test(agency, check)
