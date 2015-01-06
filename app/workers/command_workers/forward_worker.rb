@@ -15,10 +15,7 @@ module CommandWorkers
     include CommandWorkers::Base
 
     sidekiq_options retry:    0,
-                    queue:    :webhook,
-                    throttle: {threshold: 30,
-                               period:    5.seconds,
-                               key:       ->(options) { Addressable::URI.parse(options['url']).host }}
+                    queue:    :webhook
 
     attr_writer :sms_service
 
