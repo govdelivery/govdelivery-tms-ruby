@@ -4,6 +4,7 @@ describe Account do
   let(:email_vendor) { create(:email_vendor) }
   let(:sms_vendor) { create(:sms_vendor) }
   let(:shared_sms_vendor) { create(:shared_sms_vendor) }
+  let(:voice_vendor) { create(:voice_vendor) }
 
   it { should belong_to(:ipaws_vendor) }
 
@@ -138,6 +139,16 @@ describe Account do
     a.should_not be_valid
 
     a.from_addresses.first.is_default = true
+    a.should be_valid
+  end
+
+  it 'should require a from number if it had a voice vendor' do
+    Account.new(name: 'name', voice_vendor: voice_vendor).should_not be_valid
+    a = Account.new(name: 'name', voice_vendor: voice_vendor)
+    a.from_numbers.build(phone_number: '8885551234')
+    a.should_not be_valid
+
+    a.from_numbers.first.is_default = true
     a.should be_valid
   end
 

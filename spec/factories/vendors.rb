@@ -27,7 +27,7 @@ FactoryGirl.define do
   factory :voice_vendor, traits: [:vendor] do
     username 'username'
     password 'secret'
-    from '+15555555555'
+    worker 'TwilioVoiceWorker'
   end
 
   factory :ipaws_vendor, class: IPAWS::Vendor do

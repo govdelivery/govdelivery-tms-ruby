@@ -112,6 +112,10 @@ class Account < ActiveRecord::Base
     !email.nil? && from_addresses.where("lower(from_email) = ?", email.downcase).count == 1
   end
 
+  def from_number_allowed?(phone)
+    !phone.nil? && from_numbers.where("phone_number = ?", phone).count == 1
+  end
+
   # some sugar for working with keywords on the console
   def keywords arg=nil
     if arg

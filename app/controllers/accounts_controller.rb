@@ -28,7 +28,7 @@ class AccountsController < ApplicationController
 
   wrap_parameters :from_number,
                   include: [:phone_number],
-                  format:  :json
+                  format:  [:json, :url_encoded_form]
 
   def index
     @accounts = Account.all

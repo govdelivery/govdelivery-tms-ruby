@@ -28,7 +28,8 @@ describe AccountsController, :type => :controller do
                             default_response_text: 'foo'},
              from_address: {from_email: 'from@test.com',
                             reply_to:   'reply-to@test.com',
-                            errors_to:  'errors-to@test.com'}
+                            errors_to:  'errors-to@test.com'},
+             from_number: {phone_number: '8885551234'}
         @account = assigns(:account)
         @account.sms_vendor.should_not be nil
         @account.email_vendor.should_not be nil

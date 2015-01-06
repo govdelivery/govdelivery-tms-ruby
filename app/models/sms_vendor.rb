@@ -3,6 +3,8 @@ class SmsVendor < ActiveRecord::Base
   include PhoneVendor
 
   attr_accessible :stop_text, :help_text, :start_text
+  alias_attribute :from, :from_phone
+  attr_accessible :from
 
   has_many :stop_requests, :foreign_key => 'vendor_id', :dependent => :delete_all
   has_many :inbound_messages, -> { order("#{InboundMessage.table_name}.created_at DESC") }, :inverse_of => :vendor, :foreign_key => 'vendor_id', :dependent => :delete_all
@@ -11,6 +13,9 @@ class SmsVendor < ActiveRecord::Base
   validates_inclusion_of :shared, :in => [true, false]
   validates_uniqueness_of :from_phone
   validates_uniqueness_of :name
+  validates_presence_of :from
+
+  validate :normalize_from_phone
 
   def create_inbound_message!(options)
     inbound_messages.create!(options)
@@ -30,5 +35,9 @@ class SmsVendor < ActiveRecord::Base
 
   def delivery_mechanism
     Service::TwilioClient::Sms.new(username, password)
+  end
+
+  def normalize_from_phone
+    self.from_phone = PhoneNumber.new(from_phone).e164_or_short if from_phone
   end
 end

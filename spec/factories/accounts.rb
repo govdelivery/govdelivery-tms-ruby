@@ -6,6 +6,7 @@ FactoryGirl.define do
 
     before(:create) do |account, evaluator|
       evaluator.from_addresses.build({from_email: 'hey@dude.test', is_default: true})
+      evaluator.from_numbers.build({phone_number: '8885551234', is_default: true})
     end
 
     trait :shared do

@@ -1,13 +1,16 @@
 class FromNumber < ActiveRecord::Base
   belongs_to :account, :inverse_of => :from_numbers
   attr_accessible :phone_number, :is_default
+  alias_attribute :from_number, :phone_number
 
-  validates :phone_number, presence: true, uniqueness: {scope: :account_id}
+  before_validation :normalize_phone_number
+
+  validates :phone_number, presence: true, uniqueness: true
 
   before_save :ensure_unique_defaultness
 
   ##
-  # There should only be one default from address at a given time.
+  # There should only be one default from number at a given time.
   #
   def ensure_unique_defaultness(*args)
     if current_default = account.from_numbers.where(is_default: true).first
@@ -17,5 +20,9 @@ class FromNumber < ActiveRecord::Base
     else
       self.is_default = true
     end
+  end
+
+  def normalize_phone_number
+    self.phone_number = PhoneNumber.new(phone_number).e164_or_short
   end
 end
