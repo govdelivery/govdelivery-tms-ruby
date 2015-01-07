@@ -1,9 +1,13 @@
 module Service
   class TwilioMessageService
     class << self
-      def deliver!(message, callback_url=nil, message_url=nil)
-        message.sending!
-        do_deliver(message, callback_url, message_url)
+      def deliver!(message, callback_url=nil, message_url=nil, recipient_id=nil)
+        if recipient_id.nil?
+          message.sending!
+          do_deliver(message, callback_url, message_url)
+        else #retry single recipient
+          do_retry(message, callback_url, message_url, recipient_id)
+        end
       end
 
       private
@@ -22,6 +26,14 @@ module Service
                                                recipient_id: recipient.id)
           end
         end
+      end
+
+      def do_retry(message,  callback_url, message_url=nil, recipient_id)
+        Twilio::SenderWorker.perform_async(message_class: message.class.name,
+                                           callback_url: callback_url,
+                                           message_url: message_url,
+                                           message_id: message.id,
+                                           recipient_id: recipient_id)
       end
     end
   end

@@ -78,7 +78,11 @@ describe 'messages/show.rabl' do
                       with_links('self' => voice_path(voice_message),
                                  'recipients' => voice_recipients_path(voice_message),
                                  'failed' => failed_voice_recipients_path(voice_message),
-                                 'sent' => sent_voice_recipients_path(voice_message))
+                                 'sent' => sent_voice_recipients_path(voice_message),
+                                 'human' => human_voice_recipients_path(voice_message),
+                                 'machine' => machine_voice_recipients_path(voice_message),
+                                 'busy' => busy_voice_recipients_path(voice_message),
+                                 'no_answer' => no_answer_voice_recipients_path(voice_message))
   end
 
   it 'should work with an email message' do

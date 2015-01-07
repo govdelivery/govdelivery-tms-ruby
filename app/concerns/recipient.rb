@@ -7,6 +7,9 @@
 #
 module Recipient
   extend ActiveSupport::Concern
+  class ShouldRetry < StandardError
+
+  end
 
   def incomplete_statuses
     ['new', 'sending']
@@ -31,20 +34,23 @@ module Recipient
         transitions from: [:new, :sending], to: :sending, after: :acknowledge_sent
       end
 
-      event :mark_sent, after: :invoke_webhooks do
-        transitions from: [:new, :sending, :inconclusive], to: :sent, after: :finalize
+      # ack, sent_at, error_message, call_status (for voice)
+      event :mark_sent, after: [:finalize, :invoke_webhooks] do
+        transitions from: [:new, :sending, :inconclusive], to: :sent
       end
 
-      event :mark_inconclusive, after: :invoke_webhooks do
-        transitions from: [:new, :sending], to: :inconclusive, after: :finalize
+      event :mark_inconclusive, after: [:finalize, :invoke_webhooks] do
+        transitions from: [:new, :sending], to: :inconclusive
       end
 
-      event :fail, after: :invoke_webhooks do
-        transitions from: [:new, :sending, :inconclusive], to: :failed, after: :finalize
+      event :fail, after: [:invoke_webhooks] do
+        transitions from: [:new, :inconclusive], to: :failed, after: :finalize
+        transitions from: :sending, to: :sending, if: -> { !retries_exhausted? }, after: :record_attempt
+        transitions from: :sending, to: :failed, if: :retries_exhausted?, after: :finalize
       end
 
-      event :cancel, after: :invoke_webhooks do
-        transitions from: [:new, :sending], to: :canceled, after: :finalize
+      event :cancel, after: [:finalize, :invoke_webhooks] do
+        transitions from: [:new, :sending], to: :canceled
       end
 
       event :blacklist, after: :invoke_webhooks do
@@ -74,46 +80,51 @@ module Recipient
     self.error_message = self.error_message[0..511] if error_message && error_message_changed? && error_message.to_s.length > 512
   end
 
-  def sending!(ack, *args)
+  def sending!(ack, *_)
     mark_sending!(:sending, ack)
   end
 
-  def sent!(ack, date_sent=nil)
-    mark_sent!(:sent, ack, date_sent)
+  def sent!(ack, date_sent=nil, _=nil)
+    date_sent ||= Time.now
+    mark_sent!(:sent, ack, date_sent, nil)
   end
 
   def failed!(ack=nil, completed_at=nil, error_message=nil)
     fail!(:failed, ack, completed_at, error_message)
   end
 
-  def canceled!(ack, *args)
-    cancel!(:canceled, ack)
+  def canceled!(ack, *_)
+    cancel!(:canceled, ack, nil, nil)
   end
 
-  def ack!(ack=nil)
+  def ack!(ack=nil, *_)
     update_attribute(:ack, ack)
   end
 
   protected
+  def retries_exhausted?
+    true
+  end
+
   def invoke_webhooks(*_)
     message.account.webhooks.where(event_type: self.status).each do |webhook|
       webhook.invoke(self)
     end
   end
 
-  def finalize(*args)
-    self.ack           ||= args[0]
-    self.completed_at  = args[1] || Time.now
-    self.error_message = args[2]
+  def finalize(ack, completed_at, error_message)
+    self.ack           = ack if ack.present?
+    self.completed_at  = completed_at || Time.now
+    self.error_message = error_message
+    self.save!
   end
 
-  def acknowledge_sent(*args)
-    self.ack     = args[0]
+  def acknowledge_sent(ack=nil, *_)
+    self.ack     = ack
     self.sent_at = Time.now
   end
 
   def set_vendor
     self.vendor ||= self.message.try(:vendor)
   end
-
 end

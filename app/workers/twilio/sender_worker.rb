@@ -51,7 +51,7 @@ module Twilio
 
     def self.complete_recipient!(recipient, status, sid)
       transition = Service::TwilioResponseMapper.recipient_callback(status)
-      recipient.send(transition, sid)
+      recipient.send(transition, sid, nil, nil)
     end
 
     def complete_recipient_with_error!(options, error_message)

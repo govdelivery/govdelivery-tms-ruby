@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141217184138) do
+ActiveRecord::Schema.define(version: 20141218140730) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -266,6 +266,16 @@ ActiveRecord::Schema.define(version: 20141217184138) do
     t.string   "status",                                             default: "new", null: false
     t.datetime "sent_at"
     t.string   "say_text",     limit: 1000
+    t.integer  "max_retries",               precision: 38, scale: 0, default: 0,     null: false
+    t.integer  "retry_delay",               precision: 38, scale: 0, default: 300,   null: false
+  end
+
+  create_table "voice_recipient_attempts", force: true do |t|
+    t.integer  "voice_message_id",              precision: 38, scale: 0, null: false
+    t.integer  "voice_recipient_id",            precision: 38, scale: 0, null: false
+    t.datetime "completed_at"
+    t.string   "ack"
+    t.string   "description",        limit: 50
   end
 
   create_table "voice_recipients", force: true do |t|

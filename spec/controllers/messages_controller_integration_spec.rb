@@ -78,7 +78,7 @@ describe 'MessageControllers' do
       if message_type == :sms
         m = user.sms_messages.new(:body => 'A short body')
       elsif message_type == :voice
-        m = user.voice_messages.new(:play_url => 'http://foo.com/hello.wav')
+        m = user.voice_messages.new(:play_url => 'http://foo.com/hello.wav', :max_retries => 2, :retry_delay => 1200)
       end
       m.save!
       m

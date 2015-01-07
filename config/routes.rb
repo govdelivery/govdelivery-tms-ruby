@@ -55,7 +55,7 @@ Xact::Application.routes.draw do
         end
       end
     end
-    {sms: :sms_messages, voice: :voice_messages}.each do |_resource, _controller|
+    {sms: :sms_messages}.each do |_resource, _controller|
       resources(_resource, only: [:index, :new, :create, :show], controller: _controller) do
         pageable
         resources(:recipients, only: [:index, :show]) do
@@ -63,6 +63,22 @@ Xact::Application.routes.draw do
           collection do
             get :failed
             get :sent
+          end
+        end
+      end
+    end
+    {voice: :voice_messages}.each do |_resource, _controller|
+      resources(_resource, only: [:index, :new, :create, :show], controller: _controller) do
+        pageable
+        resources(:recipients, only: [:index, :show]) do
+          pageable
+          collection do
+            get :failed
+            get :sent
+            get :busy
+            get :human
+            get :machine
+            get :no_answer
           end
         end
       end

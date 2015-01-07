@@ -4,16 +4,16 @@ require File.expand_path('../../../../app/workers/base', __FILE__)
 describe Twilio::SenderWorker do
   context 'a voice send' do
     let(:voice_vendor) { create(:voice_vendor, worker: 'TwilioVoiceWorker') }
-    let(:account) { voice_vendor.accounts.create!(:name => 'name') }
-    let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-    let(:message) { account.voice_messages.create!(:play_url => 'http://localhost/file.mp3', :recipients_attributes => [{:phone => "5554443333", :vendor => voice_vendor}]) }
+    let(:account) { voice_vendor.accounts.create!(name: 'name') }
+    let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+    let(:message) { account.voice_messages.create!(play_url: 'http://localhost/file.mp3', recipients_attributes: [{phone: "5554443333", vendor: voice_vendor}]) }
     let(:client) { stub }
 
 
     #need to add recipient stubs and verify recipients are modified correctly
     context 'a very happy send' do
       it 'should work' do
-        twilio_calls = mock('calls', create: OpenStruct.new(:sid => 'abc123', :status => 'completed'))
+        twilio_calls = mock('calls', create: OpenStruct.new(sid: 'abc123', status: 'completed'))
         client.stubs(:account).returns(stub('calls', calls: twilio_calls))
         Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
         expect { subject.perform(
@@ -21,7 +21,7 @@ describe Twilio::SenderWorker do
           message_class: message.class.name,
           recipient_id: message.recipients.first.id,
           callback_url: 'http://localhost')
-        }.to change { message.recipients.where(:ack => 'abc123').count }.by 1
+        }.to change { message.recipients.where(ack: 'abc123').count }.by 1
       end
     end
 
@@ -82,8 +82,8 @@ describe Twilio::SenderWorker do
     context 'a send that succeed but then fails to update the recipient' do
       it 'should not retry' do
         twilio_calls = mock
-        twilio_calls.expects(:create).returns(OpenStruct.new(:sid => 'abc123', :status => 'completed'))
-        Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(:account => OpenStruct.new(:calls => twilio_calls)))
+        twilio_calls.expects(:create).returns(OpenStruct.new(sid: 'abc123', status: 'completed'))
+        Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(account: OpenStruct.new(calls: twilio_calls)))
         ex = ActiveRecord::ConnectionTimeoutError.new('this could be anything')
         subject.class.expects(:complete_recipient!).raises(ex)
         subject.class.expects(:delay).returns(mock('DelayedClass', complete_recipient!: 'jid'))
