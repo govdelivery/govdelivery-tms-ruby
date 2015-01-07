@@ -249,11 +249,11 @@ end
 def agency_command_params(agency)
   url = case agency.downcase
     when "bart"
-      'https://xact-services-stage.heroku.com/bart'
+      'https://xact-services-stage.herokuapp.com/bart'
     when "acetrain"
-      'https://xact-services-stage.heroku.com/acetrain'
+      'https://xact-services-stage.herokuapp.com/acetrain'
     when "cdc"
-      'https://xact-services-stage.heroku.com/knowit'
+      'https://xact-services-stage.herokuapp.com/knowit'
   end
   {
     url:           url,
@@ -341,42 +341,6 @@ When (/^I text '(.+)' to the (.+) account$/) do |message, agency|
     req.body = payload
   end
 end
-
-#===BART========================================>
-
-#Then (/^I should receive BART content as a response$/) do
-#  # TODO Can we find the actual message that XACT sent back?
-#  passed = false
-#  expected_status = 200
-
-#  check = Proc.new do
-#    # The API does not provide the command_actions relation on a command if there are no command actions
-#    # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
-#    # by the time the test wants to check for one.
-#    begin
-#      @command.get
-#      @command.command_actions.get
-#      @actions = @command.command_actions.collection
-#    rescue NoMethodError => e
-#      next
-#    end
-#    passed = @actions.any? do |action|
-#      action.status == expected_status && !action.response_body.blank?
-#    end
-#  end
-#  check_condition = Proc.new{passed}
-#  begin
-#    backoff_check(check, check_condition, "for BART to send an acceptable response")
-#  rescue => e
-#    msg = "Expected to receive HTTP Status #{expected_status} and expected to receive non-blank response_text"
-#    msg += "Command URL: #{@command.href}"
-#    raise $!, "#{$!}\n#{msg}"
-#  end
-#end
-
-
-
-#===ACETrain========================================>
 
 Then (/^I should receive (.+) content as a response$/) do |agency_name|
   # TODO Can we find the actual message that XACT sent back?
