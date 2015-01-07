@@ -129,32 +129,5 @@ describe VoiceRecipient do
         end
       end
     end
-
-  end
-
-  describe 'timeout_expired' do
-    let(:vendor) { create(:voice_vendor) }
-    let(:account) { create(:account, voice_vendor: vendor, name: 'account') }
-    let(:messages) {
-      [1, 2].map { |x|
-        m = create(:voice_message, account: account, play_url: "http://coffee.website.ninja/#{x}.wav")
-        r = m.recipients.create!(phone: "1612555123#{x}")
-        r.sending!('doo')
-        m.ready!
-        m.sending!
-        m
-      }
-    }
-    before do
-      # do this in SQL to get as close to boundaries as possible
-      messages[0].recipients.update_all("sent_at = sysdate - #{5.hours.to_i}/(24*60*60)")
-      messages[1].recipients.update_all("sent_at = sysdate - #{3.hours.to_i}/(24*60*60)")
-    end
-
-    it 'only finds recipients in sending status' do
-      expect(VoiceRecipient.timeout_expired.all).to eq(messages[0].recipients.all)
-      messages.each { |m| m.recipients.update_all(status: 'new') }
-      expect(VoiceRecipient.timeout_expired.all).to be_empty
-    end
   end
 end
