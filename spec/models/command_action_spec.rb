@@ -34,4 +34,12 @@ describe CommandAction do
     its(:success?) { should be true }
   end
 
+  describe 'a nothing' do
+    subject { build(:command_action, content_type: nil,
+                    response_body:                 nil,
+                    status:                        nil) }
+    it { should be_valid }
+    its(:success?) { should be false }
+  end
+
 end

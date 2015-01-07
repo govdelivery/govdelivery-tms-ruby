@@ -7,7 +7,7 @@ module CommandType
 
     def initialize(string_fields, array_fields)
       self.string_fields = string_fields
-      self.array_fields = array_fields
+      self.array_fields  = array_fields
     end
 
     def name
@@ -29,9 +29,9 @@ module CommandType
     end
 
     def validate_params(command_params, account)
-      command_params = CommandParameters.new(command_params) unless command_params.is_a?(CommandParameters)
+      command_params              = CommandParameters.new(command_params) unless command_params.is_a?(CommandParameters)
       command_params.command_type = self
-      command_params.account = account
+      command_params.account      = account
       command_params.valid?
       command_params.errors
     end
@@ -39,13 +39,14 @@ module CommandType
     protected
 
     def save_command_action!(params, http_response)
+      content_type = http_response.headers['Content-Type'] rescue nil
       CommandAction.where(
         inbound_message_id: params.inbound_message_id,
-        command_id: params.command_id).
+        command_id:         params.command_id).
         first_or_create!(
-        status: http_response.status,
-        content_type: http_response.headers['Content-Type'],
-        response_body:  response_body(http_response.body))
+          status:        http_response.status,
+          content_type:  content_type,
+          response_body: response_body(http_response.body))
     end
 
     # DCM command type responses return parsed hashes of JSON, so...
@@ -53,6 +54,8 @@ module CommandType
       case
         when body.is_a?(String)
           body
+        when body.nil?
+          nil
         when body.respond_to?(:to_json)
           body.to_json
         else
