@@ -264,37 +264,16 @@ end
 
 def agency_test(agency, check)
   case agency.downcase
-    when "bart"
+    when "bart", "acetrain", "cdc"
       expected_condition = 200
-      {:condition => Proc.new{
-        actions = check.call()
-        actions.any? do |action|
-          action.status == expected_condition && !action.response_body.blank?
-        end
-        },
-       :msg => "Expected to receive HTTP Status #{expected_condition} and expected to receive non-blank response_text"
-      }
-    when "acetrain"
-      expected_condition = 200
-      {:condition => Proc.new {
-        actions = check.call()
-        actions.any? do |action|
-          body_hash = JSON.parse(action.response_body)
-          action.status == expected_condition && body_hash.fetch("get_stop_etas", []).fetch(0, {}).has_key?("smsText")
-        end
-        },
-       :msg => "Expected to receive HTTP Status #{expected_condition} and expected response_text with smsText attribute"
-      }
-    when "cdc"
-      expected_condition = 200
-      {:condition => Proc.new{
-        actions = check.call()
-        actions.any? do |action|
-          action.status == expected_condition &&
-            !action.response_body.blank? &&
-            !action.response_body.include?('We are sorry, but the message you sent is not valid.')
-        end
-      },
+      {:condition => Proc.new do 
+          actions = check.call()
+          actions.any? do |action|
+            action.status == expected_condition &&
+              !action.response_body.blank? &&
+              !action.response_body.include?('We are sorry, but the message you sent is not valid.')
+          end
+        end,
        :msg => "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
       }
   end
