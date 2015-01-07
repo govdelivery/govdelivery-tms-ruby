@@ -31,9 +31,9 @@ Feature: XACT SMS 2-Way tests.
   @keyword @acetrain
   Scenario: XACT 2-Way SMS Real Time Query of ACETrain
     Given I have an XACT account for ACETrain
-    And I register the keyword frmnt
+    And I register the keyword ACETrain 
     And I register the ACETrain forward command
-    When I text 'frmnt' to the ACETrain account
+    When I text 'ACETrain frmnt' to the ACETrain account
     Then I should receive ACETrain content as a response
 
   @keyword @cdc
