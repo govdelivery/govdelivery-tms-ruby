@@ -58,7 +58,6 @@ module CommandWorkers
                                        command_params.from_param_name     => options.from,
                                        command_params.sms_body_param_name => sms_body
                                      })
-
         if response.status == 0
           raise Faraday::Error::ConnectionFailed.new(nil,
                                                      body:    "Couldn't connect to #{@http_response.env[:url].to_s}",
@@ -67,6 +66,7 @@ module CommandWorkers
       rescue Faraday::Error::ConnectionFailed, Faraday::Error::TimeoutError => e
         # these are network problems, they could happen because of a bad command but we should probably know about them
         # in case e.g. our network is having issues
+        logger.warn(e)
         self.exception = e
         response       = OpenStruct.new(e.response)
       rescue Faraday::Error::ClientError => e

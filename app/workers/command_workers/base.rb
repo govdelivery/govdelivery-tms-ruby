@@ -9,7 +9,7 @@ module CommandWorkers
       base.sidekiq_options queue: :webhook
 
       base.sidekiq_retries_exhausted do |msg|
-        logger.warn "Sidekiq job failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
+        Sidekiq.logger.warn "Sidekiq job failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
       end
 
     end

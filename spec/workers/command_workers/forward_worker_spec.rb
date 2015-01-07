@@ -12,8 +12,6 @@ describe CommandWorkers::ForwardWorker do
              http_method:         "post",
              username:            nil,
              password:            nil,
-             sms_body_param_name: "sms_body_d",
-             from_param_name:     "from_param"
            })
   end
 

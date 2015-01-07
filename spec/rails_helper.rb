@@ -40,7 +40,7 @@ def stub_command_action_create!(command_params, http_response, command_action, b
   mock_relation = mock('CommandAction.where')
   mock_relation.expects(:first_or_create!).with(
     status:        http_response.status,
-    content_type:  http_response.headers['Content-Type'],
+    content_type:  (http_response.headers['Content-Type'] rescue nil),
     response_body: body).returns(command_action)
   CommandAction.expects(:where).with(
     inbound_message_id: command_params.inbound_message_id,
