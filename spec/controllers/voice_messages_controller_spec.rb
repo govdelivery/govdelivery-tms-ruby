@@ -22,5 +22,5 @@ describe VoiceMessagesController do
 
   it_should_have_a_pageable_index(:messages)
 
-  it_should_show_with_attributes(:play_url)
+  it_should_show_with_attributes(:play_url, :recipient_detail_counts)
 end
