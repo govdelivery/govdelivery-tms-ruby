@@ -38,6 +38,18 @@ describe TwilioRequestsController, '#create' do
       response.response_code.should eq(201)
       assigns(:response).response_text.should == "Aye! Ye got me booty!"
     end
+
+    context 'that should be ignored' do
+      before do
+        InboundMessage.any_instance.stubs(:ignored?).returns(true)
+        Service::Keyword.any_instance.expects(:respond!).returns("don't send this")
+      end
+
+      it "should execute comands but not return response text" do
+        post :create, twilio_request_params('i am in my car right now, will reply later', @vendor)
+        assigns(:response).response_text.should be nil
+      end
+    end
   end
 
   context "an account with prefix: pirate" do

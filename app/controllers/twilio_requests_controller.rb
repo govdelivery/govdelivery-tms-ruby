@@ -29,14 +29,13 @@ class TwilioRequestsController < ApplicationController
                                                    keyword: keyword_service.keyword,
                                                    keyword_response: keyword_service.response_text})
 
-    # respond to it (now and/or later)
+    command_parameters.merge!(sms_tokens:         message.split,
+                              inbound_message_id: inbound_msg.id)
+    response_text = keyword_service.respond!(command_parameters)
+
     if inbound_msg.ignored? # to not respond to auto responses
-      Rails.logger.debug "ignoring message: #{inbound_msg.inspect}"
+      Rails.logger.info "ignoring message: #{inbound_msg.inspect}"
       response_text = nil
-    else
-      command_parameters.merge!(sms_tokens: message.split,
-                                inbound_message_id: inbound_msg.id)
-      response_text = keyword_service.respond!(command_parameters)
     end
 
     # if response_text is empty, twillio will not send a response
