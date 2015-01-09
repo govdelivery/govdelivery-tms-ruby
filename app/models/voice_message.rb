@@ -30,6 +30,13 @@ class VoiceMessage < ActiveRecord::Base
     Kaminari.paginate_array(status_with_attempts('failed').select { |recip| recip.secondary_status == 'no_answer' })
   end
 
+  def recipient_detail_counts
+    last_status = voice_recipient_attempts.select('voice_recipient_id, max(completed_at) complete').group('voice_recipient_id')
+    secondary_groups = voice_recipient_attempts.select('description, count(description) the_count').where('(voice_recipient_id, completed_at) in (?)', last_status).group('description')
+    h = Hash[secondary_groups.map { |r| [r.description, r.the_count] }]
+    Hash[%w(busy no_answer human machine).map { |s| [s, 0] }].merge(h)
+  end
+
   protected
 
   def status_with_attempts(status)
