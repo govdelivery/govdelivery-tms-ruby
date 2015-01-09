@@ -2,15 +2,14 @@ require 'rails_helper'
 
 describe VoiceRecipient do
   subject {
-    v         = create(:voice_vendor)
     m         = VoiceMessage.new(:play_url => 'http://coffee.website.ninja')
-    a         = Account.create(name: 'account', voice_vendor: v)
+    a         = create(:account_with_voice)
     u         = User.create(email: 'admin@get-endorsed-by-bens-mom.com', password: 'retek01!')
     u.account = a
     m.account = a
     r         = VoiceRecipient.new
     r.message = m
-    r.vendor  = v
+    r.vendor  = a.voice_vendor
     r
   }
 
