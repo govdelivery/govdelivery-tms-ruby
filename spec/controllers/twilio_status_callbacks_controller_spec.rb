@@ -74,14 +74,13 @@ describe TwilioStatusCallbacksController do
     end
   end
   describe 'Voice vendor' do
-    let(:vendor) { create(:voice_vendor) }
-    let(:account) { vendor.accounts.create(:name => 'name') }
+    let(:account) { create(:account_with_voice) }
     let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
     let(:message) { account.voice_messages.create(:play_url => 'http://ninja.com.website/hello.wav') }
     let(:recipient) do
       recipient = message.recipients.build(:phone => '+15551112222')
       recipient.ack='SM2e4152a68a31e52bbf035e22b77f09ab'
-      recipient.vendor=vendor
+      recipient.vendor=account.voice_vendor
       recipient.save!
       recipient
     end

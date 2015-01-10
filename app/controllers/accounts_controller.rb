@@ -26,6 +26,10 @@ class AccountsController < ApplicationController
                             :errors_to],
                   format:  [:json, :url_encoded_form]
 
+  wrap_parameters :from_number,
+                  include: [:phone_number],
+                  format:  [:json, :url_encoded_form]
+
   def index
     @accounts = Account.all
   end
@@ -34,6 +38,9 @@ class AccountsController < ApplicationController
     @account = Account.new(params[:account])
     if params[:from_address]
       @account.from_addresses.build(params[:from_address].merge!(is_default: true))
+    end
+    if params[:from_number]
+      @account.from_numbers.build(params[:from_number].merge!(is_default: true))
     end
     @account.save!
     respond_with(@account)

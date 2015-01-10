@@ -3,10 +3,13 @@ class VoiceMessage < ActiveRecord::Base
   has_one :call_script
   has_many :voice_recipient_attempts
 
-  attr_accessible :play_url, :say_text, :retries, :retry_delay
+  attr_accessible :play_url, :say_text, :retries, :retry_delay, :from_number
+
   validates :play_url, presence: true, unless: ->(message) { message.say_text.present? }, on: :create
   validates :say_text, presence: true, unless: ->(message) { message.play_url.present? }, on: :create
 
+  before_validation :set_from_number
+  validate :from_number_allowed?
   after_create :create_script
 
   def create_script
@@ -41,5 +44,17 @@ class VoiceMessage < ActiveRecord::Base
 
   def status_with_attempts(status)
     recipients.send(status).includes(:voice_recipient_attempts)
+  end
+
+  def from_number_allowed?
+    unless account.from_number_allowed?(self.from_number)
+      errors.add(:from_number, "is not authorized to send on this account")
+    end
+  end
+
+  def set_from_number
+    if from_number.nil? && account
+      self.from_number = account.from_number
+    end
   end
 end

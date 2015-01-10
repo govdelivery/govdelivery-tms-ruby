@@ -21,6 +21,7 @@ describe 'messages/show.rabl' do
          to_param: '22',
          class: VoiceMessage,
          play_url: 'bomb',
+         from_number: '8885551234',
          completed_at: Time.now,
          created_at: Time.now,
          new_record?: false,
@@ -70,10 +71,10 @@ describe 'messages/show.rabl' do
   it 'should work with a voice message' do
     Rabl::Engine.any_instance.stubs(:controller_name).returns('voice_messages')
     assign(:message, voice_message)
-    assign(:content_attributes, [:play_url])
+    assign(:content_attributes, [:play_url, :from_number])
     render
     rendered.should be_json_for(voice_message).
-                      with_attributes(:play_url, :status).
+                      with_attributes(:play_url, :from_number, :status).
                       with_timestamps(:created_at).
                       with_links('self' => voice_path(voice_message),
                                  'recipients' => voice_recipients_path(voice_message),

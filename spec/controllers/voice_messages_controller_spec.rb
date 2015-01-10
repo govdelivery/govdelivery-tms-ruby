@@ -2,8 +2,7 @@ require 'rails_helper'
 
 describe VoiceMessagesController do
 
-  let(:voice_vendor) { create(:voice_vendor) }
-  let(:account) { voice_vendor.accounts.create(:name => 'name') }
+  let(:account){ create(:account_with_voice) }
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:model){VoiceMessage}
   let(:messages) do
@@ -22,5 +21,5 @@ describe VoiceMessagesController do
 
   it_should_have_a_pageable_index(:messages)
 
-  it_should_show_with_attributes(:play_url, :recipient_detail_counts)
+  it_should_show_with_attributes(:from_number, :play_url, :recipient_detail_counts)
 end

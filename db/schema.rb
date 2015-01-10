@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141218140730) do
+ActiveRecord::Schema.define(version: 20150105222318) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -144,6 +144,13 @@ ActiveRecord::Schema.define(version: 20141218140730) do
     t.boolean  "is_default",     precision: 1,  scale: 0, default: false
   end
 
+  create_table "from_numbers", force: true do |t|
+    t.integer  "account_id",   precision: 38, scale: 0
+    t.string   "phone_number"
+    t.datetime "created_at"
+    t.boolean  "is_default",   precision: 1,  scale: 0, default: false
+  end
+
   create_table "inbound_messages", force: true do |t|
     t.integer  "vendor_id",                    precision: 38, scale: 0
     t.string   "caller_phone"
@@ -268,6 +275,7 @@ ActiveRecord::Schema.define(version: 20141218140730) do
     t.string   "say_text",     limit: 1000
     t.integer  "max_retries",               precision: 38, scale: 0, default: 0,     null: false
     t.integer  "retry_delay",               precision: 38, scale: 0, default: 300,   null: false
+    t.string   "from_number"
   end
 
   create_table "voice_recipient_attempts", force: true do |t|
@@ -279,15 +287,15 @@ ActiveRecord::Schema.define(version: 20141218140730) do
   end
 
   create_table "voice_recipients", force: true do |t|
-    t.integer  "message_id",                  precision: 38, scale: 0,                 null: false
-    t.integer  "vendor_id",                   precision: 38, scale: 0
+    t.integer  "message_id",                   precision: 38, scale: 0,                 null: false
+    t.integer  "vendor_id",                    precision: 38, scale: 0
     t.string   "phone"
     t.string   "formatted_phone"
     t.string   "ack"
-    t.string   "error_message",   limit: 512
+    t.string   "error_message",    limit: 512
     t.datetime "sent_at"
     t.datetime "completed_at"
-    t.string   "status",                                               default: "new", null: false
+    t.string   "status",                                                default: "new", null: false
     t.datetime "created_at"
   end
 
@@ -297,7 +305,6 @@ ActiveRecord::Schema.define(version: 20141218140730) do
     t.string   "name",       null: false
     t.string   "username",   null: false
     t.string   "password",   null: false
-    t.string   "from_phone", null: false
     t.string   "worker",     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
