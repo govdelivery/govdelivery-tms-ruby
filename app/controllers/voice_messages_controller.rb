@@ -12,10 +12,6 @@ class VoiceMessagesController < MessagesController
 
   def set_attr
     @content_attributes = [:play_url]
-<<<<<<< HEAD
-    @content_attributes.concat([:recipient_detail_counts]) unless action_name=='index'
-=======
     @content_attributes.concat([:recipient_detail_counts, :from_number]) unless action_name=='index'
->>>>>>> rwatkins/xact-from_numbers
   end
 end
