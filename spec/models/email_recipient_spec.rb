@@ -47,6 +47,19 @@ describe EmailRecipient do
         subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::one_value::seven_value")
       end
     end
+
+    context 'that is marked inconclusive' do
+      it 'should invoke webhooks' do
+        account.webhooks.create!(url: 'http://dudes.ruby', event_type: 'inconclusive')
+        Webhook.any_instance.expects(:invoke).with(subject)
+        subject.reload
+        subject.mark_inconclusive!
+        subject.completed_at.should be nil
+        subject.ack.should be nil
+        subject.error_message.should be nil
+      end
+    end
+
     context 'that fails' do
       it 'should invoke webhooks' do
         account.webhooks.create!(url: 'http://dudes.ruby', event_type: 'failed')

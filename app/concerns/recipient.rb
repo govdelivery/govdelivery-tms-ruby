@@ -39,7 +39,7 @@ module Recipient
         transitions from: [:new, :sending, :inconclusive], to: :sent
       end
 
-      event :mark_inconclusive, after: [:finalize, :invoke_webhooks] do
+      event :mark_inconclusive, after: [:invoke_webhooks] do
         transitions from: [:new, :sending], to: :inconclusive
       end
 
