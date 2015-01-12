@@ -31,10 +31,10 @@ class LoopbackMessageWorker
             recipient.blacklist!
           when self.class.magic_addresses[:sent]
             logger.info("Magic Sent Recipient: Going to Sent State.")
-            recipient.sent!(ack)
+            recipient.sent!(ack, nil, :human)
           else
             logger.info("Non-Magic Recipient: Default Action - Going to Sent State.")
-            recipient.sent!(ack)
+            recipient.sent!(ack, nil, :machine)
 
         end
       end

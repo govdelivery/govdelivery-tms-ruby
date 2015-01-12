@@ -1,5 +1,4 @@
 class LoopbackSmsWorker < LoopbackMessageWorker
-
   @magic_addresses =
     {
       sent:         '15005550006',
@@ -10,6 +9,7 @@ class LoopbackSmsWorker < LoopbackMessageWorker
       sending:      '15005550001',
       new:          '15005550000'
     }
+
 
   def perform(options)
     @message = SmsMessage.find(options['message_id'])
