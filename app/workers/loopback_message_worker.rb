@@ -4,33 +4,38 @@ class LoopbackMessageWorker
   sidekiq_options retry: 0,
                   queue: :sender
 
+  class << self
+    attr_accessor :magic_addresses
+  end
+
   def perform(options)
     if @message
-      @message.sending!
       @message.sendable_recipients.except(:order).find_each do |recipient|
-        if magic_new?(recipient)
-          logger.info("Magic New Recipient: Staying in New State.")
-        elsif magic_sending?(recipient)
-          logger.info("Magic Sending Recipient: Going to Sending State.")
-          recipient.sending!(ack)
-        elsif magic_inconclusive?(recipient)
-          logger.info("Magic Inconclusive Recipient: Going to Inconclusive State.")
-          recipient.mark_inconclusive!
-        elsif magic_canceled?(recipient)
-          logger.info("Magic Canceled Recipient: Going to Canceled State.")
-          recipient.canceled!(ack)
-        elsif magic_failed?(recipient)
-          logger.info("Magic Failed Recipient: Going to Failed State.")
-          recipient.failed!(ack)
-        elsif magic_blacklisted?(recipient)
-          logger.info("Magic Blacklisted Recipient: Going to Blacklisted State.")
-          recipient.blacklist!
-        elsif magic_sent?(recipient)
-          logger.info("Magic Sent Recipient: Going to Sent State.")
-          recipient.sent!(ack)
-        else
-          logger.info("Non-Magic Recipient: Default Action - Going to Sent State.")
-          recipient.sent!(ack)
+        case target(recipient)
+          when self.class.magic_addresses[:new]
+            logger.info("Magic New Recipient: Staying in New State.")
+          when self.class.magic_addresses[:sending]
+            logger.info("Magic Sending Recipient: Going to Sending State.")
+            recipient.sending!(ack)
+          when self.class.magic_addresses[:inconclusive]
+            logger.info("Magic Inconclusive Recipient: Going to Inconclusive State.")
+            recipient.mark_inconclusive!
+          when self.class.magic_addresses[:canceled]
+            logger.info("Magic Canceled Recipient: Going to Canceled State.")
+            recipient.canceled!(ack)
+          when self.class.magic_addresses[:failed]
+            logger.info("Magic Failed Recipient: Going to Failed State.")
+            recipient.failed!(ack)
+          when self.class.magic_addresses[:blacklisted]
+            logger.info("Magic Blacklisted Recipient: Going to Blacklisted State.")
+            recipient.blacklist!
+          when self.class.magic_addresses[:sent]
+            logger.info("Magic Sent Recipient: Going to Sent State.")
+            recipient.sent!(ack)
+          else
+            logger.info("Non-Magic Recipient: Default Action - Going to Sent State.")
+            recipient.sent!(ack)
+
         end
       end
       logger.warn("#{self.class.name} #{@message.to_s} could not be completed: #{@message.recipient_counts}") unless @message.complete!
@@ -43,31 +48,4 @@ class LoopbackMessageWorker
     @ack ||= "#{(Time.now.to_i + Random.rand(100000)).to_s(16)}"
   end
 
-  def magic_new?(recipient)
-    recipient.respond_to?(:phone) && recipient.phone == '15005550000'
-  end
-
-  def magic_sending?(recipient)
-    recipient.respond_to?(:phone) && recipient.phone == '15005550001'
-  end
-
-  def magic_inconclusive?(recipient)
-    recipient.respond_to?(:phone) && recipient.phone == '15005550002'
-  end
-
-  def magic_canceled?(recipient)
-    recipient.respond_to?(:phone) && recipient.phone == '15005550003'
-  end
-
-  def magic_failed?(recipient)
-    recipient.respond_to?(:phone) && recipient.phone == '15005550004'
-  end
-
-  def magic_blacklisted?(recipient)
-    recipient.respond_to?(:phone) && recipient.phone == '15005550005'
-  end
-
-  def magic_sent?(recipient)
-    recipient.respond_to?(:phone) && recipient.phone == '15005550006'
-  end
 end
