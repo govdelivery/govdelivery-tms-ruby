@@ -53,7 +53,7 @@ end
 
 group :development, :test do
   gem 'awesome_print'
-  gem 'brakeman'
+  gem 'brakeman-min'
   gem 'capybara'
   gem 'colored'
   gem 'cucumber'
