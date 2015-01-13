@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(version: 20150107162656) do
     t.integer  "from_number_id",              precision: 38, scale: 0
     t.string   "play_url",       limit: 512
     t.string   "say_text",       limit: 1000
-    t.boolean  "is_default",                  precision: 1,  scale: 0, default: false
+    t.boolean  "is_default",                  precision: 1,  scale: 0, default: false, null: false
     t.integer  "expires_in",                  precision: 38, scale: 0
     t.datetime "created_at"
   end

@@ -10,9 +10,8 @@ class TwilioRequestsController < ApplicationController
   end
 
   def show
-    @message = @from_number.voice_message
     respond_to do |format|
-      format.xml { render xml: twiml_response(@message).text }
+      format.xml { render xml: twiml_response.text }
     end
   end
 
@@ -62,11 +61,11 @@ class TwilioRequestsController < ApplicationController
     @from_number=FromNumber.find_by_phone_number(params['To'])
   end
 
-  def twiml_response(message)
+  def twiml_response
     Twilio::TwiML::Response.new do |r|
-      if message
-        r.Say  message.say_text if message.say_text
-        r.Play message.play_url if message.play_url
+      if @from_number && @from_number.voice_message
+        r.Say  @from_number.voice_message.say_text if @from_number.voice_message.say_text
+        r.Play @from_number.voice_message.play_url if @from_number.voice_message.play_url
       end
     end
   end
