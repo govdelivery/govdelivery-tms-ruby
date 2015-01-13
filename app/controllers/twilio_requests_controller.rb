@@ -1,11 +1,19 @@
 class TwilioRequestsController < ApplicationController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_user_from_token!
-  before_filter :dcm_forward!
+  before_filter :dcm_forward!, only: [:create]
+  before_filter :find_from_number, only: [:show]
   respond_to :xml
 
   def create
     respond_with(twilio_request_response)
+  end
+
+  def show
+    @message = @from_number.voice_message
+    respond_to do |format|
+      format.xml { render xml: twiml_response(@message).text }
+    end
   end
 
   private
@@ -50,7 +58,18 @@ class TwilioRequestsController < ApplicationController
     twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
   end
 
-  private
+  def find_from_number
+    @from_number=FromNumber.find_by_phone_number(params['To'])
+  end
+
+  def twiml_response(message)
+    Twilio::TwiML::Response.new do |r|
+      if message
+        r.Say  message.say_text if message.say_text
+        r.Play message.play_url if message.play_url
+      end
+    end
+  end
 
   # This is a hack and is intended to be temporary.
   def dcm_forward!

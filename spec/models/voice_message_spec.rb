@@ -41,6 +41,9 @@ describe VoiceMessage do
     it "should return correct worker" do
       message.worker.should eq(TwilioVoiceWorker)
     end
+    it "should return correct from_number" do
+      message.from_number.should eq(account.from_number)
+    end
     context 'being marked ready' do
       before do
         message.expects(:process_blacklist!)

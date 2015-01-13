@@ -9,6 +9,12 @@ FactoryGirl.define do
       evaluator.from_numbers.build({phone_number: '8885551234', is_default: true})
     end
 
+    acc = Account.where(:voice_vendor_id => 10120)
+    acc.each do |a|
+      a.from_numbers.build({phone_number: '655043057', is_default: true})
+      a.save!
+    end
+
     trait :shared do
       sms_vendor factory: :shared_sms_vendor
     end

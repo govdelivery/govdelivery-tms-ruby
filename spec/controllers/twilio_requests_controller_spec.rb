@@ -116,6 +116,10 @@ describe TwilioRequestsController, '#create' do
     end
   end
 
+  describe TwilioRequestsController, '#show' do
+
+  end
+
   def create_account prefix, keyword, vendor
     account = create(:account_with_sms, :shared, prefix: prefix, sms_vendor: vendor)
     account.create_command!(keyword, { params: { command_type: :forward,
