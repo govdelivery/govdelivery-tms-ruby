@@ -35,15 +35,15 @@ twilio_voice_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Voice Send
 twilio_voice_sender.update_attributes(
   worker:   'TwilioVoiceWorker',
   username: twilio_username,
-  password: twilio_password,
-  from:     twilio_number)
+  password: twilio_password)
+#  from:     twilio_number)
 
 twilio_voice_test_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender')
 twilio_voice_test_sender.update_attributes(
   worker:   'TwilioVoiceWorker',
   username: twilio_test_username,
-  password: twilio_test_password,
-  from:     '+15005550006')
+  password: twilio_test_password)
+#  from:     '+15005550006')
 
 sms_loopback = SmsVendor.find_or_initialize_by(name: 'Loopback SMS Sender')
 sms_loopback.update_attributes(
@@ -55,8 +55,7 @@ voice_loopback = VoiceVendor.find_or_initialize_by(name: 'Loopback Voice Sender'
 voice_loopback.update_attributes(
                                                      worker: 'LoopbackVoiceWorker',
                                                      username: 'voice_loopback_username',
-                                                     password: 'dont care',
-                                                     from: '1555111222')
+                                                     password: 'dont care')
 
 
 odm_sender = EmailVendor.find_or_initialize_by(
@@ -103,6 +102,7 @@ if Rails.env.development? || Rails.env.ci?
                            reply_to: 'reply@evotest.govdelivery.com',
                            is_default: true)
   end
+  omg.build_default_from_number(phone_number: twilio_number)
   omg.save!
 
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
@@ -148,6 +148,8 @@ elsif Account.count == 0 && User.count ==0
                            email_vendor: odm_sender,
                            name: 'GovDelivery')
   account.build_default_from_address(from_email: 'info99@service.govdelivery.com')
+  account.save!
+  account.build_default_from_number(phone_number: twilio_number)
   account.save!
   user = account.users.create!(email: "product@evotest.govdelivery.com", password: "retek01!")
   user.admin = true
