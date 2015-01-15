@@ -47,34 +47,22 @@ module CommandWorkers
     end
 
     def send_request(options, command_params)
-      response = nil
-      begin
-        sms_body = command_params.strip_keyword ? options.sms_tokens.join(" ") : options.sms_body
-        response = http_service.send(command_params.http_method.downcase,
-                                     command_params.url,
-                                     command_params.username,
-                                     command_params.password,
-                                     {
-                                       command_params.from_param_name     => options.from,
-                                       command_params.sms_body_param_name => sms_body
-                                     })
-        if response.status == 0
-          raise Faraday::Error::ConnectionFailed.new(nil,
-                                                     body:    "Couldn't connect to #{@http_response.env[:url].to_s}",
-                                                     headers: {})
-        end
-      rescue Faraday::Error::ConnectionFailed, Faraday::Error::TimeoutError => e
-        # these are network problems, they could happen because of a bad command but we should probably know about them
-        # in case e.g. our network is having issues
-        logger.warn(e)
-        self.exception = e
-        response       = OpenStruct.new(e.response)
-      rescue Faraday::Error::ClientError => e
-        # anything that isn't potentially a network problem is marked as a failure without reraising
-        response = OpenStruct.new(e.response)
-      ensure
-        return response
+      sms_body = command_params.strip_keyword ? options.sms_tokens.join(" ") : options.sms_body
+      response = http_service.send(command_params.http_method.downcase,
+                                   command_params.url,
+                                   command_params.username,
+                                   command_params.password,
+                                   {
+                                     command_params.from_param_name     => options.from,
+                                     command_params.sms_body_param_name => sms_body
+                                   })
+      if response.status == 0
+        return OpenStruct.new(
+          body:    "Couldn't connect to #{@http_response.env[:url].to_s}",
+          headers: {}
+        )
       end
+      return response
     end
   end
 end
