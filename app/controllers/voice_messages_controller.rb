@@ -2,7 +2,7 @@ class VoiceMessagesController < MessagesController
   include FeatureChecker
   feature :voice
 
-  wrap_parameters :message, include: [:say_text, :play_url, :retries, :retry_url, :recipients, :from_number], format: [:json, :url_encoded_form]
+  wrap_parameters :message, include: [:say_text, :play_url, :max_retries, :retry_delay, :recipients, :from_number], format: [:json, :url_encoded_form]
 
   protected
 
