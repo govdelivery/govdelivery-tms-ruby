@@ -188,7 +188,7 @@ USAGE
     VoiceVendor.all.each { |v|
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
-      puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
+      #puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
       puts "\n"
     }
 
