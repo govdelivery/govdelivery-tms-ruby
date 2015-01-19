@@ -111,7 +111,7 @@ Xact::Application.routes.draw do
   get 'load_balancer' => 'load_balancer#show'
   get 'command_types' => 'command_types#index'
   post 'twilio_requests' => 'twilio_requests#create'
-  post 'twilio_voice_requests' => 'twilio_requests#show'
+  post 'twilio_voice_requests' => 'twilio_voice_requests#create'
   post 'twilio_status_callbacks' => 'twilio_status_callbacks#create'
   post 'twiml' => 'twilio_dial_plan#show', defaults: {:format => 'xml'}
 

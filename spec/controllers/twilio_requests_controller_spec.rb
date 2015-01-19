@@ -116,25 +116,6 @@ describe TwilioRequestsController, '#create' do
     end
   end
 
-  describe TwilioRequestsController, '#show' do
-    before :each do
-      @account = create(:account_with_voice)
-      @account.default_from_number.incoming_voice_messages.create(say_text: 'hello world', is_default: true)
-    end
-
-    it 'should return empty on a non-existant FromNumber' do
-      post :show, twilio_voice_request_params(@account).merge('To' => '+1bensphone')
-      response.response_code.should == 200
-      response.body.should eq("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>")
-    end
-
-    it 'should return default message' do
-      post :show, twilio_voice_request_params(@account)
-      response.response_code.should == 200
-      response.body.should match(/hello world/)
-    end
-  end
-
   def create_account prefix, keyword, vendor
     account = create(:account_with_sms, :shared, prefix: prefix, sms_vendor: vendor)
     account.create_command!(keyword, { params: { command_type: :forward,
@@ -155,16 +136,5 @@ describe TwilioRequestsController, '#create' do
       'From' => vendor.username,
       'To' => vendor.from_phone,
       'Body' => body}
-  end
-
-  def twilio_voice_request_params(account)
-    @sid ||= ('0'*34)
-    @sid.succ!
-    {:format => "xml",
-     'CallSid' => @sid,
-     'AccountSid' => account.voice_vendor.username,
-     'From' => '+15555555555',
-     'To' => account.from_number,
-     'Direction' => 'inbound'}
   end
 end
