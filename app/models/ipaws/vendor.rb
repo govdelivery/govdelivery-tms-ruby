@@ -11,6 +11,7 @@ module IPAWS
 
     validates :cog_id, :user_id, :public_password_encrypted, :private_password_encrypted, :jks, presence: true 
 
+    attr_accessible
     attr_encrypted :public_password, attribute: :public_password_encrypted
     attr_encrypted :private_password, attribute: :private_password_encrypted
 

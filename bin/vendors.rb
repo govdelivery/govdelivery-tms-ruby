@@ -160,7 +160,7 @@ USAGE
   end
 
   def create_ipaws_vendor(options)
-    v = IPAWS::Vendor.new()
+    v = IPAWS::Vendor.new
     v.cog_id = options[:vendor_cog_id]
     v.user_id = options[:vendor_username]
     v.public_password = options[:vendor_password]

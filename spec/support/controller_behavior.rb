@@ -5,7 +5,7 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
       model.any_instance.stubs(:new_record?).returns(false)
 
       worker.expects(:perform_async).with(anything).returns(true)
-      post :create, :message => message_opts, :format => :json
+      post :create, :message => message_opts
     end
     it "should be accepted" do
       response.response_code.should == 201
@@ -16,7 +16,7 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
     before do
       model.any_instance.expects(:save_with_async_recipients).returns(false)
       model.any_instance.stubs(:new_record?).returns(true)
-      post :create, :message => message_opts, :format => :json
+      post :create, :message => message_opts
     end
 
     it "should be unprocessable_entity" do
@@ -39,7 +39,7 @@ def it_should_have_a_pageable_index(resource, parent_class=User, relation=nil)
       self.send(resource).stubs(:current_page).returns(1)
       self.send(resource).stubs(:first_page?).returns(true)
       self.send(resource).stubs(:last_page?).returns(false)
-      get :index, {:format => :json}.merge!(@params)
+      get :index, @params
       response.response_code.should == 200
     end
 

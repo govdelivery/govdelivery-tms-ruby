@@ -45,14 +45,16 @@ describe CommandActionsController do
     end
   end
 
-  def valid_attributes
-    {
-      inbound_message_id: inbound_message.id,
-      command_id: command.id,
+  let(:valid_command_action) do
+    CommandAction.new({
       response_body: 'http body',
       status: 200,
       content_type: 'text/plain',
-    }
+    }).tap do |ca|
+      ca.inbound_message = inbound_message
+      ca.command         = command
+      ca.save!
+    end
   end
 
   before do
@@ -61,14 +63,14 @@ describe CommandActionsController do
 
   describe "GET index" do
     it "works with inbound message" do
-      command_action = CommandAction.create! valid_attributes
+      command_action = valid_command_action
       get :index, sms_id: inbound_message.id
       response.response_code.should eq(200)
       assigns(:parent).should eq(inbound_message)
       assigns(:command_actions).should eq([command_action])
     end
     it "works with command" do
-      command_action = CommandAction.create! valid_attributes
+      command_action = valid_command_action
       get :index, command_id: command.id, keyword_id: keyword.id
       response.response_code.should eq(200)
       assigns(:parent).should eq(command)
@@ -78,14 +80,14 @@ describe CommandActionsController do
 
   describe "GET show" do
     it "works with inbound message" do
-      command_action = CommandAction.create! valid_attributes
+      command_action = valid_command_action
       get :show, sms_id: inbound_message.id, id: command_action.to_param
       response.response_code.should eq(200)
       assigns(:parent).should eq(inbound_message)
       assigns(:command_action).should eq(command_action)
     end
     it "works with command" do
-      command_action = CommandAction.create! valid_attributes
+      command_action = valid_command_action
       get :show, command_id: command.id, keyword_id: keyword.id, id: command_action.to_param
       response.response_code.should eq(200)
       assigns(:parent).should eq(command)

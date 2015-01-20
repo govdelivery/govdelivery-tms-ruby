@@ -113,6 +113,7 @@ GEM
     guard-rspec (4.3.1)
       guard (~> 2.1)
       rspec (>= 2.14, < 4.0)
+    highline (1.6.21)
     hike (1.2.3)
     hitimes (1.2.2-java)
     http-cookie (1.0.2)
@@ -406,6 +407,7 @@ DEPENDENCIES
   faraday
   faraday_middleware
   guard-rspec
+  highline
   httpi (= 2.1.0)
   json
   json_spec

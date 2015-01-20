@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe KeywordsController do
-  let(:account) { vendor.accounts.create(:name => 'name') }
+  let(:account) { vendor.accounts.create(name: 'name') }
   let(:vendor) { create(:sms_vendor) }
-  let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
   let(:attrs) { {'name' => "GOVD", 'response_text' => "GovAwesome!"} }
-  let(:keywords) { [stub(:name => "HI" )] }
+  let(:keywords) { [stub(name: "HI")] }
   let(:keyword) { mock("keyword") }
 
   before do
@@ -22,7 +22,7 @@ describe KeywordsController do
       keywords.stubs(:current_page).returns(1)
       keywords.stubs(:first_page?).returns(true)
       keywords.stubs(:last_page?).returns(false)
-      get :index, :format=>:json
+      get :index
       response.response_code.should == 200
       response.headers['Link'].should_not =~ /first/
       response.headers['Link'].should_not =~ /prev/
@@ -34,7 +34,7 @@ describe KeywordsController do
       keywords.stubs(:current_page).returns(2)
       keywords.stubs(:first_page?).returns(false)
       keywords.stubs(:last_page?).returns(false)
-      get :index, :page => 2
+      get :index, page: 2
       response.response_code.should == 200
       response.headers['Link'].should =~ /first/
       response.headers['Link'].should =~ /prev/
@@ -46,7 +46,7 @@ describe KeywordsController do
       keywords.stubs(:current_page).returns(3)
       keywords.stubs(:first_page?).returns(false)
       keywords.stubs(:last_page?).returns(true)
-      get :index, :page => 3
+      get :index, page: 3
       response.response_code.should == 200
       response.headers['Link'].should =~ /first/
       response.headers['Link'].should =~ /prev/
@@ -57,7 +57,7 @@ describe KeywordsController do
   context "Showing a keyword" do
     before do
       mock_finder('twelve')
-      get :show, :id => 'twelve', :format => :json
+      get :show, id: 'twelve'
     end
     it "should work" do
       response.response_code.should == 200
@@ -69,7 +69,7 @@ describe KeywordsController do
       Account.any_instance.expects(:keywords).returns(keywords)
       keyword.expects(:save).returns(true)
       keyword.stubs(:new_record?).returns(false)
-      post :create, :keyword => attrs, :format => :json
+      post :create, keyword: attrs
     end
     it "should create a keyword" do
       response.response_code.should == 201
@@ -79,7 +79,7 @@ describe KeywordsController do
     before do
       Keyword.any_instance.expects(:save).returns(false)
       Keyword.any_instance.stubs(:new_record?).returns(true)
-      post :create, :keyword => attrs, :format => :json
+      post :create, keyword: attrs
     end
     it "should return error" do
       response.response_code.should == 422
@@ -90,8 +90,7 @@ describe KeywordsController do
       keywords.first.expects(:update_attributes).with(attrs).returns(true)
       keywords.first.expects(:valid?).returns(true)
       mock_finder('twelve')
-      put :update, :id => 'twelve', :keyword => attrs,
-          :format => :json
+      put :update, id: 'twelve', keyword: attrs
     end
     it "should update" do
       response.response_code.should == 200
@@ -102,8 +101,7 @@ describe KeywordsController do
       keywords.first.expects(:update_attributes).with(attrs).returns(false)
       keywords.first.expects(:valid?).returns(false)
       mock_finder('twelve')
-      put :update, :id => 'twelve', :keyword => attrs,
-          :format => :json
+      put :update, id: 'twelve', keyword: attrs
     end
     it "should return error" do
       response.response_code.should == 422
@@ -117,7 +115,7 @@ describe KeywordsController do
       custom.expects(:custom).returns(find)
       find.expects(:find).with('twelve').returns(keywords.first)
       Account.any_instance.expects(:keywords).returns(custom)
-      delete :destroy, :id => 'twelve'
+      delete :destroy, id: 'twelve'
     end
     it "should work" do
       response.response_code.should == 200

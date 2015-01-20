@@ -59,6 +59,7 @@ group :development, :test do
   gem 'cucumber'
   gem 'factory_girl_rails'
   gem 'guard-rspec'
+  gem 'highline' # for brakeman
   gem 'httpi', '2.1.0'
   gem 'json'
   gem 'json_spec'
