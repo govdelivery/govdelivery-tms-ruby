@@ -95,12 +95,16 @@ describe Keyword do
   end
 
   describe 'custom keyword' do
-    subject { create(:custom_keyword) }
+    subject { create(:custom_keyword, name: 'FOOBAR') }
+
+    it 'should be findable in a case-insensitive way with with_name' do
+      subject.should be_instance_of(Keyword)
+      subject.class.with_name('fOobAR').first.should eq(subject)
+    end
+
     describe '#name=' do
 
       it 'downcases the name' do
-        subject.should be_instance_of(Keyword)
-        subject.name = 'FOOBAR'
         subject.name.should == 'foobar'
       end
 

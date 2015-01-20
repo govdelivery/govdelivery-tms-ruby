@@ -24,6 +24,7 @@ class Keyword < ActiveRecord::Base
   validates :response_text, length: {maximum: 160}
 
   scope :custom, -> { where.not(name: RESERVED_KEYWORDS) }
+  scope :with_name, ->(name) { where(self.arel_table[:name].matches(name.downcase)) }
 
 
   def self.stop?(text)

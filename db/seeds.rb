@@ -79,31 +79,28 @@ if Rails.env.development? || Rails.env.ci?
 
   omg = if (ENV['USE_TWILIO'] == 'true')
           puts "** using Twilio and ODM senders for default account **"
-          a = Account.find_or_initialize_by(name: "OMG")
-          a.update_attributes(
-                                        voice_vendor: twilio_voice_sender,
-                                        sms_vendor:   twilio_sms_sender,
-                                        email_vendor: odm_sender)
-                                        a
+          Account.find_or_initialize_by(name: "OMG") do |account|
+            account.voice_vendor = twilio_voice_sender
+            account.sms_vendor = twilio_sms_sender
+            account.email_vendor = odm_sender
+          end.tap do |a|
+            a.from_numbers.build(is_default: true, phone_number: twilio_number) unless a.default_from_number
+          end
         else
           puts "**  using loopback senders for default account   **"
           puts "** run with USE_TWILIO=true to use Twilio/ODM senders **"
-          a = Account.find_or_initialize_by(name: "OMG")
-          a.update_attributes(
-                                             voice_vendor: voice_loopback,
-                                             sms_vendor:   sms_loopback,
-                                             email_vendor: email_loopback,
-                                             )
-                                             a
+          Account.find_or_initialize_by(name: "OMG") do |account|
+            account.voice_vendor = voice_loopback
+            account.sms_vendor   = sms_loopback
+            account.email_vendor = email_loopback
+          end.tap do |a|
+            a.from_numbers.build(is_default: true, phone_number: '+15005551234') unless a.default_from_number
+          end
         end
-  unless omg.default_from_address
-    omg.from_addresses.build(from_email: 'tms_dev@evotest.govdelivery.com',
-                           errors_to: 'errors@evotest.govdelivery.com',
-                           reply_to: 'reply@evotest.govdelivery.com',
-                           is_default: true)
-  end
-  omg.build_default_from_number(phone_number: twilio_number)
-  omg.save!
+  omg.from_addresses.build(from_email: 'tms_dev@evotest.govdelivery.com',
+                         errors_to:  'errors@evotest.govdelivery.com',
+                         reply_to:   'reply@evotest.govdelivery.com',
+                         is_default: true) unless omg.default_from_address
 
   # stop requests to this account will spray out to DCM accounts ACME and VANDELAY
   omg.dcm_account_codes = Set.new(['ACME', 'VANDELAY'])
@@ -111,33 +108,26 @@ if Rails.env.development? || Rails.env.ci?
   omg.create_command!('stop', params: CommandParameters.new(dcm_account_codes: ['ACME', 'VANDELAY']), command_type: :dcm_unsubscribe)
 
   # SERVICES FOO => POST to http://localhost/forward
-  Keyword.delete_all
-  kw = Keyword.new(name: 'SERVICES')
-  kw.account = omg
-  kw.save!
+  kw = omg.keywords.with_name('SERVICES').first_or_create!(name: 'SERVICES')
   kw.create_command!(params: CommandParameters.new(
     username: "example@evotest.govdelivery.com",
     password: "password",
     url: "http://localhost/forward",
     http_method: "POST",
-    sms_body_param_name: "sms_body1"), command_type: :forward)
+    sms_body_param_name: "sms_body1"), command_type: :forward) unless kw.commands.any?
 
   # SUBSCRIBE ANTHRAX => evolution API request to localhost:3001
-  kw = Keyword.new(name: 'SUBSCRIBE')
-  kw.account = omg
-  kw.save!
-  kw.create_command!(params: CommandParameters.new(dcm_account_code: "ACME", dcm_topic_codes: ['ANTRHAX']), command_type: :dcm_subscribe)
+  kw = omg.keywords.with_name('SUBSCRIBE').first_or_create!(name: 'SUBSCRIBE')
+  kw.create_command!(params: CommandParameters.new(dcm_account_code: "ACME", dcm_topic_codes: ['ANTRHAX']), command_type: :dcm_subscribe) unless kw.commands.any?
 
   # Respond to "DONKEY" with "hee-haw!"
-  kw = Keyword.new(name: "DONKEY", response_text: "hee-haw!")
-  kw.account = omg
-  kw.save!
+  kw = omg.keywords.with_name('DONKEY').first_or_create!(name: 'DONKEY', response_text: "hee-haw!")
 
   # Make the product user (admin)
-  user = User.find_or_initialize_by(email: "product@govdelivery.com")
-  user.update_attributes(password: "retek01!")
-  user.account = omg
-  user.admin = true
+  user = omg.users.find_or_initialize_by(email: "product@govdelivery.com") do |u|
+    u.password="retek01!"
+    u.admin = true
+  end
   user.save!
   puts "product's token: #{user.authentication_tokens.first.token}"
 
@@ -147,9 +137,8 @@ elsif Account.count == 0 && User.count ==0
                            sms_vendor: twilio_sms_sender,
                            email_vendor: odm_sender,
                            name: 'GovDelivery')
-  account.build_default_from_address(from_email: 'info99@service.govdelivery.com')
-  account.save!
-  account.build_default_from_number(phone_number: twilio_number)
+  account.from_addresses.build(is_default: true, from_email: 'info99@service.govdelivery.com')
+  account.from_numbers.build(is_default: true, phone_number: twilio_number)
   account.save!
   user = account.users.create!(email: "product@evotest.govdelivery.com", password: "retek01!")
   user.admin = true
