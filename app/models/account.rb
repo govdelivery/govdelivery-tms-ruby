@@ -24,6 +24,7 @@ class Account < ActiveRecord::Base
   has_many :users, dependent: :destroy
   has_many :voice_messages, dependent: :delete_all
   has_many :voice_recipients, through: :voice_messages, source: :recipients
+  has_many :incoming_voice_messages, through: :from_numbers
   has_many :call_scripts, through: :voice_messages
   has_many :transformers, dependent: :delete_all
   has_many :webhooks, dependent: :delete_all

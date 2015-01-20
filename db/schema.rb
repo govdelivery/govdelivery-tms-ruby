@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150105222318) do
+ActiveRecord::Schema.define(version: 20150107162656) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                        null: false
@@ -165,6 +165,15 @@ ActiveRecord::Schema.define(version: 20150105222318) do
   end
 
   add_index "inbound_messages", ["account_id"], name: "i_inbound_messages_account_id", tablespace: "tsms_indx01"
+
+  create_table "incoming_voice_messages", force: true do |t|
+    t.integer  "from_number_id",              precision: 38, scale: 0
+    t.string   "play_url",       limit: 512
+    t.string   "say_text",       limit: 1000
+    t.boolean  "is_default",                  precision: 1,  scale: 0, default: false, null: false
+    t.integer  "expires_in",                  precision: 38, scale: 0
+    t.datetime "created_at"
+  end
 
   create_table "ipaws_vendors", force: true do |t|
     t.integer  "cog_id",                     precision: 38, scale: 0, null: false

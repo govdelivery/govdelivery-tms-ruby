@@ -20,6 +20,7 @@ class ServicesController < ApplicationController
 
     if @account.voice_vendor
       @services[:voice_messages] = voice_index_path
+      @services[:incoming_voice_messages] = incoming_voice_messages_path
     end
 
     if @account.ipaws_vendor

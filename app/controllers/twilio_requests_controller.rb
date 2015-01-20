@@ -50,8 +50,6 @@ class TwilioRequestsController < ApplicationController
     twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
   end
 
-  private
-
   # This is a hack and is intended to be temporary.
   def dcm_forward!
     ForwardStopsToDcm.forward_async!(params)
