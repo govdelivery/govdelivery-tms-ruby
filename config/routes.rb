@@ -82,6 +82,7 @@ Xact::Application.routes.draw do
             get :human
             get :machine
             get :no_answer
+            get :could_not_connect
           end
         end
       end

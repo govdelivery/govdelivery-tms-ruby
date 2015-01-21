@@ -53,6 +53,11 @@ class RecipientsController < ApplicationController
     render_recipient_subset(:no_answer)
   end
 
+  #voice
+  def could_not_connect
+    render_recipient_subset(:could_not_connect)
+  end
+
   protected
 
   def render_recipient_subset(type)

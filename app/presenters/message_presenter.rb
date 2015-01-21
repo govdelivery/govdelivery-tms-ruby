@@ -29,7 +29,7 @@ class MessagePresenter < SimpleDelegator
   end
 
   def voice_links
-    message_type == 'voice' ? {human: human_link, machine: machine_link, busy: busy_link, no_answer: no_answer_link} : {}
+    message_type == 'voice' ? {human: human_link, machine: machine_link, busy: busy_link, no_answer: no_answer_link, could_not_connect: could_not_connect_link} : {}
   end
 
   private
@@ -69,6 +69,10 @@ class MessagePresenter < SimpleDelegator
 
   def no_answer_link
     context.send(:"no_answer_#{message_type}_recipients_path", :"#{message_type}_id" => @message.id)
+  end
+
+  def could_not_connect_link
+    context.send(:"could_not_connect_#{message_type}_recipients_path", :"#{message_type}_id" => @message.id)
   end
 
   def clicked_link
