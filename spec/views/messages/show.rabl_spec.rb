@@ -83,7 +83,8 @@ describe 'messages/show.rabl' do
                                  'human' => human_voice_recipients_path(voice_message),
                                  'machine' => machine_voice_recipients_path(voice_message),
                                  'busy' => busy_voice_recipients_path(voice_message),
-                                 'no_answer' => no_answer_voice_recipients_path(voice_message))
+                                 'no_answer' => no_answer_voice_recipients_path(voice_message),
+                                 'could_not_connect' => could_not_connect_voice_recipients_path(voice_message))
   end
 
   it 'should work with an email message' do

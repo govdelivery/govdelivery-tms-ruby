@@ -230,6 +230,16 @@ describe RecipientsController do
       end
     end
 
+    context '#could_not_connect' do
+      it 'should show a could_not_connect send' do
+        voice_recipients.first.failed!('ack', nil, nil)
+        get :could_not_connect, voice_id: voice_message.id
+        response.status.should eql(200)
+        assigns(:recipients).count.should eq(1)
+        assigns(:recipients).first.status.should eql('failed')
+      end
+    end
+
     context '#show' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
