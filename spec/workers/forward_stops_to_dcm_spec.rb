@@ -31,22 +31,21 @@ describe ForwardStopsToDcm do
 
     it 'uses Faraday connection correctly' do
       Rails.stubs(:configuration).returns(stub(
-        dcm: [{api_root: 'a-url'}, {api_root: 'another-url'}],
+        dcm: {api_root: 'a-url'},
         shared_phone_numbers: ['+15554443333']
       ))
 
       conn.expects(:post).with('a-url/api/twilio_requests', is_a(Hash))
-      conn.expects(:post).with('another-url/api/twilio_requests', is_a(Hash))
       subject.perform({})
     end
     it 'always sends "stop" as the body param' do
       Rails.stubs(:configuration).returns(stub(
-        dcm: [api_root: 'a-url'],
+        dcm: {api_root: 'a-url'},
         shared_phone_numbers: ['+15554443333']
       ))
 
       conn.expects(:post).with('a-url/api/twilio_requests', has_entry('Body', 'stop'))
-      Rails.stubs(:configuration).returns(stub(dcm: [api_root: 'a-url'], shared_phone_numbers: ['+15554443333']))
+      Rails.stubs(:configuration).returns(stub(dcm: {api_root: 'a-url'}, shared_phone_numbers: ['+15554443333']))
       subject.perform({'Body' => 'subscribe'})
     end
   end

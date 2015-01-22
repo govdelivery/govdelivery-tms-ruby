@@ -16,10 +16,8 @@ class ForwardStopsToDcm
   def perform(opts)
     params_to_forward = %w(To From AccountSid MessageSid SmsSid)
     conn = connection
-    Rails.configuration.dcm.map{|h|h[:api_root]}.each do |url|
-      # Always post with "stop" so DCM will delete the subscriber.
-      conn.post(url + '/api/twilio_requests', opts.select{|k,v| params_to_forward.include?(k)}.merge('Body' => 'stop'))
-    end
+    # Always post with "stop" so DCM will delete the subscriber.
+    conn.post(Rails.configuration.dcm[:api_root] + '/api/twilio_requests', opts.select { |k, v| params_to_forward.include?(k) }.merge('Body' => 'stop'))
   end
 
   private
