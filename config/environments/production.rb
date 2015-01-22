@@ -72,7 +72,7 @@ Xact::Application.configure do
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = ["468311"]
+  config.shared_phone_numbers = ["468311", '89568', '467873', '566948', '99511', '734876', '667873', '99511']
 
   config.custom_report_account_id = 10060
 
