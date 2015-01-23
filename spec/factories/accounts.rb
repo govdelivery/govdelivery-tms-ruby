@@ -75,7 +75,6 @@ FactoryGirl.define do
                     params: CommandParameters.new(http_method: 'GET', url: 'http://foo.web'), command_type: :forward)
 
         create_list(:stop_request, 1, account: account, vendor: account.sms_vendor, phone: account.sms_vendor.from)
-        create_list(:transformer, 1, account: account)
         create_list(:webhook, 1, account: account, event_type: 'failed', url: 'http://webhook.org')
 
         create_list(:user, 1, account: account)

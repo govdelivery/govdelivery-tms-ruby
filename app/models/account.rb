@@ -26,7 +26,6 @@ class Account < ActiveRecord::Base
   has_many :voice_recipients, through: :voice_messages, source: :recipients
   has_many :incoming_voice_messages, through: :from_numbers
   has_many :call_scripts, through: :voice_messages
-  has_many :transformers, dependent: :delete_all
   has_many :webhooks, dependent: :delete_all
 
   has_many :from_addresses, inverse_of: :account, dependent: :destroy
@@ -80,10 +79,6 @@ class Account < ActiveRecord::Base
 
   def default_keyword
     keywords.where(name: 'default').first
-  end
-
-  def transformer_with_type(type)
-    self.transformers.where(content_type: type).first
   end
 
   ##
