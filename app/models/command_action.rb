@@ -1,5 +1,5 @@
 class CommandAction < ActiveRecord::Base
-  attr_accessible :command_id, :inbound_message_id, :status, :content_type, :response_body
+  attr_accessible :status, :content_type, :response_body
   strip_attributes
 
   belongs_to :command

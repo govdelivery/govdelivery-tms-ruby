@@ -20,7 +20,7 @@ gem 'phony_rails'
 gem 'protected_attributes'
 gem 'rabl'
 gem 'rack-ssl'
-gem 'rails', '~>4.0'
+gem 'rails', '~>4.1.0'
 gem 'rails-api'
 gem 'redis-rails'
 gem 'redis-sentinel'
@@ -53,12 +53,13 @@ end
 
 group :development, :test do
   gem 'awesome_print'
-  gem 'brakeman'
+  gem 'brakeman-min'
   gem 'capybara'
   gem 'colored'
   gem 'cucumber'
   gem 'factory_girl_rails'
   gem 'guard-rspec'
+  gem 'highline' # for brakeman
   gem 'httpi', '2.1.0'
   gem 'json'
   gem 'json_spec'

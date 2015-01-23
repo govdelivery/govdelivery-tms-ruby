@@ -1,6 +1,7 @@
 class EmailRecipientClick < ActiveRecord::Base
   include EmailRecipientMetric
 
+  attr_accessible :url, :email
   validates :url, :presence => true, length: {maximum: 4000}
   validates_presence_of :clicked_at
 
