@@ -28,7 +28,6 @@ describe TwilioDialPlanController do
   it "should display play_url TwiML when calling #show with a legit CallSid" do
     post :show, twilio_dial_plan_params
     response.response_code.should == 200
-    response.body.should match(/Please stand by for an important message./)
     response.body.should match(/#{message.play_url}/)
   end
 

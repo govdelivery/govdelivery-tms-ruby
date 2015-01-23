@@ -20,12 +20,11 @@ class TwilioDialPlanController < ApplicationController
   def twiml_response(message)
     Twilio::TwiML::Response.new do |r|
       if message.play_url
-        r.Say "Please stand by for an important message."
         r.Play message.play_url
       elsif message.call_script
         r.Gather(action: twiml_url, numDigits: 1) do
-          r.Say message.call_script.say_text, voice: 'alice', language: 'en-GB'
-          r.Say "To repeat this message, press 1.", voice: 'alice', language: 'en-GB'
+          r.Say message.call_script.say_text, voice: 'man'
+          r.Say "To repeat this message, press 1.", voice: 'man'
         end
       end
     end
