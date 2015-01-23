@@ -4,8 +4,7 @@ End-to-End tests require accounts on Xact. By convention, each test (a scenario 
 Xact account configured for that test's needs on each testing environment. These accounts were created via Rake tasks, and
 can easily be recreated when needed.
 
-All test accounts use Shared SMS Vendors, and have an sms_prefix based on the test name. When required, test accounts will
-also have appropriate Transformers configured.
+All test accounts use Shared SMS Vendors, and have an sms_prefix based on the test name.
 
 ## Common Vendors
 
@@ -13,7 +12,7 @@ The Email/SMS/Voice vendors used by Xact test accounts are generally shared by m
 vendors exist on each testing environment. Again, these accounts were created via Rake tasks.
 
 
-| Email Vendor Name                             | Notes                                                             | 
+| Email Vendor Name                             | Notes                                                             |
 |--------------------------------------------   |----------------------------------------------------------------   |
 | Test - Shared Loopback Email Vendor           | Makes no attempt to actually send emails.                         |
 |                                               | Has magic recipient email addresses to force recipient states.    |
@@ -57,7 +56,7 @@ address, token) that should be copied to a configuration file for the test.
 
 # Test Configuration
 
-The End-to-End tests use [Configatron](https://github.com/markbates/configatron) to store required configuration 
+The End-to-End tests use [Configatron](https://github.com/markbates/configatron) to store required configuration
 information required. Common confirguration settings (xact url, config for common vendors) are set in ./support/env.rb,
 while test specific configurations are set in test specific files in ./support/config.
 
@@ -65,8 +64,8 @@ while test specific configurations are set in test specific files in ./support/c
 
 - configatron.accounts - Namespace for all test account configurations
 - configatron.xact - Config info for the Xact instance being used during tests
-- configatron.test_support - Config for the 
-    [Xact End-to-End Test Support application](http://dev-scm.office.gdi/bill.bushey/xact_dumb_webhooks) 
+- configatron.test_support - Config for the
+    [Xact End-to-End Test Support application](http://dev-scm.office.gdi/bill.bushey/xact_dumb_webhooks)
     that creates endpoints and receives payloads
 - configatron.sms_vendors - Configuration for common Xact SMS Vendors shared by accounts
 - configatron.voice_vendors - Configuration for common Xact Voice Vendors shared by accounts
@@ -75,7 +74,7 @@ while test specific configurations are set in test specific files in ./support/c
 
 By convention, any configuration object under configatron.accounts should have all configuration info required to
 run the test it represents. That includes a .xact object, and sms/voice/email objects for any common vendors that
-the test uses. Tests generally expect to get a configuration object (e.g. conf)from configatron.accounts, and expect 
+the test uses. Tests generally expect to get a configuration object (e.g. conf)from configatron.accounts, and expect
 to be able to do:
 
     conf.xact.url               # Oh boy, a URL!
@@ -85,7 +84,7 @@ to be able to do:
 
 ### Set Config of Shared Vendors
 
-Setting the email/voice/sms vendor configuration on accounts that use a common vendor is simply. 
+Setting the email/voice/sms vendor configuration on accounts that use a common vendor is simply.
 Just set the email/voice/sms attribute of the account's config to a clone of the common vendor's configuration.
 
 

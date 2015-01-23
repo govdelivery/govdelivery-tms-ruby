@@ -1,5 +1,4 @@
 require 'app/workers/base'
-require 'app/transformers/base'
 
 module CommandWorkers
   module Base
@@ -23,10 +22,6 @@ module CommandWorkers
         @command = Command.includes(keyword: :account).find(options.command_id)
         yield(options) if block_given?
         @command.process_response(options, self.http_response)
-      rescue Transformers::InvalidResponse => e
-        Rails.logger.warn(e)
-        Rails.logger.warn(e.message)
-        nil
       end
 
     end

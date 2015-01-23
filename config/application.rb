@@ -32,7 +32,6 @@ module Xact
     # config.autoload_paths += %W(#{config.root}/extras)
     config.autoload_paths << Rails.root.join('app', 'workers')
     config.autoload_paths << Rails.root.join('app', 'presenters')
-    config.autoload_paths << Rails.root.join('app', 'transformers')
     config.autoload_paths << Rails.root.join('lib')
 
     # Only load the plugins named here, in the order given (default is alphabetical).

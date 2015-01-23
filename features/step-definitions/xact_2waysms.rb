@@ -266,7 +266,7 @@ def agency_test(agency, check)
   case agency.downcase
     when "bart", "acetrain", "cdc"
       expected_condition = 200
-      {:condition => Proc.new do 
+      {:condition => Proc.new do
           actions = check.call()
           actions.any? do |action|
             action.status == expected_condition &&

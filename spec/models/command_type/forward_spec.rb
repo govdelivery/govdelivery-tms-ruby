@@ -61,16 +61,6 @@ describe CommandType::Forward do
       subject.process_response(account, command_params, http_response)
     end
 
-    it 'will use a transformer if there is one associated to the account with a matching content type, regardless of encoding' do
-      transformer = mock()
-      command_action.stubs(:success?).returns(true)
-      command_action.stubs(:content_type).returns("application/json; charset=utf-8")
-      account.expects(:transformer_with_type).with("application/json").returns(transformer)
-      transformer.expects(:transform).with(command_action.response_body, "application/json").once
-      subject.expects(:build_message).once
-      subject.process_response(account, command_params, http_response)
-    end
-
     it 'will not create an sms message if command_action.content_type does not match text/plain' do
       command_action.stubs(:content_type).returns('something crazy')
       subject.expects(:build_message).never
@@ -82,19 +72,6 @@ describe CommandType::Forward do
       command_action.stubs(:content_type).returns('text/plain')
       subject.expects(:build_message).once
       subject.process_response(account, command_params, http_response)
-    end
-
-    context "associated to an account with transformers" do
-      it "should transform the payload using the transformer" do
-        account_transformer = mock()
-        account.stubs(:transformer_with_type).returns(account_transformer)
-        command_action.stubs(:success?).returns(true)
-        command_action.stubs(:content_type).returns('application/json')
-
-        account_transformer.expects(:transform).returns("blah")
-        subject.expects(:build_message).once
-        subject.process_response(account, command_params, http_response)
-      end
     end
   end
 end

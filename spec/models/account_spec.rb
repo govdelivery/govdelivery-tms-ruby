@@ -21,15 +21,6 @@ describe Account do
     end
   end
 
-  context 'with transformers' do
-    subject { create(:account) }
-
-    it "should be able to retrieve its transformer" do
-      transformer = subject.transformers.create(content_type:"application/json", transformer_class: "blah")
-      expect(subject.transformer_with_type("application/json")).to eq(transformer)
-    end
-  end
-
   context 'with shared SMS vendor' do
     subject { build(:account_with_sms, :shared) }
 
