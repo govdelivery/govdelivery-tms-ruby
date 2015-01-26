@@ -14,8 +14,6 @@ class ApplicationController < ActionController::API
   include ActionController::RequestForgeryProtection
   include SimpleTokenAuthentication::ActsAsTokenAuthenticationHandler
   include Devise::Controllers::SignInOut if Rails.env.test?
-  protect_from_forgery with: :null_session, if: ->(c) { c.request.format == 'application/json' }
-
 
   acts_as_token_authentication_handler_for User
   respond_to :json
