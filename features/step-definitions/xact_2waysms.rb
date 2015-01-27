@@ -257,7 +257,7 @@ def agency_command_params(agency)
   end
   {
     url:           url,
-    http_method:   'post',
+    http_method:   'get',
     strip_keyword: true
   }
 end
