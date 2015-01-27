@@ -18,7 +18,7 @@ class Command < ActiveRecord::Base
 
   delegate :process_response, :to => :command_strategy
 
-  has_many :command_actions, dependent: :destroy
+  has_many :command_actions, dependent: :nullify
 
   # Execute this command with the provided options and additional parameters
   def call(command_parameters=CommandParameters.new)

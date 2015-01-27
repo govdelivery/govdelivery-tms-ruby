@@ -11,7 +11,7 @@ class Keyword < ActiveRecord::Base
   RESERVED_KEYWORDS = STOP_WORDS + START_WORDS + HELP_WORDS + DEFAULT_WORDS
 
   has_many :inbound_messages, inverse_of: :keyword
-  has_many :commands, dependent: :delete_all
+  has_many :commands, dependent: :destroy
 
   belongs_to :account
   validates :account, presence: true
