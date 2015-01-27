@@ -11,7 +11,6 @@ class ApplicationController < ActionController::API
   include NewRelic::Agent::Instrumentation::Rails3::Errors
   include ActionController::MimeResponds
   include ActionController::ImplicitRender
-  include ActionController::RequestForgeryProtection
   include SimpleTokenAuthentication::ActsAsTokenAuthenticationHandler
   include Devise::Controllers::SignInOut if Rails.env.test?
 
