@@ -59,14 +59,14 @@ twilio_live_credentials = {
 twilio_live_numbers = {
   development: '+16514336311',
   qc: '+16519684981',
-  integration: '+16122550428',
+  integration: '+16519641178',
   stage: '+16124247727'
 }
 
 twilio_live_phone_sids = {
   development: 'PN06416578aa730a3e8f0fd3865ce9c458',
   qc: 'PN732e0d02edf9e1fdd61a3606ac030e34',
-  integration: 'PN32087052fc8c8cc15e312a70b704eef9',
+  integration: 'PN462de8d1be0c1c23670f75ee73d70715',
   stage: 'PNe896243b192ff04674538f3aa11ea839'
 }
 

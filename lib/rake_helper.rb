@@ -1,9 +1,39 @@
 # Shared Loopback Vendors
+
+def twilio_test_credentials
+  twilio_test_credentials = {
+    sid: 'ACc66477e37af9ebee0f12b349c7b75117',
+    token: '5b1c96ca034d474c6d4b68f8d05c99f5'
+  }
+end
+
+def twilio_live_credentials
+  twilio_live_credentials = {
+    sid: 'AC189315456a80a4d1d4f82f4a732ad77e',
+    token: '88e3775ad71e487c7c90b848a55a5c88'
+  }
+end
+
+def twilio_live_numbers
+  twilio_live_numbers = {
+    'development' => '+16514336311',
+    'qc' => '+16519684981',
+    'integration' => '+16519641178',
+    'stage' => '+16124247727',
+    'test' => '+15555555555'
+  }
+end
+
+def voice_loopback_number
+  voice_loopback_number = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+end
+
 def shared_loopback_vendors_config
   loopbacks_account_vendors_config = {
     sms_vendor_name: 'Test - Shared Loopback SMS Vendor',
     voice_vendor_name: 'Test - Shared Loopback Voice Vendor',
-    email_vendor_name: 'Test - Shared Loopback Email Vendor'
+    email_vendor_name: 'Test - Shared Loopback Email Vendor',
+    from_number: voice_loopback_number
   }
 end
 
@@ -36,6 +66,7 @@ def shared_live_phone_vendors_config
   config = shared_loopback_vendors_config
   config[:sms_vendor_name] = 'Test - Shared Live SMS Vendor'
   config[:voice_vendor_name] = 'Test - Shared Live Voice Vendor'
+  config[:from_number] = twilio_live_numbers[Rails.env]
   return config
 end
 
@@ -127,6 +158,12 @@ def create_test_account(test_name, account_vendors_config)
         sms_prefix = lba.sms_prefixes.build(:prefix => sms_prefix_str, :sms_vendor => sms_shared_vendor)
         sms_prefix.save!
         puts "SMS Prefix created for #{account_config[:name]}: #{sms_prefix.prefix}"
+      end
+
+      if lba.from_numbers.blank?
+        from_number = lba.from_numbers.build(:from_number => account_vendors_config['from_number'])
+        from_number.save!
+        puts "Added #{from_number.from_number} phone number to account."
       end
     }
   )
