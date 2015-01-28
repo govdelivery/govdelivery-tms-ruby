@@ -17,6 +17,7 @@ class Account < ActiveRecord::Base
   has_many :email_recipients, through: :email_messages, source: :recipients
   has_many :email_recipient_clicks, through: :email_messages
   has_many :email_recipient_opens, through: :email_messages
+  has_many :inbound_messages, dependent: :nullify
   has_many :sms_messages, dependent: :delete_all
   has_many :sms_recipients, through: :sms_messages, source: :recipients
   has_many :sms_prefixes, inverse_of: :account, dependent: :destroy

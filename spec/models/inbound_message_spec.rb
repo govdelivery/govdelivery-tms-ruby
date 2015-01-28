@@ -67,10 +67,12 @@ describe InboundMessage do
         @inbound_message.update_status! fail=false
         @inbound_message.command_status.should eql(:failure) #still a failure
       end
+
     end
+
   end
 
-  context "with custom keyword" do
+  context "auto-responses" do
     let(:inbound_message_with_response) do
       create(:inbound_message,
              keyword: create(:custom_keyword, response_text: 'respondzzz'),
@@ -83,15 +85,15 @@ describe InboundMessage do
              body: 'this is my body',
              from: '5551112222')
     end
-    it 'should always be actionable' do
+    it 'should not be actionable' do
       inbound_message_with_response.actionable?.should eq(true)
 
-      dup_inbound_message.actionable?.should eq(true)
+      dup_inbound_message.actionable?.should eq(false)
 
       # it shouldn't matter if id is nil
       old_id = dup_inbound_message.id
       dup_inbound_message.id = nil
-      dup_inbound_message.actionable?.should eq(true)
+      dup_inbound_message.actionable?.should eq(false)
       dup_inbound_message.id = old_id
 
       # The body should be the same...
@@ -100,13 +102,13 @@ describe InboundMessage do
 
       # The from (i.e. caller_phone) should be the same...
       dup_inbound_message.reload
-      dup_inbound_message.actionable?.should eq(true)
+      dup_inbound_message.actionable?.should eq(false)
       dup_inbound_message.from = dup_inbound_message.from * 2
       dup_inbound_message.actionable?.should eq(true)
 
       # The created time should be within a configured window...
       dup_inbound_message.reload
-      dup_inbound_message.actionable?.should eq(true)
+      dup_inbound_message.actionable?.should eq(false)
       dup_inbound_message.created_at = (dup_inbound_message.created_at +
                                         Xact::Application.config.auto_response_threshold.minutes +
                                         1.minute).to_datetime

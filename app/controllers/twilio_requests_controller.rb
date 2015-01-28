@@ -31,8 +31,12 @@ class TwilioRequestsController < ApplicationController
 
     command_parameters.merge!(sms_tokens:         message.split,
                               inbound_message_id: inbound_msg.id)
-    response_text = keyword_service.respond!(command_parameters)
 
+
+
+    # we don't respond inline to "ignored" messages,
+    # but keyword commands still execute and could cause messages to be sent
+    response_text = keyword_service.respond!(command_parameters)
     if inbound_msg.ignored? # to not respond to auto responses
       Rails.logger.info "ignoring message: #{inbound_msg.inspect}"
       response_text = nil
