@@ -32,12 +32,8 @@ class InboundMessage < ActiveRecord::Base
   # This method will return false if one or more inbound messages precede this message
   # by a configurable time threshold and contain the same information.  This is
   # intended to prevent infinite loops caused by auto-response messages.
-  # 
-  # An inbound message associated with a custom keyword is always actionable.
   #
   def actionable?
-    return true unless keyword.try(:special?)
-
     compare_date = self.created_at || DateTime.now
     table = self.class.arel_table
     threshold = (compare_date - Xact::Application.config.auto_response_threshold.minutes).to_datetime
