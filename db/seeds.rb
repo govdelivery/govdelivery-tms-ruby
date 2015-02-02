@@ -63,10 +63,8 @@ odm_sender = EmailVendor.find_or_initialize_by(
 odm_sender.update_attributes(
     worker: Odm::TMS_EXTENDED_WORKER)
 
-email_loopback = EmailVendor.find_or_initialize_by(
-    name: 'Email Loopback Sender')
-email_loopback.update_attributes(
-    worker: 'LoopbackEmailWorker')
+email_loopback = EmailVendor.where(name: 'Email Loopback Sender').first_or_create(worker: 'LoopbackEmailWorker')
+
 
 if Rails.env.development? || Rails.env.ci?
   #
