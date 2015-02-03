@@ -226,6 +226,29 @@ describe TwilioStatusCallbacksController do
       end
     end
 
+    context "#create with failed" do
+      before do
+        message.max_retries=3
+        recipient.sending!('ack')
+        message.ready!
+        message.sending!
+        post :create, twilio_status_callback_params('failed')
+        recipient.reload
+      end
+      it "should respond with accepted" do
+        response.response_code.should == 201
+      end
+      it "should not update recipient status" do
+        recipient.sending?.should be true
+      end
+      it "should update retry count" do
+        recipient.retries.should eql(1)
+      end
+      it "should set the completed_at date for the recipient" do
+        recipient.completed_at.should == nil
+      end
+    end
+
     def twilio_status_callback_params(status, answeredby=nil, call_sid=recipient.ack)
       {:format =>"xml" ,
        'CallSid'=>call_sid,
