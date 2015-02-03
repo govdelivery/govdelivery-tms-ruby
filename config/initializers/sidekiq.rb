@@ -39,10 +39,12 @@ Sidekiq.configure_server do |config|
 
 
   if Rails.configuration.analytics[:enabled]
-    YaketyYak::Subscriber::Supervisor.go!
+    require 'rjack-slf4j/log4j12'
+    JaketyJak::Subscriber::Supervisor.go!
   else
-    warn('YaketyYak analytics are disabled')
+    warn('JaketyJak analytics are disabled')
   end
+
   Sidekiq::RateLimitedQueue::Configuration.load!(Rails.root.join('config', 'sidekiq_rate_limited_queues.yml'))
 
   Rails.logger.info "Background services have started."

@@ -141,6 +141,7 @@ module Xact
       kafkas:     ENV['ANALYTICS_KAFKAS'].split(','),
       zookeepers: ENV['ANALYTICS_ZOOKEEPERS'].split(','),
     }
+    $CLASSPATH << Rails.root.join('config/').to_s if config.analytics[:enabled]
 
     # Default log level is DEBUG
     config.logger    = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default']

@@ -1,10 +1,10 @@
 module Analytics
-  class OpenListener < YaketyYak::Subscriber::Managed
-    def channel
+  class OpenListener < JaketyJak::Subscriber::Managed
+    def topic
       'open_channel'
     end
 
-    def group_id
+    def group
       'xact.open_listener'
     end
     
