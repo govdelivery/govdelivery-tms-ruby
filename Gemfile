@@ -40,6 +40,8 @@ gem 'twilio-ruby'
 gem "validate_url"
 gem 'valid_email'
 gem 'yakety_yak'
+gem 'jakety_jak', '~>1.1.0'
+gem 'rjack-slf4j'
 gem 'attr_encrypted'
 
 platforms :ruby do

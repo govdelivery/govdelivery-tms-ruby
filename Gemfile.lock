@@ -122,6 +122,7 @@ GEM
       rack
       rubyntlm (~> 0.3.2)
     i18n (0.7.0)
+    jakety_jak (1.1.0)
     jruby-rack (1.1.16)
     json (1.8.2-java)
     json_spec (1.1.2)
@@ -255,6 +256,7 @@ GEM
       redis (>= 2.2)
     request_exception_handler (0.5.0)
       actionpack (>= 2.1)
+    rjack-slf4j (1.7.10.0-java)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -409,6 +411,7 @@ DEPENDENCIES
   guard-rspec
   highline
   httpi (= 2.1.0)
+  jakety_jak (~> 1.1.0)
   json
   json_spec
   kaminari
@@ -437,6 +440,7 @@ DEPENDENCIES
   redis-sentinel
   redis-store (= 1.1.4)
   request_exception_handler
+  rjack-slf4j
   rspec-collection_matchers
   rspec-its
   rspec-rails
