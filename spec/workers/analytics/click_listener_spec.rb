@@ -13,12 +13,12 @@ describe Analytics::ClickListener do
     YaketyYak.configuration = {}
   end
 
-  it 'should have channel' do
-    expect(subject.channel).to eq('click_channel')
+  it 'should have topic' do
+    expect(subject.topic).to eq('click_channel')
   end
 
-  it 'should have group_id' do
-    expect(subject.group_id).to eq('xact.click_listener')
+  it 'should have group' do
+    expect(subject.group).to eq('xact.click_listener')
   end
 
   it 'should respond to a message' do
