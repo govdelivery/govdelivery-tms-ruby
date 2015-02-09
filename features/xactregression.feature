@@ -141,15 +141,22 @@ Feature: XACT Full Regression
 		Given I created a new voice message
 		Then I should be able to verify the incoming message was received
 
-	@QC-2237
-	Scenario: Test for retries and expiration time
-		Given I created a new voice message
-		Then I should be able to verify the retries and expiration time	
+	#@QC-2237
+	#Scenario: Test for retries and expiration time
+		#Given I created a new voice message
+		#Then I should be able to verify the retries and expiration time	
 
 	@QC-2237 
 	Scenario: Verify message detail
 		Given I created a new voice message
 		Then I should be able to verify details of the message
+
+	#@QC-2237 @voicetest
+	#Scenario: Set incoming voice message
+		#Given I create a new incoming voice message
+		#Then I should be able to verify details of the incoming voice message
+
+	
 
 
 

@@ -739,6 +739,21 @@ end
 
 
 
+#WIP====================================>
+Given(/^I create a new incoming voice message$/) do
+  @voice_message = client.incoming_voice_messages.build(:phone_number => phone_number)
+  STDOUT.puts @voice_message.errors unless @voice_message.post  
+  binding.pry
+end
+
+Then(/^I should be able to verify details of the incoming voice message$/) do
+  puts @voice_message.response
+end
+
+
+
+
+
 
 
 
