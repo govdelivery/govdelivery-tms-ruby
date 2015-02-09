@@ -1,10 +1,10 @@
 module Analytics
-  class ClickListener < YaketyYak::Subscriber::Managed
-    def channel
+  class ClickListener < JaketyJak::Subscriber::Managed
+    def topic
       'click_channel'
     end
 
-    def group_id
+    def group
       'xact.click_listener'
     end
     
@@ -14,4 +14,3 @@ module Analytics
     end
   end
 end
-    

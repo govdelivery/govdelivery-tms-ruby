@@ -46,6 +46,10 @@ PATTERNS[2]=".*/xact_[a-z]+_db-migrate-[-a-z_0-9]+_20[0-9][0-9][01][0-9][0123][0
 LOGDIRS[3]="/opt/xact/log"
 PATTERNS[3]=".*/(poc|qc|integration|stage|production)-\w{2}_[0-9]{4}-[01][0-9]-[0123][0-9]\.log"
 
+## JaketyJak logs
+LOGDIRS[4]="/opt/xact/log"
+PATTERNS[4]=".*/jakety-jak\.log\.20[0-9][0-9]-[01][0-9]-[0123][0-9]"
+
 
 
 APP_ENV=`hostname -s | sed 's/-.*//'`

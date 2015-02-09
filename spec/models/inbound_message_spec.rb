@@ -129,12 +129,13 @@ describe InboundMessage do
                         tap { |k| k.commands << build(:forward_command)})
 
     expected = {
-      :channel => 'sms_channel',
-      :message => has_entries({
-        :to   => message.to,
-        :from => message.from,
-        :body => message.body,
-        :uri  => 'xact:sms:inbound'
+      channel: 'sms_channel',
+      message: has_entries({
+        v: '1',
+        to_phone: message.to,
+        from_phone: message.from,
+        body: message.body,
+        uri: 'xact:sms:inbound'
       })
     }
     Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
