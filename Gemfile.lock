@@ -345,7 +345,7 @@ GEM
     tilt (1.4.1)
     timers (4.0.1)
       hitimes
-    tms_client (0.5.3)
+    tms_client (0.5.4)
       activesupport
       faraday
       faraday_middleware
@@ -456,7 +456,7 @@ DEPENDENCIES
   sinatra
   slim
   strip_attributes
-  tms_client
+  tms_client (= 0.5.4)
   trinidad
   twilio-ruby
   valid_email

@@ -131,5 +131,37 @@ Feature: XACT Full Regression
 
 
 
+	@QC-2237 
+	Scenario: TMS create a single voice message to multiple recipients
+		Given I created a new voice message
+		Then I should be able to verify that multiple recipients have received the message
+
+	@QC-2237 
+	Scenario: List and verify incoming voice messages
+		Given I created a new voice message
+		Then I should be able to verify the incoming message was received
+
+	#@QC-2237
+	#Scenario: Test for retries and expiration time
+		#Given I created a new voice message
+		#Then I should be able to verify the retries and expiration time	
+
+	@QC-2237 
+	Scenario: Verify message detail
+		Given I created a new voice message
+		Then I should be able to verify details of the message
+
+	#@QC-2237 @voicetest
+	#Scenario: Set incoming voice message
+		#Given I create a new incoming voice message
+		#Then I should be able to verify details of the incoming voice message
+
+	
+
+
+
+
+
+
 
 
