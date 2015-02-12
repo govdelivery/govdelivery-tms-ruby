@@ -11,6 +11,7 @@ require 'pry'
 require 'faraday'
 require 'base64'
 require 'multi_xml'
+require 'pry'
 
 $s = Hash.new #generating a hash value
 $s.store(1, rand(0...10000)) #storing the hash value so we can retrieve it later on
@@ -22,7 +23,7 @@ $t.store(1, rand(0...10000)) #storing the hash value so we can retrieve it later
 
 def client
     if ENV['XACT_ENV'] == 'qc'
-      client = TMS::Client.new('52qxcmfNnD1ELyfyQnkq43ToTcFKDsAZ', :api_root => 'https://qc-tms.govdelivery.com')
+      client = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', :api_root => 'https://qc-tms.govdelivery.com')
     elsif ENV['XACT_ENV'] == 'integration'
       client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', :api_root => 'https://int-tms.govdelivery.com')
     elsif ENV['XACT_ENV'] == 'stage'
@@ -450,6 +451,195 @@ end
 
 
 
+def client_2
+    if ENV['XACT_ENV'] == 'qc'
+      client = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', :api_root => 'https://qc-tms.govdelivery.com') #will send from (612) 255-6254
+    elsif ENV['XACT_ENV'] == 'integration'
+      client = TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', :api_root => 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
+    elsif ENV['XACT_ENV'] == 'stage'
+      client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
+    elsif ENV['XACT_ENV'] == 'prod'
+      client = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', :api_root => 'https://tms.govdelivery.com')
+    end
+end
+
+def phone_number_to  
+  if ENV['XACT_ENV'] == 'qc'
+    '+16519684981'
+  elsif ENV['XACT_ENV'] == 'integration'
+    '+16519641178'
+  elsif ENV['XACT_ENV'] == 'stage'
+    '+16124679346'
+  elsif ENV['XACT_ENV'] == 'prod'
+    '+16124679346'
+  end
+end  
+
+def phone_number_from
+  if ENV['XACT_ENV'] == 'qc'
+    '(612) 255-6254'
+  elsif ENV['XACT_ENV'] == 'integration'
+    '(612) 255-6225'
+  elsif ENV['XACT_ENV'] == 'stage'
+    '(612) 255-6254'
+  elsif ENV['XACT_ENV'] == 'prod'
+    '(612) 255-6254'
+  end
+end
+
+def prefix_and_body
+  if ENV['XACT_ENV'] == 'qc'
+    'CUKE test'
+  elsif ENV['XACT_ENV'] == 'integration'
+    'CUKEINT test'
+  elsif ENV['XACT_ENV'] == 'stage'
+    'CUKE test'
+  elsif ENV['XACT_ENV'] == 'prod'
+    'CUKE test'
+  end
+end
+
+def twiliomation
+  # Get your Account Sid and Auth Token from twilio.com/user/account
+  account_sid = 'AC189315456a80a4d1d4f82f4a732ad77e'
+  auth_token = '88e3775ad71e487c7c90b848a55a5c88'
+  @client = Twilio::REST::Client.new account_sid, auth_token
+end
+
+
+Given(/^I rapidly send a keyword via SMS$/) do
+  def rapid
+    @message = client_2.sms_messages.build(:body=>prefix_and_body)
+    @message.recipients.build(:phone=>phone_number_to)
+    STDOUT.puts @message.errors unless @message.post
+    sleep(0.5)
+  end
+
+  3.times {rapid} #execute "rapid" 3 times
+  twiliomation #call to twilio call list
+  sleep(2)
+    @a = @client.account.messages.list({ 
+        :date_created => Date.today, #grab full list of messages sent today
+        :body => "This is a text response from a remote website.",
+        :direction => "incoming",
+        :from => phone_number_to #sort by 
+        }).take(5).each do |call| 
+      puts call.body 
+    end
+
+    @b = @a[0].uri #find uri of "reply" message, 
+
+  @request = HTTPI::Request.new #call to twilio callsid json
+  @request.headers["Content-Type"] = "application/json"
+  @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
+  @request.url = 'https://api.twilio.com' + @b
+  @response = HTTPI.get(@request)
+    #binding.pry
+  puts @response.raw_body
+
+  i = 0
+  until JSON.parse(@response.raw_body)["body"] == "This is a text file from a remote website." #loop until call status = completed
+    STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
+    @response = HTTPI.get(@request) 
+    STDOUT.puts 'waiting for status for 6 seconds'.blue
+    sleep(6)
+    i+=1 
+    if i>10
+      fail 'waited 60 seconds for message to be delivered, but it was not found.'.red
+    end  
+  end 
+  puts 'Message found'.green 
+end
+
+
+
+Given(/^I send an SMS with an invalid word or command$/) do
+  sleep(20)
+  @message = client_2.sms_messages.build(:body=>'ABCDEF jabberwocky')
+  @message.recipients.build(:phone=>phone_number_to)
+  STDOUT.puts @message.errors unless @message.post
+  #ap @message.response
+
+
+  twiliomation #call to twilio call list
+  sleep(10)
+    @a = @client.account.messages.list({ 
+          :date_created => Date.today, #grab full list of messages sent today
+          :to => phone_number_from, #sort by
+          #:direction => "incoming"
+          }).each do |call| 
+    end
+    @b = @a[0].uri #find uri of "reply" message, 
+
+  @request = HTTPI::Request.new #call to twilio callsid json
+  @request.headers["Content-Type"] = "application/json"
+  @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
+  @request.url = 'https://api.twilio.com' + @b
+  @response = HTTPI.get(@request)
+    #binding.pry
+  puts @response.raw_body
+
+  i = 0
+  until JSON.parse(@response.raw_body)["body"] == "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." #loop until call status = completed
+    STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
+    @response = HTTPI.get(@request) 
+    STDOUT.puts 'waiting for status for 5 seconds'.blue
+    sleep(5)
+    i+=1 
+    if i>30
+      fail 'waited 150 seconds for message to be delivered, but it was not found.'.red
+    end  
+  end 
+  puts 'Help message found'.green 
+end
+
+
+
+
+
+
+
+Given(/^I send an SMS to a shared account with an invalid prefix$/) do
+  sleep(20)
+  @message = client_2.sms_messages.build(:body=>'ABCDEF help')
+  @message.recipients.build(:phone=>phone_number_to)
+  STDOUT.puts @message.errors unless @message.post
+  #ap @message.response
+
+  twiliomation #call to twilio call list
+  sleep(1)
+    @a = @client.account.messages.list({ 
+          :date_created => Date.today, #grab full list of messages sent today
+          :to => phone_number_from, #sort by
+          :direction => "reply"
+          }).each do |call| 
+    end
+    @b = @a[0].uri #find uri of "reply" message, 
+
+  @request = HTTPI::Request.new #call to twilio callsid json
+  @request.headers["Content-Type"] = "application/json"
+  @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
+  @request.url = 'https://api.twilio.com' + @b
+  @response = HTTPI.get(@request)
+    #binding.pry
+  puts @response.raw_body
+
+  i = 0
+  until JSON.parse(@response.raw_body)["body"] == "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." #loop until call status = completed
+    STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
+    @response = HTTPI.get(@request) 
+    STDOUT.puts 'waiting for status for 5 seconds'.blue
+    sleep(5)
+    i+=1 
+    if i>30 #fails after 150 seconds
+      fail 'waited 150 seconds for message to be delivered, but it was not found.'.red
+    end  
+  end 
+  puts 'Help message found'.green 
+end
+
+
+
 #================2237 VOICE tests===============>
 #================2237 VOICE tests===============>
 #================2237 VOICE tests===============>
@@ -739,16 +929,7 @@ end
 
 
 
-#WIP====================================>
-Given(/^I create a new incoming voice message$/) do
-  @voice_message = client.incoming_voice_messages.build(:phone_number => phone_number)
-  STDOUT.puts @voice_message.errors unless @voice_message.post  
-  binding.pry
-end
 
-Then(/^I should be able to verify details of the incoming voice message$/) do
-  puts @voice_message.response
-end
 
 
 
