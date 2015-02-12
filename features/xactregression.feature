@@ -128,15 +128,15 @@ Feature: XACT Full Regression
 	Scenario: TMS posting a new SMS message which contains special characters.
 		Given I post a new SMS message which contains special characters
 
-	@QC-3745 @QC-1976 @test
+	@QC-3745 @QC-1976 
 	Scenario: TMS rapid keyword sends while receiving one response
 		Given I rapidly send a keyword via SMS
 
-	@QC-3744 @QC-1976 @test
+	@QC-3744 @QC-1976 
 	Scenario: TMS sms to previx with invalid word
 		Given I send an SMS with an invalid word or command
 
-	@QC-3743 @QC-1976 @test
+	@QC-3743 @QC-1976 
 	Scenario: TMS sms to shared account with invalid prefix
 		Given I send an SMS to a shared account with an invalid prefix
 
