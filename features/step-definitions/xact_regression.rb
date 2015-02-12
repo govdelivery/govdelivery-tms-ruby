@@ -457,9 +457,7 @@ def client_2
     elsif ENV['XACT_ENV'] == 'integration'
       client = TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', :api_root => 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
     elsif ENV['XACT_ENV'] == 'stage'
-      client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
-    elsif ENV['XACT_ENV'] == 'prod'
-      client = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', :api_root => 'https://tms.govdelivery.com')
+      client = TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', :api_root => 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
     end
 end
 
@@ -469,9 +467,7 @@ def phone_number_to
   elsif ENV['XACT_ENV'] == 'integration'
     '+16519641178'
   elsif ENV['XACT_ENV'] == 'stage'
-    '+16124679346'
-  elsif ENV['XACT_ENV'] == 'prod'
-    '+16124679346'
+    '+16124247727'
   end
 end  
 
@@ -481,9 +477,7 @@ def phone_number_from
   elsif ENV['XACT_ENV'] == 'integration'
     '(612) 255-6225'
   elsif ENV['XACT_ENV'] == 'stage'
-    '(612) 255-6254'
-  elsif ENV['XACT_ENV'] == 'prod'
-    '(612) 255-6254'
+    '(612) 255-6247'
   end
 end
 
@@ -592,10 +586,6 @@ Given(/^I send an SMS with an invalid word or command$/) do
   end 
   puts 'Help message found'.green 
 end
-
-
-
-
 
 
 
