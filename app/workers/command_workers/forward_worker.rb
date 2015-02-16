@@ -14,22 +14,28 @@ module CommandWorkers
   class ForwardWorker
     include CommandWorkers::Base
 
-    sidekiq_options retry:    0,
-                    queue:    :webhook
+    sidekiq_options retry: 3, queue: :webhook
+    sidekiq_retry_in { 10 }
 
     attr_writer :sms_service
 
     def perform(opts)
-      callback_url = nil
-      message = super do |options|
-        self.http_response = send_request(options, self.command.params)
-        callback_url = options.callback_url
-      end
+      begin
+        callback_url = nil
+        message = super do |options|
+          self.http_response = send_request(options, self.command.params)
+          callback_url = options.callback_url
+        end
 
-      if message
-        recipient_id = message.first_recipient_id
-        logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
-        send_response(message, recipient_id, callback_url)
+        if message
+          recipient_id = message.first_recipient_id
+          logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
+          send_response(message, recipient_id, callback_url)
+        end
+      rescue Faraday::ClientError
+        raise
+      rescue => e
+        raise Sidekiq::Retries::Fail.new(e)
       end
     end
 
@@ -43,7 +49,6 @@ module CommandWorkers
 
     def http_service
       @http_service ||= Service::ForwardService.new(self.logger)
-
     end
 
     def send_request(options, command_params)

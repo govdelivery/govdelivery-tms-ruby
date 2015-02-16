@@ -52,4 +52,16 @@ describe CommandWorkers::ForwardWorker do
     subject.perform( options )
   end
 
+  context 'when an exception occurs' do
+    it 'reraises the exception if it is a Faraday::ClientError' do
+      subject.stubs(:send_request).raises(Faraday::ClientError, "Faraday::ClientError")
+      expect { subject.perform( options ) }.to raise_error(Faraday::ClientError)
+    end
+
+    it 'raises a Sidekiq::Retries::Fail if it is not a Faraday::ClientError in order to fail the job immediately' do
+      subject.stubs(:send_request).raises(StandardError)
+      expect { subject.perform( options ) }.to raise_error(Sidekiq::Retries::Fail)
+    end
+  end
+
 end
