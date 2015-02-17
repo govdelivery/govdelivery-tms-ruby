@@ -29,7 +29,7 @@ describe CommandType::Forward do
 
   subject { CommandType::Forward.new }
 
-  context 'on error' do
+  context 'on HTTP error' do
     before do
       stub_command_action_create!(command_params, http_error_response, command_action)
       command_action.stubs(:success?).returns(false)
@@ -39,7 +39,18 @@ describe CommandType::Forward do
       subject.expects(:build_message).never
       subject.process_response(account, command_params, http_error_response)
     end
+  end
 
+  context 'on network error' do
+    before do
+      stub_command_action_error!(command_params, command_action, "oh crap")
+      command_action.stubs(:success?).returns(false)
+    end
+
+    it 'should not create an sms' do
+      subject.expects(:build_message).never
+      subject.process_error(command_params, "oh crap")
+    end
   end
 
   context 'on success' do
@@ -63,6 +74,7 @@ describe CommandType::Forward do
 
     it 'will not create an sms message if command_action.content_type does not match text/plain' do
       command_action.stubs(:content_type).returns('something crazy')
+      command_action.stubs(:success?).returns(true)
       subject.expects(:build_message).never
       subject.process_response(account, command_params, http_response)
     end

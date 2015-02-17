@@ -12,7 +12,7 @@ module Service
         def has_more?
           has_more
         end
-      end
+      end unless defined?(Batch)
 
       # Params:
       # type    :: "delivery" | "open" | "click"

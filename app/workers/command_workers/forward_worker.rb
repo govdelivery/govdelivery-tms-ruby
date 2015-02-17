@@ -22,8 +22,8 @@ module CommandWorkers
     def perform(opts)
       begin
         callback_url = nil
-        message = super do |options|
-          self.http_response = send_request(options, self.command.params)
+        message = super do
+          self.http_response = send_request(self.options, self.command.params)
           callback_url = options.callback_url
         end
 
@@ -32,7 +32,16 @@ module CommandWorkers
           logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
           send_response(message, recipient_id, callback_url)
         end
-      rescue Faraday::ClientError
+      rescue Faraday::ClientError => e
+        ActiveRecord::Base.transaction do
+          if e.response
+            # ClientError#response isn't really a response, so...
+            e.response[:response_headers] = e.response.delete(:headers)
+            @command.process_response(self.options, Faraday::Response.new(Faraday::Env.from(e.response)))
+          else
+            @command.process_error(self.options, e.message)
+          end
+        end
         raise
       rescue => e
         raise Sidekiq::Retries::Fail.new(e)
