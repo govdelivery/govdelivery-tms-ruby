@@ -34,12 +34,28 @@ describe CommandAction do
     its(:success?) { should be true }
   end
 
+  describe 'an HTTP error' do
+    subject { build(:command_action,
+                    content_type:  nil,
+                    response_body: "Service Unavailable",
+                    status:        503) }
+    it { should be_valid }
+  end
+
+  describe 'a network error' do
+    subject { build(:command_action,
+                    content_type:  nil,
+                    error_message: 'Received fatal alert: bad_record_mac',
+                    response_body: nil,
+                    status:        nil) }
+    it { should be_valid }
+  end
+
   describe 'a nothing' do
     subject { build(:command_action, content_type: nil,
                     response_body:                 nil,
                     status:                        nil) }
-    it { should be_valid }
-    its(:success?) { should be false }
+    it { should_not be_valid }
   end
 
 end

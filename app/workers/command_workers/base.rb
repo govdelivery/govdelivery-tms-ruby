@@ -14,13 +14,13 @@ module CommandWorkers
     end
 
     module InstanceMethods
-      attr_accessor :http_service, :http_response, :exception
+      attr_accessor :http_service, :http_response, :exception, :options
       attr_reader :command
 
       def perform(opts)
-        options = CommandParameters.new(opts)
+        self.options = CommandParameters.new(opts)
         @command = Command.includes(keyword: :account).find(options.command_id)
-        yield(options) if block_given?
+        yield if block_given?
         @command.process_response(options, self.http_response)
       end
 

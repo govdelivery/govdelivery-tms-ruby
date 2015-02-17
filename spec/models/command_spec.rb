@@ -75,6 +75,23 @@ describe Command do
     specify { subject.call(@expected) }
   end
 
+  context 'process_response' do
+    it "works" do
+      http_response = stub('http_response')
+      subject.command_strategy.expects(:process_response).with(subject.account, subject.params, http_response)
+      subject.process_response({inbound_message_id: 1000}, http_response)
+    end
+  end
+
+  context 'process_error' do
+    it "works" do
+      http_response = stub('http_response')
+      subject.command_strategy.expects(:process_error).with(subject.params, http_response)
+      subject.process_error({inbound_message_id: 1000}, http_response)
+    end
+  end
+
+
   def build_dcm_unsubscribe_command account
     build(:dcm_unsubscribe_command,
           keyword: build(:custom_keyword, account: account),
