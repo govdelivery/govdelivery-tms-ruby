@@ -128,6 +128,43 @@ Feature: XACT Full Regression
 	Scenario: TMS posting a new SMS message which contains special characters.
 		Given I post a new SMS message which contains special characters
 
+	@QC-3745 @QC-1976 
+	Scenario: TMS rapid keyword sends while receiving one response
+		Given I rapidly send a keyword via SMS
+
+	@QC-3744 @QC-1976 
+	Scenario: TMS sms to previx with invalid word
+		Given I send an SMS with an invalid word or command
+
+	@QC-3743 @QC-1976 
+	Scenario: TMS sms to shared account with invalid prefix
+		Given I send an SMS to a shared account with an invalid prefix
+
+
+
+
+
+
+	@QC-2237 
+	Scenario: TMS create a single voice message to multiple recipients
+		Given I created a new voice message
+		Then I should be able to verify that multiple recipients have received the message
+
+	@QC-2237 
+	Scenario: List and verify incoming voice messages
+		Given I created a new voice message
+		Then I should be able to verify the incoming message was received	
+
+	@QC-2237 
+	Scenario: Verify message detail
+		Given I created a new voice message
+		Then I should be able to verify details of the message
+
+
+	
+
+
+
 
 
 

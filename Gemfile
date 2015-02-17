@@ -95,6 +95,6 @@ group :test do
   gem 'fakeweb'
   gem 'mocha', require: false
   gem 'shoulda-matchers'
-  gem 'tms_client'
+  gem 'tms_client', '0.5.4'
 end
 
