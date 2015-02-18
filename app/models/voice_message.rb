@@ -9,7 +9,7 @@ class VoiceMessage < ActiveRecord::Base
   validates :say_text, presence: true, unless: ->(message) { message.play_url.present? }, on: :create
 
   before_validation :set_from_number
-  validate :from_number_allowed?
+  validate :from_number_allowed?, :retry_attribute_defaults
   after_create :create_script
 
   def create_script
@@ -54,6 +54,11 @@ class VoiceMessage < ActiveRecord::Base
     unless account.from_number_allowed?(self.from_number)
       errors.add(:from_number, "is not authorized to send on this account")
     end
+  end
+
+  def retry_attribute_defaults
+    self.max_retries||=0
+    self.retry_delay||=300
   end
 
   def set_from_number
