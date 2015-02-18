@@ -12,6 +12,20 @@ describe VoiceMessage do
     it { should be_valid }
   end
 
+  context "a voice message with nil retry" do
+    let(:message) { account.voice_messages.create(:play_url => 'http://localhost/file.mp3', :max_retries => nil) }
+
+    subject! { message }
+    it { subject.max_retries.should == 0 }
+  end
+
+  context "a voice message with nil retry_delay" do
+    let(:message) { account.voice_messages.create(:play_url => 'http://localhost/file.mp3', :retry_delay => nil) }
+
+    subject! { message }
+    it { subject.retry_delay.should == 300 }
+  end
+
   context "a voice message with a script" do
     let(:message) { account.voice_messages.create!(:say_text => 'Your Gov Delivery authorization code is 1 2 3 4 5. Thank you for using Gov Delivery. This message will repeat.') }
 
