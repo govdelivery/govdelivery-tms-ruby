@@ -26,9 +26,14 @@ class Command < ActiveRecord::Base
     command_strategy.perform_async!(command_parameters)
   end
 
+  def process_error(job_params, error_message)
+    self.params.merge!(job_params)
+    command_strategy.process_error(self.params, error_message)
+  end
+
   def process_response(job_params, http_response)
-    params.merge!(job_params)
-    command_strategy.process_response(self.account, params, http_response)
+    self.params.merge!(job_params)
+    command_strategy.process_response(self.account, self.params, http_response)
   end
 
   # Grab the executable portion of this command

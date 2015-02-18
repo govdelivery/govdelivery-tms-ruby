@@ -37,14 +37,30 @@ RSpec.configure do |config|
 end
 
 def stub_command_action_create!(command_params, http_response, command_action, body=http_response.body)
-  mock_relation = mock('CommandAction.where')
-  mock_relation.expects(:first_or_create!).with(
+  command_action.expects(:update!).with(
+    error_message: nil,
     status:        http_response.status,
     content_type:  (http_response.headers['Content-Type'] rescue nil),
     response_body: body).returns(command_action)
   CommandAction.expects(:where).with(
     inbound_message_id: command_params.inbound_message_id,
-    command_id:         command_params.command_id).returns(mock_relation)
+    command_id:         command_params.command_id).returns(
+    mock('first_or_initialize', first_or_initialize: command_action)
+  )
+end
+
+def stub_command_action_error!(command_params, command_action, error_message)
+  mock_relation = stub('CommandAction.where', success: false)
+  mock_relation.expects(:update!).with(
+    error_message: error_message,
+    status:        nil,
+    content_type:  nil,
+    response_body: nil).returns(command_action)
+  CommandAction.expects(:where).with(
+    inbound_message_id: command_params.inbound_message_id,
+    command_id:         command_params.command_id).returns(
+    mock('first_or_initialize', first_or_initialize: mock_relation)
+  )
 end
 
 def exception_check(worker, expected_message, params=nil)

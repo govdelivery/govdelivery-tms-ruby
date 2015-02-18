@@ -21,7 +21,24 @@ module CommandType
 
     # this will get called in the background
     def process_response(account, params, http_response)
-      save_command_action!(params, http_response)
+      content_type = http_response.headers['Content-Type'] rescue nil
+      self.command_action(params).tap do |action|
+        action.update!(
+          status:        http_response.status,
+          content_type:  content_type,
+          response_body: response_body(http_response.body),
+          error_message: nil
+        )
+      end
+    end
+
+    def process_error(params, error_message)
+      self.command_action(params).update!(
+        status:        nil,
+        content_type:  nil,
+        response_body: nil,
+        error_message: error_message
+      )
     end
 
     def all_fields
@@ -38,15 +55,11 @@ module CommandType
 
     protected
 
-    def save_command_action!(params, http_response)
-      content_type = http_response.headers['Content-Type'] rescue nil
+    def command_action(params)
       CommandAction.where(
         inbound_message_id: params.inbound_message_id,
         command_id:         params.command_id).
-        first_or_create!(
-          status:        http_response.status,
-          content_type:  content_type,
-          response_body: response_body(http_response.body))
+        first_or_initialize
     end
 
     # DCM command type responses return parsed hashes of JSON, so...
@@ -65,7 +78,7 @@ module CommandType
 
   end
 
-  ALL = HashWithIndifferentAccess.new
+  ALL = HashWithIndifferentAccess.new unless defined?(ALL)
 
   def self.[](command_type)
     ALL[command_type] ||= self.const_get(command_type.to_s.classify).new

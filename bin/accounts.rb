@@ -74,6 +74,9 @@ USAGE
       opts.on("-f", "--from_address [FROMADDRESS]", "The default from address for this account; required if there is an email vendor.") do |p|
         @options[:account_from_address] = p
       end
+      opts.on("-o", "--from_number [FROMNUMBER]", "The default from number for this account; required if there is a voice vendor.") do |p|
+        @options[:account_from_number] = p
+      end
       opts.on("-r", "--reply_to [REPLYTO]", "The default reply-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
         @options[:account_reply_to] = p
       end
@@ -125,6 +128,13 @@ USAGE
         :errors_to    => @options[:account_errors_to],
         :is_default   => true
       })
+    end
+
+    if (@options[:account_from_number])
+      a.from_numbers.build({
+         phone_number: @options[:account_from_number],
+         is_default: true
+        })
     end
 
     a.save

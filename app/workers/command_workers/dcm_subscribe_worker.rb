@@ -13,7 +13,7 @@ module CommandWorkers
     # options: {"from"=>"+14445556666", "params"=>"ACME:TOPIC_1,TOPIC_2"}
     #
     def perform(opts)
-      super do |options|
+      super do
         begin
           client             = DCMClient::Client.new(Xact::Application.config.dcm)
           from_number        = PhoneNumber.new(options.from).dcm
