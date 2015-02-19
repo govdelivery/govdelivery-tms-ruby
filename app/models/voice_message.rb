@@ -58,8 +58,8 @@ class VoiceMessage < ActiveRecord::Base
   end
 
   def retry_attribute_defaults
-    self.max_retries||=0
-    self.retry_delay||=300
+    self.max_retries||=0 if self.has_attribute? :max_retries
+    self.retry_delay||=300 if self.has_attribute? :retry_delay
   end
 
   def set_from_number
