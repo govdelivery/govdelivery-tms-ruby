@@ -9,7 +9,8 @@ class VoiceMessage < ActiveRecord::Base
   validates :say_text, presence: true, unless: ->(message) { message.play_url.present? }, on: :create
 
   before_validation :set_from_number
-  validate :from_number_allowed?, :retry_attribute_defaults
+  validate :from_number_allowed?
+  before_save :retry_attribute_defaults
   after_create :create_script
 
   def create_script
