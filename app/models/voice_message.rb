@@ -10,6 +10,7 @@ class VoiceMessage < ActiveRecord::Base
 
   before_validation :set_from_number
   validate :from_number_allowed?
+  before_save :retry_attribute_defaults
   after_create :create_script
 
   def create_script
@@ -54,6 +55,11 @@ class VoiceMessage < ActiveRecord::Base
     unless account.from_number_allowed?(self.from_number)
       errors.add(:from_number, "is not authorized to send on this account")
     end
+  end
+
+  def retry_attribute_defaults
+    self.max_retries||=0 if self.has_attribute? :max_retries
+    self.retry_delay||=300 if self.has_attribute? :retry_delay
   end
 
   def set_from_number
