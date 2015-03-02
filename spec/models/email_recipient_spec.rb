@@ -30,6 +30,9 @@ describe EmailRecipient do
     it 'should have the correct ODM record designator' do
       subject.to_odm.should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}")
     end
+    it 'should be identifiable by x_tms_recipient' do
+      expect(subject.class.from_x_tms_recipent(subject.x_tms_recipient)).to eq(subject)
+    end
     it 'should have the right message sendable_recipients using Recipient#to_send' do
       other_email #init
       email_message.sendable_recipients.all.should eq(email_message.recipients.all)
@@ -81,7 +84,7 @@ describe EmailRecipient do
         subject.sent_at.should_not be_nil
       end
 
-      context 'that is sent' do
+      context 'and is sent' do
         before do
           subject.sent!('ack', Time.now)
         end
@@ -101,6 +104,22 @@ describe EmailRecipient do
           subject.email_recipient_opens.count.should == 0
           subject.opened!("1.1.1.1", DateTime.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
           subject.email_recipient_opens.count.should == 1
+        end
+
+        context 'and bounces' do
+          it 'should update error message and status' do
+            subject.hard_bounce!(nil, nil, 'boing!')
+            expect(subject.error_message).to eq 'boing!'
+            expect(subject.failed?).to be true
+          end
+        end
+
+        context 'and ARFs' do
+          it 'should update error message but not status' do
+            subject.arf!(nil, nil, 'woof!')
+            expect(subject.error_message).to eq 'woof!'
+            expect(subject.sent?).to be true
+          end
         end
       end
     end
