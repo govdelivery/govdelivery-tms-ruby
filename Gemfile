@@ -12,6 +12,7 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'enumify'
 gem 'faraday'
 gem 'faraday_middleware'
+gem "govdelivery-crypt", require: 'govdelivery/crypt'
 gem 'kaminari'
 gem 'log4r'
 gem 'newrelic_rpm'

@@ -29,6 +29,7 @@ module Odm
           msg.reply_to_email      = message.reply_to
           msg.email_column        = 'email'
           msg.recipient_id_column = 'recipient_id'
+          msg.headers << odm_header("X-TMS-Recipient", "##x_tms_recipient##")
           msg.record_designator   = message.odm_record_designator
           msg.track_clicks        = message.click_tracking_enabled?
           msg.track_opens         = message.open_tracking_enabled?
@@ -52,6 +53,12 @@ module Odm
     end
 
     private
+    def odm_header(name, value)
+      h       = Header.new
+      h.name  = name
+      h.value = value
+      h
+    end
 
     def create_link_encoder(encoder)
       if encoder == 'ONE'

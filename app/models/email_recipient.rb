@@ -29,7 +29,7 @@ class EmailRecipient < ActiveRecord::Base
   # @return [String]
   #
   def to_odm(defaults={})
-    record = "#{self.email}::#{self.id}"
+    record = [self.email,self.id, self.x_tms_recipient].join("::")
     defaults.merge(self.macros || {}).tap do |hsh|
       unless hsh.empty?
         hsh.keys.sort.each do |k|
@@ -60,5 +60,9 @@ class EmailRecipient < ActiveRecord::Base
       ero.email = email
       ero.save!
     end
+  end
+
+  def x_tms_recipient
+    GovDelivery::Crypt::XTmsRecipient.encrypt(self.email, self.id)
   end
 end

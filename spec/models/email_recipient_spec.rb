@@ -28,7 +28,7 @@ describe EmailRecipient do
       subject.save!
     end
     it 'should have the correct ODM record designator' do
-      subject.to_odm.should eq("hi@man.com::#{subject.id}")
+      subject.to_odm.should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}")
     end
     it 'should have the right message sendable_recipients using Recipient#to_send' do
       other_email #init
@@ -40,11 +40,11 @@ describe EmailRecipient do
         subject.save!
       end
       it 'should have the correct ODM record designator' do
-        subject.to_odm('five' => nil, 'one' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::five_value::one_value::two_value")
+        subject.to_odm('five' => nil, 'one' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::five_value::one_value::two_value")
         # remove one from default hash
-        subject.to_odm('five' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::five_value::two_value")
+        subject.to_odm('five' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::five_value::two_value")
         # merging in defaults
-        subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::one_value::seven_value")
+        subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::one_value::seven_value")
       end
     end
 
