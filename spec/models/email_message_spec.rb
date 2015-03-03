@@ -56,8 +56,8 @@ describe EmailMessage do
       account.should_not be_nil
     end
     it 'should have a record designator for odm' do
-      subject.odm_record_designator.should eq('email::recipient_id::first::macro1::macro2')
-      macroless_email.odm_record_designator.should eq('email::recipient_id')
+      subject.odm_record_designator.should eq('email::recipient_id::x_tms_recipient::first::macro1::macro2')
+      macroless_email.odm_record_designator.should eq('email::recipient_id::x_tms_recipient')
     end
     context 'and saved' do
       before { email.save! }

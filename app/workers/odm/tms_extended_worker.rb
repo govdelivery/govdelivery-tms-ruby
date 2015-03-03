@@ -25,12 +25,13 @@ module Odm
 
     if jruby?
       java_import java.net.URL
-      java_import com.govdelivery.tms.tmsextended.Credentials
-      java_import com.govdelivery.tms.tmsextended.ExtendedMessage
-      java_import com.govdelivery.tms.tmsextended.TMSExtended_Service
-      java_import com.govdelivery.tms.tmsextended.TMSExtended
-      java_import com.govdelivery.tms.tmsextended.DeliveryActivity
       java_import com.govdelivery.tms.tmsextended.ActivityRequest
+      java_import com.govdelivery.tms.tmsextended.Credentials
+      java_import com.govdelivery.tms.tmsextended.DeliveryActivity
+      java_import com.govdelivery.tms.tmsextended.ExtendedMessage
+      java_import com.govdelivery.tms.tmsextended.Header
+      java_import com.govdelivery.tms.tmsextended.TMSExtended
+      java_import com.govdelivery.tms.tmsextended.TMSExtended_Service
     end
 
     def odm

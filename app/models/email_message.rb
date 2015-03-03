@@ -67,7 +67,7 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def odm_record_designator
-    'email::recipient_id'.tap do |s|
+    'email::recipient_id::x_tms_recipient'.tap do |s|
       unless macros.blank?
         s << "::" << macros.keys.sort.join("::")
       end
