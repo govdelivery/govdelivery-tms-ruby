@@ -104,6 +104,8 @@ GEM
     formatador (0.2.5)
     gherkin (2.12.2-java)
       multi_json (~> 1.3)
+    govdelivery-crypt (0.1.0)
+      activesupport
     guard (2.6.1)
       formatador (>= 0.2.4)
       listen (~> 2.7)
@@ -406,6 +408,7 @@ DEPENDENCIES
   fakeweb
   faraday
   faraday_middleware
+  govdelivery-crypt
   guard-rspec
   highline
   httpi (= 2.1.0)

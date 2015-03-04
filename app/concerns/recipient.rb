@@ -56,6 +56,10 @@ module Recipient
       event :blacklist, after: :invoke_webhooks do
         transitions from: [:new, :sending], to: :blacklisted
       end
+
+      event :bounce, after: [:invoke_webhooks] do
+        transitions from: [:sending, :inconclusive, :canceled, :sent], to: :failed, after: :finalize
+      end
     end
 
     attr_accessor :skip_message_validation

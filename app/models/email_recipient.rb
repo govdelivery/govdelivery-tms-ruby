@@ -16,7 +16,9 @@ class EmailRecipient < ActiveRecord::Base
   has_many :email_recipient_clicks, ->(record) { where("email_recipient_clicks.email_message_id = ?", record.message_id) }
   has_many :email_recipient_opens, ->(record) { where("email_recipient_opens.email_message_id = ?", record.message_id) }
 
-
+  def self.from_x_tms_recipent(header)
+    self.find(GovDelivery::Crypt::XTmsRecipient.decrypt(header).recipient_id)
+  end
 
   ##
   # Convert this recipient into a record string for sending to ODM.
@@ -29,7 +31,7 @@ class EmailRecipient < ActiveRecord::Base
   # @return [String]
   #
   def to_odm(defaults={})
-    record = "#{self.email}::#{self.id}"
+    record = [self.email,self.id, self.x_tms_recipient].join("::")
     defaults.merge(self.macros || {}).tap do |hsh|
       unless hsh.empty?
         hsh.keys.sort.each do |k|
@@ -39,6 +41,18 @@ class EmailRecipient < ActiveRecord::Base
     end unless defaults.nil?
     record
   end
+
+
+  def arf!(_, _, error_message)
+    self.update_attribute(:error_message, error_message)
+  end
+
+  def hard_bounce!(*args)
+    bounce!(:failed, *args)
+  end
+
+  # soft and hard bounces are the same for our purposes in that the message failed
+  alias_method :soft_bounce!, :hard_bounce!
 
   # Record a click on a URL for this recipient / email combination
   def clicked!(url, date)
@@ -60,5 +74,9 @@ class EmailRecipient < ActiveRecord::Base
       ero.email = email
       ero.save!
     end
+  end
+
+  def x_tms_recipient
+    GovDelivery::Crypt::XTmsRecipient.encrypt(self.email, self.id)
   end
 end
