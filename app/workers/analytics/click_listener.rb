@@ -7,10 +7,14 @@ module Analytics
     def group
       'xact.click_listener'
     end
-    
+
     def on_message(message, partition, offset)
-      Rails.logger.info("#{self.class} received #{message}")
-      Rails.logger.info("#{self.client.partition_status}")
+      logger.info("#{self.class} received #{message}")
+      logger.info("#{self.client.partition_status}")
+    end
+
+    def logger
+      Sidekiq.logger
     end
   end
 end

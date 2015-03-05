@@ -9,11 +9,15 @@ module Analytics
     end
 
     def on_message(message, partition, offset)
-      Rails.logger.info("#{self.class} received #{message}")
-      if (recipient = EmailRecipient.from_x_tms_recipent(message['recipient']))
-        recipient.send("#{message['uri']}!", nil, nil, message['message'])
-      end
+      logger.info("#{self.class} received #{message}")
+      recipient = EmailRecipient.from_x_tms_recipent(message['recipient'])
+      recipient.send("#{message['uri']}!", nil, nil, message['message'])
+    rescue ActiveRecord::RecordNotFound => e
+      logger.warn("BounceListener: couldn't find EmailRecipient: #{message.inspect} - #{e.message}")
+    end
 
+    def logger
+      Sidekiq.logger
     end
   end
 end

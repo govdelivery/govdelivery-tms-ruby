@@ -27,6 +27,16 @@ describe Analytics::BounceListener do
         subject.on_message(message, 1, 1_000)
         expect(email_recipient.reload.failed?).to be true
       end
+
+      it 'should fail on email mismatch' do
+        xtr_header = email_recipient.x_tms_recipient
+        email_recipient.update_attribute(:email, 'not@me.com')
+        message = {'recipient' => xtr_header,
+                   'uri'       => msg_type, #this-bang will get invoked
+                   'message'   => 'blows'}
+        subject.on_message(message, 1, 1_000)
+        expect(email_recipient.reload.failed?).to be false
+      end
     end
   end
 end
