@@ -19,14 +19,14 @@ describe Analytics::BounceListener do
     before do
       email_recipient.sending!('ack')
     end
-    it 'should respond to a message' do
-      message   = {'recipient' => email_recipient.x_tms_recipient,
-                   'uri'     => 'soft_bounce', #this-bang will get invoked
-                   'message' => 'blows'}
-      partition = 1
-      offset    = 1_000
-      subject.on_message(message, partition, offset)
-      expect(email_recipient.reload.failed?).to be true
+    %w{soft_bounce hard_bounce mail_block}.each do |msg_type|
+      it 'should respond to a message' do
+        message = {'recipient' => email_recipient.x_tms_recipient,
+                   'uri'       => msg_type, #this-bang will get invoked
+                   'message'   => 'blows'}
+        subject.on_message(message, 1, 1_000)
+        expect(email_recipient.reload.failed?).to be true
+      end
     end
   end
 end

@@ -10,7 +10,10 @@ module Analytics
 
     def on_message(message, partition, offset)
       Rails.logger.info("#{self.class} received #{message}")
-      EmailRecipient.from_x_tms_recipent(message['recipient']).send("#{message['uri']}!", nil, nil, message['message'])
+      if (recipient = EmailRecipient.from_x_tms_recipent(message['recipient']))
+        recipient.send("#{message['uri']}!", nil, nil, message['message'])
+      end
+
     end
   end
 end

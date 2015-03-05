@@ -53,6 +53,7 @@ class EmailRecipient < ActiveRecord::Base
 
   # soft and hard bounces are the same for our purposes in that the message failed
   alias_method :soft_bounce!, :hard_bounce!
+  alias_method :mail_block!, :hard_bounce!
 
   # Record a click on a URL for this recipient / email combination
   def clicked!(url, date)
