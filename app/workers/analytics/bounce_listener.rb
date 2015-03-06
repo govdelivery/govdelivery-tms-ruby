@@ -10,7 +10,7 @@ module Analytics
 
     def on_message(message, partition, offset)
       logger.info("#{self.class} received #{message}")
-      Analytics::ProcessBounce.perform_async(message)
+      Analytics::ProcessBounce.perform_async(message.to_hash)
     end
 
     def logger
