@@ -9,8 +9,12 @@ module Analytics
     end
 
     def on_message(message, partition, offset)
-      Rails.logger.info("#{self.class} received #{message}")
-      EmailRecipient.from_x_tms_recipent(message['recipient']).send("#{message['uri']}!", nil, nil, message['message'])
+      logger.info("#{self.class} received #{message}")
+      Analytics::ProcessBounce.perform_async(message)
+    end
+
+    def logger
+      Sidekiq.logger
     end
   end
 end

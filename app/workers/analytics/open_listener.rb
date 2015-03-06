@@ -9,7 +9,7 @@ module Analytics
     end
     
     def on_message(message, partition, offset)
-      Rails.logger.info("#{self.class} received #{message}")
+      Sidekiq.logger.info("#{self.class} received #{message}")
     end
   end
 end
