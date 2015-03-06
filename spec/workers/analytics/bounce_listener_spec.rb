@@ -15,6 +15,6 @@ describe Analytics::BounceListener do
                'uri'       => 'bounce',
                'message'   => 'blows'}
     Analytics::ProcessBounce.expects(:perform_async).with(message)
-    subject.on_message(message, 1, 1_000)
+    subject.on_message(message.to_s, 1, 1_000)
   end
 end
