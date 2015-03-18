@@ -53,13 +53,13 @@ describe CommandWorkers::DcmSubscribeWorker do
   context 'error handling' do
 
     it 'passes options to the subscribe command' do
-      DCMClient::Client.any_instance.expects(:wireless_subscribe).with('1+5', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
-      subject.perform(options.merge(from: '5'))
+      DCMClient::Client.any_instance.expects(:wireless_subscribe).with('1+651888888', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
+      subject.perform(options.merge(from: '+1651888888'))
     end
 
     it 'ignores 422s' do
       subject.expects(:request_subscription).raises(DCMClient::Error::UnprocessableEntity.new("foo", http_failure_response))
-      expect { subject.perform(options.merge(from: '5')) }.to_not raise_error
+      expect { subject.perform(options.merge(from: '+1651888888')) }.to_not raise_error
     end
 
     it 'ignores 404s' do
