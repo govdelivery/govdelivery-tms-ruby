@@ -60,7 +60,7 @@ GEM
     colored (1.2)
     columnize (0.8.9)
     configatron (4.2.1)
-    connection_pool (2.1.0)
+    connection_pool (2.1.2)
     countries (0.11.2)
       currencies (~> 0.4.2)
       i18n_data (~> 0.6.0)
@@ -255,8 +255,6 @@ GEM
       redis-actionpack (~> 4)
       redis-activesupport (~> 4)
       redis-store (~> 1.1.0)
-    redis-sentinel (1.5.0)
-      redis
     redis-store (1.1.4)
       redis (>= 2.2)
     request_exception_handler (0.5.0)
@@ -302,16 +300,16 @@ GEM
     sexp_processor (4.5.0)
     shoulda-matchers (2.7.0)
       activesupport (>= 3.0.0)
-    sidekiq (3.3.0)
+    sidekiq (3.3.2)
       celluloid (>= 0.16.0)
-      connection_pool (>= 2.0.0)
+      connection_pool (>= 2.1.1)
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
     sidekiq-failures (0.4.3)
       sidekiq (>= 2.16.0)
-    sidekiq-pro (1.9.1)
-      sidekiq (>= 3.2.3)
+    sidekiq-pro (2.0.0)
+      sidekiq (>= 3.3.2)
     sidekiq-retries (0.3.0)
       sidekiq (~> 3.2, >= 3.2.4)
     sidekiq-unique-jobs (3.0.11)
@@ -439,10 +437,9 @@ DEPENDENCIES
   rails (~> 4.1.0)
   rails-api
   rails-erd
-  redis (= 3.1.0)
+  redis
   redis-activesupport (= 4.0.0.2)
   redis-rails
-  redis-sentinel
   redis-store (= 1.1.4)
   request_exception_handler
   rjack-slf4j
@@ -453,7 +450,7 @@ DEPENDENCIES
   ruby-oci8
   send_nsca
   shoulda-matchers
-  sidekiq (= 3.3.0)
+  sidekiq
   sidekiq-failures
   sidekiq-pro
   sidekiq-retries
