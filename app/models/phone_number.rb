@@ -4,15 +4,15 @@ require 'phony_rails'
 PhoneNumber = Struct.new(:number) do
   # 1 (444) 333-2222 => +14443332222
   def e164
-    formatted && Phony.formatted(formatted, :spaces => '')
+    return nil unless PhonyRails.plausible_number?(number)
+    PhonyRails.normalize_number(number, default_country_code: 'US', add_plus: true)
   end
 
   # 1 (444) 333-2222 => 1+4443332222
   def dcm
-    if formatted
-      country_code, *rest = Phony.split(formatted)
-      "#{country_code}+#{rest.join}"
-    end
+    return unless (formatted = e164)
+    country_code, *rest = Phony.split(formatted.slice(1..-1))
+    [country_code, rest.join].join("+")
   end
 
   # 468311 => 468311
@@ -23,13 +23,8 @@ PhoneNumber = Struct.new(:number) do
     if number.length == 6 #it's a short code
       number
     else
-      '+' + formatted
+      e164
     end
   end
 
-  private
-
-  def formatted
-    PhonyRails.normalize_number(number, :default_country_code => 'US')
-  end
 end

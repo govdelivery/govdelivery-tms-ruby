@@ -68,7 +68,6 @@ group :development, :test do
   gem 'httpi', '2.1.0'
   gem 'json'
   gem 'json_spec'
-  gem 'mail'
   gem 'mechanize'
   gem 'multi_xml'
   gem 'nokogiri'

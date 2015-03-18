@@ -1,5 +1,5 @@
 ---
-version: 0.10.0
+version: 0.12.3
 local_repository: vendor/jars
 groups:
   default:
@@ -21,7 +21,6 @@ groups:
     - org.opensaml:openws:jar:1.4.2-1
     - org.opensaml:xmltooling:jar:1.3.2-1
     - org.slf4j:slf4j-api:jar:1.6.1
-    - org.slf4j:slf4j-simple:jar:1.7.7
     - org.slf4j:slf4j-simple:jar:1.7.7
     - org.subethamail:subethasmtp:jar:3.1.7
     - xmlpull:xmlpull:jar:1.1.3.1
@@ -51,5 +50,5 @@ groups:
         transitive: {}
     - jar:commons-codec:commons-codec:jar:1.5:
         transitive: {}
-    - jar:org.slf4j:slf4j-simple:jar:1.7.7:
-        transitive: {}
+remote_repositories:
+- http://repo1.maven.org/maven2/
