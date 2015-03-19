@@ -15,7 +15,13 @@ describe Geckoboard::Uscmshim30mSubjectSends do
     end
   end
 
-  it 'writes sending info for subjects for the past 30 minutes in json format to disk' do
+  it 'writes a hash to a file' do
+    subject.expects(:write_to_file).with('name.json', '{}')
+    subject.expects(:build_data).returns(mock('hash', to_json: '{}'))
+    subject.perform(account.id, 'name')
+  end
+
+  it 'gets data for email subjects for the past 30 minutes' do
     end_time   = dbtime + 1.minute
     start_time = end_time - 30.minutes
     time_range = start_time.to_i...end_time.to_i

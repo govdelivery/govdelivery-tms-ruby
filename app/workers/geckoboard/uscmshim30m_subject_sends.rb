@@ -8,7 +8,7 @@ module Geckoboard
                     unique: true
 
     def perform(account_id, basename)
-      write_to_file("#{basename}.json", build_data(account_id, basename))
+      write_to_file("#{basename}.json", build_data(account_id, basename).to_json)
     end
 
     def build_data(account_id, basename)
