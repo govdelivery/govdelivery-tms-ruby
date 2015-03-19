@@ -4,9 +4,9 @@
 #
 
 Sidekiq::Logging.logger = Rails.logger
+Sidekiq::Client.reliable_push!
 
 # We have workers that enqueue other jobs; need the client stuff everywhere
-require 'sidekiq/pro/reliable_push'
 require './config/clock.rb'
 require './lib/clockwork/sidekiq_clockwork_scheduler.rb'
 require './config/initializers/yakety_yak'
@@ -27,7 +27,7 @@ class Sidekiq::Middleware::Server::LogAllTheThings
 end
 
 Sidekiq.configure_server do |config|
-  require 'sidekiq/pro/reliable_fetch'
+  config.reliable_fetch!
 
   config.redis                 = default.merge(Xact::Application.config.sidekiq[:server])
   config.options[:concurrency] = 30
