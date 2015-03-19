@@ -87,7 +87,9 @@ module Xact
 
     redis_opts = {url: Conf.redis_uri}
 
-    redis_opts[:sentinels] = Conf.redis_sentinel_uris if Conf.redis_sentinel_uris.any?
+    if Conf.redis_sentinel_uris.any?
+      redis_opts[:sentinels] = Conf.redis_sentinel_uris.map { |sentinel| {host: sentinel.host, port: sentinel.port.to_i} }
+    end
 
     config.cache_store = :redis_store, redis_opts, {pool_size: 7}
 
