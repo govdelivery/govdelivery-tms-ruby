@@ -42,7 +42,7 @@ describe CommandWorkers::DcmSubscribeWorker do
     }
   end
 
-  let(:command_parameters){
+  let(:command_parameters) {
     build(:subscribe_command_parameters)
   }
 
@@ -51,15 +51,16 @@ describe CommandWorkers::DcmSubscribeWorker do
   end
 
   context 'error handling' do
+    let(:number) { '+16518888888' }
 
     it 'passes options to the subscribe command' do
-      DCMClient::Client.any_instance.expects(:wireless_subscribe).with('1+651888888', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
-      subject.perform(options.merge(from: '+1651888888'))
+      DCMClient::Client.any_instance.expects(:wireless_subscribe).with('1+6518888888', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
+      subject.perform(options.merge(from: number))
     end
 
     it 'ignores 422s' do
       subject.expects(:request_subscription).raises(DCMClient::Error::UnprocessableEntity.new("foo", http_failure_response))
-      expect { subject.perform(options.merge(from: '+1651888888')) }.to_not raise_error
+      expect { subject.perform(options.merge(from: 'number')) }.to_not raise_error
     end
 
     it 'ignores 404s' do
