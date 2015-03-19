@@ -87,9 +87,8 @@ module Xact
 
     redis_hash = {}
 
-    if Conf.redis_sentinel_uris.blank?
-      redis_hash[:url] = Conf.redis_uri
-    else
+    redis_hash[:url] = Conf.redis_uri
+    unless Conf.redis_sentinel_uris.blank?
       redis_hash[:sentinels] = Conf.redis_sentinel_uris
       redis_hash[:master_name] = "master"
       redis_hash[:failover_reconnect_timeout] = 6
