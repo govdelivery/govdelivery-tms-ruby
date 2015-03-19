@@ -8,11 +8,15 @@ module Geckoboard
                     unique: true
 
     def perform(account_id, basename)
-      num_of_subject_lines = 10
-      result = subject_sends_by_unit(account_id, num_of_subject_lines, 'minute', 30)
+      write_to_file("#{basename}.json", build_data(account_id, basename))
+    end
 
-      data = {}
-      xlabels = []
+    def build_data(account_id, basename)
+      num_of_subject_lines = 10
+      result               = subject_sends_by_unit(account_id, num_of_subject_lines, 'minute', 30)
+      data                 = {}
+      xlabels              = []
+
       result.rows.each do |subject, timestamp, count|
         data[subject] ||= []
         data[subject] << count
@@ -20,63 +24,61 @@ module Geckoboard
       end
       xlabels.uniq!
 
-      series = []
-      data.each do |subject, counts|
-        series << {
-          name: subject,
-          marker: {
+      series = data.map do |subject, counts|
+        {
+          name:      subject,
+          marker:    {
             symbol: 'circle',
             radius: 4
           },
           lineWidth: 4,
-          data: counts
+          data:      counts
         }
       end
 
-      output = {
-        colors: series_colors[0..num_of_subject_lines],
+      return {
+        colors:  series_colors[0..num_of_subject_lines],
         credits: {
           enabled: false
         },
-        legend: {
+        legend:  {
           enabled: false
         },
-        title: {
+        title:   {
           text: nil
         },
-        chart: {
-          type: 'spline',
-          style: {
+        chart:   {
+          type:            'spline',
+          style:           {
             color: "#9A9A9A"
           },
-          renderTo: "container",
+          renderTo:        "container",
           backgroundColor: "transparent",
-          lineColor: "rgba(154,154,154,100)",
-          plotShadow: false
+          lineColor:       "rgba(154,154,154,100)",
+          plotShadow:      false
         },
-        xAxis: {
+        xAxis:   {
           categories: xlabels
         },
-        yAxis: {
+        yAxis:   {
           title: {
             style: {
               color: "#9a9a9a"
             },
-            text: 'Sent Messages'
+            text:  'Sent Messages'
           }
         },
         tooltip: {
-          borderColor: "rgba(0,0,0,0.85)",
+          borderColor:     "rgba(0,0,0,0.85)",
           backgroundColor: "rgba(0,0,0,0.85)",
-          style: {
+          style:           {
             color: "#9a9a9a"
           },
-          crosshairs: true,
-          shared: true
+          crosshairs:      true,
+          shared:          true
         },
-        series: series
-      }.to_json
-      write_to_file("#{basename}.json", output)
+        series:  series
+      }
     end
   end
 end
