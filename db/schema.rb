@@ -11,20 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150216224444) do
+ActiveRecord::Schema.define(version: 20150323203657) do
 
   create_table "accounts", force: true do |t|
-    t.string   "name",                                                        null: false
+    t.string   "name",                                                           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "voice_vendor_id",                    precision: 38, scale: 0
-    t.integer  "email_vendor_id",                    precision: 38, scale: 0
-    t.integer  "sms_vendor_id",                      precision: 38, scale: 0
-    t.string   "dcm_account_codes",     limit: 4000
-    t.integer  "ipaws_vendor_id",                    precision: 38, scale: 0
+    t.integer  "voice_vendor_id",                       precision: 38, scale: 0
+    t.integer  "email_vendor_id",                       precision: 38, scale: 0
+    t.integer  "sms_vendor_id",                         precision: 38, scale: 0
+    t.string   "dcm_account_codes",        limit: 4000
+    t.integer  "ipaws_vendor_id",                       precision: 38, scale: 0
     t.string   "default_response_text"
-    t.string   "sid",                   limit: 32,                            null: false
-    t.string   "link_encoder",          limit: 30
+    t.string   "sid",                      limit: 32,                            null: false
+    t.string   "link_encoder",             limit: 30
+    t.string   "link_tracking_parameters"
   end
 
   create_table "authentication_tokens", force: true do |t|
