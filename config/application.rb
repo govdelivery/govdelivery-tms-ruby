@@ -11,6 +11,7 @@ require 'rack/ssl'
 require File.expand_path("../logging", __FILE__)
 
 require File.join(File.expand_path("../../lib", __FILE__), 'gov_delivery', 'host')
+require File.join(File.expand_path("../../lib", __FILE__), 'gov_delivery', 'models', 'anchor_href_transformer')
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
