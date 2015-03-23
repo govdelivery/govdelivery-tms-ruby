@@ -453,11 +453,13 @@ end
 
 def client_2
     if ENV['XACT_ENV'] == 'qc'
-      client = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', :api_root => 'https://qc-tms.govdelivery.com') #will send from (612) 255-6254
+      client_2 = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', :api_root => 'https://qc-tms.govdelivery.com') #will send from (612) 255-6254
     elsif ENV['XACT_ENV'] == 'integration'
-      client = TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', :api_root => 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
+      client_2 = TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', :api_root => 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
     elsif ENV['XACT_ENV'] == 'stage'
-      client = TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', :api_root => 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
+      client_2 = TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', :api_root => 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
+    elsif ENV['XACT_ENV'] == 'prod'  
+      client_2 = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', :api_root => 'https://tms.govdelivery.com') #THIS TEST DOESNT RUN IN PROD
     end
 end
 
@@ -523,6 +525,7 @@ Given(/^I rapidly send a keyword via SMS$/) do
 
     @b = @a[0].uri #find uri of "reply" message, 
 
+  sleep(2)  
   @request = HTTPI::Request.new #call to twilio callsid json
   @request.headers["Content-Type"] = "application/json"
   @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
@@ -531,6 +534,7 @@ Given(/^I rapidly send a keyword via SMS$/) do
     #binding.pry
   puts @response.raw_body
 
+  sleep(2)
   i = 0
   until JSON.parse(@response.raw_body)["body"] == "This is a text file from a remote website." #loop until call status = completed
     STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
@@ -565,6 +569,7 @@ Given(/^I send an SMS with an invalid word or command$/) do
     end
     @b = @a[0].uri #find uri of "reply" message, 
 
+  sleep(2)  
   @request = HTTPI::Request.new #call to twilio callsid json
   @request.headers["Content-Type"] = "application/json"
   @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
@@ -573,6 +578,7 @@ Given(/^I send an SMS with an invalid word or command$/) do
     #binding.pry
   puts @response.raw_body
 
+  sleep(2)
   i = 0
   until JSON.parse(@response.raw_body)["body"] == "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." #loop until call status = completed
     STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
@@ -580,8 +586,8 @@ Given(/^I send an SMS with an invalid word or command$/) do
     STDOUT.puts 'waiting for status for 5 seconds'.blue
     sleep(5)
     i+=1 
-    if i>30
-      fail 'waited 150 seconds for message to be delivered, but it was not found.'.red
+    if i>9
+      fail 'waited 45 seconds for message to be delivered, but it was not found.'.red
     end  
   end 
   puts 'Help message found'.green 
@@ -605,7 +611,8 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
           }).each do |call| 
     end
     @b = @a[0].uri #find uri of "reply" message, 
-
+  
+  sleep(2)
   @request = HTTPI::Request.new #call to twilio callsid json
   @request.headers["Content-Type"] = "application/json"
   @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
@@ -613,7 +620,8 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
   @response = HTTPI.get(@request)
     #binding.pry
   puts @response.raw_body
-
+  
+  sleep(2)
   i = 0
   until JSON.parse(@response.raw_body)["body"] == "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." #loop until call status = completed
     STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
@@ -621,8 +629,8 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
     STDOUT.puts 'waiting for status for 5 seconds'.blue
     sleep(5)
     i+=1 
-    if i>30 #fails after 150 seconds
-      fail 'waited 150 seconds for message to be delivered, but it was not found.'.red
+    if i>9 #fails after 45 seconds
+      fail 'waited 45 seconds for message to be delivered, but it was not found.'.red
     end  
   end 
   puts 'Help message found'.green 
@@ -706,6 +714,7 @@ end
 Then(/^I should be able to verify the incoming message was received$/) do
   @message = client.voice_messages.get
 
+  sleep(2)
   puts @message.collection[random].attributes
 
   if @message.collection[random].attributes.include?(:play_url)
