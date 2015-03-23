@@ -24,6 +24,12 @@ I18n.enforce_available_locales = true
 
 module Xact
   class Application < Rails::Application
+    ::Conf = ConfigSpartan.create do
+      file "config/config.yml"
+      file "config/config.#{Rails.env.to_s}.yml"
+      file "/etc/sysconfig/xact.yml"
+    end
+
     config.eager_load = true
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -79,21 +85,17 @@ module Xact
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
 
-    redis_hash = {}
-    sentinels = ENV['REDIS_SENTINEL_URIS'].split(",").map(&:strip) if ENV['REDIS_SENTINEL_URIS']
-    if sentinels.blank?
-      redis_hash[:url] = ENV['REDIS_URI']
-    else
-      redis_hash[:sentinels] = sentinels
-      redis_hash[:master_name] = "master"
-      redis_hash[:failover_reconnect_timeout] = 6
+    redis_opts = {url: Conf.redis_uri}
+
+    if Conf.redis_sentinel_uris.any?
+      redis_opts[:sentinels] = Conf.redis_sentinel_uris.map { |sentinel| {host: sentinel.host, port: sentinel.port.to_i} }
     end
 
-    config.cache_store            = :redis_store, redis_hash, {pool_size: 7}
+    config.cache_store = :redis_store, redis_opts, {pool_size: 7}
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq                = {
-      default: redis_hash.merge({namespace: 'xact'}),
+      default: {namespace: 'xact'}.merge!(redis_opts),
       client:  {size: 20},
       server:  {}
     }
@@ -107,21 +109,21 @@ module Xact
     config.email_delivery_timeout = 24.hours
 
     config.dcm = {
-      username: ENV['DCM_USERNAME'],
-      password: ENV['DCM_PASSWORD'],
-      api_root: ENV['DCM_URI']
+      username: Conf.dcm_username,
+      password: Conf.dcm_password,
+      api_root: Conf.dcm_uri
     }
 
     config.twilio_polling_enabled = true
     config.odm_polling_enabled    = true
     config.colorize_logging       = false
 
-    config.fema_url            = ENV['FEMA_URI']
+    config.fema_url            = Conf.fema_uri
 
     # qc ODM
-    config.odm_endpoint        = "#{ENV['ODM_URI']}/service/TMSExtended?wsdl"
-    config.odm_username        = ENV['ODM_USERNAME']
-    config.odm_password        = ENV['ODM_PASSWORD']
+    config.odm_endpoint        = "#{Conf.odm_uri}/service/TMSExtended?wsdl"
+    config.odm_username        = Conf.odm_username
+    config.odm_password        = Conf.odm_password
 
     # override Rack exception application handling of exception status codes
     config.exceptions_app      = self.routes
@@ -138,9 +140,9 @@ module Xact
 
     # Controls whether this environment will publish/subscribe to Kafka
     config.analytics               = {
-      enabled:    ENV['ANALYTICS_ENABLED']=='true',
-      kafkas:     ENV['ANALYTICS_KAFKAS'].split(','),
-      zookeepers: ENV['ANALYTICS_ZOOKEEPERS'].split(','),
+      enabled:    Conf.analytics_enabled,
+      kafkas:     Conf.analytics_kafkas,
+      zookeepers: Conf.analytics_zookeepers
     }
 
     # Default log level is DEBUG
@@ -149,7 +151,7 @@ module Xact
     host                       = GovDelivery::Host.new
     config.datacenter_location = host.datacenter
     config.datacenter_env      = host.env
-    config.nsca_password       = ENV['NSCA_PASSWORD']
+    config.nsca_password       = Conf.nsca_password
 
     config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
   end

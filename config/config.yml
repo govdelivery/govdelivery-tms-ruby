@@ -1,0 +1,25 @@
+---
+# required
+#odm_uri: 'fake'
+#odm_username: 'fake'
+#odm_password: 'fake'
+#fema_uri: 'fake'
+#dcm_uri: 'fake'
+#dcm_username:
+#dcm_password:
+#redis_uri:
+
+# optional
+analytics_enabled: false
+analytics_kafkas: []
+analytics_zookeepers: []
+redis_sentinel_uris: [] # optional for environments with
+nsca_password: ""       # for nagios alerting
+
+# set these to run seed data
+#twilio_sid: 'fake'
+#twilio_token: 'fake'
+#twilio_number: 'fake'
+#twilio_test_sid: 'fake'
+#twilio_test_token: 'fake'
+

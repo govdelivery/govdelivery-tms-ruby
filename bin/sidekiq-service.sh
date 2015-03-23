@@ -33,6 +33,7 @@ if [[ -z "$environment" ]]; then
 fi
 
 export RAILS_ENV=$environment
+export REDIS_NAMESPACE_QUIET=1
 log_file="${app_path}/log/${app}.log"
 
 status () {
