@@ -1,11 +1,12 @@
+---
 odm_uri: "https://qc-tms.govdelivery.com:65081"
-  odm_username: xact
-  fema_uri: "https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS"
-  dcm_uri: "https://qc-api.govdelivery.com"
-  dcm_username: "xact-api@govdelivery.com"
-  analytics_enabled: false
-  redis_uri: "redis://127.0.0.1:6379/1"
-  twilio_token: "88e3775ad71e487c7c90b848a55a5c88"
-  twilio_test_token: "5b1c96ca034d474c6d4b68f8d05c99f5"
-  odm_password: Eish8sai2Heofereekae5ohmiyeijiN
-  dcm_password: "lets do Ortega Bombs"
+odm_username: xact
+fema_uri: "https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS"
+dcm_uri: "https://qc-api.govdelivery.com"
+dcm_username: "xact-api@govdelivery.com"
+analytics_enabled: false
+redis_uri: "redis://127.0.0.1:6379/1"
+twilio_token: "88e3775ad71e487c7c90b848a55a5c88"
+twilio_test_token: "5b1c96ca034d474c6d4b68f8d05c99f5"
+odm_password: Eish8sai2Heofereekae5ohmiyeijiN
+dcm_password: "lets do Ortega Bombs"
