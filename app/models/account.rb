@@ -129,7 +129,7 @@ class Account < ActiveRecord::Base
     if link_tracking_parameters.nil?
       {}
     else
-      AnchorHrefTransformer.querystring_to_hash('?' + link_tracking_parameters)
+      GovDelivery::Links::Transformer.querystring_to_hash('?' + link_tracking_parameters)
     end
   end
 
