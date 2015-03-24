@@ -126,19 +126,11 @@ class Account < ActiveRecord::Base
   # Make link tracking parameters act just like they do in Evo
   #
   def link_tracking_parameters_hash
-    AnchorHrefTransformer.querystring_to_hash('?' + link_tracking_parameters)
-  end
-
-  def link_tracking_parameters
-    no_link_tracking_parameters ? '' : read_attribute(:link_tracking_parameters)
-  end
-
-  def link_tracking_parameters=(value)
-    write_attribute(:link_tracking_parameters, value.try(:strip))
-  end
-
-  def no_link_tracking_parameters
-    read_attribute(:link_tracking_parameters).nil?
+    if link_tracking_parameters.nil?
+      {}
+    else
+      AnchorHrefTransformer.querystring_to_hash('?' + link_tracking_parameters)
+    end
   end
 
   def destroy
