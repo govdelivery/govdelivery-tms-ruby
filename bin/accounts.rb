@@ -83,6 +83,9 @@ USAGE
       opts.on("-z", "--errors_to [ERRORSTO]", "The default errors-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
         @options[:account_errors_to] = p
       end
+      opts.on("-t", "--tracking_parameters [TRACKINGPARAMS]", "Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.") do |p|
+        @options[:tracking_parameters] = p
+      end
       opts.on("-p", "--help_text [HELP_TEXT]", "Optional, defaults to sms vendor help text") do |p|
         @options[:help_text] = p
       end
@@ -128,6 +131,10 @@ USAGE
         :errors_to    => @options[:account_errors_to],
         :is_default   => true
       })
+    end
+
+    if(@options[:tracking_parameters])
+      a.link_tracking_parameters = @options[:tracking_parameters]
     end
 
     if (@options[:account_from_number])
@@ -176,6 +183,7 @@ USAGE
       tputs "default from email:", account.default_from_address.from_email.to_s
       tputs "default reply-to:", account.default_from_address.reply_to.to_s
       tputs "default errors-to:", account.default_from_address.errors_to.to_s
+      tputs "link_tracking_parameters:", account.link_tracking_parameters.to_s
     end
     account.sms_prefixes.each do |p|
       tputs "sms prefix:", p.prefix
