@@ -124,44 +124,44 @@ describe Account do
   end
 
   context 'Link Tracking Parameters' do
-    it 'should default to blank string' do
+    it 'should default to blank' do
       a = create(:account, email_vendor: email_vendor)
       a.should be_valid
-      a.link_tracking_parameters.should eq("")
-      a.link_tracking_parameters_hash.should eq({})
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
     end
 
     it 'should use supplied values' do
       a = create(:account, email_vendor: email_vendor, link_tracking_parameters:"foo=bar&pi=3")
-      a.should be_valid
-      a.link_tracking_parameters.should eq("foo=bar&pi=3")
-      a.link_tracking_parameters_hash.should eq({"foo" => "bar", "pi" => "3"})
+      expect(a).to be_valid
+      expect(a.link_tracking_parameters).to eq("foo=bar&pi=3")
+      expect(a.link_tracking_parameters_hash).to eq({"foo" => "bar", "pi" => "3"})
       a.link_tracking_parameters = "not_foo=true"
       a.save!
-      a.link_tracking_parameters.should eq("not_foo=true")
-      a.link_tracking_parameters_hash.should eq({"not_foo" => "true"})
+      expect(a.link_tracking_parameters).to eq("not_foo=true")
+      expect(a.link_tracking_parameters_hash).to eq({"not_foo" => "true"})
     end
 
     it 'should return nothing with blank tracking parameters' do
       a = create(:account, email_vendor: email_vendor, link_tracking_parameters:"")
-      a.should be_valid
-      a.link_tracking_parameters.should eq("")
-      a.link_tracking_parameters_hash.should eq({})
+      expect(a).to be_valid
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
     end
 
     it 'should be nilable' do
       a = create(:account, email_vendor: email_vendor, link_tracking_parameters:nil)
-      a.should be_valid
-      a.link_tracking_parameters.should eq("")
-      a.link_tracking_parameters_hash.should eq({})
+      expect(a).to be_valid
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
       a.link_tracking_parameters = "this=something"
       a.save!
-      a.link_tracking_parameters.should_not eq("")
-      a.link_tracking_parameters_hash.should_not be_empty
+      expect(a.link_tracking_parameters).to_not be_blank
+      expect(a.link_tracking_parameters_hash).to_not eq({})
       a.link_tracking_parameters = nil
       a.save!
-      a.link_tracking_parameters.should eq("")
-      a.link_tracking_parameters_hash.should eq({})
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
     end
   end
 
