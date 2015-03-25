@@ -8,6 +8,8 @@ class CreateAccount
 
     if(@options[:list])
       list_accounts
+    elsif(@options[:update_account])
+      update_account(@options)
     elsif(@options[:account_id])
       display_account(Account.find(@options[:account_id]))
     else
@@ -48,6 +50,9 @@ Examples:
   Create Account with IPAWS vendor
     #{__FILE__} -n "IPAWS Test Account" -a 10026
 
+  Update Account Link Tracking Parameters
+    #{__FILE__} -U -i 123 -l "utf8=true"
+
 Options:
 USAGE
       opts.on("-l", "--list", "List Accounts") do |p|
@@ -83,6 +88,9 @@ USAGE
       opts.on("-z", "--errors_to [ERRORSTO]", "The default errors-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
         @options[:account_errors_to] = p
       end
+      opts.on("-l", "--link_tracking_parameters [TRACKINGPARAMS]", "Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.") do |p|
+        @options[:account_link_tracking_parameters] = p
+      end
       opts.on("-p", "--help_text [HELP_TEXT]", "Optional, defaults to sms vendor help text") do |p|
         @options[:help_text] = p
       end
@@ -100,6 +108,9 @@ USAGE
       end
       opts.on("-x", "--sms_prefix PREFIX", "Prefix for SMS commands (required if using a shared sms vendor)") do |p|
         @options[:sms_prefix] = p
+      end
+      opts.on("-U", "--update", "Update fields of an account. -i ACCOUNT_ID is required. Updateable fields are -n, -t, -p, -s, -S, and -D") do |p|
+        @options[:update_account] = true
       end
     end.parse!(argv)
   end
@@ -130,6 +141,10 @@ USAGE
       })
     end
 
+    if(@options[:account_link_tracking_parameters])
+      a.link_tracking_parameters = @options[:account_link_tracking_parameters]
+    end
+
     if (@options[:account_from_number])
       a.from_numbers.build({
          phone_number: @options[:account_from_number],
@@ -142,16 +157,43 @@ USAGE
     if(!a.errors.empty?)
       puts a.errors.messages
     else
-      ['default', 'help', 'stop', 'start'].each do |type|
-        next unless @options[:"#{type}_text"]
-        keyword = a.send(:"#{type}_keyword")
-        keyword.response_text = @options[:"#{type}_text"]
-        keyword.save
-      end
+      set_sms_texts(a, options)
       puts "Created Account id: " + a.id.to_s
       display_account(a)
     end
 
+  end
+
+  def update_account(options)
+    if not @options[:account_id]
+      puts "Error: Must provide account ID to update via -i/--account_id"
+      return
+    end
+
+    a = Account.find(@options[:account_id])
+
+    options_to_fields = {
+      account_name: :name,
+      account_link_tracking_parameters: :link_tracking_parameters
+    }
+
+    updates = {}
+
+    options_to_fields.each do |k, v|
+      if options.include?(k)
+        updates[v] = options[k]
+      end
+    end
+
+    a.update(updates)
+
+    if (!a.errors.empty?)
+      puts a.errors.messages
+    else
+      set_sms_texts(a, options)
+      puts "Updated Account id: " + a.id.to_s
+      display_account(a)
+    end
   end
 
   def list_accounts
@@ -176,6 +218,7 @@ USAGE
       tputs "default from email:", account.default_from_address.from_email.to_s
       tputs "default reply-to:", account.default_from_address.reply_to.to_s
       tputs "default errors-to:", account.default_from_address.errors_to.to_s
+      tputs "link_tracking_parameters:", account.link_tracking_parameters.to_s
     end
     account.sms_prefixes.each do |p|
       tputs "sms prefix:", p.prefix
@@ -186,6 +229,15 @@ USAGE
 
   def tputs(key,value)
     puts "\t#{key.ljust(30)}#{value}"
+    end
+
+  def set_sms_texts(account, options)
+    ['default', 'help', 'stop', 'start'].each do |type|
+      next unless options[:"#{type}_text"]
+      keyword = account.send(:"#{type}_keyword")
+      keyword.response_text = options[:"#{type}_text"]
+      keyword.save
+    end
   end
 end
 
