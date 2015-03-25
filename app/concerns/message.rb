@@ -144,6 +144,10 @@ module Message
     # noop
   end
 
+  def transform_body
+    # noop
+  end
+
   def check_complete
     counts = recipient_state_counts
     Recipient.incomplete_statuses.collect { |state| counts[state] }.sum == 0
@@ -151,6 +155,7 @@ module Message
 
   def on_sending(*args)
     self.sent_at = Time.now
+    self.transform_body
   end
 
   def on_complete
