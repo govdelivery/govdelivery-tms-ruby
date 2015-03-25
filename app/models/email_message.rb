@@ -91,4 +91,15 @@ class EmailMessage < ActiveRecord::Base
   def recipients_with(type)
     recipients.where(["email_recipients.id in (select distinct(email_recipient_id) from email_recipient_#{type} where email_message_id = ?)", self.id])
   end
+
+  def transform_body
+    insert_link_tracking_parameters
+  end
+
+  def insert_link_tracking_parameters
+    unless account.link_tracking_parameters_hash.blank?
+      t = GovDelivery::Links::Transformer.new(account.link_tracking_parameters_hash)
+      self.body = t.replace_all_hrefs(self.body)
+    end
+  end
 end
