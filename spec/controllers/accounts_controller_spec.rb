@@ -1,5 +1,47 @@
 require 'rails_helper'
 
+RSpec.shared_examples "an account endpoint" do
+  it 'should succeed' do
+    expect(response.status).to eq(201)
+  end
+
+  context 'and then views it' do
+    before do
+      get :show, id: @account.id
+    end
+    it 'should succeed' do
+      expect(response.status).to eq(200)
+    end
+  end
+
+  context 'and then deletes it' do
+    before do
+      delete :destroy, id: @account.id
+    end
+    it 'should succeed' do
+      expect(response.status).to eq(204)
+    end
+  end
+
+  context 'and then updates it' do
+    before do
+      patch :update, id: @account.id, account: {name: 'bar'}
+    end
+    it 'should succeed' do
+      expect(response.status).to eq(200)
+    end
+  end
+
+  context 'and then lists it' do
+    before do
+      get :index, id: @account.id
+    end
+    it 'should succeed' do
+      expect(response.status).to eq(200)
+    end
+  end
+end
+
 describe AccountsController, :type => :controller do
   let (:account) { create :account,
                           sms_vendor:   create(:sms_vendor),
@@ -38,46 +80,8 @@ describe AccountsController, :type => :controller do
         expect(@account.voice_vendor).to_not be nil
       end
 
-      it 'should succeed' do
-        expect(response.status).to eq(201)
-      end
+      it_behaves_like "an account endpoint"
 
-      context 'and then views it' do
-        before do
-          get :show, id: @account.id
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(200)
-        end
-      end
-
-      context 'and then deletes it' do
-        before do
-          delete :destroy, id: @account.id
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(204)
-        end
-      end
-
-      context 'and then updates it' do
-        before do
-          patch :update, id: @account.id, account: {name: 'bar'}
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(200)
-        end
-      end
-
-      context 'and then lists it' do
-        before do
-          get :index, id: @account.id
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(200)
-        end
-
-      end
     end
 
     context 'who creates an account with a flat request' do
@@ -104,46 +108,36 @@ describe AccountsController, :type => :controller do
         expect(@account.voice_vendor).to_not be nil
       end
 
-      it 'should succeed' do
-        expect(response.status).to eq(201)
+      it_behaves_like "an account endpoint"
+
+    end
+
+    context 'who creates an account with a nils on non-email fields' do
+      before do
+        post :create,
+             name:                  'yesss',
+             voice_vendor_id:       nil,
+             email_vendor_id:       create(:email_vendor).id,
+             sms_vendor_id:         nil,
+             ipaws_vendor_id:       nil,
+             dcm_account_codes:     ['ACME'],
+             help_text:             nil,
+             stop_text:             nil,
+             default_response_text: nil,
+             link_tracking_parameters: nil,
+             from_email: 'from@test.com',
+             reply_to:   nil,
+             errors_to:   nil,
+             phone_number: nil
+        @account = assigns(:account)
+        expect(@account.sms_vendor).to be nil
+        expect(@account.email_vendor).to_not be nil
+        expect(@account.ipaws_vendor).to be nil
+        expect(@account.voice_vendor).to be nil
       end
 
-      context 'and then views it' do
-        before do
-          get :show, id: @account.id
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(200)
-        end
-      end
+      it_behaves_like "an account endpoint"
 
-      context 'and then deletes it' do
-        before do
-          delete :destroy, id: @account.id
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(204)
-        end
-      end
-
-      context 'and then updates it' do
-        before do
-          patch :update, id: @account.id, account: {name: 'bar'}
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(200)
-        end
-      end
-
-      context 'and then lists it' do
-        before do
-          get :index, id: @account.id
-        end
-        it 'should succeed' do
-          expect(response.status).to eq(200)
-        end
-
-      end
     end
   end
 

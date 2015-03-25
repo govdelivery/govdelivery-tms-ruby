@@ -14,7 +14,7 @@ class AccountsController < ApplicationController
     if params[:from_address]
       @account.from_addresses.build(params[:from_address].merge!(is_default: true))
     end
-    if params[:from_number]
+    if not @account.voice_vendor.nil? and params[:from_number]
       @account.from_numbers.build(params[:from_number].merge!(is_default: true))
     end
     @account.save!
