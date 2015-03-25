@@ -3,32 +3,7 @@ class AccountsController < ApplicationController
   before_filter ->(c) { render(json:   {error: "forbidden"},
                                status: :forbidden) unless current_user.admin? }
   before_filter :find_account, only: [:show, :update, :destroy]
-
-  wrap_parameters :message,
-    include: [
-               :name,
-               :created_at,
-               :updated_at,
-               :stop_handler_id,
-               :voice_vendor_id,
-               :email_vendor_id,
-               :sms_vendor_id,
-               :ipaws_vendor_id,
-               :dcm_account_codes,
-               :help_text,
-               :stop_text,
-               :default_response_text
-             ], format: [:json, :url_encoded_form]
-
-  wrap_parameters :from_address,
-                  include: [:from_email,
-                            :reply_to,
-                            :errors_to],
-                  format:  [:json, :url_encoded_form]
-
-  wrap_parameters :from_number,
-                  include: [:phone_number],
-                  format:  [:json, :url_encoded_form]
+  before_filter :wrap_accounts_parameters
 
   def index
     @accounts = Account.all
@@ -69,5 +44,41 @@ class AccountsController < ApplicationController
     @account = Account.find(params[:id])
   end
 
+  def wrap_accounts_parameters
+    if ['application/json', 'application/x-www-form-urlencoded'].include?(request.format)
+      wrapper_params = {
+        account: [
+          :name,
+          :created_at,
+          :updated_at,
+          :stop_handler_id,
+          :voice_vendor_id,
+          :email_vendor_id,
+          :sms_vendor_id,
+          :ipaws_vendor_id,
+          :dcm_account_codes,
+          :help_text,
+          :stop_text,
+          :default_response_text,
+          :link_tracking_parameters
+        ],
+        from_address: [
+          :from_email,
+          :reply_to,
+          :errors_to],
+        from_number: [
+          :phone_number
+        ]
+      }
 
+      wrapper_params.each do |wrapper_name, nested_params|
+        if nested_params.any? { |p| params.include?(p) }
+          params[wrapper_name] = {}
+          nested_params.each do |p|
+            params[wrapper_name][p] = params[p] if params.include?(p)
+          end
+        end
+      end
+    end
+  end
 end
