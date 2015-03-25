@@ -97,7 +97,9 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def insert_link_tracking_parameters
-    t = GovDelivery::Links::Transformer.new(account.link_tracking_parameters_hash)
-    self.body = t.replace_all_hrefs(self.body)
+    unless account.link_tracking_parameters_hash.blank?
+      t = GovDelivery::Links::Transformer.new(account.link_tracking_parameters_hash)
+      self.body = t.replace_all_hrefs(self.body)
+    end
   end
 end
