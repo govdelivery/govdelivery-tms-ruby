@@ -512,8 +512,6 @@ def prefix_and_body
     'CUKEINT test'
   elsif ENV['XACT_ENV'] == 'stage'
     'CUKE test'
-  elsif ENV['XACT_ENV'] == 'prod'
-    'CUKE test'
   end
 end
 
