@@ -71,6 +71,7 @@ def topic_code
   end
 end
 
+#this will be removed after we sort out the accounts api endpoint
   # @attr name [String] Account name (required).
   # @attr dcm_account_codes [Array] An array of GovDelivery Communications Cloud account codes that the TMS account can access.
   # @attr stop_handler_id [Integer] ID of desired StopHandler event
@@ -82,6 +83,8 @@ end
   # @attr stop_text [String] default response for when someone texts STOP to an account
   # @attr default_response_text [String]
   # @attr link_tracking_parameters [String] sets default link tracking parameter
+#this will be removed after we sort out the accounts api endpoint
+
 
 Given(/^I admin$/) do
   admin
