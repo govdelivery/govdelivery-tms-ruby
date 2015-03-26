@@ -88,10 +88,51 @@ end
 
 Given(/^I admin$/) do
   admin
-  account = admin.accounts.build(name: 'hodsjoiajpsjapdadasdass', dcm_account_codes:['CUKEAUTO_QC'], 
-    help_text: 'Account help text', stop_text: 'Account stop text', default_response_text: 'Default response text')
+  account = admin.accounts.build(:name => 'hodsjoiajpsjapdadasdass')
   STDOUT.puts account.errors unless account.post 
 end
+
+Given(/^I am a TMS admin$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^I should be able to enter link tracking params at the account level$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Given(/^I send an email from an account that has link tracking params configured$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^those params should resolve within the body of the email I send$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^I should be able to create and list templates for email messages$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^I should be able to verify that all required fields are listed$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Given(/^I am a TMS user and not an admin$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^I should not be able to see the accounts endpoint$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^I should be able to create, update, list, and delete templates$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+
+#==========================================>
+#==========================================>
+#==========================================>
+
 
 
 #@QC-2453
