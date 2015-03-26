@@ -1,6 +1,7 @@
 #!/bin/env ruby
 #encoding: utf-8
 
+require 'tms_admin_client'
 require 'tms_client'
 require 'colored'
 require 'json'
@@ -20,54 +21,75 @@ $t = Hash.new #generating a hash value
 $t.store(1, rand(0...10000)) #storing the hash value so we can retrieve it later on
 
 
+def admin
+  if ENV['XACT_ENV'] == 'qc'
+    client = TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', :api_root => 'https://qc-tms.govdelivery.com')
+  elsif ENV['XACT_ENV'] == 'integration'
+    client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', :api_root => 'https://int-tms.govdelivery.com')
+  elsif ENV['XACT_ENV'] == 'stage'
+    client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
+  end
+end
 
 def client
-    if ENV['XACT_ENV'] == 'qc'
-      client = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', :api_root => 'https://qc-tms.govdelivery.com')
-    elsif ENV['XACT_ENV'] == 'integration'
-      client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', :api_root => 'https://int-tms.govdelivery.com')
-    elsif ENV['XACT_ENV'] == 'stage'
-      client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
-    elsif ENV['XACT_ENV'] == 'prod'
-      client = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', :api_root => 'https://tms.govdelivery.com')
-    end
+  if ENV['XACT_ENV'] == 'qc'
+    client = TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', :api_root => 'https://qc-tms.govdelivery.com')
+  elsif ENV['XACT_ENV'] == 'integration'
+    client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', :api_root => 'https://int-tms.govdelivery.com')
+  elsif ENV['XACT_ENV'] == 'stage'
+    client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
+  end
 end
 
 def from_email
-    if ENV['XACT_ENV'] == 'qc'
-      'cukeautoqc@govdelivery.com'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'cukeautoint@govdelivery.com'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'cukestage@govdelivery.com'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'cukeprod@govdelivery.com'
-    end
+  if ENV['XACT_ENV'] == 'qc'
+    'cukeautoqc@govdelivery.com'
+  elsif ENV['XACT_ENV'] == 'integration'
+    'cukeautoint@govdelivery.com'
+  elsif ENV['XACT_ENV'] == 'stage'
+    'cukestage@govdelivery.com'
+  end
 end
 
 def account_code
-    if ENV['XACT_ENV'] == 'qc'
-      'CUKEAUTO_QC'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'CUKEAUTO_INT'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'CUKEAUTO_STAGE'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'CUKEAUTO_PROD'
-    end
+  if ENV['XACT_ENV'] == 'qc'
+    'CUKEAUTO_QC'
+  elsif ENV['XACT_ENV'] == 'integration'
+    'CUKEAUTO_INT'
+  elsif ENV['XACT_ENV'] == 'stage'
+    'CUKEAUTO_STAGE'
+  end
 end
 
 def topic_code
-    if ENV['XACT_ENV'] == 'qc'
-      'CUKEAUTO_QC_SMS'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'CUKEAUTO_INT_SMS'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'CUKEAUTO_STAGE_SMS'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'CUKEAUTO_PROD_SMS'
-    end
+  if ENV['XACT_ENV'] == 'qc'
+    'CUKEAUTO_QC_SMS'
+  elsif ENV['XACT_ENV'] == 'integration'
+    'CUKEAUTO_INT_SMS'
+  elsif ENV['XACT_ENV'] == 'stage'
+    'CUKEAUTO_STAGE_SMS'
+  end
 end
+
+  # @attr name [String] Account name (required).
+  # @attr dcm_account_codes [Array] An array of GovDelivery Communications Cloud account codes that the TMS account can access.
+  # @attr stop_handler_id [Integer] ID of desired StopHandler event
+  # @attr email_vendor_id [Integer] ID of desired EmailVendor
+  # @attr sms_vendor_id [Integer] ID of desired SmsVendor
+  # @attr voice_vendor_id [Integer] ID of desired VoiceVendor
+  # @attr ipaws_vendor_id [Integer] ID of desired IPAWS::Vendor
+  # @attr help_text [String] default response for when someone texts HELP to an account
+  # @attr stop_text [String] default response for when someone texts STOP to an account
+  # @attr default_response_text [String]
+  # @attr link_tracking_parameters [String] sets default link tracking parameter
+
+Given(/^I admin$/) do
+  admin
+  account = admin.accounts.build(name: 'hodsjoiajpsjapdadasdass', dcm_account_codes:['CUKEAUTO_QC'], 
+    help_text: 'Account help text', stop_text: 'Account stop text', default_response_text: 'Default response text')
+  STDOUT.puts account.errors unless account.post 
+end
+
 
 #@QC-2453
 Given(/^I create a new keyword with a text response$/) do

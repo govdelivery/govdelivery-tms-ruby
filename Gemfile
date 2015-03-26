@@ -39,6 +39,7 @@ gem 'sinatra', require: nil
 gem 'slim'
 gem "strip_attributes"
 gem 'twilio-ruby'
+gem 'tms_admin_client', '0.0.2'
 gem "validate_url"
 gem 'valid_email'
 gem 'yakety_yak'
@@ -96,6 +97,6 @@ group :test do
   gem 'fakeweb'
   gem 'mocha', require: false
   gem 'shoulda-matchers'
-  gem 'tms_client', '0.5.4'
+  gem 'tms_client', '0.7.0'
 end
 
