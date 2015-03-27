@@ -26,7 +26,8 @@ module Xact
   class Application < Rails::Application
     ::Conf = ConfigSpartan.create do
       file "config/config.yml"
-      file "config/config.#{Rails.env.to_s}.yml"
+      file "config/config.local.yml"
+      file "config/config.test.yml" if Rails.env.test?
       file "/etc/sysconfig/xact.yml"
     end
 
