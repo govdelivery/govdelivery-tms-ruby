@@ -88,8 +88,9 @@ end
 
 Given(/^I admin$/) do
   admin
-  account = admin.accounts.build(:name => 'hodsjoiajpsjapdadasdass')
-  STDOUT.puts account.errors unless account.post 
+  account = admin.accounts.get
+  puts account
+  STDOUT.puts account.errors
 end
 
 Given(/^I am a TMS admin$/) do
