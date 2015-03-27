@@ -21,6 +21,7 @@ describe ServicesController do
       inbound_sms_messages: inbound_sms_index_path,
       sms_messages: sms_index_path,
       email_messages: email_index_path,
+      from_addresses: from_addresses_path,
       voice_messages: voice_index_path,
       incoming_voice_messages: incoming_voice_messages_path,
       ipaws_event_codes: ipaws_event_codes_path,

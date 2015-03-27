@@ -26,6 +26,10 @@ Xact::Application.routes.draw do
     end
   end
 
+  resources(:from_addresses, only: [:index, :show]) do
+    pageable
+  end
+
   resources(:keywords) do
     pageable
     resources(:commands, controller: :keyword_commands) do
