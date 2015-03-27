@@ -16,11 +16,7 @@
 /log/jakety-jak.log*
 /tmp
 /config/database.yml
-/config/config.development.yml
-/config/config.qc.yml
-/config/config.integration.yml
-/config/config.stage.yml
-/config/config.prod.yml
+/config/config.local.yml
 .vagrant/
 .tags
 .tags_sorted_by_file
