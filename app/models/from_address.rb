@@ -9,6 +9,8 @@ class FromAddress < ActiveRecord::Base
   validates :bounce_email,   length: {maximum: 255}, allow_blank: true, format: Devise.email_regexp
   validates :reply_to_email, length: {maximum: 255}, allow_blank: true, format: Devise.email_regexp
 
+  has_many :email_templates
+
   before_save :ensure_unique_defaultness
 
   ##

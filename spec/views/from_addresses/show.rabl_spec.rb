@@ -1,17 +1,8 @@
 require 'rails_helper'
 
 describe 'from_addresses/show.rabl' do
-  let(:from_address) do
-    stub('from_address',
-         id:             22,
-         to_param:       '22',
-         from_email:     'ben@sink.govdelivery.com',
-         reply_to_email: 'andrew@sink.govdelivery.com',
-         bounce_email:   'bill@sink.govdelivery.com',
-         is_default:     false,
-         persisted?:     true,
-         errors:         [])
-  end
+  let(:account) { create(:account) }
+  let(:from_address) { account.default_from_address }
 
   it 'should tell us stuff' do
     assign(:from_address, from_address)

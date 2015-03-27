@@ -34,8 +34,9 @@ class ApplicationController < ActionController::API
   before_filter :authenticate_user!
   before_filter :set_page, :only => :index
 
-  rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
-  rescue_from JSON::ParserError, :with => :render_malformed_json
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+  rescue_from JSON::ParserError, with: :render_malformed_json
+  rescue_from ActiveRecord::RecordInvalid, with: :render_invalid_record
 
   # URL helper methods will use this set of options as defaults
   def default_url_options
@@ -89,6 +90,11 @@ class ApplicationController < ActionController::API
     render :json => {error: "Something went wrong parsing your request JSON"}, :status => :bad_request
   end
 
+  def render_invalid_record(e)
+    instrument_captured_error(e)
+    render json: {errors: e.record.errors.messages}, status: :unprocessable_entity
+  end
+
   def find_user
     if user_signed_in?
       @account = current_user.account
@@ -130,13 +136,13 @@ class ApplicationController < ActionController::API
 
   ##
   # We don't bang-save when using respond_with, so this is the way we get NewRelic
-  # to notice there is a problem: give it an exception. 
+  # to notice there is a problem: give it an exception.
   #
   def log_validation_errors(r)
     instrument_captured_error(ActiveRecord::RecordInvalid.new(r))
   end
 
-  ## 
+  ##
   # log something and tell new relic there was a problem somewhere (XACT-213)
   #
   def instrument_captured_error(e)
@@ -147,5 +153,13 @@ class ApplicationController < ActionController::API
 
   def default_url_options
     ActionController::Base.default_url_options
+  end
+
+  def transform_links_payload!(main_key)
+    return unless params[main_key][:_links].is_a? Hash
+    links = params[main_key].delete(:_links)
+    links.each do |key, value|
+      params[main_key]["#{key}_id"] = value
+    end
   end
 end

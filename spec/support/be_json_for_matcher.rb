@@ -17,7 +17,7 @@ RSpec::Matchers.define :be_json_for do |expected|
   end
 
   chain :with_errors do |*timestamps|
-    @errors=true
+    @errors = true
   end
 
   chain :with_links do |links|
