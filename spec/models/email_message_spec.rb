@@ -80,6 +80,20 @@ describe EmailMessage do
         end
       end
 
+      context 'and ready!' do
+        before do
+          email.recipients.create!(email: 'bill@busheyworld.ie')
+        end
+
+        it 'should insert tracking parameters into all links' do
+          expect(email.ready!).to be true
+          expect(email.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
+          expect(email.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
+          expect(email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
+          expect(email.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
+        end
+      end
+
       context 'and sending!' do
         before do
           email.recipients.create!(email: 'bill@busheyworld.ie')
@@ -93,15 +107,6 @@ describe EmailMessage do
 
         it 'should not be able to skip queued' do
           expect{email.sending!(nil, 'dummy_id')}.to raise_error(AASM::InvalidTransition)
-        end
-
-        it 'should insert tracking parameters into all links' do
-          expect(email.ready!).to be true
-          expect(email.sending!(nil, 'dummy_id')).to be true
-          expect(email.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
-          expect(email.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
-          expect(email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
-          expect(email.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
 
         context 'and completed! without a message' do

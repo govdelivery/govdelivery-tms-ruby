@@ -14,7 +14,7 @@ module Message
       state :canceled
 
       event :ready do
-        transitions from: :new, to: :queued, guard: :create_recipients, after: [:process_blacklist!, :prepare_recipients]
+        transitions from: :new, to: :queued, guard: :create_recipients, after: [:process_blacklist!, :prepare_recipients, :transform_body]
       end
 
       event :sending do
@@ -155,7 +155,6 @@ module Message
 
   def on_sending(*args)
     self.sent_at = Time.now
-    self.transform_body
   end
 
   def on_complete
