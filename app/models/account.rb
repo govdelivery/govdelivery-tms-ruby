@@ -3,7 +3,7 @@ require 'set'
 class Account < ActiveRecord::Base
   attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :ipaws_vendor,
                   :sms_vendor_id, :email_vendor_id, :voice_vendor_id, :ipaws_vendor_id,
-                  :from_address, :dcm_account_codes
+                  :from_address, :dcm_account_codes, :link_tracking_parameters
 
   belongs_to :email_vendor
   belongs_to :sms_vendor
@@ -120,6 +120,13 @@ class Account < ActiveRecord::Base
     else
       super
     end
+  end
+
+  ##
+  # Make link tracking parameters act just like they do in Evo
+  #
+  def link_tracking_parameters_hash
+    GovDelivery::Links::Transformer.querystring_to_hash('?' + (link_tracking_parameters || ''))
   end
 
   def destroy

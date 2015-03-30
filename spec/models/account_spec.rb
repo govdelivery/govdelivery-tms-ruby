@@ -123,6 +123,48 @@ describe Account do
     end
   end
 
+  context 'Link Tracking Parameters' do
+    it 'should default to blank' do
+      a = create(:account, email_vendor: email_vendor)
+      a.should be_valid
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
+    end
+
+    it 'should use supplied values' do
+      a = create(:account, email_vendor: email_vendor, link_tracking_parameters:"foo=bar&pi=3")
+      expect(a).to be_valid
+      expect(a.link_tracking_parameters).to eq("foo=bar&pi=3")
+      expect(a.link_tracking_parameters_hash).to eq({"foo" => "bar", "pi" => "3"})
+      a.link_tracking_parameters = "not_foo=true"
+      a.save!
+      expect(a.link_tracking_parameters).to eq("not_foo=true")
+      expect(a.link_tracking_parameters_hash).to eq({"not_foo" => "true"})
+    end
+
+    it 'should return nothing with blank tracking parameters' do
+      a = create(:account, email_vendor: email_vendor, link_tracking_parameters:"")
+      expect(a).to be_valid
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
+    end
+
+    it 'should be nilable' do
+      a = create(:account, email_vendor: email_vendor, link_tracking_parameters:nil)
+      expect(a).to be_valid
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
+      a.link_tracking_parameters = "this=something"
+      a.save!
+      expect(a.link_tracking_parameters).to_not be_blank
+      expect(a.link_tracking_parameters_hash).to_not eq({})
+      a.link_tracking_parameters = nil
+      a.save!
+      expect(a.link_tracking_parameters).to be_blank
+      expect(a.link_tracking_parameters_hash).to eq({})
+    end
+  end
+
   it 'should require a from address if it had an email vendor' do
     Account.new(name: 'name', email_vendor: email_vendor).should_not be_valid
     a = Account.new(name: 'name', email_vendor: email_vendor)

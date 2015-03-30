@@ -44,7 +44,7 @@ RSpec.describe WebhooksController, :type => :controller do
   it 'can update' do
     webhook = account.webhooks.create!(event_type: 'failed', url: 'http://failwhale.com/fail')
     patch :update, id: webhook.to_param, webhook: {event_type: 'sent', url: 'http://failwhale.com/sent'}
-    expect(response.status).to eq(204)
+    expect(response.status).to eq(200)
     expect(hook = assigns(:webhook)).to eq(webhook)
     hook.event_type.should eq('sent')
     hook.url.should eq('http://failwhale.com/sent')

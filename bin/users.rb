@@ -85,6 +85,7 @@ USAGE
     puts "\temail: " + u.email + "\n"
     puts "\taccount_id: " + u.account_id.to_s + "\n"
     puts "\tauth token: " + (u.authentication_tokens.first.try(:token) || "(n/a)") + "\n"
+    puts "\tadmin: " + u.admin.to_s + "\n"
     puts "\n"
   end
 

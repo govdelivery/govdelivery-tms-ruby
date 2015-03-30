@@ -2,11 +2,11 @@ require 'rails_helper'
 
 describe EmailMessage do
   let(:vendor) { create(:email_vendor) }
-  let(:account) { create(:account, email_vendor: vendor, name: 'name') }
+  let(:account) { create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3') }    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
   let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
   let(:email) { build(:email_message,
     :user => user,
-    :body => 'longggg body',
+    :body => 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
     :subject => 'specs before tests',
     :from_email => account.from_email,
     :open_tracking_enabled => true,
@@ -77,6 +77,20 @@ describe EmailMessage do
         end
         not_cols.each do |c|
           expect { result.send(c) }.to raise_error
+        end
+      end
+
+      context 'and ready!' do
+        before do
+          email.recipients.create!(email: 'bill@busheyworld.ie')
+        end
+
+        it 'should insert tracking parameters into all links' do
+          expect(email.ready!).to be true
+          expect(email.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
+          expect(email.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
+          expect(email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
+          expect(email.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
       end
 

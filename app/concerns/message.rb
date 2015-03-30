@@ -14,7 +14,7 @@ module Message
       state :canceled
 
       event :ready do
-        transitions from: :new, to: :queued, guard: :create_recipients, after: [:process_blacklist!, :prepare_recipients]
+        transitions from: :new, to: :queued, guard: :create_recipients, after: [:process_blacklist!, :prepare_recipients, :transform_body]
       end
 
       event :sending do
@@ -141,6 +141,10 @@ module Message
   end
 
   def prepare_recipients
+    # noop
+  end
+
+  def transform_body
     # noop
   end
 
