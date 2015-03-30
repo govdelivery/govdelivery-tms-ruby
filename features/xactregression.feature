@@ -33,9 +33,9 @@ Feature: XACT Full Regression
 
 #admin template and link tracking params tests
 
-	@admin
-    Scenario: Admin
-    	Given I admin
+	#@admin
+    #Scenario: Admin
+    	#Given I admin
 
     @XACT-533-1
     Scenario: TMS admin creation of link tracking params
