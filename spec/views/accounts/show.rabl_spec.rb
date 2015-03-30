@@ -32,6 +32,7 @@ describe 'accounts/show.rabl' do
                           :sms_vendor_id,
                           :ipaws_vendor_id,
                           :default_response_text,
+                          :link_tracking_parameters,
                           :sid).
                       with_arrays(:dcm_account_codes).
                       with_timestamps(:created_at, :updated_at).
