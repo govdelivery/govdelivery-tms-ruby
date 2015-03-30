@@ -51,7 +51,7 @@ Examples:
     #{__FILE__} -n "IPAWS Test Account" -a 10026
 
   Update Account Link Tracking Parameters
-    #{__FILE__} -U -i 123 -l "utf8=true"
+    #{__FILE__} -U -i 123 -L "utf8=true"
 
 Options:
 USAGE
@@ -88,7 +88,7 @@ USAGE
       opts.on("-z", "--errors_to [ERRORSTO]", "The default errors-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
         @options[:account_errors_to] = p
       end
-      opts.on("-l", "--link_tracking_parameters [TRACKINGPARAMS]", "Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.") do |p|
+      opts.on("-L", "--link_tracking_parameters [TRACKINGPARAMS]", "Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.") do |p|
         @options[:account_link_tracking_parameters] = p
       end
       opts.on("-p", "--help_text [HELP_TEXT]", "Optional, defaults to sms vendor help text") do |p|
