@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe TwilioRequestsController, '#create' do
+  render_views
   # a short_code has been provisioned with twilio
   # a vendor has been provisioned with credentials from twilio
   # AccountSid and SmsSid are added to the request by twilio
@@ -13,20 +14,22 @@ describe TwilioRequestsController, '#create' do
   context 'without a prefix' do
     it 'should return 404 on a non-existant AccountSid' do
       post :create, twilio_request_params('HELP ', @vendor).merge('AccountSid' => 'something ridiculous')
-      response.response_code.should eq(404)
+      expect(response.response_code).to eq(404)
     end
 
     it "responds to 'STOP' with vendor stop text" do
       SmsVendor.any_instance.expects(:stop!).with(kind_of(CommandParameters))
       post :create, twilio_request_params('STOP', @vendor)
-      response.response_code.should eq(201)
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
+      expect(response.response_code).to eq(201)
+      expect(assigns(:response).response_text).to eq Service::Keyword::DEFAULT_STOP_TEXT
+      expect(response).to be_a_valid_twilio_sms_response
     end
 
     it "responds to 'HELP' with vendor help text" do
       post :create, twilio_request_params('HELP', @vendor)
-      response.response_code.should eq(201)
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_HELP_TEXT
+      expect(response.response_code).to eq(201)
+      expect(assigns(:response).response_text).to eq Service::Keyword::DEFAULT_HELP_TEXT
+      expect(response).to be_a_valid_twilio_sms_response
     end
 
     it "responds to: 'GIBBERISH' with account default response text" do
@@ -35,8 +38,9 @@ describe TwilioRequestsController, '#create' do
       default_keyword.response_text = "Aye! Ye got me booty!"
       default_keyword.save
       post :create, twilio_request_params('GIBBERISH', @vendor)
-      response.response_code.should eq(201)
-      assigns(:response).response_text.should == "Aye! Ye got me booty!"
+      expect(response.response_code).to eq(201)
+      expect(assigns(:response).response_text).to eq "Aye! Ye got me booty!"
+      expect(response).to be_a_valid_twilio_sms_response
     end
 
     context 'that should be ignored' do
@@ -47,7 +51,7 @@ describe TwilioRequestsController, '#create' do
 
       it "should execute comands but not return response text" do
         post :create, twilio_request_params('i am in my car right now, will reply later', @vendor)
-        assigns(:response).response_text.should be nil
+        expect(assigns(:response).response_text).to be nil
       end
     end
   end
@@ -61,7 +65,7 @@ describe TwilioRequestsController, '#create' do
       end
       it "does not respond" do
         post :create, @params
-        assigns(:response).response_text.should be_blank
+        expect(assigns(:response).response_text).to be_blank
       end
 
       context " adding response text: 'ok' to the keyword" do
@@ -69,22 +73,22 @@ describe TwilioRequestsController, '#create' do
         it "responds with 'ok'" do
           @keyword.update_attribute( :response_text, 'ok')
           post :create, @params
-          assigns(:response).response_text.should eql('ok')
+          expect(assigns(:response).response_text).to eql('ok')
         end
       end
 
       context "an account WITHOUT custom stop text, help text, or default response text" do
         it "responds to 'pirate stop' with vendor stop text" do
           post :create, @params.merge('Body' => 'pirate stop')
-          assigns(:response).response_text.should eql( Service::Keyword::DEFAULT_STOP_TEXT )
+          expect(assigns(:response).response_text).to eql( Service::Keyword::DEFAULT_STOP_TEXT )
         end
         it "responds to 'pirate help' with vendor help text" do
           post :create, @params.merge('Body' => 'pirate help')
-          assigns(:response).response_text.should eql( Service::Keyword::DEFAULT_HELP_TEXT )
+          expect(assigns(:response).response_text).to eql( Service::Keyword::DEFAULT_HELP_TEXT )
         end
         it "responds to 'pirate nothin' with account help text" do
           post :create, @params.merge('Body' => 'pirate nothin')
-          assigns(:response).response_text.should be_nil
+          expect(assigns(:response).response_text).to be_nil
         end
       end
 
@@ -102,15 +106,15 @@ describe TwilioRequestsController, '#create' do
         end
         it "responds to 'pirate stop' with account stop text" do
           post :create, @params.merge('Body' => 'pirate stop')
-          assigns(:response).response_text.should eql("oh sorry")
+          expect(assigns(:response).response_text).to eql("oh sorry")
         end
         it "responds to 'pirate help' with account help text" do
           post :create, @params.merge('Body' => 'pirate help')
-          assigns(:response).response_text.should eql("maybe later")
+          expect(assigns(:response).response_text).to eql("maybe later")
         end
         it "responds to 'pirate nothin' with account default response text" do
           post :create, @params.merge('Body' => 'pirate nothin')
-          assigns(:response).response_text.should eql("wat")
+          expect(assigns(:response).response_text).to eql("wat")
         end
       end
     end
