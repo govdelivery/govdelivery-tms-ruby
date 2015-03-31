@@ -36,6 +36,16 @@ RSpec.configure do |config|
 
 end
 
+RSpec::Matchers.define :be_a_valid_twilio_sms_response do
+  match do |response|
+    xml_doc = Nokogiri::XML(response.body)
+    !xml_doc.xpath("/Response//Sms").empty?
+  end
+  failure_message do |response|
+    "expected \n\n#{response.body}\n to be a valid Twilio SMS response"
+  end
+end
+
 def stub_command_action_create!(command_params, http_response, command_action, body=http_response.body)
   command_action.expects(:update!).with(
     error_message: nil,
