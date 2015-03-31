@@ -37,7 +37,7 @@ Feature: XACT Full Regression
     #Scenario: Admin
     	#Given I admin
 
-	@XACT-533-2
+	@XACT-533-2 @QC-2239
     Scenario: Check that params resolve correctly
     	Given I am a TMS admin
     	And I send an email from an account that has link tracking params configured
@@ -54,7 +54,7 @@ Feature: XACT Full Regression
     #	Then I should be able to create and list templates for email messages
     #	And I should be able to verify that all required fields are listed
 
-	@XACT-533-5
+	@XACT-533-5 @QC-2239
     Scenario: TMS admin verify that link tracking params are only available internally
     	Given I am a TMS user and not an admin
     	Then I should not be able to see the accounts endpoint
