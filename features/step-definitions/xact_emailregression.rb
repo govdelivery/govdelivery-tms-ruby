@@ -20,6 +20,9 @@ $s.store(1, rand(0...10000)) #storing the hash value so we can retrieve it later
 $t = Hash.new #generating a hash value
 $t.store(1, rand(0...10000)) #storing the hash value so we can retrieve it later on
 
+$x = Time.new #generating a hash value
+
+
 
 def admin
   if ENV['XACT_ENV'] == 'qc'
@@ -74,20 +77,26 @@ end
 
 def mail_accounts
   if ENV['XACT_ENV'] == 'qc'
-    to = 'xactqctest1@gmail.com'
-    username = 'xactqctest1@gmail.com'
-    password = 'govdel01!'
+    'xactqctest1@gmail.com'
   elsif ENV['XACT_ENV'] == 'integration'
-    to = 'xactqctest1@gmail.com'
-    username = 'xactqctest1@gmail.com'
-    password = 'govdel01!'
+    'xactqctest1@gmail.com'
   elsif ENV['XACT_ENV'] == 'stage'
-    to = 'xactqctest1@gmail.com'
-    username = 'xactqctest1@gmail.com'
-    password = 'govdel01!'
+    'xactqctest1@gmail.com'
   end  
 end
 
+def password
+  'govdel01!'
+end  
+
+Mail.defaults do
+  retriever_method :imap, 
+   :address    => "imap.gmail.com",
+   :port       => 993,
+   :user_name  => mail_accounts,
+   :password   => password,
+   :enable_ssl => true
+end
 
 
 
@@ -102,20 +111,31 @@ end
 
 And(/^I send an email from an account that has link tracking params configured$/) do
   admin
-  @message = client.email_messages.build(:body => '<p><a href="http://www.google.com">You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.</a>', 
-                                         :subject => 'XACT-533-2 Email Test for link parameters',
-                                         :from_email => "#{from_email}",
-                                         :macros => {"city"=>"Saint Paul"})
-  @message.recipients.build(:email => 'xactqctest1@gmail.com')
-
-binding.pry
-
+  @message = client.email_messages.build(:body => '<p><a href="http://www.cnn.com">You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.</a>', 
+                                         :subject => "XACT-533-2 Email Test for link parameters #{$x}",
+                                         :from_email => "#{from_email}")
+  @message.recipients.build(:email => mail_accounts)
   STDOUT.puts @message.errors unless @message.post
 end
 
 Then(/^those params should resolve within the body of the email I send$/) do
-  
+  emails = Mail.find(:subject => "XACT-533-2 Email Test for link parameters #{$x}") #telling Mail what to look for
+  lines = emails[0].html_part.body.decoded #extracting all of the HTML out of the email since the email is MultiPart
+  doc = Nokogiri::HTML.parse(lines) #Using Nokogiri to parse out the HTML to be something more readable
+  URL = doc.css('p a').map { |link| link['href'] }[0] #forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
+
+  puts 'link found goes to: '.green 
+  puts URL #outputting the extracted URL that goes to the password reset
+
+  if URL.include? "utf8=false"
+    puts 'params found'.green
+  elsif
+    fail 'params not found'.red
+
+  end  
 end
+
+
 
 Given(/^I am a TMS user and not an admin$/) do
   pending # express the regexp above with the code you wish you had
