@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gem 'aasm'
 gem 'addressable'
-gem 'activerecord-oracle_enhanced-adapter', '=1.5.5.3'
+gem 'activerecord-oracle_enhanced-adapter'
 gem 'clockwork'
 gem 'config_spartan', '~>1.0.0'
 gem 'dcm_client'
