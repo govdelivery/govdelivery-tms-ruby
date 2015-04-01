@@ -89,6 +89,10 @@ def password
   'govdel01!'
 end  
 
+def subject
+  "XACT-533-2 Email Test for link parameters #{$x}"
+end  
+
 Mail.defaults do
   retriever_method :imap, 
    :address    => "imap.gmail.com",
@@ -119,20 +123,48 @@ And(/^I send an email from an account that has link tracking params configured$/
 end
 
 Then(/^those params should resolve within the body of the email I send$/) do
-  emails = Mail.find(:subject => "XACT-533-2 Email Test for link parameters #{$x}") #telling Mail what to look for
-  lines = emails[0].html_part.body.decoded #extracting all of the HTML out of the email since the email is MultiPart
-  doc = Nokogiri::HTML.parse(lines) #Using Nokogiri to parse out the HTML to be something more readable
-  URL = doc.css('p a').map { |link| link['href'] }[0] #forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
+  a=0
+  until Mail.last != [] #checking to see if inbox is empty, and waiting until a message arrives
+    sleep(10)
+    STDOUT.puts 'waiting 10 seconds for emails to arrive'.green
+    a+=1
+    if a>10
+      fail
+    end  
+  end  
 
-  puts 'link found goes to: '.green 
-  puts URL #outputting the extracted URL that goes to the password reset
+  emails = Mail.last #establish emails var
 
-  if URL.include? "utf8=false"
+  i=0
+  until emails.subject = subject #telling Mail what to look for
+    start = Time.now
+    STDOUT.puts 'waiting for email for 6 seconds'.blue
+    sleep(6)
+    i+=1 
+    
+    if i>30
+      fail 'The email didn\'t appear wthin 3 minutes'.red
+    end  
+  end 
+  
+    lines = emails.html_part.body.decoded #extracting all of the HTML out of the email since the email is MultiPart
+    doc = Nokogiri::HTML.parse(lines) #Using Nokogiri to parse out the HTML to be something more readable
+    URL = doc.css('p a').map { |link| link['href'] }[0] #forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
+    puts 'Link found goes to: '.green 
+    puts URL #outputting the extracted URL with the email
+  
+  if URL.include? "utf8=true"
     puts 'params found'.green
   elsif
     fail 'params not found'.red
-
   end  
+    
+    Mail.find_and_delete({:what=>:all})
+
+    if Mail.all == []
+      puts 'Inbox email deleted'.green
+    end  
+
 end
 
 
