@@ -137,7 +137,6 @@ Then(/^those params should resolve within the body of the email I send$/) do
 
   i=0
   until emails.subject = subject #telling Mail what to look for
-    start = Time.now
     STDOUT.puts 'waiting for email for 6 seconds'.blue
     sleep(6)
     i+=1 
