@@ -2,7 +2,6 @@
 #encoding: utf-8
 
 require 'tms_admin_client'
-require 'tms_client'
 require 'colored'
 require 'json'
 require 'awesome_print'
@@ -24,81 +23,12 @@ $x = Time.new #generating a hash value
 
 
 
-def admin
-  if ENV['XACT_ENV'] == 'qc'
-    client = TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', :api_root => 'https://qc-tms.govdelivery.com')
-  elsif ENV['XACT_ENV'] == 'integration'
-    client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', :api_root => 'https://int-tms.govdelivery.com')
-  elsif ENV['XACT_ENV'] == 'stage'
-    client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
-  end
-end
-
-def client
-  if ENV['XACT_ENV'] == 'qc'
-    client = TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', :api_root => 'https://qc-tms.govdelivery.com')
-  elsif ENV['XACT_ENV'] == 'integration'
-    client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', :api_root => 'https://int-tms.govdelivery.com')
-  elsif ENV['XACT_ENV'] == 'stage'
-    client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
-  end
-end
-
-def from_email
-  if ENV['XACT_ENV'] == 'qc'
-    'cukeautoqc@govdelivery.com'
-  elsif ENV['XACT_ENV'] == 'integration'
-    'cukeautoint@govdelivery.com'
-  elsif ENV['XACT_ENV'] == 'stage'
-    'cukestage@govdelivery.com'
-  end
-end
-
-def account_code
-  if ENV['XACT_ENV'] == 'qc'
-    'CUKEAUTO_QC'
-  elsif ENV['XACT_ENV'] == 'integration'
-    'CUKEAUTO_INT'
-  elsif ENV['XACT_ENV'] == 'stage'
-    'CUKEAUTO_STAGE'
-  end
-end
-
-def topic_code
-  if ENV['XACT_ENV'] == 'qc'
-    'CUKEAUTO_QC_SMS'
-  elsif ENV['XACT_ENV'] == 'integration'
-    'CUKEAUTO_INT_SMS'
-  elsif ENV['XACT_ENV'] == 'stage'
-    'CUKEAUTO_STAGE_SMS'
-  end
-end
-
-
-def mail_accounts
-  if ENV['XACT_ENV'] == 'qc'
-    'xactqctest1@gmail.com'
-  elsif ENV['XACT_ENV'] == 'integration'
-    'xactqctest1@gmail.com'
-  elsif ENV['XACT_ENV'] == 'stage'
-    'xactqctest1@gmail.com'
-  end  
-end
-
-def password
-  'govdel01!'
-end  
-
-def subject
-  "XACT-533-2 Email Test for link parameters #{$x}"
-end  
-
 Mail.defaults do
   retriever_method :imap, 
    :address    => "imap.gmail.com",
    :port       => 993,
-   :user_name  => mail_accounts,
-   :password   => password,
+   :user_name  => EmailAdmin::new.mail_accounts,
+   :password   => EmailAdmin::new.password,
    :enable_ssl => true
 end
 
@@ -110,15 +40,15 @@ end
 
 
 Given(/^I am a TMS admin$/) do
-  admin
+  EmailAdmin.new.admin
 end
 
 And(/^I send an email from an account that has link tracking params configured$/) do
-  admin
+  EmailAdmin.new.admin
   @message = client.email_messages.build(:body => '<p><a href="http://www.cnn.com">You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.</a>', 
                                          :subject => "XACT-533-2 Email Test for link parameters #{$x}",
-                                         :from_email => "#{from_email}")
-  @message.recipients.build(:email => mail_accounts)
+                                         :from_email => "#{EmailAdmin.new.from_email}")
+  @message.recipients.build(:email => EmailAdmin.new.mail_accounts)
   STDOUT.puts @message.errors unless @message.post
 end
 
@@ -136,7 +66,7 @@ Then(/^those params should resolve within the body of the email I send$/) do
   emails = Mail.last #establish emails var
 
   i=0
-  until emails.subject = subject #telling Mail what to look for
+  until emails.subject = EmailAdmin.new.subject #telling Mail what to look for
     STDOUT.puts 'waiting for email for 6 seconds'.blue
     sleep(6)
     i+=1 
@@ -150,7 +80,7 @@ Then(/^those params should resolve within the body of the email I send$/) do
     doc = Nokogiri::HTML.parse(lines) #Using Nokogiri to parse out the HTML to be something more readable
     URL = doc.css('p a').map { |link| link['href'] }[0] #forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
     puts 'Link found goes to: '.green 
-    puts URL #outputting the extracted URL with the email
+    puts URL #outputting the extracted URL with the email for the sake of readability
   
   if URL.include? "utf8=true"
     puts 'params found'.green
@@ -167,13 +97,20 @@ Then(/^those params should resolve within the body of the email I send$/) do
 end
 
 
-
 Given(/^I am a TMS user and not an admin$/) do
-  pending # express the regexp above with the code you wish you had
+  @request = HTTPI::Request.new
+  @request.url = EmailAdmin.new.url
+  @request.headers = {'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => "#{EmailAdmin.new.non_admin}"}
 end
 
 Then(/^I should not be able to see the accounts endpoint$/) do
-  pending # express the regexp above with the code you wish you had
+  @response = HTTPI.get(@request)
+  puts JSON.parse(@response.raw_body)
+  if JSON.parse(@response.raw_body) == {"error"=>"forbidden"}
+    puts 'Forbidden found, passing test'.green
+  elsif
+    fail 'Was able to view accounts as a user, test failed'.red
+  end    
 end
 
 

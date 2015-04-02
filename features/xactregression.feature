@@ -33,10 +33,6 @@ Feature: XACT Full Regression
 
 #admin template and link tracking params tests
 
-	#@admin
-    #Scenario: Admin
-    	#Given I admin
-
 	@XACT-533-2 @QC-2239
     Scenario: Check that params resolve correctly
     	Given I am a TMS admin

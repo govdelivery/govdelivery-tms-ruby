@@ -26,26 +26,22 @@ case environment
     email_endtoend.xact.account.id            = '10541'
     email_endtoend.xact.user.token            = 'LLovBHFaaNY2buT3PxxbCPszaANkywDh'
     email_endtoend.xact.user.email_address    = 'qc-email_end_to_end-test@govdelivery.com'
-
     email_endtoend.gmail.imap.user_name       = 'canari11dd@gmail.com'
 
   when :integration
     email_endtoend.xact.account.id            = '10243'
     email_endtoend.xact.user.token            = 'NqSCMTYEewtqNNbMNG7pbs6hZPYy3RyM'
     email_endtoend.xact.user.email_address    = 'integration-email_end_to_end-test@govdelivery.com'
-
     email_endtoend.gmail.imap.user_name       = 'canari9dd@gmail.com'
 
   when :stage
     email_endtoend.xact.account.id            = '10940'
     email_endtoend.xact.user.token            = 'aNYMWXsgqeppQyqGFKPqWLenEFBqAWZ5'
     email_endtoend.xact.user.email_address    = 'stage-email_end_to_end-test@govdelivery.com'
-
     email_endtoend.gmail.imap.user_name       = 'canari7dd@gmail.com'
 
   when :prod
     email_endtoend.xact.user.email_address    = 'CUKEPROD@govdelivery.com'
     email_endtoend.xact.user.password         = 'GovDel01'
-
     email_endtoend.gmail.imap.user_name       = 'canari8dd@gmail.com'
 end
