@@ -119,9 +119,3 @@ Then(/^I should be able to verify the voice message was received$/) do
   end 
   puts 'Call found'.green 
 end
-
-
-
-
-
-

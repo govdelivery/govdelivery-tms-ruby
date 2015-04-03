@@ -1,6 +1,6 @@
 Feature: XACT SMS 2-Way tests.
 
-    @2waysubscribe @keyword @Dev-Safety
+  @2waysubscribe @keyword @Dev-Safety
 	Scenario: XACT 2-Way SMS to Subscribe
 		Given I create a subscription keyword and command
 		And I send an SMS to create a subscription on TMS
@@ -14,7 +14,7 @@ Feature: XACT SMS 2-Way tests.
 		Then I should receive a STOP response
 		And my subscription should be removed
 
-  @keyword
+  @keyword @static
   Scenario: XACT 2-Way SMS to receive static content
     Given A keyword with static content is configured for an TMS account
     And I send that keyword as an SMS to TMS
