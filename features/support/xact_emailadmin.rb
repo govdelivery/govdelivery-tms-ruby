@@ -6,8 +6,6 @@ require 'colored'
 require 'mail'
 require 'pry'
 
-
-
   class EmailAdmin
 	def non_admin
   	  if ENV['XACT_ENV'] == 'qc'
@@ -79,7 +77,6 @@ require 'pry'
 	  end
 	end
 
-
 	def mail_accounts
 	  if ENV['XACT_ENV'] == 'qc'
 	    'xactqctest1@gmail.com'
@@ -99,38 +96,3 @@ require 'pry'
 	end
   end
 
-
-
-
-# 	  when ENV['XACT_ENV'] == 'qc'
-# 	  	non_admin      = '2nUnEBWJ362at369KLqgdzR1gGp6meQo' #"id": 10460, "account_id": 10120, "email": "securitytest@evotest.govdelivery.com"
-# 	  	url            = 'https://qc-tms.govdelivery.com/accounts' 
-# 	    client         = TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', :api_root => 'https://qc-tms.govdelivery.com')
-# 	    from_email     = 'cukeautoqc@govdelivery.com'
-# 	    account_code   = 'CUKEAUTO_QC'
-# 	    topic_code     = 'CUKEAUTO_QC_SMS'
-# 	    email_accounts = 'xactqctest1@gmail.com'
-# 	    password       = 'govdel01!'
-# 	    subject        = "XACT-533-2 Email Test for link parameters #{$x}"
-# 	  when ENV['XACT_ENV'] == 'integration'
-# 	  	non_admin      = 'qJ71WByLHx53Z296Lpkxs9LcCVU6x2gh' #"id": 10320, "account_id": 10060, "email": "cuke-user-int@evotest.govdelivery.com", "admin": false
-# 	  	url		       = 'https://int-tms.govdelivery.com/accounts'
-# 	  	client         = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', :api_root => 'https://int-tms.govdelivery.com')
-# 	  	from_email     = 'cukeautoint@govdelivery.com'
-# 	  	account_code   = 'CUKEAUTO_INT'
-# 	  	topic_code     = 'CUKEAUTO_INT_SMS'
-# 	  	email_accounts = 'xactqctest1@gmail.com'
-# 	  	password       = 'govdel01!'
-# 	  	subject        = "XACT-533-2 Email Test for link parameters #{$x}"
-# 	  when ENV['XACT_ENV'] == 'stage'
-# 		non_admin      = 'pzYSpUsoFXx6GKX7jzoQbstsMDyb9f6X' #"id": 11320,"account_id": 10360,"email": "cuke-user-stage@evotest.govdelivery.com","admin": false
-# 		url 	       = 'https://stage-tms.govdelivery.com/accounts' 
-# 		client         = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', :api_root => 'https://stage-tms.govdelivery.com')
-# 		from_email     = 'cukestage@govdelivery.com'
-# 		account_code   = 'CUKEAUTO_STAGE'
-# 		topic_code     = 'CUKEAUTO_STAGE_SMS'
-# 		email_accounts = 'xactqctest1@gmail.com'
-# 		password       = 'govdel01!'
-# 		subject        = "XACT-533-2 Email Test for link parameters #{$x}"
-# 	end  
-# end

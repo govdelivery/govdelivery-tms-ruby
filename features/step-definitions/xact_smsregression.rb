@@ -293,13 +293,3 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
   end 
   puts 'Help message found'.green 
 end
-
-
-
-
-
-
-
-
-
-

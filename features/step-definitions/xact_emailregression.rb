@@ -21,8 +21,6 @@ $t.store(1, rand(0...10000)) #storing the hash value so we can retrieve it later
 
 $x = Time.new #generating a hash value
 
-
-
 Mail.defaults do
   retriever_method :imap, 
    :address    => "imap.gmail.com",
@@ -31,12 +29,6 @@ Mail.defaults do
    :password   => EmailAdmin::new.password,
    :enable_ssl => true
 end
-
-
-
-#=======================>
-#=======================>
-#=======================>
 
 
 Given(/^I am a TMS admin$/) do
@@ -306,32 +298,3 @@ Given(/^I post a new EMAIL message with an invalid FROM_EMAIL produces an error$
     fail 'error not found'.red
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

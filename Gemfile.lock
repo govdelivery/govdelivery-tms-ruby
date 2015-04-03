@@ -352,8 +352,8 @@ GEM
     timers (4.0.1)
       hitimes
     tms_admin_client (0.0.2)
-      tms_client (~> 0.7.0)
-    tms_client (0.7.0)
+      tms_client (~> 0.6.0)
+    tms_client (0.6.0)
       activesupport
       faraday
       faraday_middleware
@@ -467,7 +467,7 @@ DEPENDENCIES
   slim
   strip_attributes
   tms_admin_client (= 0.0.2)
-  tms_client (= 0.7.0)
+  tms_client (= 0.6.0)
   trinidad
   twilio-ruby
   valid_email
