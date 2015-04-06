@@ -23,7 +23,9 @@ class EmailTemplatesController < ApplicationController
   def update
     params.except!(:from_address_id)
     transform_links_payload!(:email_template)
-    respond_with(@email_template = find_email_template.update_attributes!(params[:email_template]))
+    @email_template = find_email_template
+    @email_template.update_attributes(params[:email_template])
+    respond_with(@email_template)
   end
 
   def destroy

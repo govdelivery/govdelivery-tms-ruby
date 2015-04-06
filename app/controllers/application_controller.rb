@@ -36,7 +36,6 @@ class ApplicationController < ActionController::API
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
   rescue_from JSON::ParserError, with: :render_malformed_json
-  rescue_from ActiveRecord::RecordInvalid, with: :render_invalid_record
 
   # URL helper methods will use this set of options as defaults
   def default_url_options
