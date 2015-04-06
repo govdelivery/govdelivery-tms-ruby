@@ -21,13 +21,6 @@ $t = Hash.new #generating a hash value
 $t.store(1, rand(0...10000)) #storing the hash value so we can retrieve it later on
 
 
-
-#==========================================>
-#==========================================>
-#==========================================>
-
-
-
 #@QC-2453
 Given(/^I create a new keyword with a text response$/) do
   @keyword = client.keywords.build(:name => "160CHARS", :response_text => "160CHARS") 

@@ -1,5 +1,9 @@
 Feature: XACT Full Regression
-      
+
+
+#misc
+
+
     @QC-2453 @QC-2440
 	Scenario: TMS configure a text response for an SMS keyword under 160 characters.
 		Given I create a new keyword with a text response
@@ -26,6 +30,39 @@ Feature: XACT Full Regression
 		Given I create a keyword and command with an invalid account code
         Then I should receive an error
 
+
+#admin template and link tracking params tests
+
+	@XACT-533-2 @QC-2239
+    Scenario: Check that params resolve correctly
+    	Given I am a TMS admin
+    	And I send an email from an account that has link tracking params configured
+    	Then those params should resolve within the body of the email I send
+
+	#@XACT-533-3
+    #Scenario: TMS admin creation of link tracking params
+    #	Given I am a TMS admin
+    #	Then I should be able to enter link tracking params at the account level
+
+	#@XACT-533-4 @XACT-545-2
+    #Scenario: TMS admin verify that templates are registered on messages-email endpoint
+    #	Given I am a TMS admin
+    #	Then I should be able to create and list templates for email messages
+    #	And I should be able to verify that all required fields are listed
+
+	@XACT-533-5 @QC-2239
+    Scenario: TMS admin verify that link tracking params are only available internally
+    	Given I am a TMS user and not an admin
+    	Then I should not be able to see the accounts endpoint
+
+    #@XACT-545-1
+    #Scenario: TMS admin verify that templates can be read, updated, listed, and deleted
+    #	Given I am a TMS admin
+    #	Then I should be able to create, update, list, and delete templates
+
+
+
+#email    	
 
 
     @QC-2456 @QC-2239
@@ -85,7 +122,7 @@ Feature: XACT Full Regression
 		Given I post a new EMAIL message with an invalid FROM_EMAIL produces an error
 
 
-
+#sms
 
         
     @QC-2234 @QC-1976
@@ -142,7 +179,7 @@ Feature: XACT Full Regression
 
 
 
-
+#voice
 
 
 	@QC-2237 

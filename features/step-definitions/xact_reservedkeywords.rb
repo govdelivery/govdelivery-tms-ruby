@@ -29,7 +29,3 @@ Then(/^I should receive an reserved keyword message$/) do
       raise 'Keyword was created erroneously.'.red
     end
 end
-
-
-
-
