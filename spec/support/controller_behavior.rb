@@ -8,7 +8,7 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
       post :create, :message => message_opts
     end
     it "should be accepted" do
-      response.response_code.should == 201
+      expect(response.response_code).to eq 201
     end
   end
 
@@ -20,7 +20,7 @@ def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
     end
 
     it "should be unprocessable_entity" do
-      response.response_code.should == 422
+      expect(response.response_code).to eq 422
     end
   end
 end
@@ -29,7 +29,7 @@ def it_should_have_a_pageable_index(resource, parent_class=User, relation=nil)
   describe "index" do
     before do
       self.send(resource).stubs(:total_pages).returns(5)
-      @params = block_given? ? yield(self) : {}
+      @params  = block_given? ? yield(self) : {}
       relation ||= model.to_s.tableize
       pageable = stub('pageable', :page => self.send(resource))
       pageable.stubs(:includes).returns(pageable)
@@ -40,7 +40,7 @@ def it_should_have_a_pageable_index(resource, parent_class=User, relation=nil)
       self.send(resource).stubs(:first_page?).returns(true)
       self.send(resource).stubs(:last_page?).returns(false)
       get :index, @params
-      response.response_code.should == 200
+      expect(response.response_code).to eq 200
     end
 
     it "should have all links" do
@@ -49,10 +49,10 @@ def it_should_have_a_pageable_index(resource, parent_class=User, relation=nil)
       r.stubs(:first_page?).returns(false)
       r.stubs(:last_page?).returns(false)
       get :index, {:page => 2}.merge!(@params)
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should =~ /next/
-      response.headers['Link'].should =~ /last/
+      expect(response.headers['Link']).to match /first/
+      expect(response.headers['Link']).to match /prev/
+      expect(response.headers['Link']).to match /next/
+      expect(response.headers['Link']).to match /last/
     end
 
     it "should have prev and first links" do
@@ -61,10 +61,10 @@ def it_should_have_a_pageable_index(resource, parent_class=User, relation=nil)
       r.stubs(:first_page?).returns(false)
       r.stubs(:last_page?).returns(true)
       get :index, {:page => 5}.merge!(@params)
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should_not =~ /next/
-      response.headers['Link'].should_not =~ /last/
+      expect(response.headers['Link']).to match /first/
+      expect(response.headers['Link']).to match /prev/
+      expect(response.headers['Link']).to_not match /next/
+      expect(response.headers['Link']).to_not match /last/
     end
   end
 
@@ -76,8 +76,8 @@ def it_should_show_with_attributes(*attrs)
       message = stub(:message)
       User.any_instance.expects(model.to_s.tableize).returns(stub(:find => message))
       get :show, :id => 1
-      assigns(:message).should_not be_nil
-      assigns(:content_attributes).should match_array(attrs) unless attrs.blank?
+      expect(assigns(:message)).to_not be nil
+      expect(assigns(:content_attributes)).to match_array(attrs) unless attrs.blank?
     end
   end
 end

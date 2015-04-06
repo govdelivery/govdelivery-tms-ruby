@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150323203657) do
+ActiveRecord::Schema.define(version: 20150325163856) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                           null: false
@@ -126,6 +126,20 @@ ActiveRecord::Schema.define(version: 20150323203657) do
   end
 
   add_index "email_recipients", ["message_id", "id"], name: "i_ema_rec_mes_id_id", tablespace: "tsms_indx01"
+
+  create_table "email_templates", force: true do |t|
+    t.text     "body",                                                              null: false
+    t.string   "subject",                                                           null: false
+    t.string   "link_tracking_parameters"
+    t.text     "macros"
+    t.integer  "user_id",                  precision: 38, scale: 0
+    t.integer  "account_id",               precision: 38, scale: 0
+    t.integer  "from_address_id",          precision: 38, scale: 0
+    t.boolean  "open_tracking_enabled",    precision: 1,  scale: 0, default: false, null: false
+    t.boolean  "click_tracking_enabled",   precision: 1,  scale: 0, default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "email_vendors", force: true do |t|
     t.string   "name",                null: false

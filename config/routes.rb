@@ -26,6 +26,10 @@ Xact::Application.routes.draw do
     end
   end
 
+  resources(:from_addresses, only: [:index, :show]) do
+    pageable
+  end
+
   resources(:keywords) do
     pageable
     resources(:commands, controller: :keyword_commands) do
@@ -35,6 +39,10 @@ Xact::Application.routes.draw do
   end
 
   resources(:incoming_voice_messages, only: [:index, :create, :show]) do
+    pageable
+  end
+
+  resources :email_templates, except: [:new, :edit] do
     pageable
   end
 
