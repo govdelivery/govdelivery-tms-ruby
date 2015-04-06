@@ -9,13 +9,14 @@ class ServicesController < ApplicationController
 
     if @account.sms_vendor
       @services[:keywords] = keywords_path
-      @services[:command_types] = command_types_path 
-      @services[:inbound_sms_messages] = inbound_sms_index_path 
-      @services[:sms_messages] = sms_index_path 
+      @services[:command_types] = command_types_path
+      @services[:inbound_sms_messages] = inbound_sms_index_path
+      @services[:sms_messages] = sms_index_path
     end
 
     if @account.email_vendor
       @services[:email_messages] = email_index_path
+      @services[:email_templates] = email_templates_path
       @services[:from_addresses] = from_addresses_path
     end
 
@@ -42,9 +43,9 @@ class ServicesController < ApplicationController
     @services[:webhooks] = webhooks_path
   end
 
-  
+
   private
-  
+
   def render_405
     response['Allow'] = 'GET'
     render(json: ["only GET method allowed"], status: 405) and return
