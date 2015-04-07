@@ -16,7 +16,7 @@ class ServicesController < ApplicationController
 
     if @account.email_vendor
       @services[:email_messages] = email_index_path
-      @services[:email_templates] = email_templates_path
+      @services[:email_templates] = templates_email_index_path
       @services[:from_addresses] = from_addresses_path
     end
 
