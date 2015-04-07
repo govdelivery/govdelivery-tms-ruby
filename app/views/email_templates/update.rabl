@@ -1,2 +1,2 @@
 object @email_template
-extends "@email_template/show"
+extends "email_templates/show"
