@@ -70,7 +70,7 @@ Given(/^I create a new subscribe keyword and command$/) do
   @keyword.post
   @command = @keyword.commands.build(
             :name => "#{$s[1]}", 
-            :params => {:dcm_account_code => "#{account_code}", :dcm_topic_codes => ["#{topic_code}"]},
+            :params => {:dcm_account_code => "#{EmailAdmin.new.account_code}", :dcm_topic_codes => ["#{EmailAdmin.new.topic_code}"]},
             :command_type => :dcm_subscribe)
   @command.post
 end
@@ -84,7 +84,7 @@ Given(/^I create a new unsubscribe keyword and command$/) do
   @keyword.post
   @command = @keyword.commands.build(
             :name => "#{$s[1]}", 
-            :params => {:dcm_account_codes => ["#{account_code}"], :dcm_topic_codes => ["#{topic_code}"]},
+            :params => {:dcm_account_codes => ["#{EmailAdmin.new.account_code}"], :dcm_topic_codes => ["#{EmailAdmin.new.topic_code}"]},
             :command_type => :dcm_unsubscribe)
   @command.post
 end  
