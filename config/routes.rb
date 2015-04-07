@@ -42,8 +42,10 @@ Xact::Application.routes.draw do
     pageable
   end
 
-  resources :email_templates, except: [:new, :edit] do
-    pageable
+  scope :templates, path: 'templates', as: "templates" do
+    resources :email, except: [:new, :edit], controller: :email_templates do
+      pageable
+    end
   end
 
   scope :messages, path: 'messages' do
