@@ -20,7 +20,7 @@ module Service
           EventService.expects(:odm).returns(odm_service)
 
           events = EventService.send("#{type}_events", vendor)
-          events.should == [1,2,3]
+          expect(events).to eq([1,2,3])
         end
       end
     end

@@ -9,17 +9,17 @@ describe ForwardStopsToDcm do
       end
 
       it 'returns true ONLY if "To" number is in shared_phone_numbers' do
-        Rails.stubs(:configuration).returns(stub(:shared_phone_numbers => ['+15554443333']))
-        subject.class.should_forward?('Body' => body, 'To' => '+15554443333').should be true
-        subject.class.should_forward?('Body' => body, 'To' => '+15554443330').should be false
+        Rails.stubs(:configuration).returns(stub(shared_phone_numbers: ['+15554443333']))
+        expect(subject.class.should_forward?('Body' => body, 'To' => '+15554443333')).to be true
+        expect(subject.class.should_forward?('Body' => body, 'To' => '+15554443330')).to be false
       end
     end
 
     it 'retruns false when body is not a stop request' do
       Keyword.expects(:stop?).at_least_once.with(body).returns(false)
-      Rails.stubs(:configuration).returns(stub(:shared_phone_numbers => ['+15554443333']))
-      subject.class.should_forward?('Body' => body, 'To' => '+15554443333').should be false
-      subject.class.should_forward?('Body' => body, 'To' => '+15554443330').should be false
+      Rails.stubs(:configuration).returns(stub(shared_phone_numbers: ['+15554443333']))
+      expect(subject.class.should_forward?('Body' => body, 'To' => '+15554443333')).to be false
+      expect(subject.class.should_forward?('Body' => body, 'To' => '+15554443330')).to be false
     end
   end
 

@@ -18,8 +18,8 @@ Given (/^I have a user who can receive SMS messages$/)do
     configatron.test_support.twilio.account.token
   )
   twil.account.incoming_phone_numbers.get(configatron.test_support.twilio.phone.sid).update(
-    :voice_url => @sms_receiver_full_uri,
-    :sms_url => @sms_receiver_full_uri
+    voice_url: @sms_receiver_full_uri,
+    sms_url: @sms_receiver_full_uri
   )
 end
 
@@ -27,8 +27,8 @@ Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
   client = tms_client(configatron.accounts.sms_endtoend)
-  message = client.sms_messages.build(:body=>"#{$bt[1]}")
-  message.recipients.build(:phone=> configatron.test_support.twilio.phone.number)
+  message = client.sms_messages.build(body:"#{$bt[1]}")
+  message.recipients.build(phone: configatron.test_support.twilio.phone.number)
   puts configatron.test_support.twilio.phone.number
   message.post
   message.recipients.collection.detect{|r| r.errors }

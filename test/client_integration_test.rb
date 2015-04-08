@@ -3,12 +3,12 @@ require 'tms_client'
 class ClientIntegrationTest
 
   def initialize
-    @client = TMS::Client.new('test@sink.govdelivery.com', 'abcd1234', :api_root => 'http://localhost:3000', :logger => Rails.logger)
+    @client = TMS::Client.new('test@sink.govdelivery.com', 'abcd1234', api_root: 'http://localhost:3000', logger: Rails.logger)
   end
 
   def run
-    test_phone_message_and_recipient_gets(@client.voice_messages, {:play_url => 'http://www.thesubstars.com'})
-    test_phone_message_and_recipient_gets(@client.sms_messages, {:body => 'hey awesome'})
+    test_phone_message_and_recipient_gets(@client.voice_messages, {play_url: 'http://www.thesubstars.com'})
+    test_phone_message_and_recipient_gets(@client.sms_messages, {body: 'hey awesome'})
     test_email_message
   end
 
@@ -16,10 +16,10 @@ class ClientIntegrationTest
 
   def test_email_message
     puts @client.subresources
-    message = @client.email_messages.build({:body => 'hey awesome', :subject => 'hi', :from_name => "bangin'"})
+    message = @client.email_messages.build({body: 'hey awesome', subject: 'hi', from_name: "bangin'"})
     email = "recipient00"
     70.times do
-      message.recipients.build(:email => email)
+      message.recipients.build(email: email)
       email = email.succ
     end
     post_message_and_verify_recipient_gets(message)
@@ -29,7 +29,7 @@ class ClientIntegrationTest
     message = message_collection.build(message_attributes)
     phone = '+16125015456'
     60.times do
-      message.recipients.build(:phone => phone)
+      message.recipients.build(phone: phone)
       phone = phone.succ
     end
     post_message_and_verify_recipient_gets(message)

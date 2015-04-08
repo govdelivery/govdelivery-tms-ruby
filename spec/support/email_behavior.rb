@@ -15,15 +15,15 @@ def it_should_validate_as_email(*args)
 
       it "should be invalid when not an email" do
         subject.send("#{email_meth}=", 'invalid')
-        subject.should_not be_valid
-        subject.errors.get(email_meth).should_not be_nil
+        expect(subject).not_to be_valid
+        expect(subject.errors.get(email_meth)).not_to be_nil
       end
 
       it "should be invalid when too long" do
         # adds up to 256 characters
         subject.send("#{email_meth}=", 'five@' + 'e' * 246 + '.five')
-        subject.should_not be_valid
-        subject.errors.get(email_meth).should_not be_nil
+        expect(subject).not_to be_valid
+        expect(subject.errors.get(email_meth)).not_to be_nil
       end
     end
   end

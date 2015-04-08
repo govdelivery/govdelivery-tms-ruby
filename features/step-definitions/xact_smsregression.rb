@@ -21,8 +21,8 @@ require 'pry'
 
 
 Given(/^I post a new SMS message with too many characters$/) do
-  @message = client.sms_messages.build(:body=>'PtFGdBXk65tYERi9yKuOAxPInGJQPrNeaIdNJ7YlLeEAxglMeoxaufoKTxJZUOEOkXo5jO84cFIyeUGHdywK2mOnUy2JM6Q9vdd2Plpce8mZFvWdtUQJgVQSDTOUwFUkLkHOLIXqGHE24CBJlTZmxOE2HuyVqYRof')
-  @message.recipients.build(:phone=>'5551112222')
+  @message = client.sms_messages.build(body:'PtFGdBXk65tYERi9yKuOAxPInGJQPrNeaIdNJ7YlLeEAxglMeoxaufoKTxJZUOEOkXo5jO84cFIyeUGHdywK2mOnUy2JM6Q9vdd2Plpce8mZFvWdtUQJgVQSDTOUwFUkLkHOLIXqGHE24CBJlTZmxOE2HuyVqYRof')
+  @message.recipients.build(phone:'5551112222')
   STDOUT.puts @message.errors unless @message.post
   if @message.errors["body"] == ["is too long (maximum is 160 characters)"]
     puts 'error found'.green
@@ -32,20 +32,20 @@ Given(/^I post a new SMS message with too many characters$/) do
 end
 
 Given(/^I post a new SMS message with the correct number of characters$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'5551112222')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'5551112222')
   STDOUT.puts @message.errors unless @message.post
 end
 
 Given(/^I post a new SMS message with the correct number of characters to a formatted phone number$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'(555) 111-2222')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'(555) 111-2222')
   STDOUT.puts @message.errors unless @message.post
 end
 
 Given(/^I post a new SMS message and retrieve the message details$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'5551112222')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'5551112222')
   STDOUT.puts @message.errors unless @message.post
 
   sms = @message.get
@@ -57,8 +57,8 @@ Given(/^I post a new SMS message and retrieve the message details$/) do
 end
 
 Given(/^I post a new SMS message and retrieve the recipient details$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'5551112222')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'5551112222')
   STDOUT.puts @message.errors unless @message.post
   sms = @message.get
 
@@ -70,15 +70,15 @@ Given(/^I post a new SMS message and retrieve the recipient details$/) do
 end
 
 Given(/^I post a new SMS message to multiple recipients$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'5551112222')
-  @message.recipients.build(:phone=>'5551112223')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'5551112222')
+  @message.recipients.build(phone:'5551112223')
   STDOUT.puts @message.errors unless @message.post
 end
 
 Given(/^I post a new SMS message to an empty recipient$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'')
   STDOUT.puts @message.errors unless @message.post
     if @message.errors["recipients"] == ["must contain at least one valid recipient"]
     puts 'error found'.green
@@ -88,24 +88,24 @@ Given(/^I post a new SMS message to an empty recipient$/) do
 end
 
 Given(/^I post a new SMS message to invalid recipients I should not receive failed recipients$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'55A')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'55A')
   STDOUT.puts @message.errors unless @message.post
 end
 
 Given(/^I post a new SMS message with duplicate recipients$/) do
-  @message = client.sms_messages.build(:body=>'You have received this message as a result of feature testing within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'5551112222')
-  @message.recipients.build(:phone=>'5551112222')
-  @message.recipients.build(:phone=>'5551112222')
-  @message.recipients.build(:phone=>'5551112222')
-  @message.recipients.build(:phone=>'5551112222')
+  @message = client.sms_messages.build(body:'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @message.recipients.build(phone:'5551112222')
+  @message.recipients.build(phone:'5551112222')
+  @message.recipients.build(phone:'5551112222')
+  @message.recipients.build(phone:'5551112222')
+  @message.recipients.build(phone:'5551112222')
   STDOUT.puts @message.errors unless @message.post
 end
 
 Given(/^I post a new SMS message which contains special characters$/) do
-  @message = client.sms_messages.build(:body=>'You í á é ñ ó ú ü ¿ ¡ received this message as a result of feature testing special characters within the GovDelivery platform.')
-  @message.recipients.build(:phone=>'5551112222')
+  @message = client.sms_messages.build(body:'You í á é ñ ó ú ü ¿ ¡ received this message as a result of feature testing special characters within the GovDelivery platform.')
+  @message.recipients.build(phone:'5551112222')
   STDOUT.puts @message.errors unless @message.post
 end
 
@@ -113,13 +113,13 @@ end
 
 def client_2
     if ENV['XACT_ENV'] == 'qc'
-      client_2 = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', :api_root => 'https://qc-tms.govdelivery.com') #will send from (612) 255-6254
+      client_2 = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', api_root: 'https://qc-tms.govdelivery.com') #will send from (612) 255-6254
     elsif ENV['XACT_ENV'] == 'integration'
-      client_2 = TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', :api_root => 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
+      client_2 = TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', api_root: 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
     elsif ENV['XACT_ENV'] == 'stage'
-      client_2 = TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', :api_root => 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
+      client_2 = TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', api_root: 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
     elsif ENV['XACT_ENV'] == 'prod'  
-      client_2 = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', :api_root => 'https://tms.govdelivery.com') #THIS TEST DOESNT RUN IN PROD
+      client_2 = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com') #THIS TEST DOESNT RUN IN PROD
     end
 end
 
@@ -163,8 +163,8 @@ end
 
 Given(/^I rapidly send a keyword via SMS$/) do
   def rapid
-    @message = client_2.sms_messages.build(:body=>prefix_and_body)
-    @message.recipients.build(:phone=>phone_number_to)
+    @message = client_2.sms_messages.build(body:prefix_and_body)
+    @message.recipients.build(phone:phone_number_to)
     STDOUT.puts @message.errors unless @message.post
     sleep(0.5)
   end
@@ -173,10 +173,10 @@ Given(/^I rapidly send a keyword via SMS$/) do
   twiliomation #call to twilio call list
   sleep(2)
     @a = @client.account.messages.list({ 
-        :date_created => Date.today, #grab full list of messages sent today
-        :body => "This is a text response from a remote website.",
-        :direction => "incoming",
-        :from => phone_number_to #sort by 
+        date_created: Date.today, #grab full list of messages sent today
+        body: "This is a text response from a remote website.",
+        direction: "incoming",
+        from: phone_number_to #sort by 
         }).take(5).each do |call| 
       puts call.body 
     end
@@ -211,8 +211,8 @@ end
 
 Given(/^I send an SMS with an invalid word or command$/) do
   sleep(20)
-  @message = client_2.sms_messages.build(:body=>'ABCDEF jabberwocky')
-  @message.recipients.build(:phone=>phone_number_to)
+  @message = client_2.sms_messages.build(body:'ABCDEF jabberwocky')
+  @message.recipients.build(phone:phone_number_to)
   STDOUT.puts @message.errors unless @message.post
   #ap @message.response
 
@@ -220,8 +220,8 @@ Given(/^I send an SMS with an invalid word or command$/) do
   twiliomation #call to twilio call list
   sleep(10)
     @a = @client.account.messages.list({ 
-          :date_created => Date.today, #grab full list of messages sent today
-          :to => phone_number_from, #sort by
+          date_created: Date.today, #grab full list of messages sent today
+          to: phone_number_from, #sort by
           #:direction => "incoming"
           }).each do |call| 
     end
@@ -255,17 +255,17 @@ end
 
 Given(/^I send an SMS to a shared account with an invalid prefix$/) do
   sleep(20)
-  @message = client_2.sms_messages.build(:body=>'ABCDEF help')
-  @message.recipients.build(:phone=>phone_number_to)
+  @message = client_2.sms_messages.build(body:'ABCDEF help')
+  @message.recipients.build(phone:phone_number_to)
   STDOUT.puts @message.errors unless @message.post
   #ap @message.response
 
   twiliomation #call to twilio call list
   sleep(1)
     @a = @client.account.messages.list({ 
-          :date_created => Date.today, #grab full list of messages sent today
-          :to => phone_number_from, #sort by
-          :direction => "reply"
+          date_created: Date.today, #grab full list of messages sent today
+          to: phone_number_from, #sort by
+          direction: "reply"
           }).each do |call| 
     end
     @b = @a[0].uri #find uri of "reply" message, 

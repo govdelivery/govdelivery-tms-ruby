@@ -2,10 +2,10 @@ require 'rails_helper'
 describe CreateRecipientsWorker do
   let(:worker) { CreateRecipientsWorker.new }
   let(:recipient_params) { stub('recipients') }
-  let(:send_worker) { mock('LoopbackMessageWorker', :perform_async => true) }
+  let(:send_worker) { mock('LoopbackMessageWorker', perform_async: true) }
 
   it 'should enqueue a message worker job if there are recipients' do
-    message = mock('message', :worker => send_worker)
+    message = mock('message', worker: send_worker)
     message.stubs(:id).returns(1)
     message.expects(:ready!).with(nil, recipient_params)
     SmsMessage.expects(:find).with(1).returns(message)

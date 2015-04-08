@@ -23,11 +23,11 @@ describe KeywordsController do
       keywords.stubs(:first_page?).returns(true)
       keywords.stubs(:last_page?).returns(false)
       get :index
-      response.response_code.should == 200
-      response.headers['Link'].should_not =~ /first/
-      response.headers['Link'].should_not =~ /prev/
-      response.headers['Link'].should =~ /next/
-      response.headers['Link'].should =~ /last/
+      expect(response.response_code).to eq(200)
+      expect(response.headers['Link']).not_to match(/first/)
+      expect(response.headers['Link']).not_to match(/prev/)
+      expect(response.headers['Link']).to match(/next/)
+      expect(response.headers['Link']).to match(/last/)
     end
 
     it "should have all links" do
@@ -35,11 +35,11 @@ describe KeywordsController do
       keywords.stubs(:first_page?).returns(false)
       keywords.stubs(:last_page?).returns(false)
       get :index, page: 2
-      response.response_code.should == 200
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should =~ /next/
-      response.headers['Link'].should =~ /last/
+      expect(response.response_code).to eq(200)
+      expect(response.headers['Link']).to match(/first/)
+      expect(response.headers['Link']).to match(/prev/)
+      expect(response.headers['Link']).to match(/next/)
+      expect(response.headers['Link']).to match(/last/)
     end
 
     it "should have prev and first links" do
@@ -47,11 +47,11 @@ describe KeywordsController do
       keywords.stubs(:first_page?).returns(false)
       keywords.stubs(:last_page?).returns(true)
       get :index, page: 3
-      response.response_code.should == 200
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should_not =~ /next/
-      response.headers['Link'].should_not =~ /last/
+      expect(response.response_code).to eq(200)
+      expect(response.headers['Link']).to match(/first/)
+      expect(response.headers['Link']).to match(/prev/)
+      expect(response.headers['Link']).not_to match(/next/)
+      expect(response.headers['Link']).not_to match(/last/)
     end
   end
   context "Showing a keyword" do
@@ -60,7 +60,7 @@ describe KeywordsController do
       get :show, id: 'twelve'
     end
     it "should work" do
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
     end
   end
   context "Creating a valid keyword" do
@@ -72,7 +72,7 @@ describe KeywordsController do
       post :create, keyword: attrs
     end
     it "should create a keyword" do
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
   end
   context "Creating an invalid keyword" do
@@ -82,7 +82,7 @@ describe KeywordsController do
       post :create, keyword: attrs
     end
     it "should return error" do
-      response.response_code.should == 422
+      expect(response.response_code).to eq(422)
     end
   end
   context "Updating a valid keyword" do
@@ -93,7 +93,7 @@ describe KeywordsController do
       put :update, id: 'twelve', keyword: attrs
     end
     it "should update" do
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
     end
   end
   context "Updating an invalid keyword" do
@@ -104,7 +104,7 @@ describe KeywordsController do
       put :update, id: 'twelve', keyword: attrs
     end
     it "should return error" do
-      response.response_code.should == 422
+      expect(response.response_code).to eq(422)
     end
   end
   context "Deleting a keyword" do
@@ -118,7 +118,7 @@ describe KeywordsController do
       delete :destroy, id: 'twelve'
     end
     it "should work" do
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
     end
   end
 

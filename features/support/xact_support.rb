@@ -55,7 +55,7 @@ class IMAPCleaner
       imap.select('INBOX')
       messages = imap.search(['ALL']).map do |message_id|
         msg = imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
-        result = {:mailbox => msg.from[0].mailbox, :host => msg.from[0].host, :subject => msg.subject, :created_at => msg.date}
+        result = {mailbox: msg.from[0].mailbox, host: msg.from[0].host, subject: msg.subject, created_at: msg.date}
         imap.store(message_id, "+FLAGS", [:Deleted])
       end
     rescue Exception => e

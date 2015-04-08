@@ -10,13 +10,13 @@ class Command < ActiveRecord::Base
   attr_accessible :command_type, :name, :params
   validates_presence_of :command_type
 
-  validates_length_of :name, :maximum => 255, :allow_nil => true
-  validates :params, length: {maximum: 4000}, :allow_nil => true
+  validates_length_of :name, maximum: 255, allow_nil: true
+  validates :params, length: {maximum: 4000}, allow_nil: true
   before_save :set_name
   validate :validate_command
   validate :validate_keyword
 
-  delegate :process_response, :to => :command_strategy
+  delegate :process_response, to: :command_strategy
 
   has_many :command_actions, dependent: :nullify
 
@@ -58,10 +58,10 @@ class Command < ActiveRecord::Base
   protected
 
   def build_response(short_body, dest_number)
-    message = account.sms_messages.new(:body => short_body)
+    message = account.sms_messages.new(body: short_body)
     # User is out of context for this message, as there is no current user - the
     # incoming controller request was from a handset (not a client's app)
-    message.recipients.build(:phone => dest_number, :vendor => account.sms_vendor)
+    message.recipients.build(phone: dest_number, vendor: account.sms_vendor)
     message.save!
     message
   end

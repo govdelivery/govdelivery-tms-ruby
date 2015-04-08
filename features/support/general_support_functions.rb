@@ -17,8 +17,8 @@ After('@Twilio') do |scenario|
     configatron.test_support.twilio.account.token
   )
   twil.account.incoming_phone_numbers.get(configatron.test_support.twilio.phone.sid).update(
-    :voice_url => '',
-    :sms_url => ''
+    voice_url: '',
+    sms_url: ''
   )
 end
 

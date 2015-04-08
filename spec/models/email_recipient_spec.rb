@@ -11,7 +11,7 @@ describe EmailRecipient do
     em.save
     em
   }
-  let(:user) { User.create(:email => 'admin@example.com', :password => 'retek01!').tap { |u| u.account = account } }
+  let(:user) { User.create(email: 'admin@example.com', password: 'retek01!').tap { |u| u.account = account } }
 
   subject {
     r         = email_message.recipients.build
@@ -20,7 +20,7 @@ describe EmailRecipient do
   }
 
   its(:email) { should be_nil }
-  it { should_not be_valid }
+  it { is_expected.not_to be_valid }
 
   context 'with an email' do
     before do
@@ -28,14 +28,14 @@ describe EmailRecipient do
       subject.save!
     end
     it 'should have the correct ODM record designator' do
-      subject.to_odm.should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}")
+      expect(subject.to_odm).to eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}")
     end
     it 'should be identifiable by x_tms_recipient' do
       expect(subject.class.from_x_tms_recipent(subject.x_tms_recipient)).to eq(subject)
     end
     it 'should have the right message sendable_recipients using Recipient#to_send' do
       other_email #init
-      email_message.sendable_recipients.all.should eq(email_message.recipients.all)
+      expect(email_message.sendable_recipients.all).to eq(email_message.recipients.all)
     end
     context 'and macros' do
       before do
@@ -43,11 +43,11 @@ describe EmailRecipient do
         subject.save!
       end
       it 'should have the correct ODM record designator' do
-        subject.to_odm('five' => nil, 'one' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::five_value::one_value::two_value")
+        expect(subject.to_odm('five' => nil, 'one' => nil, 'two' => nil)).to eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::five_value::one_value::two_value")
         # remove one from default hash
-        subject.to_odm('five' => nil, 'two' => nil).should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::five_value::two_value")
+        expect(subject.to_odm('five' => nil, 'two' => nil)).to eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::five_value::two_value")
         # merging in defaults
-        subject.to_odm({'one' => nil, 'seven' => 'seven_value'}).should eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::one_value::seven_value")
+        expect(subject.to_odm({'one' => nil, 'seven' => 'seven_value'})).to eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::one_value::seven_value")
       end
     end
 
@@ -57,9 +57,9 @@ describe EmailRecipient do
         Webhook.any_instance.expects(:invoke).with(subject)
         subject.reload
         subject.mark_inconclusive!
-        subject.completed_at.should be nil
-        subject.ack.should be nil
-        subject.error_message.should be nil
+        expect(subject.completed_at).to be nil
+        expect(subject.ack).to be nil
+        expect(subject.error_message).to be nil
       end
     end
 
@@ -69,9 +69,9 @@ describe EmailRecipient do
         Webhook.any_instance.expects(:invoke).with(subject)
         subject.reload
         subject.failed!('ack', nil, 'this message is terrible')
-        subject.failed?.should be true
-        subject.ack.should eq 'ack'
-        subject.error_message.should eq 'this message is terrible'
+        expect(subject.failed?).to be true
+        expect(subject.ack).to eq 'ack'
+        expect(subject.error_message).to eq 'this message is terrible'
       end
     end
 
@@ -81,7 +81,7 @@ describe EmailRecipient do
       end
 
       it 'should set sent_at' do
-        subject.sent_at.should_not be_nil
+        expect(subject.sent_at).not_to be_nil
       end
 
       context 'and is sent' do
@@ -90,20 +90,20 @@ describe EmailRecipient do
         end
         it 'should update the record' do
           subject.reload
-          subject.vendor.should_not be_nil
-          subject.completed_at.should_not be_nil
-          subject.ack.should eq('ack')
-          subject.sent?.should be true
+          expect(subject.vendor).not_to be_nil
+          expect(subject.completed_at).not_to be_nil
+          expect(subject.ack).to eq('ack')
+          expect(subject.sent?).to be true
         end
         it 'should save clicks' do
-          subject.email_recipient_clicks.count.should == 0
+          expect(subject.email_recipient_clicks.count).to eq(0)
           subject.clicked!("http://foo.bar.com", DateTime.now)
-          subject.email_recipient_clicks.count.should == 1
+          expect(subject.email_recipient_clicks.count).to eq(1)
         end
         it 'should save opens' do
-          subject.email_recipient_opens.count.should == 0
+          expect(subject.email_recipient_opens.count).to eq(0)
           subject.opened!("1.1.1.1", DateTime.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
-          subject.email_recipient_opens.count.should == 1
+          expect(subject.email_recipient_opens.count).to eq(1)
         end
 
         context 'and bounces' do
@@ -128,30 +128,30 @@ describe EmailRecipient do
       it 'should have an error_message' do
         failed_recipient = subject
         failed_recipient.failed!(:ack, (sent_at = Time.now), 'error_message')
-        failed_recipient.error_message.should eq 'error_message'
-        failed_recipient.failed?.should be true
+        expect(failed_recipient.error_message).to eq 'error_message'
+        expect(failed_recipient.failed?).to be true
       end
 
       it 'should truncate a too-long error message' do
         failed_recipient = subject
         failed_recipient.failed!(:ack, (sent_at = Time.now), 'a' * 600)
-        failed_recipient.error_message.should eq 'a'*512
-        failed_recipient.failed?.should be true
+        expect(failed_recipient.error_message).to eq 'a'*512
+        expect(failed_recipient.failed?).to be true
       end
 
       it 'failed scope includes failed status ' do
         subject.failed!
-        EmailRecipient.failed.should include(subject)
+        expect(EmailRecipient.failed).to include(subject)
       end
 
       it 'failed scope does not include canceled status' do
         subject.canceled!('ack')
-        EmailRecipient.failed.should_not include(subject)
+        expect(EmailRecipient.failed).not_to include(subject)
       end
 
       it 'sent scope includes sent status' do
         subject.sent!('ack', nil)
-        EmailRecipient.sent.should include(subject)
+        expect(EmailRecipient.sent).to include(subject)
       end
     end
   end

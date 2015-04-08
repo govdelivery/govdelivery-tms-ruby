@@ -13,15 +13,15 @@ if defined?(JRUBY_VERSION)
     end
 
     it 'should process all email vendors' do
-      xmlgregorian = stub(:to_gregorian_calendar => stub(:time_in_millis => 1359784800000))
-      events = [stub('click events', :recipient_id => '1', :address => 'foo@bar.com', :message_id => 'slkdlfk', :at => xmlgregorian, :url => "clickonme.com")]
+      xmlgregorian = stub(to_gregorian_calendar: stub(time_in_millis: 1359784800000))
+      events = [stub('click events', recipient_id: '1', address: 'foo@bar.com', message_id: 'slkdlfk', at: xmlgregorian, url: "clickonme.com")]
       recipient = mock
 
       # mock service fetch of click events
       Service::Odm::EventService.expects(:click_events).with(@vendor).returns(events)
       
       # mock recipient lookup
-      @vendor.expects(:recipients).returns(mock(:find => recipient))
+      @vendor.expects(:recipients).returns(mock(find: recipient))
 
       # mock method to record a click
       recipient.expects(:clicked!)
@@ -36,7 +36,7 @@ if defined?(JRUBY_VERSION)
     end
 
     context 'odm throws error' do
-      let (:service)  { mock('Service::Odm::EventService') }
+      let (:service)  { double('Service::Odm::EventService') }
 
       it 'should catch Throwable and throw Ruby Exception' do
         Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java::java::lang::Exception.new("hello Exception"))

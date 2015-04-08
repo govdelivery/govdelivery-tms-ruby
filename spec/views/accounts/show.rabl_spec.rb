@@ -25,7 +25,7 @@ describe 'accounts/show.rabl' do
 
   it 'should work when valid' do
     render
-    rendered.should be_json_for(account).
+    expect(rendered).to be_json_for(account).
           with_attributes(:name,
                           :voice_vendor_id,
                           :email_vendor_id,

@@ -41,7 +41,7 @@ end
 And(/^a callback url is registered for each event type$/) do
   client = tms_client(configatron.accounts.webhooks)
   @event_callback_uris.each do |key,value|
-    webhook = client.webhooks.build(:url=>@capi.callbacks_domain + value, :event_type=>key)
+    webhook = client.webhooks.build(url:@capi.callbacks_domain + value, event_type:key)
     webhook.post
     puts "Webhook registered for #{key}: #{value}"
     @webhooks << webhook
@@ -51,26 +51,26 @@ end
 When(/^I send a message of each type to the magic address of each event state$/) do
   client = tms_client(configatron.accounts.webhooks)
   @messages = {}
-  @messages[:email] = client.email_messages.build(:body=>'Webhooks Testing',:subject=>"#{$subject[1]}")
+  @messages[:email] = client.email_messages.build(body:'Webhooks Testing',subject:"#{$subject[1]}")
   puts 'Sending to the following Email Addresses'
   magic_emails.each do |event_type, magic_email|
-    @messages[:email].recipients.build(:email=>magic_email)
+    @messages[:email].recipients.build(email:magic_email)
     puts "\t#{event_type}: #{magic_email}"
   end
   @messages[:email].post!
 
-  @messages[:sms] = client.sms_messages.build(:body=>'Webhooks Testing')
+  @messages[:sms] = client.sms_messages.build(body:'Webhooks Testing')
   puts 'Sending to the following SMS Numbers'
   magic_phone_numbers.each do |event_type, magic_number|
-    @messages[:sms].recipients.build(:phone=>magic_number)
+    @messages[:sms].recipients.build(phone:magic_number)
     puts "\t#{event_type}: #{magic_number}"
   end
   @messages[:sms].post!
 
-  @messages[:voice] = client.voice_messages.build(:play_url => 'http://www.webhooks-testing.com')
+  @messages[:voice] = client.voice_messages.build(play_url: 'http://www.webhooks-testing.com')
   puts 'Sending to the following Voice Numbers'
   magic_phone_numbers.each do |event_type, magic_number|
-    @messages[:voice].recipients.build(:phone=>magic_number)
+    @messages[:voice].recipients.build(phone:magic_number)
     puts "\t#{event_type}: #{magic_number}"
   end
   @messages[:voice].post!

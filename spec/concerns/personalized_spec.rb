@@ -21,7 +21,7 @@ describe Personalized do
   subject { ImportantMessage.new }
   context 'translating macros' do
     it 'should work' do
-      subject.to_odm(:body).should eq('##injections## here and ##FLUBBER## there [pea] ugly manhole covers')
+      expect(subject.to_odm(:body)).to eq('##injections## here and ##FLUBBER## there [pea] ugly manhole covers')
     end
   end
 end

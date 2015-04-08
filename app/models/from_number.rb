@@ -1,5 +1,5 @@
 class FromNumber < ActiveRecord::Base
-  belongs_to :account, :inverse_of => :from_numbers
+  belongs_to :account, inverse_of: :from_numbers
   has_many :incoming_voice_messages
   has_one :default_incoming_voice_message, -> { where(is_default: true).order('created_at DESC') }, class_name: IncomingVoiceMessage
   has_one :last_incoming_voice_message, -> { where(is_default: false).order('created_at DESC') }, class_name: IncomingVoiceMessage

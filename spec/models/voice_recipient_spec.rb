@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe VoiceRecipient do
   subject {
-    m         = VoiceMessage.new(:play_url => 'http://coffee.website.ninja')
+    m         = VoiceMessage.new(play_url: 'http://coffee.website.ninja')
     a         = create(:account_with_voice)
     u         = User.create(email: 'admin@get-endorsed-by-bens-mom.com', password: 'retek01!')
     u.account = a
@@ -14,14 +14,14 @@ describe VoiceRecipient do
   }
 
   its(:phone) { should be_nil }
-  it { should_not be_valid } # validates_presence_of :phone
+  it { is_expected.not_to be_valid } # validates_presence_of :phone
 
   describe "when phone is not a number" do
     before do
       subject.phone = 'invalid'
       subject.save!
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should be_nil }
   end
 
@@ -30,7 +30,7 @@ describe VoiceRecipient do
       subject.phone = '0001112222'
       subject.save
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should be_nil }
   end
 
@@ -39,7 +39,7 @@ describe VoiceRecipient do
       subject.phone = '223'
       subject.save!
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should be nil }
   end
 
@@ -48,7 +48,7 @@ describe VoiceRecipient do
       subject.phone = 6125015456
       subject.save!
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should eq '+16125015456' }
   end
 
@@ -59,17 +59,17 @@ describe VoiceRecipient do
 
     it 'should persist formatted_phone if phone number is valid' do
       subject.save!
-      subject.formatted_phone.should_not be_nil
+      expect(subject.formatted_phone).not_to be_nil
     end
 
     it 'has an ack that is too long' do
       subject.ack = 'A'*257
-      subject.should_not be_valid
+      expect(subject).not_to be_valid
     end
 
     it 'has an error message that is too long' do
       subject.error_message = 'A'*513
-      subject.should be_valid
+      expect(subject).to be_valid
     end
   end
 

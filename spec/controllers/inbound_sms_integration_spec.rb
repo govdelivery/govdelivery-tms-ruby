@@ -2,17 +2,17 @@ require 'rails_helper'
 
 describe TwilioRequestsController do
   let(:vendor) { create(:sms_vendor) }
-  let(:account) { create(:account, :sms_vendor => vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
+  let(:account) { create(:account, sms_vendor: vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
 
   describe '#create with "STOP"' do
     let(:params) { twilio_request_params('STOP') }
     it 'should respond with created' do
       post :create, params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
     it 'should respond with stop text' do
       post :create, params
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
+      expect(assigns(:response).response_text).to eq(Service::Keyword::DEFAULT_STOP_TEXT)
     end
     it 'should persist a stop request' do
       expect{post :create, params}
@@ -23,8 +23,8 @@ describe TwilioRequestsController do
         .to change{vendor.inbound_messages.count}.by 1
     end
     it 'executes a command' do
-      account.create_command!( 'stop', :params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]),
-                           :command_type => :dcm_unsubscribe)
+      account.create_command!( 'stop', params: CommandParameters.new(dcm_account_codes: ["ACME","VANDELAY"]),
+                           command_type: :dcm_unsubscribe)
       Command.any_instance.expects(:call)
       post :create, params
     end
@@ -34,12 +34,12 @@ describe TwilioRequestsController do
     let(:params) { twilio_request_params('garbage') }
     it "should respond with created" do
       post :create, params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
     it 'should respond with default response text' do
       post :create, params
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_HELP_TEXT
-      assigns(:response).response_text.should_not be_nil
+      expect(assigns(:response).response_text).to eq(Service::Keyword::DEFAULT_HELP_TEXT)
+      expect(assigns(:response).response_text).not_to be_nil
     end
     it 'should persist an inbound message' do
       expect{post :create, params}
@@ -54,11 +54,11 @@ describe TwilioRequestsController do
     let(:params) { twilio_request_params('UNSUBSCRIBE') }
     it 'should respond with created' do
       post :create, params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
     it 'should respond with vendor stop text' do
       post :create, params
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
+      expect(assigns(:response).response_text).to eq(Service::Keyword::DEFAULT_STOP_TEXT)
     end
     it 'should persist an inbound message' do
       expect{post :create, params}.to change{vendor.inbound_messages.count}.by 1
@@ -84,7 +84,7 @@ describe TwilioRequestsController do
   def twilio_request_params(body)
     @sid ||= ('0'*34)
     @sid.succ!
-    {:format =>"xml" ,
+    {format:"xml" ,
       'SmsSid'=>@sid,
       'AccountSid'=>vendor.username,
       'From'=>'+15551113333',

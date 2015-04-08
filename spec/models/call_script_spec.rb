@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe CallScript, :type => :model do
+RSpec.describe CallScript, type: :model do
   describe 'validations' do
-    it { should validate_presence_of :voice_message }
-    it { should validate_presence_of :say_text }
+    it { is_expected.to validate_presence_of :voice_message }
+    it { is_expected.to validate_presence_of :say_text }
   end
 end

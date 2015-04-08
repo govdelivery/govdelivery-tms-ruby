@@ -155,13 +155,13 @@ def create_test_account(test_name, account_vendors_config)
       end
 
       if lba.sms_prefixes.find_by(prefix: sms_prefix_str).blank?
-        sms_prefix = lba.sms_prefixes.build(:prefix => sms_prefix_str, :sms_vendor => sms_shared_vendor)
+        sms_prefix = lba.sms_prefixes.build(prefix: sms_prefix_str, sms_vendor: sms_shared_vendor)
         sms_prefix.save!
         puts "SMS Prefix created for #{account_config[:name]}: #{sms_prefix.prefix}"
       end
 
       if lba.from_numbers.blank?
-        from_number = lba.from_numbers.build(:from_number => account_vendors_config['from_number'])
+        from_number = lba.from_numbers.build(from_number: account_vendors_config['from_number'])
         from_number.save!
         puts "Added #{from_number.from_number} phone number to account."
       end

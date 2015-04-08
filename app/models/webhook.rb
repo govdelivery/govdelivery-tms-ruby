@@ -6,7 +6,7 @@ class Webhook < ActiveRecord::Base
             presence:  true,
             inclusion: {in:      EmailRecipient.aasm.states.map(&:to_s) - ['new'],
                         message: "%{value} is not a valid event type"}
-  validates :url, :url => true
+  validates :url, url: true
 
   def invoke(recipient)
     WebhookWorker.perform_async({url: self.url, job_key: job_key}.merge!(params: RecipientPresenter.new(recipient, self.account).to_webhook))

@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 describe EmailTemplate do
-  it { should belong_to :account }
-  it { should belong_to :user }
-  it { should belong_to :from_address }
-  it { should serialize :macros }
-  it { should validate_presence_of :body }
-  it { should validate_presence_of :subject }
-  it { should validate_presence_of :user }
-  it { should validate_presence_of :account }
-  it { should validate_presence_of :from_address }
+  it { is_expected.to belong_to :account }
+  it { is_expected.to belong_to :user }
+  it { is_expected.to belong_to :from_address }
+  it { is_expected.to serialize :macros }
+  it { is_expected.to validate_presence_of :body }
+  it { is_expected.to validate_presence_of :subject }
+  it { is_expected.to validate_presence_of :user }
+  it { is_expected.to validate_presence_of :account }
+  it { is_expected.to validate_presence_of :from_address }
 
   let(:account) { create(:account) }
   let(:other_account) { create(:account) }

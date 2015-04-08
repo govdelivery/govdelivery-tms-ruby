@@ -22,7 +22,7 @@ describe 'from_addresses/index.rabl' do
     @json = ActiveSupport::JSON.decode(rendered)
   end
   it 'should have one item' do
-    rendered.should have_json_type(Array)
-    rendered.should have_json_size(5)
+    expect(rendered).to have_json_type(Array)
+    expect(rendered).to have_json_size(5)
   end
 end

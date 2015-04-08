@@ -5,8 +5,8 @@ describe 'MessageControllers' do
     render_views
     let(:user) {
       sms_vendor = create(:sms_vendor)
-      account = Account.create!(:sms_vendor => sms_vendor, :name => 'name')
-      account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop")
+      account = Account.create!(sms_vendor: sms_vendor, name: 'name')
+      account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop")
     }
 
     before do
@@ -16,10 +16,10 @@ describe 'MessageControllers' do
       # this shared example relies on let() bindings json & message
       shared_examples_for 'a non-new message response' do
         it 'has correct attributes' do
-          json.fetch('status').should == message.status
-          json['recipient_counts']['total'].should == message.recipients.count
+          expect(json.fetch('status')).to eq(message.status)
+          expect(json['recipient_counts']['total']).to eq(message.recipients.count)
           VoiceRecipient.aasm.states.map(&:to_s).each do |status|
-            json['recipient_counts'][status].should == 1
+            expect(json['recipient_counts'][status]).to eq(1)
           end
         end
       end
@@ -28,15 +28,15 @@ describe 'MessageControllers' do
         add_recipients!(create_message(:sms))
       }
       let(:json) {
-        get :show, :id => message.id
+        get :show, id: message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
       }
       it_behaves_like 'a non-new message response'
       it 'has correct sms-specific attributes' do
-        json['body'].should == message.body
-        json.should_not include 'url'
-        json['_links']['self'].should == "/messages/sms/#{message.id}"
-        json['_links']['recipients'].should == "/messages/sms/#{message.id}/recipients"
+        expect(json['body']).to eq(message.body)
+        expect(json).not_to include 'url'
+        expect(json['_links']['self']).to eq("/messages/sms/#{message.id}")
+        expect(json['_links']['recipients']).to eq("/messages/sms/#{message.id}/recipients")
       end
     end
   end
@@ -44,7 +44,7 @@ describe 'MessageControllers' do
     render_views
     let(:user) {
       account = create(:account_with_voice)
-      account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop")
+      account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop")
     }
 
     before do
@@ -54,10 +54,10 @@ describe 'MessageControllers' do
       # this shared example relies on let() bindings json & message
       shared_examples_for 'a non-new message response' do
         it 'has correct attributes' do
-          json.fetch('status').should == message.status
-          json['recipient_counts']['total'].should == message.recipients.count
+          expect(json.fetch('status')).to eq(message.status)
+          expect(json['recipient_counts']['total']).to eq(message.recipients.count)
           VoiceRecipient.aasm.states.map(&:to_s).each do |status|
-            json['recipient_counts'][status].should == 1
+            expect(json['recipient_counts'][status]).to eq(1)
           end
         end
       end
@@ -67,14 +67,14 @@ describe 'MessageControllers' do
           add_recipients!(create_message(:voice))
         end
         let(:json) {
-          get :show, :id => message.id
-          response.status.should eq(200)
+          get :show, id: message.id
+          expect(response.status).to eq(200)
           HashWithIndifferentAccess.new(JSON.parse(response.body))
         }
         it 'has 0 for all recipient_counts' do
-          json['recipient_counts']['total'].should == 7
+          expect(json['recipient_counts']['total']).to eq(7)
           VoiceRecipient.aasm.states.map(&:to_s).each do |status|
-            json['recipient_counts'][status].should == 1
+            expect(json['recipient_counts'][status]).to eq(1)
           end
         end
       end
@@ -82,23 +82,23 @@ describe 'MessageControllers' do
         add_recipients!(create_message(:voice))
       }
       let(:json) {
-        get :show, :id => message.id
+        get :show, id: message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
       }
       it_behaves_like 'a non-new message response'
       it 'has correct voice-specific attributes' do
-        json['play_url'].should == message.play_url
-        json.should_not include 'body'
-        json['_links']['self'].should == "/messages/voice/#{message.id}"
-        json['_links']['recipients'].should == "/messages/voice/#{message.id}/recipients"
+        expect(json['play_url']).to eq(message.play_url)
+        expect(json).not_to include 'body'
+        expect(json['_links']['self']).to eq("/messages/voice/#{message.id}")
+        expect(json['_links']['recipients']).to eq("/messages/voice/#{message.id}/recipients")
       end
     end
   end
   def create_message(message_type)
     if message_type == :sms
-      m = user.sms_messages.new(:body => 'A short body')
+      m = user.sms_messages.new(body: 'A short body')
     elsif message_type == :voice
-      m = user.voice_messages.new(:play_url => 'http://foo.com/hello.wav')
+      m = user.voice_messages.new(play_url: 'http://foo.com/hello.wav')
     end
     m.save!
     m

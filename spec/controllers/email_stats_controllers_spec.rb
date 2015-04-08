@@ -33,18 +33,18 @@ require 'rails_helper'
       end
       it "returns http success" do
         get 'index', email_id: email_message.id, recipient_id: email_recipient.id
-        response.response_code.should == 200
-        assigns(:page).should == 1
-        assigns(:events).map(&:id).sort.should == stats.map(&:id).sort
-        assigns(:events).should match_array stats
+        expect(response.response_code).to eq(200)
+        expect(assigns(:page)).to eq(1)
+        expect(assigns(:events).map(&:id).sort).to eq(stats.map(&:id).sort)
+        expect(assigns(:events)).to match_array stats
       end
     end
 
     describe "GET #show" do
       it "returns http success" do
         get 'show', email_id: email_message.id, recipient_id: email_recipient.id, id: stats.first.id
-        response.response_code.should == 200
-        assigns(:event).should_not be_nil
+        expect(response.response_code).to eq(200)
+        expect(assigns(:event)).not_to be_nil
       end
     end
 

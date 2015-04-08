@@ -2,8 +2,8 @@ class KeywordCommandsController < ApplicationController
   wrap_parameters :command, include: [:params, :name, :command_type], format: [:json, :url_encoded_form]
 
   before_filter :find_user, :find_keyword
-  before_filter :find_command, :only => [:show, :update, :destroy]
-  before_filter :set_page, :only => :index
+  before_filter :find_command, only: [:show, :update, :destroy]
+  before_filter :set_page, only: :index
 
   def index
     @commands = @keyword.commands.page(@page)

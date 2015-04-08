@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Service::ForwardService do
   let(:client) { Service::ForwardService.new }
-  let(:body) { { :foo => :bar } }
+  let(:body) { { foo: :bar } }
   let(:url) { "http://www.foo.com/a/sub/dir" }
 
   it 'should post the parameters' do

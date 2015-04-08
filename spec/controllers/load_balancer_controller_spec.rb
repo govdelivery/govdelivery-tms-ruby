@@ -10,8 +10,8 @@ describe LoadBalancerController, "testing status" do
     it "should render nothing" do
       @connection.expects(:select_one).with('SELECT SYSDATE FROM DUAL')
       get :show
-      response.code.should == "200"
-      response.body.should eq('XACT Donkey Cookies')
+      expect(response.code).to eq("200")
+      expect(response.body).to eq('XACT Donkey Cookies')
     end
   end
 

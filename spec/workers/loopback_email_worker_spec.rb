@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe LoopbackEmailWorker, :type => :worker do
+RSpec.describe LoopbackEmailWorker, type: :worker do
   let(:loopback_vendor) { EmailVendor.create!(worker: 'LoopbackEmailWorker',
                                               name:   'test vendor') }
   let(:account) { create(:account, email_vendor: loopback_vendor) }

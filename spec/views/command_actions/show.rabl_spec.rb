@@ -21,7 +21,7 @@ describe 'command_actions/show.rabl' do
 
   it 'should work when valid' do
     render
-    rendered.should be_json_for(command_action).
+    expect(rendered).to be_json_for(command_action).
                       with_attributes(:status, :content_type, :response_body).
                       with_timestamps(:created_at).
                       with_links('self' => inbound_sms_command_action_path(command_action.inbound_message_id, command_action.id),

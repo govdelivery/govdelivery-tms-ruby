@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe LoopbackVoiceWorker, :type => :worker do
+RSpec.describe LoopbackVoiceWorker, type: :worker do
   let(:loopback_vendor) { VoiceVendor.create!(worker:   'LoopbackVoiceWorker',
                                             name:     'test vendor',
                                             username: 'sms_loopback_username',

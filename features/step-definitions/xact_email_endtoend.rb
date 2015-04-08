@@ -87,7 +87,7 @@ Then /^I go to Gmail to check for message delivery$/ do
         retriever_method :imap, conf.gmail.imap.to_h
       end
 
-      emails = Mail.find(:what => :last, :count => 1000, :order => :dsc)
+      emails = Mail.find(what: :last, count: 1000, order: :dsc)
 
       emails.each do |mail|
         mail.parts.map { |p| 

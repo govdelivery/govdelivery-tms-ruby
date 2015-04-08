@@ -6,10 +6,10 @@ if defined?(JRUBY_VERSION)
   describe Odm::TmsExtendedSenderWorker do
     let(:worker) { Odm::TmsExtendedSenderWorker.new }
     let(:odm_vendor) { create(:email_vendor, worker: 'LoopbackMessageWorker') }
-    let(:account) { create(:account, :email_vendor => odm_vendor, name: 'name') }
+    let(:account) { create(:account, email_vendor: odm_vendor, name: 'name') }
     let(:recipients) do
       s = stub('recipients')
-      s.stubs(:find_each).yields(EmailRecipient.new(:email => 'email@sink.govdelivery.com')).then.yields(EmailRecipient.new(:email => 'email2@sink.govdelivery.com'))
+      s.stubs(:find_each).yields(EmailRecipient.new(email: 'email@sink.govdelivery.com')).then.yields(EmailRecipient.new(email: 'email2@sink.govdelivery.com'))
       s
     end
     let(:email_message) do
@@ -48,7 +48,7 @@ if defined?(JRUBY_VERSION)
       p
     end
     let (:odm_v2) { mock(' Odm::TmsExtendedSenderWorker::ODMv2') }
-    let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', :getTMSExtendedPort => odm_v2) }
+    let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', getTMSExtendedPort: odm_v2) }
 
     context 'dynamic_queue_key' do
       it 'should work with subject' do

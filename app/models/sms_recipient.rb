@@ -9,7 +9,7 @@ class SmsRecipient < ActiveRecord::Base
     end
   }
 
-  scope :not_sent, -> { where(:sent_at => nil) }
+  scope :not_sent, -> { where(sent_at: nil) }
   scope :blacklisted, lambda { |vendor_id|
     sql = <<-SQL
       inner join #{StopRequest.table_name} 

@@ -3,28 +3,28 @@ require 'rails_helper'
 describe EmailMessage do
   let(:vendor) { create(:email_vendor) }
   let(:account) { create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3') }    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
-  let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
   let(:email) { build(:email_message,
-    :user => user,
-    :body => 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
-    :subject => 'specs before tests',
-    :from_email => account.from_email,
-    :open_tracking_enabled => true,
-    :click_tracking_enabled => true,
-    :macros => {
+    user: user,
+    body: 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
+    subject: 'specs before tests',
+    from_email: account.from_email,
+    open_tracking_enabled: true,
+    click_tracking_enabled: true,
+    macros: {
       'macro1' => 'foo',
       'macro2' => 'bar',
       'first' => 'bazeliefooga'
     }
   ) }
   let(:macroless_email) { build(:email_message,
-      :user => user,
-      :body => 'longggg body',
-      :subject => 'specs before tests',
-      :from_email => account.from_email,
-      :open_tracking_enabled => true,
-      :click_tracking_enabled => true,
-      :macros => {}
+      user: user,
+      body: 'longggg body',
+      subject: 'specs before tests',
+      from_email: account.from_email,
+      open_tracking_enabled: true,
+      click_tracking_enabled: true,
+      macros: {}
   ) }
   subject { email }
 
@@ -35,8 +35,8 @@ describe EmailMessage do
       Account.any_instance.stubs(:from_email_allowed?).returns(false)
     end
     it 'should not be valid' do
-      email.should be_invalid
-      email.errors.get(:from_email).should_not be_empty
+      expect(email).to be_invalid
+      expect(email.errors.get(:from_email)).not_to be_empty
     end
   end
 
@@ -46,25 +46,25 @@ describe EmailMessage do
       email.click_tracking_enabled = nil
       email.save!
       email.reload
-      email.open_tracking_enabled.should be true
-      email.click_tracking_enabled.should be true
+      expect(email.open_tracking_enabled).to be true
+      expect(email.click_tracking_enabled).to be true
     end
   end
   context "with all attributes" do
-    it { should be_valid }
+    it { is_expected.to be_valid }
     it 'should set the account' do
-      account.should_not be_nil
+      expect(account).not_to be_nil
     end
     it 'should have a record designator for odm' do
-      subject.odm_record_designator.should eq('email::recipient_id::x_tms_recipient::first::macro1::macro2')
-      macroless_email.odm_record_designator.should eq('email::recipient_id::x_tms_recipient')
+      expect(subject.odm_record_designator).to eq('email::recipient_id::x_tms_recipient::first::macro1::macro2')
+      expect(macroless_email.odm_record_designator).to eq('email::recipient_id::x_tms_recipient')
     end
     context 'and saved' do
       before { email.save! }
 
       it 'should be able to create recipients' do
-        rcpt = email.create_recipients([:email => 'tyler@dudes.com'])
-        email.recipients.reload.count.should eq(1)
+        rcpt = email.create_recipients([email: 'tyler@dudes.com'])
+        expect(email.recipients.reload.count).to eq(1)
       end
 
       it "should select proper columns for list" do
@@ -99,10 +99,10 @@ describe EmailMessage do
           email.recipients.create!(email: 'bill@busheyworld.ie')
         end
         it 'should send and set ack' do
-          email.ready!.should be true
-          email.sending!(nil, 'dummy_id').should be true
-          email.recipients.first.sending?.should be true
-          email.reload.ack.should eq('dummy_id')
+          expect(email.ready!).to be true
+          expect(email.sending!(nil, 'dummy_id')).to be true
+          expect(email.recipients.first.sending?).to be true
+          expect(email.reload.ack).to eq('dummy_id')
         end
 
         it 'should not be able to skip queued' do
@@ -111,10 +111,10 @@ describe EmailMessage do
 
         context 'and completed! without a message' do
           it 'should not set the macros attribute' do
-            email.has_attribute?(:macros).should be true
-            email.ready!.should be true
-            email.sending!(nil, 'dummy_id').should be true
-            email.recipients.first.sent!('ack', nil, nil).should be true
+            expect(email.has_attribute?(:macros)).to be true
+            expect(email.ready!).to be true
+            expect(email.sending!(nil, 'dummy_id')).to be true
+            expect(email.recipients.first.sent!('ack', nil, nil)).to be true
 
             message = EmailMessage.without_message.find(email.id)
             expect(message.has_attribute?(:macros)).to be false
@@ -133,7 +133,7 @@ describe EmailMessage do
             recip = email.recipients.reload.first
             recip.send(:"#{type}!", "http://dudes.com/tyler", Time.now)
           end
-          it { email.send(:"recipients_who_#{type}").count.should == 1 }
+          it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
         end
       end
 
@@ -147,7 +147,7 @@ describe EmailMessage do
             recip = email.recipients.reload.first
             recip.send(:"#{type}!", "email_ack", nil, nil)
           end
-          it { email.send(:"recipients_who_#{type}").count.should == 1 }
+          it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
         end
       end
     end
@@ -157,7 +157,7 @@ describe EmailMessage do
     context "without #{field}" do
       it 'should not be valid' do
         email.send("#{field}=", nil)
-        should_not be_valid
+        is_expected.not_to be_valid
       end
     end
   end
@@ -170,20 +170,20 @@ describe EmailMessage do
       it 'should be account default when nil' do
         email.send("#{field}=", nil)
         email.account.expects(field).returns("return")
-        email.send(field).should eq("return")
+        expect(email.send(field)).to eq("return")
       end
       it 'should be local from_email when nil and account default is nil' do
         email.send("#{field}=", nil)
         email.from_email = "from_email"
         email.account.expects(field).returns(nil)
-        email.send(field).should eq("from_email")
+        expect(email.send(field)).to eq("from_email")
       end
     end
     context "#{field}" do
       it 'should use local value' do
         email.send("#{field}=", 'local')
         email.account.expects(field).never
-        email.send(field).should eq("local")
+        expect(email.send(field)).to eq("local")
       end
     end
   end

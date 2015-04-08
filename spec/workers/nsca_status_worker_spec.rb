@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe NscaStatusWorker, :type => :worker do
+RSpec.describe NscaStatusWorker, type: :worker do
   it 'should be OK' do
     worker = NscaStatusWorker.new
     worker.expects(:checks).returns('dummy' => stub('scope', count: 0))
