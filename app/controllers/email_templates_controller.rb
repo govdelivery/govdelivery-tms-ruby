@@ -12,8 +12,8 @@ class EmailTemplatesController < ApplicationController
 
   def create
     params.except!(:from_address_id)
-    transform_links_payload!(:email_template)
-    template_params = params[:email_template].reverse_merge(from_address_id: @account.default_from_address.id)
+    transform_links_payload!
+    template_params = params.reverse_merge(from_address_id: @account.default_from_address.id)
     @email_template = account_templates.create(template_params) do |template|
       template.user = current_user
     end
@@ -22,9 +22,9 @@ class EmailTemplatesController < ApplicationController
 
   def update
     params.except!(:from_address_id)
-    transform_links_payload!(:email_template)
+    transform_links_payload!
     @email_template = find_email_template
-    @email_template.update_attributes(params[:email_template])
+    @email_template.update_attributes(params)
     respond_with(@email_template)
   end
 
