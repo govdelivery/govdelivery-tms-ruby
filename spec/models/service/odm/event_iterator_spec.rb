@@ -24,7 +24,7 @@ module Service
         batch = nil
         transactor = ->(&block){ batch = block.call }
         EventIterator.new(fetcher, sequence, transactor).each {|event|}
-        batch.events.should == [1,2,3]
+        expect(batch.events).to eq([1,2,3])
       end
       it 'keeps calling #fetch on the fetcher until it does not have more' do
         fetcher.expects(:fetch).twice.returns(TestBatch.new([1,2,3], 'the next one', true)).then.returns(TestBatch.new([4,5,6], nil, false))
@@ -36,7 +36,7 @@ module Service
       end
       it 'yields each event in the batch' do
         events = EventIterator.new(fetcher, sequence, transactor).map {|event| event }
-        events.should == [1,2,3]
+        expect(events).to eq([1,2,3])
       end
     end
   end

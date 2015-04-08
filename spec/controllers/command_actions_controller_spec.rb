@@ -65,16 +65,16 @@ describe CommandActionsController do
     it "works with inbound message" do
       command_action = valid_command_action
       get :index, sms_id: inbound_message.id
-      response.response_code.should eq(200)
-      assigns(:parent).should eq(inbound_message)
-      assigns(:command_actions).should eq([command_action])
+      expect(response.response_code).to eq(200)
+      expect(assigns(:parent)).to eq(inbound_message)
+      expect(assigns(:command_actions)).to eq([command_action])
     end
     it "works with command" do
       command_action = valid_command_action
       get :index, command_id: command.id, keyword_id: keyword.id
-      response.response_code.should eq(200)
-      assigns(:parent).should eq(command)
-      assigns(:command_actions).should eq([command_action])
+      expect(response.response_code).to eq(200)
+      expect(assigns(:parent)).to eq(command)
+      expect(assigns(:command_actions)).to eq([command_action])
     end
   end
 
@@ -82,16 +82,16 @@ describe CommandActionsController do
     it "works with inbound message" do
       command_action = valid_command_action
       get :show, sms_id: inbound_message.id, id: command_action.to_param
-      response.response_code.should eq(200)
-      assigns(:parent).should eq(inbound_message)
-      assigns(:command_action).should eq(command_action)
+      expect(response.response_code).to eq(200)
+      expect(assigns(:parent)).to eq(inbound_message)
+      expect(assigns(:command_action)).to eq(command_action)
     end
     it "works with command" do
       command_action = valid_command_action
       get :show, command_id: command.id, keyword_id: keyword.id, id: command_action.to_param
-      response.response_code.should eq(200)
-      assigns(:parent).should eq(command)
-      assigns(:command_action).should eq(command_action)
+      expect(response.response_code).to eq(200)
+      expect(assigns(:parent)).to eq(command)
+      expect(assigns(:command_action)).to eq(command_action)
     end
   end
 

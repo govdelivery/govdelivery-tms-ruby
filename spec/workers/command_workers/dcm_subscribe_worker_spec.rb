@@ -84,7 +84,7 @@ describe CommandWorkers::DcmSubscribeWorker do
     it 'uses lowest status code' do
       subject.http_response = stub(status: 200)
       subject.http_response = stub(status: 404)
-      subject.http_response.status.should eq(200)
+      expect(subject.http_response.status).to eq(200)
     end
   end
 

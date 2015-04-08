@@ -7,9 +7,9 @@ describe View::TwilioRequestResponse do
     View::TwilioRequestResponse.new(vendor, nil)
   }
   it 'delegates to vendor' do
-    subject.foobar.should == :omg_lol
+    expect(subject.foobar).to eq(:omg_lol)
   end
   it 'works with rabl' do
-    subject.respond_to?(:foobar).should be true
+    expect(subject.respond_to?(:foobar)).to be true
   end
 end

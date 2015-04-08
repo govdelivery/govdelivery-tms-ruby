@@ -7,7 +7,7 @@ describe IPAWS::EventCodesController do
       user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
       sign_in user
       get :index, format: :json
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
       expect(response.body).to be_present
       data = JSON.parse(response.body)
       expect(data).to be == IPAWS::EventCode.all.as_json
@@ -17,7 +17,7 @@ describe IPAWS::EventCodesController do
       user = create :user, account: create(:account, ipaws_vendor: nil)
       sign_in user
       get :index, format: :json
-      response.response_code.should == 403
+      expect(response.response_code).to eq(403)
     end
   end
 

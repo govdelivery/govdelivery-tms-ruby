@@ -10,18 +10,18 @@ describe Service::Keyword do
         subject { Service::Keyword.new(type, account.id, account.sms_vendor) }
 
         it "sets the keyword to the special, #{type} keyword" do
-          subject.keyword.should eql account.send(:"#{type}_keyword")
+          expect(subject.keyword).to eql account.send(:"#{type}_keyword")
         end
 
         it "delegates to the response_text set on the #{type} keyword" do
           keyword = account.send(:"#{type}_keyword")
           keyword.response_text = "spatula"
           keyword.save
-          subject.response_text.should eql "spatula"
+          expect(subject.response_text).to eql "spatula"
         end
 
         it "responds with DEFAULT_#{type.upcase}_TEXT if no response_text is set" do
-          subject.response_text.should eql Service::Keyword.const_get("DEFAULT_#{type.upcase}_TEXT")
+          expect(subject.response_text).to eql Service::Keyword.const_get("DEFAULT_#{type.upcase}_TEXT")
         end
 
         it "respond! should call #{type}! on account" do
@@ -31,7 +31,7 @@ describe Service::Keyword do
         end
 
         it "should return false on default?" do
-          subject.default?.should == false
+          expect(subject.default?).to eq(false)
         end
       end
     end
@@ -46,17 +46,17 @@ describe Service::Keyword do
     subject { Service::Keyword.new("spatula", account.id, account.sms_vendor) }
 
     it "sets the keyword to the matching keyword" do
-      subject.keyword.should eql @keyword
+      expect(subject.keyword).to eql @keyword
     end
 
     it "uses the response_text from the keyword" do
-      subject.response_text.should eql @keyword.response_text
+      expect(subject.response_text).to eql @keyword.response_text
     end
 
     it "uses the response_text from the keyword even if the response text is nil" do
       @keyword.response_text = nil
       @keyword.save
-      subject.response_text.should eql @keyword.response_text
+      expect(subject.response_text).to eql @keyword.response_text
     end
 
     it "respond! should call execute_commands on the keyword" do
@@ -67,7 +67,7 @@ describe Service::Keyword do
     end
 
     it "should return false on default?" do
-      subject.default?.should == false
+      expect(subject.default?).to eq(false)
     end
   end
 
@@ -76,7 +76,7 @@ describe Service::Keyword do
     subject { Service::Keyword.new("spatula", account.id, account.sms_vendor) }
 
     it "sets the keyword to the default keyword" do
-      subject.keyword.should eql account.default_keyword
+      expect(subject.keyword).to eql account.default_keyword
     end
 
     it "respond! should call execute_commands on the default keyword" do
@@ -88,7 +88,7 @@ describe Service::Keyword do
     end
 
     it "should return true on default?" do
-      subject.default?.should == true
+      expect(subject.default?).to eq(true)
     end
   end
 
@@ -101,11 +101,11 @@ describe Service::Keyword do
         subject { Service::Keyword.new(type, nil, vendor) }
 
         it "sets no keyword" do
-          subject.keyword.should be_nil
+          expect(subject.keyword).to be_nil
         end
 
         it "responds with DEFAULT_#{type.upcase}_TEXT" do
-          subject.response_text.should eql Service::Keyword.const_get("DEFAULT_#{type.upcase}_TEXT")
+          expect(subject.response_text).to eql Service::Keyword.const_get("DEFAULT_#{type.upcase}_TEXT")
         end
 
         it "respond! should call #{type}! on vendor" do
@@ -115,7 +115,7 @@ describe Service::Keyword do
         end
 
         it "should return false on default?" do
-          subject.default?.should == false
+          expect(subject.default?).to eq(false)
         end
       end
     end
@@ -135,7 +135,7 @@ describe Service::Keyword do
         subject { Service::Keyword.new(type, nil, vendor) }
 
         it "responds with #{type}_text" do
-          subject.response_text.should eql 'custom'
+          expect(subject.response_text).to eql 'custom'
         end
       end
     end
@@ -152,7 +152,7 @@ describe Service::Keyword do
     subject { Service::Keyword.new("random", nil, vendor) }
 
     it "should respond with the custom help_text" do
-      subject.response_text.should eql 'custom'
+      expect(subject.response_text).to eql 'custom'
     end
   end
 
@@ -163,11 +163,11 @@ describe Service::Keyword do
     subject { Service::Keyword.new("random", nil, account.sms_vendor) }
 
     it "sets no keyword" do
-      subject.keyword.should be_nil
+      expect(subject.keyword).to be_nil
     end
 
     it "responds with DEFAULT_HELP_TEXT" do
-      subject.response_text.should eql Service::Keyword::DEFAULT_HELP_TEXT
+      expect(subject.response_text).to eql Service::Keyword::DEFAULT_HELP_TEXT
     end
 
     it "respond! should be a noop" do
@@ -177,7 +177,7 @@ describe Service::Keyword do
     end
 
     it "should return true on default?" do
-      subject.default?.should == true
+      expect(subject.default?).to eq(true)
     end
   end
 

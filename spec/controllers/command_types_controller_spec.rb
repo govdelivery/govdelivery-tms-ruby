@@ -13,7 +13,7 @@ describe CommandTypesController do
     end
 
     it "should render correctly" do
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
     end
   end
 end

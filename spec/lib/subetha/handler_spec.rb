@@ -63,8 +63,8 @@ describe Subetha::Handler do
     it 'should work' do
       CreateRecipientsWorker.expects(:perform_async)
       subject.data(StringIO.new(message).to_inputstream)
-      subject.message.should_not be_nil
-      subject.message.persisted?.should be true
+      expect(subject.message).not_to be_nil
+      expect(subject.message.persisted?).to be true
     end
 
     it 'should fail if message is invalid' do

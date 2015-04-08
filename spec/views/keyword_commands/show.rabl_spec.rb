@@ -26,7 +26,7 @@ describe 'keyword_commands/show.rabl' do
 
   it 'should work when valid' do
     render
-    rendered.should be_json_for(command).
+    expect(rendered).to be_json_for(command).
                       with_attributes(:name, :command_type).
                       with_objects(:params).
                       with_links('self' => keyword_command_path(keyword, command),
@@ -38,7 +38,7 @@ describe 'keyword_commands/show.rabl' do
   it 'should work when invalid' do
     command.stubs(:errors).returns({:foo => 'whoops'})
     render
-    rendered.should be_json_for(command).
+    expect(rendered).to be_json_for(command).
                       with_attributes(:name, :command_type).
                       with_objects(:params).
                       with_links('self' => keyword_commands_path(keyword),

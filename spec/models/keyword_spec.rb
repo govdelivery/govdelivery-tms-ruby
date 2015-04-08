@@ -44,7 +44,7 @@ describe Keyword do
   [:name, :response_text].each do |field|
     context "when #{field} is too long" do
       before { subject.send("#{field}=", 'A'*161) }
-      specify { subject.should be_invalid }
+      specify { expect(subject).to be_invalid }
     end
   end
 
@@ -59,7 +59,7 @@ describe Keyword do
       @new_keyword.account = subject.account
     end
 
-    specify { @new_keyword.should be_invalid }
+    specify { expect(@new_keyword).to be_invalid }
 
     context "and same vendor but different account_id" do
       before do
@@ -67,7 +67,7 @@ describe Keyword do
         @new_keyword.account = create(:account, sms_prefixes: [sms_prefix], sms_vendor: subject.account.sms_vendor)
       end
       specify do
-        @new_keyword.should be_valid
+        expect(@new_keyword).to be_valid
         @new_keyword.save! # make sure there is no index preventing this anymore
       end
     end
@@ -98,30 +98,30 @@ describe Keyword do
     subject { create(:custom_keyword, name: 'FOOBAR') }
 
     it 'should be findable in a case-insensitive way with with_name' do
-      subject.should be_instance_of(Keyword)
-      subject.class.with_name('fOobAR').first.should eq(subject)
+      expect(subject).to be_instance_of(Keyword)
+      expect(subject.class.with_name('fOobAR').first).to eq(subject)
     end
 
     describe '#name=' do
 
       it 'downcases the name' do
-        subject.name.should == 'foobar'
+        expect(subject.name).to eq('foobar')
       end
 
       it 'handles non-ascii' do
         subject.name = 'SÜSCRÍBÁSÉÑ'
-        subject.name.should == 'süscríbáséñ'
+        expect(subject.name).to eq('süscríbáséñ')
       end
 
       it 'strips whitespace' do
         subject.name = " foobar \n"
-        subject.name.should == 'foobar'
+        expect(subject.name).to eq('foobar')
       end
     end
   end
 
   describe '#create_command!' do
-    let(:command) { stub('Command', call: true) }
+    let(:command) { double('Command', call: true) }
     let(:command_params) { CommandParameters.new }
     subject { create(:account_with_sms).stop_keyword }
 
@@ -160,7 +160,7 @@ describe Keyword do
   describe 'stop?' do
     %w(stop quit STOP QUIT sToP qUiT cancel unsubscribe).each do |stop|
       it "should recognize #{stop}" do
-        Keyword.stop?(stop).should be true
+        expect(Keyword.stop?(stop)).to be true
       end
     end
   end

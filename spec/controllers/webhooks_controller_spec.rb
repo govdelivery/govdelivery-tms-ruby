@@ -18,11 +18,11 @@ RSpec.describe WebhooksController, :type => :controller do
     end
     it 'should paginate' do
       get :index, page: 2
-      assigns(:page).should eq(2)
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should =~ /next/
-      response.headers['Link'].should =~ /last/
+      expect(assigns(:page)).to eq(2)
+      expect(response.headers['Link']).to match(/first/)
+      expect(response.headers['Link']).to match(/prev/)
+      expect(response.headers['Link']).to match(/next/)
+      expect(response.headers['Link']).to match(/last/)
     end
 
   end
@@ -46,8 +46,8 @@ RSpec.describe WebhooksController, :type => :controller do
     patch :update, id: webhook.to_param, webhook: {event_type: 'sent', url: 'http://failwhale.com/sent'}
     expect(response.status).to eq(200)
     expect(hook = assigns(:webhook)).to eq(webhook)
-    hook.event_type.should eq('sent')
-    hook.url.should eq('http://failwhale.com/sent')
+    expect(hook.event_type).to eq('sent')
+    expect(hook.url).to eq('http://failwhale.com/sent')
   end
 
   it 'can destroy' do

@@ -23,11 +23,11 @@ describe KeywordCommandsController do
       commands.stubs(:first_page?).returns(true)
       commands.stubs(:last_page?).returns(false)
       get :index, :keyword_id => keyword.id
-      response.response_code.should == 200
-      response.headers['Link'].should_not =~ /first/
-      response.headers['Link'].should_not =~ /prev/
-      response.headers['Link'].should =~ /next/
-      response.headers['Link'].should =~ /last/
+      expect(response.response_code).to eq(200)
+      expect(response.headers['Link']).not_to match(/first/)
+      expect(response.headers['Link']).not_to match(/prev/)
+      expect(response.headers['Link']).to match(/next/)
+      expect(response.headers['Link']).to match(/last/)
     end
 
     it "should have all links" do
@@ -35,11 +35,11 @@ describe KeywordCommandsController do
       commands.stubs(:first_page?).returns(false)
       commands.stubs(:last_page?).returns(false)
       get :index, :keyword_id => keyword.id, :page => 2
-      response.response_code.should == 200
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should =~ /next/
-      response.headers['Link'].should =~ /last/
+      expect(response.response_code).to eq(200)
+      expect(response.headers['Link']).to match(/first/)
+      expect(response.headers['Link']).to match(/prev/)
+      expect(response.headers['Link']).to match(/next/)
+      expect(response.headers['Link']).to match(/last/)
     end
 
     it "should have prev and first links" do
@@ -47,11 +47,11 @@ describe KeywordCommandsController do
       commands.stubs(:first_page?).returns(false)
       commands.stubs(:last_page?).returns(true)
       get :index, :keyword_id => keyword.id, :page => 5
-      response.response_code.should == 200
-      response.headers['Link'].should =~ /first/
-      response.headers['Link'].should =~ /prev/
-      response.headers['Link'].should_not =~ /next/
-      response.headers['Link'].should_not =~ /last/
+      expect(response.response_code).to eq(200)
+      expect(response.headers['Link']).to match(/first/)
+      expect(response.headers['Link']).to match(/prev/)
+      expect(response.headers['Link']).not_to match(/next/)
+      expect(response.headers['Link']).not_to match(/last/)
     end
   end
   context "Displaying an command" do
@@ -62,7 +62,7 @@ describe KeywordCommandsController do
       get :show, :keyword_id => keyword.id, :id => '22'
     end
     it "should work" do
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
     end
   end
 
@@ -82,22 +82,22 @@ describe KeywordCommandsController do
 
     it "should create a command with valid params" do
       post :create, keyword_id: keyword.id, command: valid_params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
 
     it "should be able to create a command on the stop keyword" do
       post :create, keyword_id: 'stop', command: valid_params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
 
     it "should be able to create a command on the help keyword" do
       post :create, keyword_id: 'help', command: valid_params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
 
     it "should be able to create a command on the default keyword" do
       post :create, keyword_id: 'default', command: valid_params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
   end
 
@@ -112,7 +112,7 @@ describe KeywordCommandsController do
       }
     end
     it "should return error" do
-      response.response_code.should == 422
+      expect(response.response_code).to eq(422)
     end
   end
 
@@ -127,7 +127,7 @@ describe KeywordCommandsController do
       }
     end
     it "should work" do
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
     end
   end
 
@@ -141,7 +141,7 @@ describe KeywordCommandsController do
       }
     end
     it "should work" do
-      response.response_code.should == 422
+      expect(response.response_code).to eq(422)
     end
   end
 
@@ -152,7 +152,7 @@ describe KeywordCommandsController do
       delete :destroy, :keyword_id => keyword.id, :id => '1'
     end
     it "should work" do
-      response.response_code.should == 204
+      expect(response.response_code).to eq(204)
     end
   end
 

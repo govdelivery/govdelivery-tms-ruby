@@ -16,7 +16,7 @@ describe TwilioStatusCallbacksController do
 
     it "should error when calling #create with an SmsSid that is not found" do
       post :create, twilio_status_callback_params('sent ', "NO THIS IS WRONG")
-      response.response_code.should == 404
+      expect(response.response_code).to eq(404)
     end
 
     context "#create with garbage status" do
@@ -25,13 +25,13 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should not update recipient status" do
-        recipient.new?.should be true
+        expect(recipient.new?).to be true
       end
       it "should not set the completed_at date for the recipient" do
-        recipient.completed_at.should == nil
+        expect(recipient.completed_at).to eq(nil)
       end
     end
 
@@ -40,13 +40,13 @@ describe TwilioStatusCallbacksController do
         post :create, twilio_status_callback_params('sent')
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should update recipient status" do
-        recipient.reload.sent?.should be true
+        expect(recipient.reload.sent?).to be true
       end
       it "should set the completed_at date for the recipient" do
-        recipient.reload.completed_at.should_not == nil
+        expect(recipient.reload.completed_at).not_to eq(nil)
       end
     end
 
@@ -56,13 +56,13 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should update recipient status" do
-        recipient.failed?.should be true
+        expect(recipient.failed?).to be true
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should_not == nil
+        expect(recipient.completed_at).not_to eq(nil)
       end
     end
 
@@ -94,16 +94,16 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should update recipient status" do
-        recipient.sent?.should be true
+        expect(recipient.sent?).to be true
       end
       it "should not update recipient secondary status" do
-        recipient.secondary_status.should eql('human')
+        expect(recipient.secondary_status).to eql('human')
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should_not be_nil
+        expect(recipient.completed_at).not_to be_nil
       end
     end
 
@@ -116,16 +116,16 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should update recipient status" do
-        recipient.sent?.should be true
+        expect(recipient.sent?).to be true
       end
       it "should update recipient secondary status" do
-        recipient.secondary_status.should eql('machine')
+        expect(recipient.secondary_status).to eql('machine')
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should_not be_nil
+        expect(recipient.completed_at).not_to be_nil
       end
     end
 
@@ -138,16 +138,16 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should update recipient status" do
-        recipient.failed?.should be true
+        expect(recipient.failed?).to be true
       end
       it "should update recipient secondary status" do
-        recipient.secondary_status.should eql('busy')
+        expect(recipient.secondary_status).to eql('busy')
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should_not be_nil
+        expect(recipient.completed_at).not_to be_nil
       end
     end
 
@@ -160,16 +160,16 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should update recipient status" do
-        recipient.failed?.should be true
+        expect(recipient.failed?).to be true
       end
       it "should update recipient secondary status" do
-        recipient.secondary_status.should eql('no_answer')
+        expect(recipient.secondary_status).to eql('no_answer')
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should_not be_nil
+        expect(recipient.completed_at).not_to be_nil
       end
     end
 
@@ -183,20 +183,20 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should not update recipient status" do
-        recipient.sent?.should be false
-        recipient.sending?.should be true
+        expect(recipient.sent?).to be false
+        expect(recipient.sending?).to be true
       end
       it "should update recipient secondary status" do
-        recipient.voice_recipient_attempts.last.description.should eql('busy')
+        expect(recipient.voice_recipient_attempts.last.description).to eql('busy')
       end
       it "should update retry count" do
-        recipient.retries.should eql(1)
+        expect(recipient.retries).to eql(1)
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should be_nil
+        expect(recipient.completed_at).to be_nil
       end
     end
 
@@ -210,19 +210,19 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should update recipient status" do
-        recipient.sent?.should be false
+        expect(recipient.sent?).to be false
       end
       it "should update recipient secondary status" do
-        recipient.voice_recipient_attempts.last.description.should eql('no_answer')
+        expect(recipient.voice_recipient_attempts.last.description).to eql('no_answer')
       end
       it "should update retry count" do
-        recipient.retries.should eql(1)
+        expect(recipient.retries).to eql(1)
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should == nil
+        expect(recipient.completed_at).to eq(nil)
       end
     end
 
@@ -236,16 +236,16 @@ describe TwilioStatusCallbacksController do
         recipient.reload
       end
       it "should respond with accepted" do
-        response.response_code.should == 201
+        expect(response.response_code).to eq(201)
       end
       it "should not update recipient status" do
-        recipient.sending?.should be true
+        expect(recipient.sending?).to be true
       end
       it "should update retry count" do
-        recipient.retries.should eql(1)
+        expect(recipient.retries).to eql(1)
       end
       it "should set the completed_at date for the recipient" do
-        recipient.completed_at.should == nil
+        expect(recipient.completed_at).to eq(nil)
       end
     end
 

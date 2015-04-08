@@ -8,11 +8,11 @@ describe TwilioRequestsController do
     let(:params) { twilio_request_params('STOP') }
     it 'should respond with created' do
       post :create, params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
     it 'should respond with stop text' do
       post :create, params
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
+      expect(assigns(:response).response_text).to eq(Service::Keyword::DEFAULT_STOP_TEXT)
     end
     it 'should persist a stop request' do
       expect{post :create, params}
@@ -34,12 +34,12 @@ describe TwilioRequestsController do
     let(:params) { twilio_request_params('garbage') }
     it "should respond with created" do
       post :create, params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
     it 'should respond with default response text' do
       post :create, params
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_HELP_TEXT
-      assigns(:response).response_text.should_not be_nil
+      expect(assigns(:response).response_text).to eq(Service::Keyword::DEFAULT_HELP_TEXT)
+      expect(assigns(:response).response_text).not_to be_nil
     end
     it 'should persist an inbound message' do
       expect{post :create, params}
@@ -54,11 +54,11 @@ describe TwilioRequestsController do
     let(:params) { twilio_request_params('UNSUBSCRIBE') }
     it 'should respond with created' do
       post :create, params
-      response.response_code.should == 201
+      expect(response.response_code).to eq(201)
     end
     it 'should respond with vendor stop text' do
       post :create, params
-      assigns(:response).response_text.should == Service::Keyword::DEFAULT_STOP_TEXT
+      expect(assigns(:response).response_text).to eq(Service::Keyword::DEFAULT_STOP_TEXT)
     end
     it 'should persist an inbound message' do
       expect{post :create, params}.to change{vendor.inbound_messages.count}.by 1

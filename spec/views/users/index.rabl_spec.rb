@@ -16,14 +16,14 @@ describe 'users/index.rabl' do
     render
     body = JSON.parse(rendered)
     account.users.each do |a_user|
-      body['users'].any?{|body_user| body_user['id'] == a_user.id}.should be_truthy
+      expect(body['users'].any?{|body_user| body_user['id'] == a_user.id}).to be_truthy
     end
   end
 
   it 'should be a good HAL endpoint' do
     render
     body = JSON.parse(rendered)
-    body['_links']['self'].should eq(account_users_path(account))
-    body['_links']['account'].should eq(account_path(account))
+    expect(body['_links']['self']).to eq(account_users_path(account))
+    expect(body['_links']['account']).to eq(account_path(account))
   end
 end

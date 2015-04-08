@@ -36,7 +36,7 @@ if defined?(JRUBY_VERSION)
     end
 
     context 'odm throws error' do
-      let (:service)  { mock('Service::Odm::EventService') }
+      let (:service)  { double('Service::Odm::EventService') }
 
       it 'should catch Throwable and throw Ruby Exception' do
         Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java::java::lang::Exception.new("hello Exception"))

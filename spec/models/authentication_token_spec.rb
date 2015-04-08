@@ -8,22 +8,22 @@ describe AuthenticationToken do
   subject { user.authentication_tokens.first }
 
   context "when valid" do
-    specify { subject.valid?.should == true }
+    specify { expect(subject.valid?).to eq(true) }
   end
   
   context "when token is empty" do
     before { subject.token = nil }
-    specify { subject.valid?.should == false }
+    specify { expect(subject.valid?).to eq(false) }
   end
 
   context "when token is not unique" do
     before { subject.token = other_user.authentication_tokens.first.token }
-    specify { subject.valid?.should == false }
+    specify { expect(subject.valid?).to eq(false) }
   end
 
   context "when user is nil" do
     before { subject.user = nil }
-    specify { subject.valid?.should == false }
+    specify { expect(subject.valid?).to eq(false) }
   end
 
 end

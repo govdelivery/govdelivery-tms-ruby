@@ -64,7 +64,7 @@ describe CommandWorkers::DcmUnsubscribeWorker do
     end
     specify do
       subject.perform(options)
-      subject.http_response.status.should eq(200)
+      expect(subject.http_response.status).to eq(200)
     end
   end
 end

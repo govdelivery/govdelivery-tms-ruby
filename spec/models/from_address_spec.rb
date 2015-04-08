@@ -12,31 +12,31 @@ describe FromAddress do
     end
     it 'should not allow duplicate default addresses' do
       account.from_addresses.create(:is_default => true, :from_email => 'two@example.com')
-      account.from_addresses.where(is_default: true).count.should eq(1)
+      expect(account.from_addresses.where(is_default: true).count).to eq(1)
     end
 
     it 'should not allow duplicate from emails' do
       fa = account.from_addresses.create(:from_email => 'one@example.com')
-      fa.new_record?.should be true
-      fa.errors[:from_email].should_not be_nil
+      expect(fa.new_record?).to be true
+      expect(fa.errors[:from_email]).not_to be_nil
     end
   end
 
   context 'with account and all addresses' do
     subject { account.from_addresses.build(:from_email => 'hey@dude.com', :bounce_email => 'bounce@dude.com', :reply_to_email => 'replyto@dude.com') }
-    it { should be_valid }
+    it { is_expected.to be_valid }
     it 'should use from email for bounce and reply-to' do
-      subject.bounce_email.should eq("bounce@dude.com")
-      subject.errors_to.should    eq("bounce@dude.com")
+      expect(subject.bounce_email).to eq("bounce@dude.com")
+      expect(subject.errors_to).to    eq("bounce@dude.com")
 
-      subject.reply_to_email.should eq('replyto@dude.com')
-      subject.reply_to.should       eq('replyto@dude.com')
+      expect(subject.reply_to_email).to eq('replyto@dude.com')
+      expect(subject.reply_to).to       eq('replyto@dude.com')
     end
   end
 
   context 'with account and from_email' do
     subject { account.from_addresses.build(:from_email => 'hey@dude.com') }
-    it { should be_valid }
+    it { is_expected.to be_valid }
   end
 
   context 'with no from_email' do
@@ -44,6 +44,6 @@ describe FromAddress do
       :bounce_email   => 'bounce@dude.com', 
       :reply_to_email => 'replyto@dude.com'
       ) }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 end

@@ -17,7 +17,7 @@ RSpec.describe UsersController, :type => :controller do
 
     it 'should be able to list users on an account' do
       get :index, {account_id: account.id}
-      response.status.should eq(200)
+      expect(response.status).to eq(200)
     end
 
   end
@@ -29,7 +29,7 @@ RSpec.describe UsersController, :type => :controller do
 
     it 'should not be able to do anything' do
       get :index, {:account_id => account.id}
-      response.status.should eq(403)
+      expect(response.status).to eq(403)
     end
   end
 end

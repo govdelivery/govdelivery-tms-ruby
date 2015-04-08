@@ -44,17 +44,17 @@ if defined? JRUBY_VERSION
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         get :index, { format: :json }.merge(ipaws_credentials)
-        response.response_code.should == 200
+        expect(response.response_code).to eq(200)
         expect(response.body).to be_present
         data = JSON.parse(response.body)
-        data.should be_present
+        expect(data).to be_present
       end
 
       it 'responds with 403 (forbidden) if no IPAWS vendor' do
         user = create :user, account: create(:account, ipaws_vendor: nil)
         sign_in user
         get :index, { format: :json }.merge(ipaws_credentials)
-        response.response_code.should == 403
+        expect(response.response_code).to eq(403)
       end
     end
 

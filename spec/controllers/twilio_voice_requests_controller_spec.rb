@@ -8,14 +8,14 @@ describe TwilioVoiceRequestsController, '#create' do
 
   it 'should return empty on a non-existant FromNumber' do
     post :create, twilio_voice_request_params(@account).merge('To' => '+1bensphone')
-    response.response_code.should == 200
-    response.body.should eq("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>")
+    expect(response.response_code).to eq(200)
+    expect(response.body).to eq("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>")
   end
 
   it 'should return default message' do
     post :create, twilio_voice_request_params(@account)
-    response.response_code.should == 200
-    response.body.should match(/hello world/)
+    expect(response.response_code).to eq(200)
+    expect(response.body).to match(/hello world/)
   end
 
   def twilio_voice_request_params(account)

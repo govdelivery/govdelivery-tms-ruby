@@ -26,12 +26,12 @@ describe ApplicationController do
 
     it "should 404 when ActiveRecord::RecordNotFound " do
       get :show, :id => 'ActiveRecord::RecordNotFound'
-      response.response_code.should eq(404)
+      expect(response.response_code).to eq(404)
     end
 
     it "should 400 on" do
       get :show, :id => 'JSON::ParserError'
-      response.response_code.should eq(400)
+      expect(response.response_code).to eq(400)
       JSON.parse(response.body) # this shouldn't raise
     end
   end
@@ -48,8 +48,8 @@ describe ApplicationController do
 
     it "should log a user in with that auth token" do
       get :index
-      response.response_code.should eq(200)
-      controller.current_user.should eq(user)
+      expect(response.response_code).to eq(200)
+      expect(controller.current_user).to eq(user)
     end
 
     describe "incorrectly" do
@@ -59,7 +59,7 @@ describe ApplicationController do
 
       it "should return the correct response code when token is wrong" do
         get :index
-        response.response_code.should eq(401)
+        expect(response.response_code).to eq(401)
       end
     end
   end

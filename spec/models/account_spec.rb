@@ -6,18 +6,18 @@ describe Account do
   let(:shared_sms_vendor) { create(:shared_sms_vendor) }
   let(:voice_vendor) { create(:voice_vendor) }
 
-  it { should belong_to(:ipaws_vendor) }
+  it { is_expected.to belong_to(:ipaws_vendor) }
 
   context 'from_email_allowed?' do
     subject {
       create(:account, email_vendor: email_vendor)
     }
     it 'should work' do
-      subject.sid.should_not be nil
-      subject.from_email_allowed?('randomemail@foo.com').should be false
-      subject.from_email_allowed?(subject.default_from_address.from_email).should be true
-      subject.from_email_allowed?(subject.default_from_address.from_email.upcase).should be true
-      subject.from_email_allowed?(nil).should be false
+      expect(subject.sid).not_to be nil
+      expect(subject.from_email_allowed?('randomemail@foo.com')).to be false
+      expect(subject.from_email_allowed?(subject.default_from_address.from_email)).to be true
+      expect(subject.from_email_allowed?(subject.default_from_address.from_email.upcase)).to be true
+      expect(subject.from_email_allowed?(nil)).to be false
     end
   end
 
@@ -25,17 +25,17 @@ describe Account do
     subject { build(:account_with_sms, :shared) }
 
     context "without prefixes" do
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
     end
 
     context "with prefixes" do
       subject { create(:account_with_sms, :shared, prefix: 'other-pirate') }
-      it { should be_valid }
+      it { is_expected.to be_valid }
       it 'can have multiple prefixes' do
         subject.save!
         subject.sms_prefixes.create! prefix: 'name01'
         subject.sms_prefixes.create! prefix: 'name02'
-        subject.sms_vendor.sms_prefixes.count.should eql( 3 )
+        expect(subject.sms_vendor.sms_prefixes.count).to eql( 3 )
       end
     end
 
@@ -46,51 +46,51 @@ describe Account do
       Account.new(name: 'name', sms_vendor: sms_vendor, dcm_account_codes: ['ACCOUNT_CODE'])
     }
 
-    it { should be_valid }
+    it { is_expected.to be_valid }
 
     context "when name is empty" do
       before { subject.name = nil }
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
     end
 
     context "when name too long" do
       before { subject.name = "W"*257 }
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
     end
 
     context "when link_encoder is nil" do
       before { subject.link_encoder = nil }
-      it { should be_valid }
+      it { is_expected.to be_valid }
     end
 
     # HYRULE
     context "when link_encoder is ONE" do
       before { subject.link_encoder = 'ONE' }
-      it { should be_valid }
+      it { is_expected.to be_valid }
     end
 
     # STRONGMAIL
     context "when link_encoder is TWO" do
       before { subject.link_encoder = 'TWO' }
-      it { should be_valid }
+      it { is_expected.to be_valid }
     end
 
     context "when link_encoder is invalid" do
       before { subject.link_encoder = 'blah' }
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
     end
 
     context 'creating a command' do
       it 'can create a command on a keyword on the fly' do
         account = create(:account_with_sms)
         command = account.create_command!('fly', params: build(:forward_command_parameters), command_type: 'forward')
-        command.keyword.account.should eql(account)
+        expect(command.keyword.account).to eql(account)
       end
     end
     context "calling stop" do
       it 'should call commands' do
         account = create(:account_with_sms, dcm_account_codes: ['ACCOUNT_CODE'])
-        account.stop_keyword.should_not be_nil
+        expect(account.stop_keyword).not_to be_nil
         command_params = mock()
         params = CommandParameters.new(dcm_account_codes: ['ACCOUNT_CODE'])
         account.stop_keyword.create_command!(params: params, command_type: :dcm_unsubscribe)
@@ -126,7 +126,7 @@ describe Account do
   context 'Link Tracking Parameters' do
     it 'should default to blank' do
       a = create(:account, email_vendor: email_vendor)
-      a.should be_valid
+      expect(a).to be_valid
       expect(a.link_tracking_parameters).to be_blank
       expect(a.link_tracking_parameters_hash).to eq({})
     end
@@ -166,30 +166,30 @@ describe Account do
   end
 
   it 'should require a from address if it had an email vendor' do
-    Account.new(name: 'name', email_vendor: email_vendor).should_not be_valid
+    expect(Account.new(name: 'name', email_vendor: email_vendor)).not_to be_valid
     a = Account.new(name: 'name', email_vendor: email_vendor)
     a.from_addresses.build(from_email: 'shanty@example.com')
-    a.should_not be_valid
+    expect(a).not_to be_valid
 
     a.from_addresses.first.is_default = true
-    a.should be_valid
+    expect(a).to be_valid
   end
 
   it 'should require a from number if it had a voice vendor' do
-    Account.new(name: 'name', voice_vendor: voice_vendor).should_not be_valid
+    expect(Account.new(name: 'name', voice_vendor: voice_vendor)).not_to be_valid
     a = Account.new(name: 'name', voice_vendor: voice_vendor)
     a.from_numbers.build(phone_number: '8885551234')
-    a.should_not be_valid
+    expect(a).not_to be_valid
 
     a.from_numbers.first.is_default = true
-    a.should be_valid
+    expect(a).to be_valid
   end
 
   it 'has some sugar for the EN peeps' do
     account = create(:account_with_sms)
     account.keywords.create!(name: 'what')
-    account.keywords('what').should be_kind_of(Keyword)
-    account.keywords('what!').should be_nil
+    expect(account.keywords('what')).to be_kind_of(Keyword)
+    expect(account.keywords('what!')).to be_nil
   end
 
   context 'an account with lots of stuff that is destroyed' do
@@ -197,7 +197,7 @@ describe Account do
       @tables = ActiveRecord::Base.connection.tables
       @tables.delete('schema_migrations')
       @tables.each do |table|
-        ActiveRecord::Base.connection.select_value("select count(*) from #{table}").should eq 0
+        expect(ActiveRecord::Base.connection.select_value("select count(*) from #{table}")).to eq 0
       end
       @account    = create(:account_with_stuff)
       @account_id = @account.id
@@ -225,6 +225,6 @@ describe Account do
     vendor.shared = false
     vendor.save!
     second_account.sms_vendor = vendor
-    second_account.valid?.should == false
+    expect(second_account.valid?).to eq(false)
   end
 end

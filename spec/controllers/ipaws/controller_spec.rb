@@ -17,10 +17,10 @@ describe IPAWS::Controller, type: :controller do
     it 'should return a 502 error' do
       sign_in user
       get :index, format: :json
-      response.code.should eq '502'
+      expect(response.code).to eq '502'
       json = JSON.parse(response.body)
-      json['error'].should eq('the IPAWS service is not available')
-      json['status_code'].should eq '502'
+      expect(json['error']).to eq('the IPAWS service is not available')
+      expect(json['status_code']).to eq '502'
     end
   end
 

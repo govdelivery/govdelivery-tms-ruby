@@ -23,7 +23,7 @@ describe IncomingVoiceMessagesController do
       results.stubs(:first_page?).returns(true)
       results.stubs(:last_page?).returns(false)
       get :index, :format=>:json
-      response.response_code.should == 200
+      expect(response.response_code).to eq(200)
     end
   end
 
@@ -31,8 +31,8 @@ describe IncomingVoiceMessagesController do
     it "assigns the requested inbound_message as @message" do
       message = create(:incoming_voice_message, from_number: account.default_from_number)
       get :show, {:id => message.to_param}
-      response.status.should == 200
-      assigns(:voice_message).should be_present
+      expect(response.status).to eq(200)
+      expect(assigns(:voice_message)).to be_present
     end
   end
 
@@ -43,7 +43,7 @@ describe IncomingVoiceMessagesController do
     end
     it "shows only inbound_messages of the user's account" do
       get :index
-      assigns(:voice_messages).count.should eql(3) #not 6
+      expect(assigns(:voice_messages).count).to eql(3) #not 6
     end
   end
 

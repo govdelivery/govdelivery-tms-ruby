@@ -16,7 +16,7 @@ describe 'keywords/show.rabl' do
   it 'should work when valid' do
     assign(:keyword, keyword)
     render
-    rendered.should be_json_for(keyword).
+    expect(rendered).to be_json_for(keyword).
                       with_attributes(:name, :response_text).
                       with_timestamps.
                       with_links('self' => keyword_path(keyword),
@@ -28,7 +28,7 @@ describe 'keywords/show.rabl' do
     keyword.stubs(:to_param).returns(nil)
     keyword.stubs(:persisted?).returns(false)
     render
-    rendered.should be_json_for(keyword).
+    expect(rendered).to be_json_for(keyword).
                       with_attributes(:name, :response_text).
                       with_timestamps.
                       with_links(:self => keywords_path)

@@ -31,7 +31,7 @@ describe 'recipients/show.rabl' do
       render
     end
     it 'should have one item' do
-      rendered.should be_json_for(recipient).
+      expect(rendered).to be_json_for(recipient).
                         with_timestamps(:created_at, :completed_at).
                         with_attributes(:formatted_phone, :phone, :status).
                         with_links('sms_message' => sms_path(22), 'self' => sms_recipient_path(22, 11))
@@ -67,7 +67,7 @@ describe 'recipients/show.rabl' do
       render
     end
     it 'should have one item' do
-      rendered.should be_json_for(recipient).
+      expect(rendered).to be_json_for(recipient).
                         with_timestamps(:created_at, :completed_at).
                         with_attributes(:status, :email, :macros).
                         with_links('email_message' => email_path(22), 'self' => email_recipient_path(22, 11))
@@ -75,14 +75,14 @@ describe 'recipients/show.rabl' do
 
     it 'should not have an error_message' do
       json_data = ActiveSupport::JSON.decode(rendered)
-      json_data.should_not have_key(:error_message)
+      expect(json_data).not_to have_key(:error_message)
     end
 
     context 'with an error message' do
       it 'should have an error_message if present' do
         assign(:recipient, recipient.tap{|r| r.stubs(:error_message).returns('oops')})
         json_data = ActiveSupport::JSON.decode(render)
-        json_data.should include('error_message' => 'oops')
+        expect(json_data).to include('error_message' => 'oops')
       end
     end
   end

@@ -7,8 +7,8 @@ describe View::EmailRecipientEvent do
   describe '#respond_to?' do
     subject { View::EmailRecipientEvent.new(stub(foobar: :omg_lol), nil) }
     it 'works' do
-      subject.foobar.should == :omg_lol
-      subject.respond_to?(:foobar).should be true
+      expect(subject.foobar).to eq(:omg_lol)
+      expect(subject.respond_to?(:foobar)).to be true
     end
   end
 
@@ -18,14 +18,14 @@ describe View::EmailRecipientEvent do
       open = mock(opened_at: t)
       open.stubs(class: stub(name: 'EmailRecipientOpen'))
       subject = View::EmailRecipientEvent.new(open, nil)
-      subject.event_at.should == t
+      expect(subject.event_at).to eq(t)
     end
     it 'dispatches to clicked_at' do
       t = Time.at(1359784800)
       click = mock(clicked_at: t)
       click.stubs(class: stub(name: 'EmailRecipientClick'))
       subject = View::EmailRecipientEvent.new(click, nil)
-      subject.event_at.should == t
+      expect(subject.event_at).to eq(t)
     end
   end
 
@@ -52,8 +52,8 @@ describe View::EmailRecipientEvent do
       context.expects(:url_for).with(self_opts).at_least_once.returns('the self url!!!!!!!!!!')
       context.expects(:url_for).with(recipient_opts).at_least_once.returns('the recipient url!!!!!!!!!!')
       event_view = View::EmailRecipientEvent.new(event, context)
-      event_view._links[:self].should == 'the self url!!!!!!!!!!'
-      event_view._links[:email_recipient].should == 'the recipient url!!!!!!!!!!'
+      expect(event_view._links[:self]).to eq('the self url!!!!!!!!!!')
+      expect(event_view._links[:email_recipient]).to eq('the recipient url!!!!!!!!!!')
     end
   end
 end

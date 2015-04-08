@@ -27,14 +27,14 @@ describe EmailRecipientClick do
     end
   }
 
-  it { should be_valid }
+  it { is_expected.to be_valid }
   
   [:email_message, :email_recipient, :url, :email, :clicked_at].each do |attr|
     context "when #{attr} is nil" do
       before do
         subject.send("#{attr}=", nil)
       end
-      it { should be_invalid }
+      it { is_expected.to be_invalid }
     end
   end
 

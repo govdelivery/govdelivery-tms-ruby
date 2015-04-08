@@ -59,7 +59,7 @@ describe 'messages/show.rabl' do
     assign(:message, sms_message)
     assign(:content_attributes, [:body])
     render
-    rendered.should be_json_for(sms_message).
+    expect(rendered).to be_json_for(sms_message).
                       with_attributes(:body, :status).
                       with_timestamps(:created_at).
                       with_links('self' => sms_path(sms_message),
@@ -73,7 +73,7 @@ describe 'messages/show.rabl' do
     assign(:message, voice_message)
     assign(:content_attributes, [:play_url, :from_number])
     render
-    rendered.should be_json_for(voice_message).
+    expect(rendered).to be_json_for(voice_message).
                       with_attributes(:play_url, :from_number, :status).
                       with_timestamps(:created_at).
                       with_links('self' => voice_path(voice_message),
@@ -92,7 +92,7 @@ describe 'messages/show.rabl' do
     assign(:message, email_message)
     assign(:content_attributes, [:from_name, :from_email, :errors_to, :reply_to, :subject, :body, :open_tracking_enabled, :click_tracking_enabled, :macros])
     render
-    rendered.should be_json_for(email_message).
+    expect(rendered).to be_json_for(email_message).
                       with_attributes(:from_name, :from_email, :subject, :body, :status, :open_tracking_enabled, :click_tracking_enabled, :macros, :reply_to, :errors_to).
                       with_timestamps(:created_at).
                       with_links('self' => email_path(email_message),

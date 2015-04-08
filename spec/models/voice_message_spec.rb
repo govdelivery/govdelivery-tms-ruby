@@ -9,28 +9,28 @@ describe VoiceMessage do
     let(:message) { account.voice_messages.build(:play_url => 'http://localhost/file.mp3') }
 
     subject { message }
-    it { should be_valid }
+    it { is_expected.to be_valid }
   end
 
   context "a voice message with nil retry" do
     let(:message) { account.voice_messages.create(:play_url => 'http://localhost/file.mp3', :max_retries => nil) }
 
     subject! { message }
-    it { subject.max_retries.should == 0 }
+    it { expect(subject.max_retries).to eq(0) }
   end
 
   context "a voice message with nil retry_delay" do
     let(:message) { account.voice_messages.create(:play_url => 'http://localhost/file.mp3', :retry_delay => nil) }
 
     subject! { message }
-    it { subject.retry_delay.should == 300 }
+    it { expect(subject.retry_delay).to eq(300) }
   end
 
   context "a voice message with a script" do
     let(:message) { account.voice_messages.create!(:say_text => 'Your Gov Delivery authorization code is 1 2 3 4 5. Thank you for using Gov Delivery. This message will repeat.') }
 
     subject { message }
-    it { subject.call_script.should_not be_nil }
+    it { expect(subject.call_script).not_to be_nil }
 
     context 'recipient filters' do
       {failed: 'error_message', sent: "human"}.each do |type, arg|
@@ -41,7 +41,7 @@ describe VoiceMessage do
             recip = subject.recipients.reload.first
             recip.send(:"#{type}!", 'ack', nil, arg)
           end
-          it { subject.send(:"recipients_who_#{type}").count.should == 1 }
+          it { expect(subject.send(:"recipients_who_#{type}").count).to eq(1) }
         end
       end
     end
@@ -53,23 +53,23 @@ describe VoiceMessage do
       account.save!
     end
     it "should return correct worker" do
-      message.worker.should eq(TwilioVoiceWorker)
+      expect(message.worker).to eq(TwilioVoiceWorker)
     end
     it "should return correct from_number" do
-      message.from_number.should eq(account.from_number)
+      expect(message.from_number).to eq(account.from_number)
     end
     context 'being marked ready' do
       before do
         message.expects(:process_blacklist!)
-        message.ready!(nil, [{phone: "4054343424"}]).should be true
+        expect(message.ready!(nil, [{phone: "4054343424"}])).to be true
       end
 
       context "being marked as sending" do
         before do
-          message.sending!.should be true
+          expect(message.sending!).to be true
         end
         specify do
-          message.recipients.first.new?.should be true
+          expect(message.recipients.first.new?).to be true
         end
       end
     end
@@ -82,10 +82,10 @@ describe VoiceMessage do
 
     context "with valid recipient" do
       before { message.create_recipients([{:phone => "6093433422"}]) }
-      specify { message.recipients.first.should be_valid }
-      specify { message.sendable_recipients.first.should be_valid }
-      specify { message.should respond_to(:process_blacklist!) }
-      specify { message.recipients.first.vendor.should eq(account.voice_vendor) }
+      specify { expect(message.recipients.first).to be_valid }
+      specify { expect(message.sendable_recipients.first).to be_valid }
+      specify { expect(message).to respond_to(:process_blacklist!) }
+      specify { expect(message.recipients.first.vendor).to eq(account.voice_vendor) }
     end
   end
 end
