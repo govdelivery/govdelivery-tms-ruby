@@ -80,7 +80,7 @@ Then(/^those params should resolve within the body of the email I send$/) do
     fail 'params not found'.red
   end  
     
-    Mail.find_and_delete({what::all})
+    Mail.find_and_delete({what: => :all})
 
     if Mail.all == []
       puts 'Inbox email deleted'.green
