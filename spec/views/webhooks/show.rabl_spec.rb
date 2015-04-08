@@ -20,7 +20,7 @@ describe 'webhooks/show.rabl' do
          url: 'http://fail.com',
          event_type: 'failed',
          created_at: Time.now,
-         errors: {:url => "Can't be blank"},
+         errors: {url: "Can't be blank"},
          persisted?: false
     )
   end

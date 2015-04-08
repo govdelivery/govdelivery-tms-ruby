@@ -11,26 +11,26 @@ describe ApplicationController do
     end
 
     def index
-      render :text => "3oo" 
+      render text: "3oo" 
     end
   end
 
   describe "when handling exceptions" do
     let(:vendor) { create(:sms_vendor) }
-    let(:account) { vendor.accounts.create(:name => 'name') }
-    let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+    let(:account) { vendor.accounts.create(name: 'name') }
+    let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
 
     before do
       sign_in user
     end
 
     it "should 404 when ActiveRecord::RecordNotFound " do
-      get :show, :id => 'ActiveRecord::RecordNotFound'
+      get :show, id: 'ActiveRecord::RecordNotFound'
       expect(response.response_code).to eq(404)
     end
 
     it "should 400 on" do
-      get :show, :id => 'JSON::ParserError'
+      get :show, id: 'JSON::ParserError'
       expect(response.response_code).to eq(400)
       JSON.parse(response.body) # this shouldn't raise
     end
@@ -38,8 +38,8 @@ describe ApplicationController do
 
   describe "using the X-AUTH-TOKEN header" do
     let(:vendor) { create(:sms_vendor) }
-    let(:account) { vendor.accounts.create(:name => 'name') }
-    let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+    let(:account) { vendor.accounts.create(name: 'name') }
+    let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
     let(:auth_token) { user.authentication_tokens.first.token }
 
     before do 

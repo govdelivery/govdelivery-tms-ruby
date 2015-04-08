@@ -8,7 +8,7 @@ describe InboundMessagesController do
     end
 
     it "routes to #show" do
-      expect(get("/inbound/sms/1")).to route_to("inbound_messages#show", :id => "1")
+      expect(get("/inbound/sms/1")).to route_to("inbound_messages#show", id: "1")
     end
   end
 end

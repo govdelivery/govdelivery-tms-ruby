@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UsersController, :type => :controller do
+RSpec.describe UsersController, type: :controller do
 
   let (:account) { create :account,
                           sms_vendor:   create(:sms_vendor),
@@ -28,7 +28,7 @@ RSpec.describe UsersController, :type => :controller do
     end
 
     it 'should not be able to do anything' do
-      get :index, {:account_id => account.id}
+      get :index, {account_id: account.id}
       expect(response.status).to eq(403)
     end
   end

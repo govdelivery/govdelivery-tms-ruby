@@ -31,6 +31,6 @@ describe 'keywords/show.rabl' do
     expect(rendered).to be_json_for(keyword).
                       with_attributes(:name, :response_text).
                       with_timestamps.
-                      with_links(:self => keywords_path)
+                      with_links(self: keywords_path)
   end
 end

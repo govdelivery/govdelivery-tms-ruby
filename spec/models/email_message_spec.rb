@@ -3,28 +3,28 @@ require 'rails_helper'
 describe EmailMessage do
   let(:vendor) { create(:email_vendor) }
   let(:account) { create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3') }    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
-  let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
   let(:email) { build(:email_message,
-    :user => user,
-    :body => 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
-    :subject => 'specs before tests',
-    :from_email => account.from_email,
-    :open_tracking_enabled => true,
-    :click_tracking_enabled => true,
-    :macros => {
+    user: user,
+    body: 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
+    subject: 'specs before tests',
+    from_email: account.from_email,
+    open_tracking_enabled: true,
+    click_tracking_enabled: true,
+    macros: {
       'macro1' => 'foo',
       'macro2' => 'bar',
       'first' => 'bazeliefooga'
     }
   ) }
   let(:macroless_email) { build(:email_message,
-      :user => user,
-      :body => 'longggg body',
-      :subject => 'specs before tests',
-      :from_email => account.from_email,
-      :open_tracking_enabled => true,
-      :click_tracking_enabled => true,
-      :macros => {}
+      user: user,
+      body: 'longggg body',
+      subject: 'specs before tests',
+      from_email: account.from_email,
+      open_tracking_enabled: true,
+      click_tracking_enabled: true,
+      macros: {}
   ) }
   subject { email }
 
@@ -63,7 +63,7 @@ describe EmailMessage do
       before { email.save! }
 
       it 'should be able to create recipients' do
-        rcpt = email.create_recipients([:email => 'tyler@dudes.com'])
+        rcpt = email.create_recipients([email: 'tyler@dudes.com'])
         expect(email.recipients.reload.count).to eq(1)
       end
 

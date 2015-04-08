@@ -128,8 +128,8 @@ describe Keyword do
     it 'creates a command' do
       expect {
         dcm_account_codes = subject.account.dcm_account_codes.to_a
-        subject.create_command!(:params       => CommandParameters.new(:dcm_account_codes => dcm_account_codes),
-                                :command_type => :dcm_unsubscribe)
+        subject.create_command!(params:       CommandParameters.new(dcm_account_codes: dcm_account_codes),
+                                command_type: :dcm_unsubscribe)
       }.to change { Command.count }.by 1
     end
 
@@ -151,8 +151,8 @@ describe Keyword do
       # in this case the dcm_account_codes have to be a subset of vendor.accounts.map(&:dcm_account_codes)
       expect {
         # zanzabar doesn't exist silly
-        keyword.create_command!(:params       => CommandParameters.new(:dcm_account_codes => ['zanzabar']),
-                                :command_type => :dcm_unsubscribe)
+        keyword.create_command!(params:       CommandParameters.new(dcm_account_codes: ['zanzabar']),
+                                command_type: :dcm_unsubscribe)
       }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end

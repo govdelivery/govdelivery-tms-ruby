@@ -51,7 +51,7 @@ class TwilioRequestsController < ApplicationController
   end
 
   def callback_url
-    twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
+    twilio_status_callbacks_url(format: :xml) if Rails.configuration.public_callback
   end
 
   # This is a hack and is intended to be temporary.

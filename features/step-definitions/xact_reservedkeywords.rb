@@ -15,7 +15,7 @@ Given(/^I attempt to create a reserved keyword (.*)$/) do |keyword|
 
   @conf = configatron.accounts.sms_2way_subscribe
   client = tms_client(@conf)
-  @keyword = client.keywords.build(:name => keyword)
+  @keyword = client.keywords.build(name: keyword)
   keyword = @transformed_keyword
     STDOUT.puts @keyword.errors unless @keyword.post    
 end

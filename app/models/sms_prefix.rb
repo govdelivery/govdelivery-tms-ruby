@@ -1,10 +1,10 @@
 class SmsPrefix < ActiveRecord::Base
   attr_accessible :prefix
 
-  validates :prefix, :presence => true, :uniqueness => {:scope => :sms_vendor_id}
+  validates :prefix, presence: true, uniqueness: {scope: :sms_vendor_id}
   before_validation :derived_sms_id
   validates_presence_of :account, :sms_vendor
-  belongs_to :account, :inverse_of => :sms_prefixes
+  belongs_to :account, inverse_of: :sms_prefixes
   belongs_to :sms_vendor
 
 

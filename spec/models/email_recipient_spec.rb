@@ -11,7 +11,7 @@ describe EmailRecipient do
     em.save
     em
   }
-  let(:user) { User.create(:email => 'admin@example.com', :password => 'retek01!').tap { |u| u.account = account } }
+  let(:user) { User.create(email: 'admin@example.com', password: 'retek01!').tap { |u| u.account = account } }
 
   subject {
     r         = email_message.recipients.build

@@ -50,7 +50,7 @@ class CommandParameters
   # This is not persisted anywhere.  The getter/setter is used for bi-directional
   # encryption. If this property were in PARAMS, it would be serialized into the
   # database, which is exactly what we don't want.
-  attr_encrypted :password, :encode => true, :key => "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
+  attr_encrypted :password, encode: true, key: "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
   #attr_accessible :password
 
   def merge!(params)

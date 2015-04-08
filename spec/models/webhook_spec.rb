@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Webhook, :type => :model do
+RSpec.describe Webhook, type: :model do
   let(:vendor) { create(:sms_vendor) }
-  let(:account) { vendor.accounts.create!(:name => 'name') }
+  let(:account) { vendor.accounts.create!(name: 'name') }
 
   context 'a webhook for failures' do
     it 'should require event_type' do

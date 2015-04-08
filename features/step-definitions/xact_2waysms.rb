@@ -19,14 +19,14 @@ Given(/^I create a subscription keyword and command$/) do
 
   @conf = configatron.accounts.sms_2way_subscribe
   client = tms_client(@conf)
-  @keyword = client.keywords.build(:name => "subscribe::#{random_string}", :response_text => "subscribe")
+  @keyword = client.keywords.build(name: "subscribe::#{random_string}", response_text: "subscribe")
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
-    :command_type => :dcm_subscribe,
+    command_type: :dcm_subscribe,
     #do not change the NAME param unless you want to break everything
-    :name => "subscribe",
-    :params => {:dcm_account_code => @conf.xact.account.dcm_account_id,
-                :dcm_topic_codes => @conf.xact.account.dcm_topic_codes})
+    name: "subscribe",
+    params: {dcm_account_code: @conf.xact.account.dcm_account_id,
+                dcm_topic_codes: @conf.xact.account.dcm_topic_codes})
   raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
 
 
@@ -37,7 +37,7 @@ And(/^I send an SMS to create a subscription on TMS$/) do
   next if dev_not_live?
 
   #create connection to XACT
-  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
+  conn = Faraday.new(url: @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -102,7 +102,7 @@ Given(/^I am subscribed to receive TMS messages$/) do
   #subscribe first
   @conf = configatron.accounts.sms_2way_stop
   client = tms_client(@conf)
-  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
+  conn = Faraday.new(url: @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -132,13 +132,13 @@ Given(/^I create a stop keyword and command$/) do
   next if dev_not_live?
 
   client = tms_client(@conf)
-  @keyword = client.keywords.build(:name => "stop::#{random_string}", :response_text => "stop")
+  @keyword = client.keywords.build(name: "stop::#{random_string}", response_text: "stop")
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
-    :command_type => :dcm_unsubscribe,
+    command_type: :dcm_unsubscribe,
     #do not change the NAME param unless you want to break everything
-    :name => "unsubscribe",
-    :params => {:dcm_account_codes => @conf.xact.account.dcm_account_id})
+    name: "unsubscribe",
+    params: {dcm_account_codes: @conf.xact.account.dcm_account_id})
   raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
 
   sleep(2)
@@ -148,7 +148,7 @@ When(/^I send an SMS to opt out of receiving TMS messages$/) do
   next if dev_not_live?
 
   #begin stop request
-  conn = Faraday.new(:url => @conf.xact.url) do |faraday|
+  conn = Faraday.new(url: @conf.xact.url) do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -215,12 +215,12 @@ end
 Given (/^A keyword with static content is configured for an TMS account$/) do
   @conf = configatron.accounts.sms_2way_static
   client = tms_client(@conf)
-  @keyword = client.keywords.build(:name => random_string, :response_text => random_string)
+  @keyword = client.keywords.build(name: random_string, response_text: random_string)
   @keyword.post
 end
 
 Given (/^I send that keyword as an SMS to TMS$/) do
-  conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
+  conn = Faraday.new(url: "#{@conf.xact.url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter
@@ -266,7 +266,7 @@ def agency_test(agency, check)
   case agency.downcase
     when "bart", "acetrain", "cdc"
       expected_condition = 200
-      {:condition => Proc.new do
+      {condition: Proc.new do
           actions = check.call()
           actions.any? do |action|
             action.status == expected_condition &&
@@ -274,7 +274,7 @@ def agency_test(agency, check)
               !action.response_body.include?('We are sorry, but the message you sent is not valid.')
           end
         end,
-       :msg => "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
+       msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
       }
   end
 end
@@ -287,15 +287,15 @@ end
 Given (/^I register the keyword (.+)$/) do |agency|
   # Register a unique keyword each time, so that test failures can save the keyword for review without concern for future test keyword collisions
   @agency_keyword = "#{agency.downcase}#{random_string}"
-  @keyword = @client.keywords.build(:name => @agency_keyword)
+  @keyword = @client.keywords.build(name: @agency_keyword)
   raise "Could not create #{@agency_keyword} keyword: #{@keyword.errors}" unless @keyword.post
 end
 
 Given (/^I register the (.+) forward command$/) do |agency|
   @command = @keyword.commands.build(
-    :name => "#{agency} Forwarding",
-    :params => agency_command_params(agency),
-    :command_type => :forward
+    name: "#{agency} Forwarding",
+    params: agency_command_params(agency),
+    command_type: :forward
   )
   raise "Could not create Forwarding command: #{@command.errors}" unless @command.post
 end
@@ -304,7 +304,7 @@ When (/^I text '(.+)' to the (.+) account$/) do |message, agency|
   # Don't actually care about the keyword that is passed to this test
   message = message.split[1..-1].join(" ")
 
-  conn = Faraday.new(:url => "#{@conf.xact.url}") do |faraday|
+  conn = Faraday.new(url: "#{@conf.xact.url}") do |faraday|
     faraday.request     :url_encoded
     faraday.response    :logger
     faraday.adapter     Faraday.default_adapter

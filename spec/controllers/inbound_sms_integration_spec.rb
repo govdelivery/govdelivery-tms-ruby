@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe TwilioRequestsController do
   let(:vendor) { create(:sms_vendor) }
-  let(:account) { create(:account, :sms_vendor => vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
+  let(:account) { create(:account, sms_vendor: vendor, name: 'aname', dcm_account_codes: ["ACME", "VANDELAY"]) }
 
   describe '#create with "STOP"' do
     let(:params) { twilio_request_params('STOP') }
@@ -23,8 +23,8 @@ describe TwilioRequestsController do
         .to change{vendor.inbound_messages.count}.by 1
     end
     it 'executes a command' do
-      account.create_command!( 'stop', :params => CommandParameters.new(:dcm_account_codes => ["ACME","VANDELAY"]),
-                           :command_type => :dcm_unsubscribe)
+      account.create_command!( 'stop', params: CommandParameters.new(dcm_account_codes: ["ACME","VANDELAY"]),
+                           command_type: :dcm_unsubscribe)
       Command.any_instance.expects(:call)
       post :create, params
     end
@@ -84,7 +84,7 @@ describe TwilioRequestsController do
   def twilio_request_params(body)
     @sid ||= ('0'*34)
     @sid.succ!
-    {:format =>"xml" ,
+    {format:"xml" ,
       'SmsSid'=>@sid,
       'AccountSid'=>vendor.username,
       'From'=>'+15551113333',

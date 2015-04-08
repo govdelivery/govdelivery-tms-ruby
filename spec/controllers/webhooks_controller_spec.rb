@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe WebhooksController, :type => :controller do
+RSpec.describe WebhooksController, type: :controller do
   let(:account) { Account.create!(name: 'name') }
   let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
   let(:webhooks) do

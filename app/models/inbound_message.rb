@@ -12,7 +12,7 @@ class InboundMessage < ActiveRecord::Base
 
   has_many :command_actions, dependent: :delete_all
 
-  before_validation :set_response_status, :on => :create
+  before_validation :set_response_status, on: :create
   before_create :see_if_this_should_be_ignored
   after_create :publish_event
 
@@ -38,8 +38,8 @@ class InboundMessage < ActiveRecord::Base
     table = self.class.arel_table
     threshold = (compare_date - Xact::Application.config.auto_response_threshold.minutes).to_datetime
     self.class.where("created_at >= ?", threshold).
-               where(:body => self.body).
-               where(:caller_phone => self.caller_phone).
+               where(body: self.body).
+               where(caller_phone: self.caller_phone).
                where(table[:id].not_eq(self.id)).count == 0
   end
 
@@ -61,13 +61,13 @@ class InboundMessage < ActiveRecord::Base
   end
 
   def publish_event
-    Analytics::PublisherWorker.perform_async(:channel => 'sms_channel', :message => {
-      :uri        => 'xact:sms:inbound',
-      :v          => '1',
-      :from_phone => from,
-      :to_phone   => to,
-      :body       => body,
-      :created_at => created_at
+    Analytics::PublisherWorker.perform_async(channel: 'sms_channel', message: {
+      uri:        'xact:sms:inbound',
+      v:          '1',
+      from_phone: from,
+      to_phone:   to,
+      body:       body,
+      created_at: created_at
     })
   end
 

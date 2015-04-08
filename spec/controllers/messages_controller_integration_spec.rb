@@ -5,8 +5,8 @@ describe 'MessageControllers' do
     render_views
     let(:user) {
       sms_vendor = create(:sms_vendor)
-      account = Account.create!(:sms_vendor => sms_vendor, :name => 'name')
-      account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop")
+      account = Account.create!(sms_vendor: sms_vendor, name: 'name')
+      account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop")
     }
 
     before do
@@ -28,7 +28,7 @@ describe 'MessageControllers' do
         add_recipients!(create_message(:sms))
       }
       let(:json) {
-        get :show, :id => message.id
+        get :show, id: message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
       }
       it_behaves_like 'a non-new message response'
@@ -44,7 +44,7 @@ describe 'MessageControllers' do
     render_views
     let(:user) {
       account = create(:account_with_voice)
-      account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop")
+      account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop")
     }
 
     before do
@@ -67,7 +67,7 @@ describe 'MessageControllers' do
           add_recipients!(create_message(:voice))
         end
         let(:json) {
-          get :show, :id => message.id
+          get :show, id: message.id
           expect(response.status).to eq(200)
           HashWithIndifferentAccess.new(JSON.parse(response.body))
         }
@@ -82,7 +82,7 @@ describe 'MessageControllers' do
         add_recipients!(create_message(:voice))
       }
       let(:json) {
-        get :show, :id => message.id
+        get :show, id: message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
       }
       it_behaves_like 'a non-new message response'
@@ -96,9 +96,9 @@ describe 'MessageControllers' do
   end
   def create_message(message_type)
     if message_type == :sms
-      m = user.sms_messages.new(:body => 'A short body')
+      m = user.sms_messages.new(body: 'A short body')
     elsif message_type == :voice
-      m = user.voice_messages.new(:play_url => 'http://foo.com/hello.wav')
+      m = user.voice_messages.new(play_url: 'http://foo.com/hello.wav')
     end
     m.save!
     m

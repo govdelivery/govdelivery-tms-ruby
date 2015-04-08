@@ -115,7 +115,7 @@ describe Account do
       end
       context 'with existing stop request for this phone' do
         it 'should not create another stop request, but should call stop' do
-          subject.expects(:stop_requests).returns(stub(:exists? => true))
+          subject.expects(:stop_requests).returns(stub(exists?: true))
           subject.expects(:stop) # non-bang method should be called.
           subject.stop!(mock(from: "8888"))
         end

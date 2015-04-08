@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe StopRequest do
   let(:vendor) { create(:sms_vendor) }
-  let(:stop_request) { vendor.stop_requests.build(:phone => "+16666666666").tap{|s| s.account_id = 1 }}
-  let(:dup_stop_request) { vendor.stop_requests.build(:phone => "+16666666666").tap{|s| s.account_id = 1 }}
+  let(:stop_request) { vendor.stop_requests.build(phone: "+16666666666").tap{|s| s.account_id = 1 }}
+  let(:dup_stop_request) { vendor.stop_requests.build(phone: "+16666666666").tap{|s| s.account_id = 1 }}
 
   [[:phone, 255]].each do |field, length|
     context "when #{field} is empty" do

@@ -26,11 +26,11 @@ module Service
       [:open, :delivery, :click].each do |type|
         describe "with a service that returns #{type}_activity_batch" do
           let(:activity_batch) {
-            OpenStruct.new(type => ['event'] * 5, :next_sequence => 'the next one')
+            OpenStruct.new(type => ['event'] * 5, next_sequence: 'the next one')
           }
 
           let(:activity_request) {
-            req = OpenStruct.new(:max_results => 0)
+            req = OpenStruct.new(max_results: 0)
             ActivityRequest.expects(:new).returns(req)
             req
           }

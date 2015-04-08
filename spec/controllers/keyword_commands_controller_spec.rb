@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 describe KeywordCommandsController do
-  let(:vendor)  { create(:sms_vendor, :name => 'name', :username => 'username', :password => 'secret', :worker => 'LoopbackMessageWorker') }
-  let(:account) { vendor.accounts.create! :name=> "HELLO ACCOUNT" }
-  let(:user)    { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
+  let(:vendor)  { create(:sms_vendor, name: 'name', username: 'username', password: 'secret', worker: 'LoopbackMessageWorker') }
+  let(:account) { vendor.accounts.create! name: "HELLO ACCOUNT" }
+  let(:user)    { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
   let(:keyword) { create(:keyword, account: account ) }
-  let(:command) { Command.new(:command_type => :dcm_subscribe, :name => "ALLIGATORZ") }
-  let(:commands) { [stub(:name => "Hello New York")] }
+  let(:command) { Command.new(command_type: :dcm_subscribe, name: "ALLIGATORZ") }
+  let(:commands) { [stub(name: "Hello New York")] }
 
   before do
     sign_in user
@@ -22,7 +22,7 @@ describe KeywordCommandsController do
       commands.stubs(:current_page).returns(1)
       commands.stubs(:first_page?).returns(true)
       commands.stubs(:last_page?).returns(false)
-      get :index, :keyword_id => keyword.id
+      get :index, keyword_id: keyword.id
       expect(response.response_code).to eq(200)
       expect(response.headers['Link']).not_to match(/first/)
       expect(response.headers['Link']).not_to match(/prev/)
@@ -34,7 +34,7 @@ describe KeywordCommandsController do
       commands.stubs(:current_page).returns(2)
       commands.stubs(:first_page?).returns(false)
       commands.stubs(:last_page?).returns(false)
-      get :index, :keyword_id => keyword.id, :page => 2
+      get :index, keyword_id: keyword.id, page: 2
       expect(response.response_code).to eq(200)
       expect(response.headers['Link']).to match(/first/)
       expect(response.headers['Link']).to match(/prev/)
@@ -46,7 +46,7 @@ describe KeywordCommandsController do
       commands.stubs(:current_page).returns(5)
       commands.stubs(:first_page?).returns(false)
       commands.stubs(:last_page?).returns(true)
-      get :index, :keyword_id => keyword.id, :page => 5
+      get :index, keyword_id: keyword.id, page: 5
       expect(response.response_code).to eq(200)
       expect(response.headers['Link']).to match(/first/)
       expect(response.headers['Link']).to match(/prev/)
@@ -59,7 +59,7 @@ describe KeywordCommandsController do
       find = mock
       find.expects(:find).with('22').returns(command)
       Keyword.any_instance.expects(:commands).returns(find)
-      get :show, :keyword_id => keyword.id, :id => '22'
+      get :show, keyword_id: keyword.id, id: '22'
     end
     it "should work" do
       expect(response.response_code).to eq(200)
@@ -103,11 +103,11 @@ describe KeywordCommandsController do
 
   context "Creating an invalid command" do
     before do
-      post :create, :keyword_id => keyword.id, :command => {
-        :name => "Hello Boston",
-        :command_type => "dcm_unsubscribe",
-        :params => {
-          :dcm_account_codes => ["OOPZ"]
+      post :create, keyword_id: keyword.id, command: {
+        name: "Hello Boston",
+        command_type: "dcm_unsubscribe",
+        params: {
+          dcm_account_codes: ["OOPZ"]
         }
       }
     end
@@ -122,8 +122,8 @@ describe KeywordCommandsController do
       commands.first.expects(:update_attributes).returns(true)
       commands.first.expects(:valid?).returns(true)
       mock_finder('1')
-      put :update, :keyword_id => keyword.id, :id => '1', :command => {
-        :name => "Hello Chicago",
+      put :update, keyword_id: keyword.id, id: '1', command: {
+        name: "Hello Chicago",
       }
     end
     it "should work" do
@@ -136,8 +136,8 @@ describe KeywordCommandsController do
       commands.first.expects(:update_attributes).returns(false)
       commands.first.expects(:valid?).returns(false)
       mock_finder('1')
-      put :update, :keyword_id => keyword.id, :id => '1', :command => {
-        :name => "Hello Chicago",
+      put :update, keyword_id: keyword.id, id: '1', command: {
+        name: "Hello Chicago",
       }
     end
     it "should work" do
@@ -149,7 +149,7 @@ describe KeywordCommandsController do
     before do
       commands.first.expects(:destroy)
       mock_finder('1')
-      delete :destroy, :keyword_id => keyword.id, :id => '1'
+      delete :destroy, keyword_id: keyword.id, id: '1'
     end
     it "should work" do
       expect(response.response_code).to eq(204)

@@ -16,7 +16,7 @@ module Service
         f
       }
       let(:sequence) {
-        stub('sequence', :sequence => 'a sequence',  :update_sequence! => 'blah')
+        stub('sequence', sequence: 'a sequence',  update_sequence!: 'blah')
       }
       subject { EventIterator.new(fetcher, sequence, transactor) }
 

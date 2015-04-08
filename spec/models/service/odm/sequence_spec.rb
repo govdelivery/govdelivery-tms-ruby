@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Service::Odm::Sequence do
   let(:vendor) {
-    stub(:deliveries_sequence => 'a sequence')
+    stub(deliveries_sequence: 'a sequence')
   }
   subject {
     Service::Odm::Sequence.new(:delivery, vendor)

@@ -21,7 +21,7 @@ describe TwilioVoiceRequestsController, '#create' do
   def twilio_voice_request_params(account)
     @sid ||= ('0'*34)
     @sid.succ!
-    {:format => "xml",
+    {format: "xml",
      'CallSid' => @sid,
      'AccountSid' => account.voice_vendor.username,
      'From' => '+15555555555',

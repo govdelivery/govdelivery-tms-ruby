@@ -2,11 +2,11 @@ require 'rails_helper'
 
 describe Command do
   let(:vendor){create(:sms_vendor)}
-  let(:account){create(:account, sms_vendor: vendor, :dcm_account_codes=>['acme'])}
+  let(:account){create(:account, sms_vendor: vendor, dcm_account_codes:['acme'])}
   let(:keyword){create(:keyword, account: account, name: "test")}
   let(:dcm_subscribe_command) {
     keyword.commands.create(name: "FOO", command_type: :dcm_subscribe,
-                            params: CommandParameters.new(:dcm_account_code => ["acme"], :dcm_topic_codes=>['XXX']) )
+                            params: CommandParameters.new(dcm_account_code: ["acme"], dcm_topic_codes:['XXX']) )
   }
 
   subject { build_dcm_unsubscribe_command( account ) }
@@ -68,7 +68,7 @@ describe Command do
     before do
       # Command should combine its own (persisted) params with the incoming params, convert them to a
       # hash, and pass them to the worker invocation
-      @expected = CommandParameters.new(:from => "+122222", :dcm_account_codes => ["foo"])
+      @expected = CommandParameters.new(from: "+122222", dcm_account_codes: ["foo"])
       @expected.expects(:command_id=)
       CommandType[subject.command_type].expects(:perform_async!).with(@expected)
     end

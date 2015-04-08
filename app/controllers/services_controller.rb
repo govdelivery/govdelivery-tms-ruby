@@ -5,7 +5,7 @@ class ServicesController < ApplicationController
   before_filter ->(c){ render_405 unless request.method == "GET" }
 
   def index
-    @services = { :self => root_path }
+    @services = { self: root_path }
 
     if @account.sms_vendor
       @services[:keywords] = keywords_path

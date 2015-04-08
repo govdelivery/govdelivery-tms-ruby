@@ -4,25 +4,25 @@ describe RecipientsController do
   let(:vendor) { create(:sms_vendor) }
 
   let(:account) { create(:account, sms_vendor: vendor, name: 'name') }
-  let(:user) { account.users.create(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-  let(:message) { user.sms_messages.create(:body => "A"*160) }
-  let(:voice_message) { user.voice_messages.create(:play_url => "http://your.mom") }
+  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
+  let(:message) { user.sms_messages.create(body: "A"*160) }
+  let(:voice_message) { user.voice_messages.create(play_url: "http://your.mom") }
   let(:recipients) do
-    3.times.map { |i| message.recipients.build(:phone => (6125551200 + i).to_s) }
+    3.times.map { |i| message.recipients.build(phone: (6125551200 + i).to_s) }
   end
   let(:voice_recipients) do
-    3.times.map { |i| voice_message.recipients.create!(:phone => (6125551200 + i).to_s, :status => :sending) }
+    3.times.map { |i| voice_message.recipients.create!(phone: (6125551200 + i).to_s, status: :sending) }
   end
-  let(:email_message) { user.email_messages.create(:subject => "subs", :from_name => 'dude', :body => 'hi') }
+  let(:email_message) { user.email_messages.create(subject: "subs", from_name: 'dude', body: 'hi') }
   let(:email_recipients) do
-    3.times.map { |i| email_message.recipients.build(:email => "dude#{i}@sink.govdelivery.com", :macros =>{"foo" => "paper"}) }
+    3.times.map { |i| email_message.recipients.build(email: "dude#{i}@sink.govdelivery.com", macros:{"foo" => "paper"}) }
   end
 
   before do
     sign_in user
-    User.any_instance.stubs(:account_sms_messages).returns(stub(:find => message))
+    User.any_instance.stubs(:account_sms_messages).returns(stub(find: message))
     SmsMessage.any_instance.stubs(:id).returns(1)
-    User.any_instance.stubs(:account_voice_messages).returns(stub(:find => voice_message))
+    User.any_instance.stubs(:account_voice_messages).returns(stub(find: voice_message))
     VoiceMessage.any_instance.stubs(:id).returns(1)
   end
 
@@ -30,10 +30,10 @@ describe RecipientsController do
     context "##{type}" do
       it "should work with recipients who #{type}" do
         EmailMessage.any_instance.stubs(:id).returns(1)
-        User.any_instance.stubs(:account_email_messages).returns(stub(:find => email_message))
+        User.any_instance.stubs(:account_email_messages).returns(stub(find: email_message))
         stub_pagination(email_recipients, 1, 5)
-        EmailMessage.any_instance.expects(:"recipients_who_#{type}").returns(stub(:page => email_recipients))
-        get type, :email_id => 1, :format => :json
+        EmailMessage.any_instance.expects(:"recipients_who_#{type}").returns(stub(page: email_recipients))
+        get type, email_id: 1, format: :json
         expect(response.response_code).to eq(200)
         expect(assigns(:page)).to eq(1)
         expect(assigns(:content_attributes)).to match_array([:email, :macros])
@@ -66,8 +66,8 @@ describe RecipientsController do
   context '#index' do
     it 'should work with sms recipients' do
       stub_pagination(recipients, 1, 5)
-      SmsMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
-      get :index, :sms_id => 1, :format => :json
+      SmsMessage.any_instance.expects(:recipients).returns(stub(page: recipients))
+      get :index, sms_id: 1, format: :json
       expect(assigns(:page)).to eq(1)
       expect(assigns(:content_attributes)).to match_array([:phone, :formatted_phone])
       expect(response.headers['Link']).to match(/next/)
@@ -75,10 +75,10 @@ describe RecipientsController do
     end
     it 'should work with voice recipients' do
       VoiceMessage.any_instance.stubs(:id).returns(1)
-      User.any_instance.stubs(:account_voice_messages).returns(stub(:find => voice_message))
+      User.any_instance.stubs(:account_voice_messages).returns(stub(find: voice_message))
       stub_pagination(voice_recipients, 1, 5)
-      VoiceMessage.any_instance.expects(:recipients).returns(stub(:page => voice_recipients))
-      get :index, :voice_id => 1, :format => :json
+      VoiceMessage.any_instance.expects(:recipients).returns(stub(page: voice_recipients))
+      get :index, voice_id: 1, format: :json
       expect(assigns(:page)).to eq(1)
       expect(assigns(:content_attributes)).to match_array([:phone, :formatted_phone, :secondary_status, :retries])
       expect(response.headers['Link']).to match(/next/)
@@ -86,10 +86,10 @@ describe RecipientsController do
     end
     it 'should work with email recipients' do
       EmailMessage.any_instance.stubs(:id).returns(1)
-      User.any_instance.stubs(:account_email_messages).returns(stub(:find => email_message))
+      User.any_instance.stubs(:account_email_messages).returns(stub(find: email_message))
       stub_pagination(email_recipients, 1, 5)
-      EmailMessage.any_instance.expects(:recipients).returns(stub(:page => email_recipients))
-      get :index, :email_id => 1, :format => :json
+      EmailMessage.any_instance.expects(:recipients).returns(stub(page: email_recipients))
+      get :index, email_id: 1, format: :json
       expect(response.response_code).to eq(200)
       expect(assigns(:page)).to eq(1)
       expect(assigns(:content_attributes)).to match_array([:email, :macros])
@@ -104,10 +104,10 @@ describe RecipientsController do
     context '#page' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
-        SmsMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
+        SmsMessage.any_instance.expects(:recipients).returns(stub(page: recipients))
 
 
-        get :index, :sms_id => 1, :format => :json, :page => 2
+        get :index, sms_id: 1, format: :json, page: 2
         expect(assigns(:page)).to eq(2)
         expect(response.headers['Link']).to match(/first/)
         expect(response.headers['Link']).to match(/prev/)
@@ -140,9 +140,9 @@ describe RecipientsController do
     context '#show' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
-        SmsMessage.any_instance.expects(:recipients).returns(stub(:find => stub(:find => recipients.first)))
+        SmsMessage.any_instance.expects(:recipients).returns(stub(find: stub(find: recipients.first)))
 
-        get :show, :sms_id => 1, :format => :json, :id=> 2
+        get :show, sms_id: 1, format: :json, id: 2
         expect(response.response_code).to eq(200)
         expect(assigns(:recipient)).not_to be_nil
       end
@@ -154,10 +154,10 @@ describe RecipientsController do
     context '#page' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
-        VoiceMessage.any_instance.expects(:recipients).returns(stub(:page => recipients))
+        VoiceMessage.any_instance.expects(:recipients).returns(stub(page: recipients))
 
 
-        get :index, :voice_id => 1, :format => :json, :page => 2
+        get :index, voice_id: 1, format: :json, page: 2
         expect(assigns(:page)).to eq(2)
         expect(response.headers['Link']).to match(/first/)
         expect(response.headers['Link']).to match(/prev/)
@@ -243,9 +243,9 @@ describe RecipientsController do
     context '#show' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
-        VoiceMessage.any_instance.expects(:recipients).returns(stub(:find => stub(:find => recipients.first)))
+        VoiceMessage.any_instance.expects(:recipients).returns(stub(find: stub(find: recipients.first)))
 
-        get :show, :voice_id => 1, :format => :json, :id=> 2
+        get :show, voice_id: 1, format: :json, id: 2
         expect(response.response_code).to eq(200)
         expect(assigns(:recipient)).not_to be_nil
       end

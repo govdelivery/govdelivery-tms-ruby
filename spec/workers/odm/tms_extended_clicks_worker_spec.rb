@@ -13,15 +13,15 @@ if defined?(JRUBY_VERSION)
     end
 
     it 'should process all email vendors' do
-      xmlgregorian = stub(:to_gregorian_calendar => stub(:time_in_millis => 1359784800000))
-      events = [stub('click events', :recipient_id => '1', :address => 'foo@bar.com', :message_id => 'slkdlfk', :at => xmlgregorian, :url => "clickonme.com")]
+      xmlgregorian = stub(to_gregorian_calendar: stub(time_in_millis: 1359784800000))
+      events = [stub('click events', recipient_id: '1', address: 'foo@bar.com', message_id: 'slkdlfk', at: xmlgregorian, url: "clickonme.com")]
       recipient = mock
 
       # mock service fetch of click events
       Service::Odm::EventService.expects(:click_events).with(@vendor).returns(events)
       
       # mock recipient lookup
-      @vendor.expects(:recipients).returns(mock(:find => recipient))
+      @vendor.expects(:recipients).returns(mock(find: recipient))
 
       # mock method to record a click
       recipient.expects(:clicked!)

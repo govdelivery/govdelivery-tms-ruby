@@ -32,14 +32,14 @@ class ApplicationController < ActionController::API
 
   before_filter :set_default_format
   before_filter :authenticate_user!
-  before_filter :set_page, :only => :index
+  before_filter :set_page, only: :index
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
   rescue_from JSON::ParserError, with: :render_malformed_json
 
   # URL helper methods will use this set of options as defaults
   def default_url_options
-    {:protocol => Rails.configuration.protocol}
+    {protocol: Rails.configuration.protocol}
   end
 
   protected
@@ -71,7 +71,7 @@ class ApplicationController < ActionController::API
   # it in the params hash.
   def extract_token_header
     if request.headers['X-AUTH-TOKEN']
-      params.merge!({:auth_token => request.headers['X-AUTH-TOKEN']})
+      params.merge!({auth_token: request.headers['X-AUTH-TOKEN']})
     end
   end
 
@@ -81,12 +81,12 @@ class ApplicationController < ActionController::API
 
   def render_not_found(e)
     instrument_captured_error(e)
-    render :json => '{}', :status => :not_found
+    render json: '{}', status: :not_found
   end
 
   def render_malformed_json(e)
     instrument_captured_error(e)
-    render :json => {error: "Something went wrong parsing your request JSON"}, :status => :bad_request
+    render json: {error: "Something went wrong parsing your request JSON"}, status: :bad_request
   end
 
   def render_invalid_record(e)

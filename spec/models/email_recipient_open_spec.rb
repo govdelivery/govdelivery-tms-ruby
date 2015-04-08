@@ -5,7 +5,7 @@ describe EmailRecipientOpen do
   let(:account) { create(:account, email_vendor: vendor) }
 
   let(:email_message) { 
-    EmailMessage.new(:body => 'short body', :subject => 'fuuu').tap do |em|
+    EmailMessage.new(body: 'short body', subject: 'fuuu').tap do |em|
       em.account=account
       em.save!
     end

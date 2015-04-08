@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe View::TwilioRequestResponse do
   subject {
-    vendor = stub(:foobar => :omg_lol)
+    vendor = stub(foobar: :omg_lol)
     View::TwilioRequestResponse.new(vendor, nil)
   }
   it 'delegates to vendor' do

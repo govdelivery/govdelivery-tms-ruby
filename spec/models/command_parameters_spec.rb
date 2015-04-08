@@ -8,15 +8,15 @@ describe CommandParameters do
   end
 
   let(:command_type) do
-    stub(:string_fields => [:dcm_account_code, :username],
-         :array_fields => [:dcm_topic_codes],
-         :required_string_fields => [:dcm_account_code, :username],
-         :required_array_fields => [:dcm_topic_codes],
-         :name => :test_command_type)
+    stub(string_fields: [:dcm_account_code, :username],
+         array_fields: [:dcm_topic_codes],
+         required_string_fields: [:dcm_account_code, :username],
+         required_array_fields: [:dcm_topic_codes],
+         name: :test_command_type)
   end
 
   let(:account) do
-    stub(:dcm_account_codes => ["AB"])
+    stub(dcm_account_codes: ["AB"])
   end
 
   let(:command_parameters) { CommandParameters.new(params)}
@@ -38,7 +38,7 @@ describe CommandParameters do
   end
 
   it "should merge correctly" do
-    other_parameters = CommandParameters.new(:account_id => 10, :sms_body => nil)
+    other_parameters = CommandParameters.new(account_id: 10, sms_body: nil)
 
     command_parameters.merge!(other_parameters)
 

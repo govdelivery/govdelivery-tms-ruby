@@ -9,11 +9,11 @@ require 'multi_xml'
 Capybara.default_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
 options = {
-    :js_errors => false,
-    :timeout => 30,
-    :debug => false,
-    :phantomjs_options => ['--load-images=no', '--disk-cache=false'],
-    :inspector => true,
+    js_errors: false,
+    timeout: 30,
+    debug: false,
+    phantomjs_options: ['--load-images=no', '--disk-cache=false'],
+    inspector: true,
 }
 Capybara::Poltergeist::Driver.new(app, options)
 end
@@ -33,11 +33,11 @@ end
 
 def xact_url
   urls = {
-    :development => "http://localhost:3000",
-    :qc => "https://qc-tms.govdelivery.com",
-    :integration => "https://int-tms.govdelivery.com",
-    :stage => "https://stage-tms.govdelivery.com",
-    :prod => "https://tms.govdelivery.com"
+    development: "http://localhost:3000",
+    qc: "https://qc-tms.govdelivery.com",
+    integration: "https://int-tms.govdelivery.com",
+    stage: "https://stage-tms.govdelivery.com",
+    prod: "https://tms.govdelivery.com"
   }
 
   url = urls[environment]
@@ -146,24 +146,24 @@ end
 
 def magic_emails
   magic_emails = {
-    :sending => "sending@sink.govdelivery.com",
-    :sent => "sent@sink.govdelivery.com",
-    :failed => "failed@sink.govdelivery.com",
-    :blacklisted => "blacklisted@sink.govdelivery.com",
-    :inconclusive => "inconclusive@sink.govdelivery.com",
-    :canceled => "canceled@sink.govdelivery.com"
+    sending: "sending@sink.govdelivery.com",
+    sent: "sent@sink.govdelivery.com",
+    failed: "failed@sink.govdelivery.com",
+    blacklisted: "blacklisted@sink.govdelivery.com",
+    inconclusive: "inconclusive@sink.govdelivery.com",
+    canceled: "canceled@sink.govdelivery.com"
   }
 end
 
 def magic_phone_numbers
   magic_phone_numbers = {
     #:new => "15005550000",
-    :sending => "15005550001",
-    :inconclusive => "15005550002",
-    :canceled => "15005550003",
-    :failed => "15005550004",
-    :blacklisted => "15005550005",
-    :sent => "15005550006"
+    sending: "15005550001",
+    inconclusive: "15005550002",
+    canceled: "15005550003",
+    failed: "15005550004",
+    blacklisted: "15005550005",
+    sent: "15005550006"
   }
 end
 
@@ -186,7 +186,7 @@ def twilio_xact_test_number_2
 end
 
 def tms_client(conf)
-    client = TMS::Client.new(conf.xact.user.token, :api_root => conf.xact.url)
+    client = TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
 end
 
 #

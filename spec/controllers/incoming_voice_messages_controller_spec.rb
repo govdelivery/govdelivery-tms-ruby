@@ -3,8 +3,8 @@ require 'rails_helper'
 describe IncomingVoiceMessagesController do
 
   let(:account){create(:account_with_voice)}
-  let(:user){account.users.create(:email => 'foo@evotest.govdelivery.com',
-                                  :password => "schwoop")}
+  let(:user){account.users.create(email: 'foo@evotest.govdelivery.com',
+                                  password: "schwoop")}
 
   before do
     sign_in user
@@ -16,13 +16,13 @@ describe IncomingVoiceMessagesController do
     end
     before do
       results.stubs(:total_pages).returns(5)
-      controller.stubs(:finder).returns(stub(:page => results))
+      controller.stubs(:finder).returns(stub(page: results))
     end
     it "should work on the first page" do
       results.stubs(:current_page).returns(1)
       results.stubs(:first_page?).returns(true)
       results.stubs(:last_page?).returns(false)
-      get :index, :format=>:json
+      get :index, format: :json
       expect(response.response_code).to eq(200)
     end
   end
@@ -30,7 +30,7 @@ describe IncomingVoiceMessagesController do
   describe "GET show" do
     it "assigns the requested inbound_message as @message" do
       message = create(:incoming_voice_message, from_number: account.default_from_number)
-      get :show, {:id => message.to_param}
+      get :show, {id: message.to_param}
       expect(response.status).to eq(200)
       expect(assigns(:voice_message)).to be_present
     end
