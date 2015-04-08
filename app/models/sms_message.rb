@@ -2,7 +2,7 @@ class SmsMessage < ActiveRecord::Base
   include Message
 
   validates_presence_of :body, on: :create
-  validates_length_of :body, :maximum => 160, on: :create
+  validates_length_of :body, maximum: 160, on: :create
   attr_accessible :body
   belongs_to :sms_vendor
 

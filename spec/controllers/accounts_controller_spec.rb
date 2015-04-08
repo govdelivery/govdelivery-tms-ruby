@@ -42,7 +42,7 @@ RSpec.shared_examples "an account endpoint" do
   end
 end
 
-describe AccountsController, :type => :controller do
+describe AccountsController, type: :controller do
   let (:account) { create :account,
                           sms_vendor:   create(:sms_vendor),
                           email_vendor: create(:email_vendor),

@@ -58,12 +58,12 @@ end
 
 
 Given(/^I created a new voice message$/) do
-  @message = client.voice_messages.build(:play_url => voice_message[random]) #combine methods where 'random' selects the hash key at random
+  @message = client.voice_messages.build(play_url: voice_message[random]) #combine methods where 'random' selects the hash key at random
 end
 
 Then(/^I should be able to verify that multiple recipients have received the message$/) do
-    @message.recipients.build(:phone => phone_number)
-    @message.recipients.build(:phone => phone_number_2) #change phone
+    @message.recipients.build(phone: phone_number)
+    @message.recipients.build(phone: phone_number_2) #change phone
     STDOUT.puts @message.errors unless @message.post
   if @message.response.status == 201
     puts '201 Created'.green
@@ -76,7 +76,7 @@ end
 
 
 Then(/^I should be able to verify the statuses using good numbers$/) do
-    @message.recipients.build(:phone => phone_number)
+    @message.recipients.build(phone: phone_number)
     STDOUT.puts @message.errors unless @message.post
   if @message.response.status == 201
     puts '201 Created'.green
@@ -157,7 +157,7 @@ end
 # end
 
 Then(/^I should be able to verify details of the message$/) do
-  @message.recipients.build(:phone => phone_number)
+  @message.recipients.build(phone: phone_number)
     STDOUT.puts @message.errors unless @message.post
     sleep(10)
     

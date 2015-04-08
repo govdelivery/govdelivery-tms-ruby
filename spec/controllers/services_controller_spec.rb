@@ -13,7 +13,7 @@ describe ServicesController do
 
   it "should show services" do
     get :index
-    response.response_code.should == 200
+    expect(response.response_code).to eq(200)
     expect(assigns(:services)).to be == {
       self: root_path,
       keywords: keywords_path,
@@ -39,8 +39,8 @@ describe ServicesController do
 
   it "should not allow any method other than GET" do
     post :index
-    response.headers.should include('Allow' => 'GET')
-    response.response_code.should == 405
+    expect(response.headers).to include('Allow' => 'GET')
+    expect(response.response_code).to eq(405)
   end
 
 end

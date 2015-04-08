@@ -21,7 +21,7 @@ describe 'inbound_messages/show.rabl' do
 
   it 'should work' do
     render
-    rendered.should be_json_for(inbound_message).
+    expect(rendered).to be_json_for(inbound_message).
                       with_attributes(:from, :to, :body, :command_status).
                       with_timestamps(:created_at).
                       with_links('self' => inbound_sms_path(inbound_message),
@@ -31,7 +31,7 @@ describe 'inbound_messages/show.rabl' do
   it "should not have command_actions if there aren't any" do
     inbound_message.stubs(:command_actions).returns([])
     render
-    rendered.should be_json_for(inbound_message).
+    expect(rendered).to be_json_for(inbound_message).
                       with_attributes(:from, :to, :body, :command_status).
                       with_timestamps(:created_at).
                       with_links('self' => inbound_sms_path(inbound_message))

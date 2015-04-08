@@ -6,11 +6,11 @@ class SmsVendor < ActiveRecord::Base
   alias_attribute :from, :from_phone
   attr_accessible :from
 
-  has_many :stop_requests, :foreign_key => 'vendor_id', :dependent => :delete_all
-  has_many :inbound_messages, -> { order("#{InboundMessage.table_name}.created_at DESC") }, :inverse_of => :vendor, :foreign_key => 'vendor_id', :dependent => :delete_all
-  has_many :sms_prefixes, :dependent => :destroy
+  has_many :stop_requests, foreign_key: 'vendor_id', dependent: :delete_all
+  has_many :inbound_messages, -> { order("#{InboundMessage.table_name}.created_at DESC") }, inverse_of: :vendor, foreign_key: 'vendor_id', dependent: :delete_all
+  has_many :sms_prefixes, dependent: :destroy
 
-  validates_inclusion_of :shared, :in => [true, false]
+  validates_inclusion_of :shared, in: [true, false]
   validates_uniqueness_of :from_phone
   validates_uniqueness_of :name
   validates_presence_of :from

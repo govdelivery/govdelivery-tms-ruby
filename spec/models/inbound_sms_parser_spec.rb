@@ -18,7 +18,7 @@ describe InboundSmsParser do
       its(:message)    { should eql('blah gibberish with caps and ٸ unicode') }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
+        expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
@@ -46,7 +46,7 @@ describe InboundSmsParser do
       its(:message)    { should eql('xyz') }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
+        expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
@@ -56,7 +56,7 @@ describe InboundSmsParser do
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
+        expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
@@ -66,7 +66,7 @@ describe InboundSmsParser do
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should eql(account.id) }
       it "should respond with help" do
-        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
+        expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
@@ -76,7 +76,7 @@ describe InboundSmsParser do
       its(:message)    { should eql('me@you.com') }
       its(:account_id) { should eql(account.id) }
       it "should respond with stop" do
-        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_STOP_TEXT
+        expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_STOP_TEXT
       end
     end
 
@@ -86,7 +86,7 @@ describe InboundSmsParser do
       its(:message)    { should be_blank }
       its(:account_id) { should be_blank }
       it "should respond with help" do
-        subject.keyword.send(:response_text).should eql Service::Keyword::DEFAULT_HELP_TEXT
+        expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 

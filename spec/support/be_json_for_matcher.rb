@@ -41,18 +41,18 @@ RSpec::Matchers.define :be_json_for do |expected|
 
     json.each do |k, v|
       if k=='errors' && @errors
-        v.should be_a(Hash)
+        expect(v).to be_a(Hash)
       elsif k=='_links'
-        @links.each { |rel, href| v[rel.to_s].should eq(href) }
-        @links.keys.length.should eq(v.keys.length)
+        @links.each { |rel, href| expect(v[rel.to_s]).to eq(href) }
+        expect(@links.keys.length).to eq(v.keys.length)
       elsif ts=@timestamps.delete(k.to_sym)
-        Time.parse(v).to_s(:json).should eq(expected.send(ts).to_s(:json))
+        expect(Time.parse(v).to_s(:json)).to eq(expected.send(ts).to_s(:json))
       elsif @objects.delete(k.to_sym)
-        v.should be_a(Hash)
+        expect(v).to be_a(Hash)
       elsif @arrays.delete(k.to_sym)
-        v.should be_a(Array)
+        expect(v).to be_a(Array)
       elsif @attributes.delete(k.to_sym)
-        v.should eq(expected.send(k))
+        expect(v).to eq(expected.send(k))
       else
         fail("Unrecognized JSON attribute #{k}: #{rendered}")
       end

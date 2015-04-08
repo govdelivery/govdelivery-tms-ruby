@@ -17,16 +17,16 @@ class StatusCodes < Test::Unit::TestCase
 	path = 'https://stage-tms.govdelivery.com/messages/email'
 
 	imap_opts = {
-	  :address    => 'imap.gmail.com',
-	  :port       => 993,
-	  :user_name  => 'canari7dd@gmail.com',
-	  :password   => 'govdel01!', 
-	  :enable_ssl => true
+	  address:    'imap.gmail.com',
+	  port:       993,
+	  user_name:  'canari7dd@gmail.com',
+	  password:   'govdel01!', 
+	  enable_ssl: true
 	}
 	xact_opts = {
-	  :user_name  => 'cukestage@govdelivery.com',
-	  :password   => 'govdel01',
-	  :recipient  => 'canari7dd@gmail.com'
+	  user_name:  'cukestage@govdelivery.com',
+	  password:   'govdel01',
+	  recipient:  'canari7dd@gmail.com'
 	}
 	  email_body = "This is a test for end to end email delivery. <a href=\\\"#{expected_link}\\\">With a link</a>"
 	  

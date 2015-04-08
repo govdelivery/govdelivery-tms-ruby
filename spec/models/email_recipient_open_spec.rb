@@ -5,7 +5,7 @@ describe EmailRecipientOpen do
   let(:account) { create(:account, email_vendor: vendor) }
 
   let(:email_message) { 
-    EmailMessage.new(:body => 'short body', :subject => 'fuuu').tap do |em|
+    EmailMessage.new(body: 'short body', subject: 'fuuu').tap do |em|
       em.account=account
       em.save!
     end
@@ -27,14 +27,14 @@ describe EmailRecipientOpen do
     end
   }
 
-  it { should be_valid }
+  it { is_expected.to be_valid }
   
   [:email_message, :email_recipient, :event_ip, :email, :opened_at].each do |attr|
     context "when #{attr} is nil" do
       before do
         subject.send("#{attr}=", nil)
       end
-      it { should be_invalid }
+      it { is_expected.to be_invalid }
     end
   end
 

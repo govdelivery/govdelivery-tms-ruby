@@ -82,9 +82,9 @@ if defined? JRUBY_VERSION
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         post :create, ipaws_credentials.merge(ipaws_alert_params)
-        response.response_code.should == 200
-        response.body.should be_present
-        JSON.parse(response.body).should be_present
+        expect(response.response_code).to eq(200)
+        expect(response.body).to be_present
+        expect(JSON.parse(response.body)).to be_present
       end
 
       it 'returns the IPAWS error response' do
@@ -92,16 +92,16 @@ if defined? JRUBY_VERSION
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
         post :create, ipaws_credentials.merge(ipaws_alert_params)
-        response.response_code.should == 200
-        response.body.should be_present
-        JSON.parse(response.body).should be_present
+        expect(response.response_code).to eq(200)
+        expect(response.body).to be_present
+        expect(JSON.parse(response.body)).to be_present
       end
 
       it 'responds with 403 (forbidden) if no IPAWS vendor' do
         user = create :user, account: create(:account, ipaws_vendor: nil)
         sign_in user
         post :create, ipaws_credentials.merge(ipaws_alert_params)
-        response.response_code.should == 403
+        expect(response.response_code).to eq(403)
       end
 
     end

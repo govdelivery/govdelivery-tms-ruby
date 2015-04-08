@@ -20,7 +20,7 @@ describe 'webhooks/show.rabl' do
          url: 'http://fail.com',
          event_type: 'failed',
          created_at: Time.now,
-         errors: {:url => "Can't be blank"},
+         errors: {url: "Can't be blank"},
          persisted?: false
     )
   end
@@ -29,7 +29,7 @@ describe 'webhooks/show.rabl' do
   it 'should tells us stuff' do
     assign(:webhook, webhook)
     render
-    rendered.should be_json_for(webhook).
+    expect(rendered).to be_json_for(webhook).
                       with_attributes(:url, :event_type).
                       with_timestamps(:created_at).
                       with_links('self' => webhook_path(webhook))
@@ -38,7 +38,7 @@ describe 'webhooks/show.rabl' do
   it 'should have errors with invalid webhook' do
     assign(:webhook, invalid_webhook)
     render
-    rendered.should be_json_for(webhook).
+    expect(rendered).to be_json_for(webhook).
                       with_attributes(:url, :event_type).
                       with_timestamps(:created_at).
                       with_links('self' => webhooks_path).

@@ -134,7 +134,7 @@ describe TwilioRequestsController, '#create' do
   def twilio_request_params(body, vendor)
     @sid ||= ('0'*34)
     @sid.succ!
-    {:format => "xml",
+    {format: "xml",
       'SmsSid' => @sid,
       'AccountSid' => vendor.username,
       'From' => vendor.username,

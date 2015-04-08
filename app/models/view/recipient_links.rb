@@ -11,9 +11,9 @@ module View
     end
 
     def _links
-      links = {:self => self_link, message_name => message_link}
+      links = {self: self_link, message_name => message_link}
       if recipient.class.name.downcase.include?('email')
-        links.merge(:opens => opens_link, :clicks => clicks_link)
+        links.merge(opens: opens_link, clicks: clicks_link)
       else
         links
       end

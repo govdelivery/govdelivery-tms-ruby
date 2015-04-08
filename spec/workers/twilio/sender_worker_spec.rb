@@ -4,8 +4,8 @@ require File.expand_path('../../../../app/workers/base', __FILE__)
 describe Twilio::SenderWorker do
   context 'a voice send' do
     let(:account){ create(:account_with_voice) }
-    let(:user) { account.users.create!(:email => 'foo@evotest.govdelivery.com', :password => "schwoop") }
-    let(:message) { account.voice_messages.create!(:play_url => 'http://localhost/file.mp3', :recipients_attributes => [{:phone => "5554443333", :vendor => account.voice_vendor}]) }
+    let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
+    let(:message) { account.voice_messages.create!(play_url: 'http://localhost/file.mp3', recipients_attributes: [{phone: "5554443333", vendor: account.voice_vendor}]) }
     let(:client) { stub }
 
 

@@ -97,7 +97,7 @@ module Subetha
     def send_options
       routes              = Rails.application.routes.url_helpers
       opts                = {message_url: routes.twiml_url}
-      opts[:callback_url] = routes.twilio_status_callbacks_url(:format => :xml) if Rails.configuration.public_callback
+      opts[:callback_url] = routes.twilio_status_callbacks_url(format: :xml) if Rails.configuration.public_callback
       opts
     end
 

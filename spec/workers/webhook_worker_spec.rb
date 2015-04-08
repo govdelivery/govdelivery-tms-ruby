@@ -8,13 +8,13 @@ describe WebhookWorker do
   end
   let(:connection_404) do
     stub('faraday 404').tap do |obj|
-      obj.stubs(:post).raises(Faraday::Error::ResourceNotFound, {:status => 404, :headers => {}, :body => 'nope'})
+      obj.stubs(:post).raises(Faraday::Error::ResourceNotFound, {status: 404, headers: {}, body: 'nope'})
     end
   end
 
   let(:connection_500) do
     stub('faraday 500').tap do |obj|
-      obj.stubs(:post).raises(Faraday::Error::ClientError, {:status => 500, :headers => {}, :body => 'nope'})
+      obj.stubs(:post).raises(Faraday::Error::ClientError, {status: 500, headers: {}, body: 'nope'})
     end
   end
 

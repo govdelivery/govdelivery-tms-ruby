@@ -5,48 +5,48 @@ describe IPAWS::Vendor do
     com.govdelivery.ipaws.IPAWSClient.__persistent__ = true if defined?(JRUBY_VERSION)
   end
 
-  it { should have_many(:accounts) }
+  it { is_expected.to have_many(:accounts) }
 
-  it { should validate_presence_of(:cog_id) }
-  it { should validate_presence_of(:user_id) }
-  it { should validate_presence_of(:public_password_encrypted) }
-  it { should validate_presence_of(:private_password_encrypted) }
-  it { should validate_presence_of(:jks) }
+  it { is_expected.to validate_presence_of(:cog_id) }
+  it { is_expected.to validate_presence_of(:user_id) }
+  it { is_expected.to validate_presence_of(:public_password_encrypted) }
+  it { is_expected.to validate_presence_of(:private_password_encrypted) }
+  it { is_expected.to validate_presence_of(:jks) }
 
   it 'encrypts the public password' do
     vendor = build :ipaws_vendor, public_password: nil
-    vendor.public_password.should be_nil
-    vendor.public_password_encrypted.should be_nil
+    expect(vendor.public_password).to be_nil
+    expect(vendor.public_password_encrypted).to be_nil
     vendor.public_password = 'foobar'
-    vendor.public_password_encrypted.should be_present
-    vendor.public_password_encrypted.should_not == vendor.public_password
-    vendor.public_password.should == 'foobar'
+    expect(vendor.public_password_encrypted).to be_present
+    expect(vendor.public_password_encrypted).not_to eq(vendor.public_password)
+    expect(vendor.public_password).to eq('foobar')
     vendor.save!
     vendor.reload
-    vendor.public_password_encrypted.should be_present
-    vendor.public_password_encrypted.should_not == vendor.public_password
-    vendor.public_password.should == 'foobar'
+    expect(vendor.public_password_encrypted).to be_present
+    expect(vendor.public_password_encrypted).not_to eq(vendor.public_password)
+    expect(vendor.public_password).to eq('foobar')
   end
 
   it 'encrypts the private password' do
     vendor = build :ipaws_vendor, private_password: nil
-    vendor.private_password.should be_nil
-    vendor.private_password_encrypted.should be_nil
+    expect(vendor.private_password).to be_nil
+    expect(vendor.private_password_encrypted).to be_nil
     vendor.private_password = 'foobar'
-    vendor.private_password_encrypted.should be_present
-    vendor.private_password_encrypted.should_not == vendor.private_password
-    vendor.private_password.should == 'foobar'
+    expect(vendor.private_password_encrypted).to be_present
+    expect(vendor.private_password_encrypted).not_to eq(vendor.private_password)
+    expect(vendor.private_password).to eq('foobar')
     vendor.save!
     vendor.reload
-    vendor.private_password_encrypted.should be_present
-    vendor.private_password_encrypted.should_not == vendor.private_password
-    vendor.private_password.should == 'foobar'
+    expect(vendor.private_password_encrypted).to be_present
+    expect(vendor.private_password_encrypted).not_to eq(vendor.private_password)
+    expect(vendor.private_password).to eq('foobar')
   end
 
   describe '#client' do
     it 'returns an IPAWS client object' do
       vendor = build :ipaws_vendor
-      vendor.client.should be_present
+      expect(vendor.client).to be_present
     end
   end
 
@@ -58,7 +58,7 @@ describe IPAWS::Vendor do
       ipaws_response = [{"ACK"=>"PONG"}]
       xact_response = { "ACK" => "PONG" }
       subject.client.stubs(:getAck).returns(ipaws_response)
-      subject.ack.should == xact_response
+      expect(subject.ack).to eq(xact_response)
     end
   end
 
@@ -126,7 +126,7 @@ describe IPAWS::Vendor do
         ]
       }
       subject.client.stubs(:getCOGProfile).returns(ipaws_response)
-      subject.cog_profile.should == xact_response
+      expect(subject.cog_profile).to eq(xact_response)
     end
     it 'converts eventCodes or geoCodes to arrays only when present' do
       ipaws_response = [
@@ -168,7 +168,7 @@ describe IPAWS::Vendor do
         "email"=>"joe.bloom@govdelivery.com"
       }
       subject.client.stubs(:getCOGProfile).returns(ipaws_response)
-      subject.cog_profile.should == xact_response
+      expect(subject.cog_profile).to eq(xact_response)
     end
   end
 
@@ -271,14 +271,14 @@ describe IPAWS::Vendor do
     end
     it 'flattens response and groups statuses in groups of 4 with key statuses' do
       subject.client.stubs(:postCAP).returns(ipaws_response)
-      subject.post_alert({key: 'value'}).should == xact_response
+      expect(subject.post_alert({key: 'value'})).to eq(xact_response)
     end
   end
 
   describe '#nwem_cog_authorization' do
     it 'returns the status as a single hash' do
       subject.client.stubs(:isCogAuthorized).returns([{"cogid"=>"true"}])
-      subject.nwem_cog_authorization.should == {"cogid"=>"true"}
+      expect(subject.nwem_cog_authorization).to eq({"cogid"=>"true"})
     end
   end
 
@@ -326,7 +326,7 @@ describe IPAWS::Vendor do
         }
       ]
       subject.client.stubs(:getNWEMAuxData).returns(ipaws_response)
-      subject.nwem_areas.should == xact_response
+      expect(subject.nwem_areas).to eq(xact_response)
     end
   end
 

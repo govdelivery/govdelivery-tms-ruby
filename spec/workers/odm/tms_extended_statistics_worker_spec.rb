@@ -8,10 +8,10 @@ if defined?(JRUBY_VERSION)
 
     let(:worker) { subject }
 
-    let(:service_stub) { stub(:delivery_events => delivery_events)}
-    let(:delivery_events) { [stub(:recipient_id => "not_numeric", :message_id => "foo", :address => "hey@bob.evotest.com")] }
+    let(:service_stub) { stub(delivery_events: delivery_events)}
+    let(:delivery_events) { [stub(recipient_id: "not_numeric", message_id: "foo", address: "hey@bob.evotest.com")] }
 
-    let(:vendor) { stub(:recipients => stub(:incomplete => stub(:find => nil)))}
+    let(:vendor) { stub(recipients: stub(incomplete: stub(find: nil)))}
 
     it 'should not bomb when given non-numeric recipient_id' do
       worker.service = service_stub

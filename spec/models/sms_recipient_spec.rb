@@ -8,14 +8,14 @@ describe SmsRecipient do
     create(:sms_recipient, message: message, vendor: vendor)
   }
 
-  it { should validate_presence_of :phone } # validates_presence_of :phone
+  it { is_expected.to validate_presence_of :phone } # validates_presence_of :phone
 
   describe "when phone is not a number" do
     before do
       subject.phone = 'invalid'
       subject.save!
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should be_nil }
   end
 
@@ -24,7 +24,7 @@ describe SmsRecipient do
       subject.phone = '0001112222'
       subject.save
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should be_nil }
   end
 
@@ -33,7 +33,7 @@ describe SmsRecipient do
       subject.phone = '223'
       subject.save!
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should be nil }
   end
 
@@ -42,7 +42,7 @@ describe SmsRecipient do
       subject.phone = 6125015456
       subject.save!
     end
-    it { should be_valid }
+    it { is_expected.to be_valid }
     its(:formatted_phone) { should eq '+16125015456' }
   end
 
@@ -53,17 +53,17 @@ describe SmsRecipient do
 
     it 'should persist formatted_phone if phone number is valid' do
       subject.save!
-      subject.formatted_phone.should_not be_nil
+      expect(subject.formatted_phone).not_to be_nil
     end
 
     it 'has an ack that is too long' do
       subject.ack = 'A'*257
-      subject.should_not be_valid
+      expect(subject).not_to be_valid
     end
 
     it 'has an error message that is too long' do
       subject.error_message = 'A'*513
-      subject.should be_valid
+      expect(subject).to be_valid
     end
   end
 
@@ -114,13 +114,13 @@ describe SmsRecipient, 'blacklist scopes' do
 
   it 'should get account_blacklisted' do
     scope = sms_message.recipients.account_blacklisted(sms_vendor.id, account.id)
-    scope.count.should eq(2)
-    scope.map(&:phone).sort.should eq(["+16123089081", "+16123089082"])
+    expect(scope.count).to eq(2)
+    expect(scope.map(&:phone).sort).to eq(["+16123089081", "+16123089082"])
   end
 
   it 'should get not_account_blacklisted' do
     scope = sms_message.recipients.not_account_blacklisted(sms_vendor.id, account.id)
-    scope.count.should eq(1)
-    scope.map(&:phone).should eq(["+16123089083"])
+    expect(scope.count).to eq(1)
+    expect(scope.map(&:phone)).to eq(["+16123089083"])
   end
 end

@@ -18,26 +18,26 @@ describe TokensController do
   it 'allows only admin users' do
     request.headers['X-AUTH-TOKEN'] = user.authentication_tokens.first.token
     get :index, account_id: account.id, user_id: user.id
-    response.response_code.should eq(404)
+    expect(response.response_code).to eq(404)
   end
 
   it 'lists tokens for a user' do
     expected = user.authentication_tokens.map(&:token)
     get :index, account_id: account.id, user_id: user.id
-    JSON.parse(response.body)['tokens'].map{|h| h['token']}.to_set.should eq(expected.to_set)
+    expect(JSON.parse(response.body)['tokens'].map{|h| h['token']}.to_set).to eq(expected.to_set)
   end
 
   it 'shows a token' do
     token = user.authentication_tokens.first
     get :show, account_id: account.id, user_id: user.id, id: token.id
-    response.response_code.should eq(200)
+    expect(response.response_code).to eq(200)
   end
 
   it 'deletes a token' do
     token = user.authentication_tokens.first
     id = token.id
     get :destroy, account_id: account.id, user_id: user.id, id: id
-    user.authentication_tokens.find_by_id(id).should be_nil
+    expect(user.authentication_tokens.find_by_id(id)).to be_nil
     assert_equal 0, user.authentication_tokens.count
     assert user.valid?
   end

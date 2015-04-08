@@ -1,6 +1,6 @@
 require 'rails_helper'
 describe CommandWorkers::DcmUnsubscribeWorker do
-  let(:config) { {:username => "foo", :password => "bar", :api_root => "http://example.com"} }
+  let(:config) { {username: "foo", password: "bar", api_root: "http://example.com"} }
   let(:client) { mock('dcm_client') }
   let(:account) { create(:account) }
   let(:command) do
@@ -64,7 +64,7 @@ describe CommandWorkers::DcmUnsubscribeWorker do
     end
     specify do
       subject.perform(options)
-      subject.http_response.status.should eq(200)
+      expect(subject.http_response.status).to eq(200)
     end
   end
 end

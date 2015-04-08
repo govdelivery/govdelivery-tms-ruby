@@ -20,8 +20,8 @@ module Service
 
       def create_options(message, recipient, callback_url, message_url=nil)
         opts = {
-          :to => "#{recipient.formatted_phone}",
-          :from => message.respond_to?(:from_number) ? message.from_number : message.vendor.from,
+          to: "#{recipient.formatted_phone}",
+          from: message.respond_to?(:from_number) ? message.from_number : message.vendor.from,
         }
         opts[:body] = message.body if message.respond_to?(:body)
         opts[:IfMachine] = 'Continue' if message.respond_to?(:play_url) #if voice, use AMD

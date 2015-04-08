@@ -8,7 +8,7 @@ describe View::RecipientLinks do
     let(:context) { build_context(recipient) }
     it 'gets correct links for a non-email recipient' do
       expected_links = { self: 'the recipient url', sms_message: 'the message url' }
-      View::RecipientLinks.new(recipient, context)._links.should == expected_links
+      expect(View::RecipientLinks.new(recipient, context)._links).to eq(expected_links)
     end
   end
   describe '#_links for email recipients' do
@@ -19,7 +19,7 @@ describe View::RecipientLinks do
                         email_message: 'the message url',
                         clicks: 'the clicks url',
                         opens: 'the opens url'}
-      View::RecipientLinks.new(recipient, context)._links.should == expected_links
+      expect(View::RecipientLinks.new(recipient, context)._links).to eq(expected_links)
     end
   end
 
