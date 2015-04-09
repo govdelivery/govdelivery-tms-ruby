@@ -15,35 +15,35 @@ require 'pry'
       elsif ENV['XACT_ENV'] == 'stage'
         'pzYSpUsoFXx6GKX7jzoQbstsMDyb9f6X' #"id": 11320,"account_id": 10360,"email": "cuke-user-stage@evotest.govdelivery.com","admin": false
       end
-    end  
+    end
 
 	def url
 	  if ENV['XACT_ENV'] == 'qc'
-	    'https://qc-tms.govdelivery.com/accounts' 
+	    'https://qc-tms.govdelivery.com/accounts'
 	  elsif ENV['XACT_ENV'] == 'integration'
-	    'https://int-tms.govdelivery.com/accounts' 
+	    'https://int-tms.govdelivery.com/accounts'
 	  elsif ENV['XACT_ENV'] == 'stage'
-	    'https://stage-tms.govdelivery.com/accounts' 
+	    'https://stage-tms.govdelivery.com/accounts'
 	  end
-	end  
+	end
 
 	def admin
 	  if ENV['XACT_ENV'] == 'qc'
-	    client = TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
+	    client = GovDelivery::TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
 	  elsif ENV['XACT_ENV'] == 'integration'
-	    client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
+	    client = GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
 	  elsif ENV['XACT_ENV'] == 'stage'
-	    client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
+	    client = GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
 	  end
 	end
 
 	def client
 	  if ENV['XACT_ENV'] == 'qc'
-	    client = TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
+	    client = GovDelivery::TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
 	  elsif ENV['XACT_ENV'] == 'integration'
-	    client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
+	    client = GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
 	  elsif ENV['XACT_ENV'] == 'stage'
-	    client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
+	    client = GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
 	  end
 	end
 
@@ -84,12 +84,12 @@ require 'pry'
 	    'xactqctest1@gmail.com'
 	  elsif ENV['XACT_ENV'] == 'stage'
 	    'xactqctest1@gmail.com'
-	  end  
+	  end
 	end
 
 	def password
 	  'govdel01!'
-	end  
+	end
 
 	def subject
 	  "XACT-533-2 Email Test for link parameters #{$x}"

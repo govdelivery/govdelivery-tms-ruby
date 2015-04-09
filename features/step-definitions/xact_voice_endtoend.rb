@@ -6,7 +6,6 @@ require 'capybara/cucumber'
 require 'rubygems'
 require 'colored'
 require 'awesome_print'
-require 'tms_client'
 require 'twilio-ruby'
 require 'date'
 require 'httpi'
@@ -18,13 +17,13 @@ Capybara.default_wait_time = 300
 
 def client
   if ENV['XACT_ENV'] == 'qc'
-    client = TMS::Client.new('52qxcmfNnD1ELyfyQnkq43ToTcFKDsAZ', api_root: 'https://qc-tms.govdelivery.com')
+    client = GovDelivery::TMS::Client.new('52qxcmfNnD1ELyfyQnkq43ToTcFKDsAZ', api_root: 'https://qc-tms.govdelivery.com')
   elsif ENV['XACT_ENV'] == 'integration'
-    client = TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
+    client = GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
   elsif ENV['XACT_ENV'] == 'stage'
-    client = TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
+    client = GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
   elsif ENV['XACT_ENV'] == 'prod'
-    client = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com')
+    client = GovDelivery::TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com')
   end
 end
 
@@ -99,7 +98,7 @@ Then(/^I should be able to verify the voice message was received$/) do
           start_time: Date.today,
           status: "ringing",
           from: from_number
-          }).each do |call| 
+          }).each do |call|
         @b = call.uri
   end
 

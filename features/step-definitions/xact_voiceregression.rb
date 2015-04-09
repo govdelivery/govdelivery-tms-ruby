@@ -1,7 +1,5 @@
 #!/bin/env ruby
 #encoding: utf-8
-
-require 'tms_client'
 require 'colored'
 require 'json'
 require 'awesome_print'

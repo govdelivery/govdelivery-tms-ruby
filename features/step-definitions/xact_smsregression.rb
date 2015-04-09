@@ -1,8 +1,5 @@
 #!/bin/env ruby
 #encoding: utf-8
-
-
-require 'tms_client'
 require 'colored'
 require 'json'
 require 'awesome_print'
@@ -113,13 +110,13 @@ end
 
 def client_2
     if ENV['XACT_ENV'] == 'qc'
-      client_2 = TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', api_root: 'https://qc-tms.govdelivery.com') #will send from (612) 255-6254
+      client_2 = GovDelivery::TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', api_root: 'https://qc-tms.govdelivery.com') #will send from (612) 255-6254
     elsif ENV['XACT_ENV'] == 'integration'
-      client_2 = TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', api_root: 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
+      client_2 = GovDelivery::TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', api_root: 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
     elsif ENV['XACT_ENV'] == 'stage'
-      client_2 = TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', api_root: 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
+      client_2 = GovDelivery::TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', api_root: 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
     elsif ENV['XACT_ENV'] == 'prod'  
-      client_2 = TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com') #THIS TEST DOESNT RUN IN PROD
+      client_2 = GovDelivery::TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com') #THIS TEST DOESNT RUN IN PROD
     end
 end
 
