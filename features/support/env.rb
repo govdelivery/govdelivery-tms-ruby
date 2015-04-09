@@ -5,17 +5,16 @@ require 'configatron'
 require 'multi_xml'
 require 'govdelivery-tms-internal'
 
-
 Capybara.default_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
-options = {
+  options = {
     js_errors: false,
     timeout: 30,
     debug: false,
     phantomjs_options: ['--load-images=no', '--disk-cache=false'],
-    inspector: true,
-}
-Capybara::Poltergeist::Driver.new(app, options)
+    inspector: true
+  }
+  Capybara::Poltergeist::Driver.new(app, options)
 end
 
 def environment
@@ -26,29 +25,29 @@ def environment
     :stage,
     :prod
   ]
-  env = ENV.has_key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
-  raise "Unsupported XACT Environment: #{env}" if !environments.include?(env)
+  env = ENV.key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
+  raise "Unsupported XACT Environment: #{env}" unless environments.include?(env)
   env
 end
 
 def xact_url
   urls = {
-    development: "http://localhost:3000",
-    qc: "https://qc-tms.govdelivery.com",
-    integration: "https://int-tms.govdelivery.com",
-    stage: "https://stage-tms.govdelivery.com",
-    prod: "https://tms.govdelivery.com"
+    development: 'http://localhost:3000',
+    qc: 'https://qc-tms.govdelivery.com',
+    integration: 'https://int-tms.govdelivery.com',
+    stage: 'https://stage-tms.govdelivery.com',
+    prod: 'https://tms.govdelivery.com'
   }
 
   url = urls[environment]
-  raise "No XACT URL defined for environment #{environment}" if !url
+  raise "No XACT URL defined for environment #{environment}" unless url
   url
 end
 
 # Set general configuration options
 twilio_test_credentials = {
   sid: 'ACc66477e37af9ebee0f12b349c7b75117',
-  token: '5b1c96ca034d474c6d4b68f8d05c99f5',
+  token: '5b1c96ca034d474c6d4b68f8d05c99f5'
 }
 
 twilio_live_credentials = {
@@ -113,7 +112,6 @@ configatron.voice_vendors.live.vendor.username                  = twilio_live_cr
 configatron.voice_vendors.live.vendor.password                  = twilio_live_credentials[:token]
 configatron.voice_vendors.live.vendor.twilio_test               = false
 
-
 def message_types
   message_types = [
     :email,
@@ -135,42 +133,42 @@ end
 
 def magic_addresses(message_type)
   case message_type
-    when :email
-      magic_emails
-    when :sms
-      magic_phone_numbers
-    when :voice
-      magic_phone_numbers
+  when :email
+    magic_emails
+  when :sms
+    magic_phone_numbers
+  when :voice
+    magic_phone_numbers
   end
 end
 
 def magic_emails
   magic_emails = {
-    sending: "sending@sink.govdelivery.com",
-    sent: "sent@sink.govdelivery.com",
-    failed: "failed@sink.govdelivery.com",
-    blacklisted: "blacklisted@sink.govdelivery.com",
-    inconclusive: "inconclusive@sink.govdelivery.com",
-    canceled: "canceled@sink.govdelivery.com"
+    sending: 'sending@sink.govdelivery.com',
+    sent: 'sent@sink.govdelivery.com',
+    failed: 'failed@sink.govdelivery.com',
+    blacklisted: 'blacklisted@sink.govdelivery.com',
+    inconclusive: 'inconclusive@sink.govdelivery.com',
+    canceled: 'canceled@sink.govdelivery.com'
   }
 end
 
 def magic_phone_numbers
   magic_phone_numbers = {
     #:new => "15005550000",
-    sending: "15005550001",
-    inconclusive: "15005550002",
-    canceled: "15005550003",
-    failed: "15005550004",
-    blacklisted: "15005550005",
-    sent: "15005550006"
+    sending: '15005550001',
+    inconclusive: '15005550002',
+    canceled: '15005550003',
+    failed: '15005550004',
+    blacklisted: '15005550005',
+    sent: '15005550006'
   }
 end
 
 def status_for_address(magic_addresses, address)
-  matches = magic_addresses.select {|status, magic_address| magic_address == address}
+  matches = magic_addresses.select { |_status, magic_address| magic_address == address }
   status = matches ? matches.first.first : nil
-  return status
+  status
 end
 
 def callbacks_api_root
@@ -186,7 +184,7 @@ def twilio_xact_test_number_2
 end
 
 def tms_client(conf)
-    client = GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
+  client = GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
 end
 
 #
@@ -195,44 +193,41 @@ end
 def dev_not_live?
   return false unless environment == :development
 
-  return !(configatron.xact.has_key?('user') && configatron.xact.user.has_key?('token'))
+  !(configatron.xact.key?('user') && configatron.xact.user.key?('token'))
 end
 
 def dcm_base64_url
-    if ENV['XACT_ENV'] == 'qc'
-      'https://qc-api.govdelivery.com/api/account/CUKEAUTO_QC/subscribers/'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'https://int-api.govdelivery.com/api/account/CUKEAUTO_INT/subscribers/'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'https://api.govdelivery.com/api/account/CUKEAUTO_PROD/subscribers/'
-    end
+  if ENV['XACT_ENV'] == 'qc'
+    'https://qc-api.govdelivery.com/api/account/CUKEAUTO_QC/subscribers/'
+  elsif ENV['XACT_ENV'] == 'integration'
+    'https://int-api.govdelivery.com/api/account/CUKEAUTO_INT/subscribers/'
+  elsif ENV['XACT_ENV'] == 'stage'
+    'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
+  elsif ENV['XACT_ENV'] == 'prod'
+    'https://api.govdelivery.com/api/account/CUKEAUTO_PROD/subscribers/'
+  end
 end
 
 def user
-    if ENV['XACT_ENV'] == 'qc'
-      @request = HTTPI::Request.new
-      @request.headers["Content-Type"] = "application/xml"
-      @request.auth.basic("autocukeqc_sa@evotest.govdelivery.com", "govdel01!")
-    elsif ENV['XACT_ENV'] == 'integration'
-      @request = HTTPI::Request.new
-      @request.headers["Content-Type"] = "application/xml"
-      @request.auth.basic("autocukeint_sa@evotest.govdelivery.com", "govdel01!")
-    elsif ENV['XACT_ENV'] == 'stage'
-      @request = HTTPI::Request.new
-      @request.headers["Content-Type"] = "application/xml"
-      @request.auth.basic("autocukestage_sa@evotest.govdelivery.com", "govdel01!")
-    elsif ENV['XACT_ENV'] == 'prod'
-      @request = HTTPI::Request.new
-      @request.headers["Content-Type"] = "application/xml"
-      @request.auth.basic("autocukeprod_sa@evotest.govdelivery.com", "govdel01!")
-    end
+  if ENV['XACT_ENV'] == 'qc'
+    @request = HTTPI::Request.new
+    @request.headers['Content-Type'] = 'application/xml'
+    @request.auth.basic('autocukeqc_sa@evotest.govdelivery.com', 'govdel01!')
+  elsif ENV['XACT_ENV'] == 'integration'
+    @request = HTTPI::Request.new
+    @request.headers['Content-Type'] = 'application/xml'
+    @request.auth.basic('autocukeint_sa@evotest.govdelivery.com', 'govdel01!')
+  elsif ENV['XACT_ENV'] == 'stage'
+    @request = HTTPI::Request.new
+    @request.headers['Content-Type'] = 'application/xml'
+    @request.auth.basic('autocukestage_sa@evotest.govdelivery.com', 'govdel01!')
+  elsif ENV['XACT_ENV'] == 'prod'
+    @request = HTTPI::Request.new
+    @request.headers['Content-Type'] = 'application/xml'
+    @request.auth.basic('autocukeprod_sa@evotest.govdelivery.com', 'govdel01!')
+  end
 end
-
 
 def sample_subscriber_number
   '+16122236629'
-end  
-
-
+end

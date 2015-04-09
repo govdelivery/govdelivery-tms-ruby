@@ -13,11 +13,11 @@ describe 'accounts/show.rabl' do
            ipaws_vendor:          ipaws_vendor,
            email_vendor:          email_vendor,
            default_response_text: 'seriously default',
-           dcm_account_codes:     ['so', 'rad'])
+           dcm_account_codes:     %w(so rad))
   end
 
-  let (:user) { create :user, account: account, admin: false }
-  let (:admin_user) { create :user, account: account, admin: true }
+  let(:user) { create :user, account: account, admin: false }
+  let(:admin_user) { create :user, account: account, admin: true }
 
   before do
     assign(:account, account)
@@ -25,18 +25,18 @@ describe 'accounts/show.rabl' do
 
   it 'should work when valid' do
     render
-    expect(rendered).to be_json_for(account).
-          with_attributes(:name,
-                          :voice_vendor_id,
-                          :email_vendor_id,
-                          :sms_vendor_id,
-                          :ipaws_vendor_id,
-                          :default_response_text,
-                          :link_tracking_parameters,
-                          :sid).
-                      with_arrays(:dcm_account_codes).
-                      with_timestamps(:created_at, :updated_at).
-                      with_links( 'self' => account_path(account),
-                                  'users' => account_users_path(account))
+    expect(rendered).to be_json_for(account)
+      .with_attributes(:name,
+                       :voice_vendor_id,
+                       :email_vendor_id,
+                       :sms_vendor_id,
+                       :ipaws_vendor_id,
+                       :default_response_text,
+                       :link_tracking_parameters,
+                       :sid)
+      .with_arrays(:dcm_account_codes)
+      .with_timestamps(:created_at, :updated_at)
+      .with_links('self' => account_path(account),
+                  'users' => account_users_path(account))
   end
 end

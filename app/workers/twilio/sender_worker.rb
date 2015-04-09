@@ -9,16 +9,16 @@ module Twilio
 
     sidekiq_retries_exhausted do |msg|
       Sidekiq.logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
-      self.new.complete_recipient_with_error!(msg['args'].first.symbolize_keys, msg['error_message'])
+      new.complete_recipient_with_error!(msg['args'].first.symbolize_keys, msg['error_message'])
     end
 
     def find_message_and_recipient(options)
       message   = options[:message_class].constantize.find(options[:message_id])
       recipient = message.recipients.find(options[:recipient_id])
-      return message, recipient
+      [message, recipient]
     end
 
-    def perform(options={})
+    def perform(options = {})
       begin
         options.symbolize_keys!
         callback_url               = options[:callback_url]
@@ -58,6 +58,5 @@ module Twilio
       _, recipient = find_message_and_recipient(options)
       recipient.failed!(nil, nil, error_message)
     end
-
   end
 end

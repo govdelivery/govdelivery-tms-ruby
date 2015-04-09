@@ -21,7 +21,7 @@ class KeywordsController < ApplicationController
   end
 
   def update
-    params[:keyword].delete(:name) if ['stop', 'start', 'help', 'default'].include?(params[:keyword] && params[:keyword].try(:[], :name))
+    params[:keyword].delete(:name) if %w(stop start help default).include?(params[:keyword] && params[:keyword].try(:[], :name))
     @keyword.update_attributes(params[:keyword])
     respond_with(@keyword)
   end

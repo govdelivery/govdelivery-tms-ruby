@@ -2,16 +2,16 @@ module Geckoboard
   module UscmshimHelpers
     def zeroes(timestamps)
       # start with 0 for every hour
-      timestamps.reduce({}) { |memo, i|
+      timestamps.reduce({}) do |memo, i|
         # Time objects work as hash keys regardless of time zone (now=Time.now) == now.utc
         memo.merge(Time.at(i) => 0)
-      }
+      end
     end
 
     def grouped_by_time_format(scope, column, time_range, format)
-      result = scope.
-        where(created_at: time_range).
-        group(%Q[trunc(#{scope.quoted_table_name}.#{dbconn.quote_column_name(column)}, '#{format}')]).count # hash with Time objs as keys
+      result = scope
+               .where(created_at: time_range)
+               .group(%[trunc(#{scope.quoted_table_name}.#{dbconn.quote_column_name(column)}, '#{format}')]).count # hash with Time objs as keys
       result.is_a?(Hash) ? result : {} # result==0 when there's nothing to report on
     end
 
@@ -37,12 +37,12 @@ module Geckoboard
       'Eastern Time (US & Canada)'
     end
 
-    def subject_sends_by_unit(account_id, number_of_subject_lines=5, unit='hour', units=12, model_klass=EmailMessage)
-      if unit == 'hour' then
+    def subject_sends_by_unit(account_id, number_of_subject_lines = 5, unit = 'hour', units = 12, model_klass = EmailMessage)
+      if unit == 'hour'
         trunc_fmt = 'HH24'
         interval = 'HOUR'
         normalize = 24
-      elsif unit == 'minute' then
+      elsif unit == 'minute'
         trunc_fmt = 'MI'
         interval = 'MINUTE'
         normalize = 1440
@@ -115,37 +115,37 @@ module Geckoboard
 
     def series_colors
       [
-        "#FCFFF5",
-        "#D1DBBD",
-        "#91AA9D",
-        "#ACF0F2",
-        "#EB7F00",
-        "#54AC92",
-        "#F1B60B",
-        "#097178",
-        "#9E4292",
-        "#9D21D9",
-        "#03DAF7",
-        "#DF9859",
-        "#362B7A",
-        "#318741",
-        "#ADECFC",
-        "#60F4BF",
-        "#B8F415",
-        "#D5C003",
-        "#A352A9",
-        "#457216",
-        "#E87EC2",
-        "#E7ADCC",
-        "#2A1EA1",
-        "#25477F",
-        "#1B48E6",
-        "#FDF6CB",
-        "#8A337F",
-        "#FAA194",
-        "#2B9731",
-        "#75DBDC",
-        "#2CA126"
+        '#FCFFF5',
+        '#D1DBBD',
+        '#91AA9D',
+        '#ACF0F2',
+        '#EB7F00',
+        '#54AC92',
+        '#F1B60B',
+        '#097178',
+        '#9E4292',
+        '#9D21D9',
+        '#03DAF7',
+        '#DF9859',
+        '#362B7A',
+        '#318741',
+        '#ADECFC',
+        '#60F4BF',
+        '#B8F415',
+        '#D5C003',
+        '#A352A9',
+        '#457216',
+        '#E87EC2',
+        '#E7ADCC',
+        '#2A1EA1',
+        '#25477F',
+        '#1B48E6',
+        '#FDF6CB',
+        '#8A337F',
+        '#FAA194',
+        '#2B9731',
+        '#75DBDC',
+        '#2CA126'
       ]
     end
   end

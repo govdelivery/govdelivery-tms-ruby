@@ -9,7 +9,7 @@ RSpec.describe NscaStatusWorker, type: :worker do
       hostname:    'xact',
       service:     'dummy',
       return_code: SendNsca::STATUS_OK,
-      status:      "Status OK: 0 records",
+      status:      'Status OK: 0 records',
       password:    Rails.configuration.nsca_password
     }
     SendNsca::NscaConnection.expects(:new).with(args).returns(mock('nsca', send_nsca: true))
@@ -25,14 +25,14 @@ RSpec.describe NscaStatusWorker, type: :worker do
       hostname:    'xact',
       service:     'dummy',
       return_code: SendNsca::STATUS_WARNING,
-      status:      "Status WARNING: 1 records",
+      status:      'Status WARNING: 1 records',
       password:    Rails.configuration.nsca_password
     }
     SendNsca::NscaConnection.expects(:new).with(args).returns(mock('nsca', send_nsca: true))
     worker.perform
   end
 
-  %w{datacenter_env datacenter_location nsca_password}.each do |config|
+  %w(datacenter_env datacenter_location nsca_password).each do |config|
     it "should exit if #{config} is not set" do
       Rails.configuration.stubs(config).returns(nil)
       SendNsca::NscaConnection.expects(:new).never

@@ -1,14 +1,15 @@
-require Rails.root.join("lib/simple_token_authentication/acts_as_multi_token_authenticatable")
+require Rails.root.join('lib/simple_token_authentication/acts_as_multi_token_authenticatable')
 
 class CustomFailure < Devise::FailureApp
   protected
+
   def http_auth_body
     return i18n_message unless request_format
     method = "to_#{request_format}"
-    if method == "to_xml"
-      {:errors => {:error => i18n_message}}.to_xml(:root => Rails.application.class.parent_name)
+    if method == 'to_xml'
+      { errors: { error: i18n_message } }.to_xml(root: Rails.application.class.parent_name)
     elsif {}.respond_to?(method)
-      {:error => i18n_message}.send(method)
+      { error: i18n_message }.send(method)
     else
       i18n_message
     end
@@ -19,14 +20,13 @@ class CustomFailure < Devise::FailureApp
   end
 end
 
-
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class with default "from" parameter.
-  config.mailer_sender = "please-change-me-at-config-initializers-devise@example.com"
+  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
 
   # Configure the class responsible to send e-mails.
   # config.mailer = "Devise::Mailer"
@@ -80,7 +80,7 @@ Devise.setup do |config|
   # config.http_authenticatable_on_xhr = true
 
   # The realm used in Http Basic Authentication. "Application" by default.
-  config.http_authentication_realm = "GovDelivery Transactional SMS"
+  config.http_authentication_realm = 'GovDelivery Transactional SMS'
 
   # It will change confirmation, password recovery and other workflows
   # to behave the same regardless if the e-mail provided was right or wrong.
@@ -194,7 +194,7 @@ Devise.setup do |config|
 
   # ==> Configuration for :token_authenticatable
   # Defines name of the authentication token params key
-  #config.token_authentication_key = :auth_token
+  # config.token_authentication_key = :auth_token
 
   # ==> Scopes configuration
   # Turn scoped views on. Before rendering "sessions/new", it will first check for

@@ -14,10 +14,10 @@ class ChangeSmsAndVoiceRecipientStatusColumns < ActiveRecord::Migration
   def up
     [SmsRecipient, VoiceRecipient].each do |model|
       rename_column model.table_name, :status, :old_status
-      add_column model.table_name, :status, :string, :null => false, :default => 'new'
-      INTS_TO_STRINGS.each do |int,string|
+      add_column model.table_name, :status, :string, null: false, default: 'new'
+      INTS_TO_STRINGS.each do |int, string|
         puts "Changing status from #{int} to #{string}"
-        puts model.where(:old_status => int).update_all(:status => string)
+        puts model.where(old_status: int).update_all(status: string)
       end
       remove_column model.table_name, :old_status
     end
@@ -26,10 +26,10 @@ class ChangeSmsAndVoiceRecipientStatusColumns < ActiveRecord::Migration
   def down
     [SmsRecipient, VoiceRecipient].each do |model|
       rename_column model.table_name, :status, :old_status
-      add_column model.table_name, :status, :integer, :null => false, :default => 1
-      INTS_TO_STRINGS.each do |int,string|
+      add_column model.table_name, :status, :integer, null: false, default: 1
+      INTS_TO_STRINGS.each do |int, string|
         puts "Changing status from #{string} to #{int}"
-        puts model.where(:old_status => string).update_all(:status => int)
+        puts model.where(old_status: string).update_all(status: int)
       end
       remove_column model.table_name, :old_status
     end

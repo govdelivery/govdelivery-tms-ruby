@@ -18,7 +18,7 @@ Xact::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   # Raise exception on mass assignment protection for Active Record models
-  #config.active_record.mass_assignment_sanitizer = :strict
+  # config.active_record.mass_assignment_sanitizer = :strict
 
   # Do not compress assets
   config.assets.compress = false
@@ -31,7 +31,7 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = false
 
-  routes.default_url_options = {host: 'test.host', port: 3000}
+  routes.default_url_options = { host: 'test.host', port: 3000 }
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
@@ -39,10 +39,10 @@ Xact::Application.configure do
 
   config.sidekiq = {
     default: {
-      url:       "redis://it-buildbox1.office.gdi:6379/2",
+      url:       'redis://it-buildbox1.office.gdi:6379/2',
       namespace: 'xact'
     },
-    client:  {size: 20},
+    client:  { size: 20 },
     server:  {}
   }
 end

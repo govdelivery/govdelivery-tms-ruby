@@ -7,25 +7,25 @@ webhooks = configatron.accounts.webhooks
 webhooks.xact.user.password = 'retek01!'
 webhooks.xact.user.admin = false
 
-webhooks.sms = configatron.sms_vendors.loopback.clone()
-webhooks.voice = configatron.voice_vendors.loopback.clone()
+webhooks.sms = configatron.sms_vendors.loopback.clone
+webhooks.voice = configatron.voice_vendors.loopback.clone
 webhooks.sms.prefix = 'webhooks'
 
 case environment
-  when :development
-    webhooks.xact.account.id = ENV['XACT_WEBHOOK_ACCOUNT_ID']
-    webhooks.xact.user.token = ENV['XACT_WEBHOOK_USER_TOKEN']
-    webhooks.xact.user.email_address = 'development-webhooks-test@govdelivery.com'
-  when :qc
-    webhooks.xact.account.id = '10520'
-    webhooks.xact.user.token = 'i38CvrkGeDypJnijfGz9zd1EUZkzctYg'
-    webhooks.xact.user.email_address = 'qc-webhooks-test@govdelivery.com'
-  when :integration
-    webhooks.xact.account.id = '10220'
-    webhooks.xact.user.token = 'pnJRwcsTU59dHiNKFvRC5qZnHTq5F1nU'
-    webhooks.xact.user.email_address = 'integration-webhooks-test@govdelivery.com'
-  when :stage
-    webhooks.xact.account.id = '11020'
-    webhooks.xact.user.token = 'XX298RJyjk5pnLRRDyxaBArz6ocBcCEo'
-    webhooks.xact.user.email_address = 'stage-webhooks-test@govdelivery.com'
+when :development
+  webhooks.xact.account.id = ENV['XACT_WEBHOOK_ACCOUNT_ID']
+  webhooks.xact.user.token = ENV['XACT_WEBHOOK_USER_TOKEN']
+  webhooks.xact.user.email_address = 'development-webhooks-test@govdelivery.com'
+when :qc
+  webhooks.xact.account.id = '10520'
+  webhooks.xact.user.token = 'i38CvrkGeDypJnijfGz9zd1EUZkzctYg'
+  webhooks.xact.user.email_address = 'qc-webhooks-test@govdelivery.com'
+when :integration
+  webhooks.xact.account.id = '10220'
+  webhooks.xact.user.token = 'pnJRwcsTU59dHiNKFvRC5qZnHTq5F1nU'
+  webhooks.xact.user.email_address = 'integration-webhooks-test@govdelivery.com'
+when :stage
+  webhooks.xact.account.id = '11020'
+  webhooks.xact.user.token = 'XX298RJyjk5pnLRRDyxaBArz6ocBcCEo'
+  webhooks.xact.user.email_address = 'stage-webhooks-test@govdelivery.com'
 end

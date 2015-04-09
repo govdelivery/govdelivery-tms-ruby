@@ -1,10 +1,10 @@
 module Service
   class ForwardService
-    USER_AGENT = "Mozilla/5.0 (compatible; GovDelivery TMS v1.0; http://govdelivery.com)"
+    USER_AGENT = 'Mozilla/5.0 (compatible; GovDelivery TMS v1.0; http://govdelivery.com)'
 
     attr_accessor :logger
 
-    def initialize(logger=nil)
+    def initialize(logger = nil)
       self.logger = logger
     end
 
@@ -23,9 +23,9 @@ module Service
 
     def connection(username, password)
       Faraday.new do |faraday|
-        faraday.request  :url_encoded
+        faraday.request :url_encoded
         faraday.headers[:user_agent] = USER_AGENT
-        faraday.use Faraday::Response::Logger, self.logger if self.logger
+        faraday.use Faraday::Response::Logger, logger if logger
         faraday.use Faraday::Response::RaiseError
         faraday.basic_auth(username, password) if username && password
         faraday.adapter Faraday.default_adapter

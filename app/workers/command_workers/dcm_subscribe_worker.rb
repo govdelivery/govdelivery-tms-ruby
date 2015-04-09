@@ -34,10 +34,10 @@ module CommandWorkers
       end
 
     ensure
-      raise self.exception if self.exception
+      raise exception if exception
     end
 
-    def request_subscription client, from_number, options, command_parameters
+    def request_subscription(client, from_number, options, command_parameters)
       if (email_address = extract_email(options.sms_tokens || []))
         # example: subscribe em@il
         client.email_subscribe(email_address, command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
@@ -47,9 +47,7 @@ module CommandWorkers
     end
 
     def extract_email(subscribe_args)
-      if !subscribe_args[0].nil? && subscribe_args[0] =~ /@/
-        subscribe_args[0]
-      end
+      subscribe_args[0] if !subscribe_args[0].nil? && subscribe_args[0] =~ /@/
     end
 
     ##
@@ -62,5 +60,4 @@ module CommandWorkers
       end
     end
   end
-
 end

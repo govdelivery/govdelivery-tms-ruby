@@ -3,6 +3,5 @@ module CommandType
     def initialize
       super([], [:dcm_account_codes])
     end
-
   end
 end

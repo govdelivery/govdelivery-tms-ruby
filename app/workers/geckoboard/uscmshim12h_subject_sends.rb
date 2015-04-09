@@ -47,11 +47,11 @@ module Geckoboard
         chart: {
           type: 'spline',
           style: {
-            color: "#9A9A9A"
+            color: '#9A9A9A'
           },
-          renderTo: "container",
-          backgroundColor: "transparent",
-          lineColor: "rgba(154,154,154,100)",
+          renderTo: 'container',
+          backgroundColor: 'transparent',
+          lineColor: 'rgba(154,154,154,100)',
           plotShadow: false
         },
         xAxis: {
@@ -60,16 +60,16 @@ module Geckoboard
         yAxis: {
           title: {
             style: {
-              color: "#9a9a9a"
+              color: '#9a9a9a'
             },
             text: 'Sent Messages'
           }
         },
         tooltip: {
-          borderColor: "rgba(0,0,0,0.85)",
-          backgroundColor: "rgba(0,0,0,0.85)",
+          borderColor: 'rgba(0,0,0,0.85)',
+          backgroundColor: 'rgba(0,0,0,0.85)',
           style: {
-            color: "#9a9a9a"
+            color: '#9a9a9a'
           },
           crosshairs: true,
           shared: true
@@ -82,6 +82,5 @@ module Geckoboard
 end
 
 {
-
 
 }

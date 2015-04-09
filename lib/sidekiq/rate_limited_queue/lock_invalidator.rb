@@ -10,7 +10,6 @@ module Sidekiq
         end
         logger.info("Reset queues #{reset_queues.join(', ')}") if reset_queues.any?
       end
-
     end
   end
 end

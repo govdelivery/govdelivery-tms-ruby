@@ -1,6 +1,6 @@
 # Set this before connecting to the database
 ENV['NLS_LANG'] = 'american_america.AL32UTF8'
-$CLASSPATH << File.expand_path("../../config", __FILE__) # Rails.root.join('config/').to_s
+$CLASSPATH << File.expand_path('../../config', __FILE__) # Rails.root.join('config/').to_s
 
 require File.expand_path('../boot', __FILE__)
 
@@ -8,13 +8,13 @@ require 'rails/all'
 require 'rack/ssl'
 
 # set up logging
-require File.expand_path("../logging", __FILE__)
+require File.expand_path('../logging', __FILE__)
 
-require File.join(File.expand_path("../../lib", __FILE__), 'gov_delivery', 'host')
+require File.join(File.expand_path('../../lib', __FILE__), 'gov_delivery', 'host')
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
-  Bundler.require(*Rails.groups(:assets => %w(development test)))
+  Bundler.require(*Rails.groups(assets: %w(development test)))
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 end
@@ -25,10 +25,10 @@ I18n.enforce_available_locales = true
 module Xact
   class Application < Rails::Application
     ::Conf = ConfigSpartan.create do
-      file "config/config.yml"
-      file "config/config.local.yml"
-      file "config/config.test.yml" if Rails.env.test?
-      file "/etc/sysconfig/xact.yml"
+      file 'config/config.yml'
+      file 'config/config.local.yml'
+      file 'config/config.test.yml' if Rails.env.test?
+      file '/etc/sysconfig/xact.yml'
     end
 
     config.eager_load = true
@@ -58,10 +58,10 @@ module Xact
     # config.i18n.default_locale = :de
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding                                    = "utf-8"
+    config.encoding                                    = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters                           += [:password, :auth_token]
+    config.filter_parameters += [:password, :auth_token]
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
@@ -86,18 +86,18 @@ module Xact
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
 
-    redis_opts = {url: Conf.redis_uri}
+    redis_opts = { url: Conf.redis_uri }
 
     if Conf.redis_sentinel_uris.any?
-      redis_opts[:sentinels] = Conf.redis_sentinel_uris.map { |sentinel| {host: sentinel.host, port: sentinel.port.to_i} }
+      redis_opts[:sentinels] = Conf.redis_sentinel_uris.map { |sentinel| { host: sentinel.host, port: sentinel.port.to_i } }
     end
 
-    config.cache_store = :redis_store, redis_opts, {pool_size: 7}
+    config.cache_store = :redis_store, redis_opts, { pool_size: 7 }
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq                = {
-      default: {namespace: 'xact'}.merge!(redis_opts),
-      client:  {size: 20},
+      default: { namespace: 'xact' }.merge!(redis_opts),
+      client:  { size: 20 },
       server:  {}
     }
 
@@ -127,9 +127,9 @@ module Xact
     config.odm_password        = Conf.odm_password
 
     # override Rack exception application handling of exception status codes
-    config.exceptions_app      = self.routes
+    config.exceptions_app      = routes
 
-    routes.default_url_options     = {host: "#{Rails.env.to_s}-tms.govdelivery.com", protocol: 'https'}
+    routes.default_url_options     = { host: "#{Rails.env}-tms.govdelivery.com", protocol: 'https' }
 
     # Threshold (in minutes) under which multiple inbound messages from a
     # user will be ignored.  This is to prevent auto-response messages

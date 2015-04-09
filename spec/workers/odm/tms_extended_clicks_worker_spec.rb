@@ -13,13 +13,13 @@ if defined?(JRUBY_VERSION)
     end
 
     it 'should process all email vendors' do
-      xmlgregorian = stub(to_gregorian_calendar: stub(time_in_millis: 1359784800000))
-      events = [stub('click events', recipient_id: '1', address: 'foo@bar.com', message_id: 'slkdlfk', at: xmlgregorian, url: "clickonme.com")]
+      xmlgregorian = stub(to_gregorian_calendar: stub(time_in_millis: 1_359_784_800_000))
+      events = [stub('click events', recipient_id: '1', address: 'foo@bar.com', message_id: 'slkdlfk', at: xmlgregorian, url: 'clickonme.com')]
       recipient = mock
 
       # mock service fetch of click events
       Service::Odm::EventService.expects(:click_events).with(@vendor).returns(events)
-      
+
       # mock recipient lookup
       @vendor.expects(:recipients).returns(mock(find: recipient))
 
@@ -32,22 +32,22 @@ if defined?(JRUBY_VERSION)
     it 'should not bury exceptions from service' do
       Service::Odm::EventService.expects(:click_events).raises Java::JavaxXmlWs::WebServiceException.new('it happened')
 
-      exception_check(subject, "it happened")
+      exception_check(subject, 'it happened')
     end
 
     context 'odm throws error' do
-      let (:service)  { double('Service::Odm::EventService') }
+      let(:service)  { double('Service::Odm::EventService') }
 
       it 'should catch Throwable and throw Ruby Exception' do
-        Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java::java::lang::Exception.new("hello Exception"))
-  
-        exception_check(subject, "hello Exception")
+        Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java.java.lang::Exception.new('hello Exception'))
+
+        exception_check(subject, 'hello Exception')
       end
 
       it 'should catch TMSFault and throw Ruby Exception' do
-        Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new("hello TMSFault", nil))
+        Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new('hello TMSFault', nil))
 
-        exception_check(subject, "ODM Error: hello TMSFault")
+        exception_check(subject, 'ODM Error: hello TMSFault')
       end
     end
   end

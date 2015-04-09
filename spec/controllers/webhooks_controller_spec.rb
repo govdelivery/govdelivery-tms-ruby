@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe WebhooksController, type: :controller do
   let(:account) { Account.create!(name: 'name') }
-  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
+  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
   let(:webhooks) do
     3.times.map { |i| account.webhooks.build(event_type: 'failed', url: "http://failwhale.com/fail/#{i}") }
   end
@@ -24,11 +24,10 @@ RSpec.describe WebhooksController, type: :controller do
       expect(response.headers['Link']).to match(/next/)
       expect(response.headers['Link']).to match(/last/)
     end
-
   end
 
   it 'can create' do
-    post :create, webhook: {event_type: 'failed', url: 'http://failwhale.com/fail'}
+    post :create, webhook: { event_type: 'failed', url: 'http://failwhale.com/fail' }
     expect(response.status).to eq(201)
     expect(assigns(:webhook)).to be_a(Webhook)
     expect(assigns(:webhook).persisted?).to be true
@@ -43,7 +42,7 @@ RSpec.describe WebhooksController, type: :controller do
 
   it 'can update' do
     webhook = account.webhooks.create!(event_type: 'failed', url: 'http://failwhale.com/fail')
-    patch :update, id: webhook.to_param, webhook: {event_type: 'sent', url: 'http://failwhale.com/sent'}
+    patch :update, id: webhook.to_param, webhook: { event_type: 'sent', url: 'http://failwhale.com/sent' }
     expect(response.status).to eq(200)
     expect(hook = assigns(:webhook)).to eq(webhook)
     expect(hook.event_type).to eq('sent')

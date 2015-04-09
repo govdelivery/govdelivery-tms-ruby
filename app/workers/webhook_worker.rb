@@ -4,8 +4,8 @@ class WebhookWorker
   sidekiq_options retry:    10,
                   queue:    :webhook
 
-  READ_TIMEOUT = 60 #seconds
-  CONN_TIMEOUT = 60 #seconds
+  READ_TIMEOUT = 60 # seconds
+  CONN_TIMEOUT = 60 # seconds
 
   def perform(options)
     connection.post(options['url'], options['params']) do |req|
@@ -33,5 +33,4 @@ class WebhookWorker
       faraday.adapter Faraday.default_adapter
     end
   end
-
 end

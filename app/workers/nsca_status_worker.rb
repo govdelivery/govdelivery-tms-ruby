@@ -8,11 +8,11 @@ class NscaStatusWorker
     pass = Rails.configuration.nsca_password
     case
       when env.nil?
-        logger.warn("NscaStatusWorker: datacenter_env not set") and return false
+        logger.warn('NscaStatusWorker: datacenter_env not set') and return false
       when loc.nil?
-        logger.warn("NscaStatusWorker: datacenter_location not set") and return false
+        logger.warn('NscaStatusWorker: datacenter_location not set') and return false
       when pass.nil?
-        logger.warn("NscaStatusWorker: nsca_password not set") and return false
+        logger.warn('NscaStatusWorker: nsca_password not set') and return false
     end
 
     checks.each do |service, scope|
@@ -22,8 +22,8 @@ class NscaStatusWorker
         port:        5667,
         hostname:    'xact',
         service:     service,
-        return_code: count==0 ? SendNsca::STATUS_OK : SendNsca::STATUS_WARNING,
-        status:      "Status #{count==0 ? 'OK' : 'WARNING'}: #{count} records",
+        return_code: count == 0 ? SendNsca::STATUS_OK : SendNsca::STATUS_WARNING,
+        status:      "Status #{count == 0 ? 'OK' : 'WARNING'}: #{count} records",
         password:    pass
       }
       logger.debug("SendNsca::NscaConnection -- #{args.inspect}")
@@ -31,12 +31,11 @@ class NscaStatusWorker
     end
   end
 
-
   # noinspection RubyStringKeysInHashInspection
   def checks
     max_not_yet_sending_age = 30.minutes.ago
-    max_email_sending_age   = (Rails.configuration.email_delivery_timeout+3.hours).ago
-    max_twilio_sending_age  = (Rails.configuration.twilio_delivery_timeout+2.hours).ago
+    max_email_sending_age   = (Rails.configuration.email_delivery_timeout + 3.hours).ago
+    max_twilio_sending_age  = (Rails.configuration.twilio_delivery_timeout + 2.hours).ago
 
     {
       'Unsent email messages'       => EmailMessage.not_yet_sending.where('sent_at IS NULL OR created_at < ?', max_not_yet_sending_age),

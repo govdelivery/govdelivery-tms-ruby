@@ -1,5 +1,5 @@
 # This worker takes a phone number and a comma-separated list of DCM account codes
-# and issues the subscriber deletion requests to DCM.  This is an account-level 
+# and issues the subscriber deletion requests to DCM.  This is an account-level
 # subscription deletion (i.e. not a topic unsubscribe).
 module CommandWorkers
   class DcmUnsubscribeWorker
@@ -23,10 +23,10 @@ module CommandWorkers
         command.params.dcm_account_codes.collect do |dcm_account_code|
           begin
             self.http_response = client.delete_wireless_subscriber(number, dcm_account_code)
-              # we don't care if the DCM subscriber doesn't exist
+          # we don't care if the DCM subscriber doesn't exist
           rescue DCMClient::Error::NotFound => e
             self.http_response = e.response
-              # store exception and mark job as failed even though we'll retry it
+          # store exception and mark job as failed even though we'll retry it
           rescue DCMClient::Error => e
             logger.error e.message
             self.exception     = e
@@ -36,7 +36,7 @@ module CommandWorkers
       end
 
     ensure
-      raise self.exception if self.exception
+      raise exception if exception
     end
 
     ##

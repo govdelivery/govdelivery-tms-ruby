@@ -5,7 +5,7 @@ module Messages
     include Workers::Base
     sidekiq_options queue: :low, retry: false, unique: true
 
-    def perform(*args)
+    def perform(*_args)
       batch             = Sidekiq::Batch.new
       batch.description = self.class.name
       batch.expires_in 8.hours

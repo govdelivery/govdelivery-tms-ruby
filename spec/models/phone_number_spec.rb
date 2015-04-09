@@ -42,7 +42,7 @@ describe PhoneNumber do
   end
 
   describe 'valid non-US numbers in e164 format' do
-    let(:number) { "+441604230230" }
+    let(:number) { '+441604230230' }
     subject { PhoneNumber.new(number) }
     its(:number) { should eq number }
     its(:e164) { should eq number }

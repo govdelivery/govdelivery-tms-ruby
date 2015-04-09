@@ -14,10 +14,10 @@ module Personalized
   # @param attribute [Symbol] the field on this class to translate
   #
   def to_odm(attribute)
-    self.send(attribute).gsub(/(\[\[)|(\]\])/,'##')
+    send(attribute).gsub(/(\[\[)|(\]\])/, '##')
   end
 
   def valid_macros
-    errors.add(:macros, "must be a hash or null") unless self.try(:macros).nil? || self.macros.is_a?(Hash)
+    errors.add(:macros, 'must be a hash or null') unless try(:macros).nil? || macros.is_a?(Hash)
   end
 end

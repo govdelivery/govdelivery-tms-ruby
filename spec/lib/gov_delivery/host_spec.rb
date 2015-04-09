@@ -1,6 +1,5 @@
 require 'spec_helper'
-require File.join(File.expand_path("../../../../lib", __FILE__), 'gov_delivery', 'host')
-
+require File.join(File.expand_path('../../../../lib', __FILE__), 'gov_delivery', 'host')
 
 describe GovDelivery::Host do
   it 'should parse stuff correctly in dev' do
@@ -16,5 +15,4 @@ describe GovDelivery::Host do
     expect(host.env).to eq('qc')
     expect(host.datacenter).to eq('ep')
   end
-
 end

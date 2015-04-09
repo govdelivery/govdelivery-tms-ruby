@@ -11,7 +11,7 @@ describe 'inbound_messages/index.rabl' do
            command_status: 'success',
            created_at: i.days.ago,
            command_actions: [stub]
-      )
+          )
     end
   end
 

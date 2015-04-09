@@ -20,32 +20,30 @@ module CommandWorkers
     attr_writer :sms_service
 
     def perform(opts)
-      begin
-        callback_url = nil
-        message = super do
-          self.http_response = send_request(self.options, self.command.params)
-          callback_url = options.callback_url
-        end
-
-        if message
-          recipient_id = message.first_recipient_id
-          logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
-          send_response(message, recipient_id, callback_url)
-        end
-      rescue Faraday::ClientError => e
-        ActiveRecord::Base.transaction do
-          if e.response
-            # ClientError#response isn't really a response, so...
-            e.response[:response_headers] = e.response.delete(:headers)
-            @command.process_response(self.options, Faraday::Response.new(Faraday::Env.from(e.response)))
-          else
-            @command.process_error(self.options, e.message)
-          end
-        end
-        raise
-      rescue => e
-        raise Sidekiq::Retries::Fail.new(e)
+      callback_url = nil
+      message = super do
+        self.http_response = send_request(options, command.params)
+        callback_url = options.callback_url
       end
+
+      if message
+        recipient_id = message.first_recipient_id
+        logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
+        send_response(message, recipient_id, callback_url)
+      end
+    rescue Faraday::ClientError => e
+      ActiveRecord::Base.transaction do
+        if e.response
+          # ClientError#response isn't really a response, so...
+          e.response[:response_headers] = e.response.delete(:headers)
+          @command.process_response(options, Faraday::Response.new(Faraday::Env.from(e.response)))
+        else
+          @command.process_error(options, e.message)
+        end
+      end
+      raise
+    rescue => e
+      raise Sidekiq::Retries::Fail.new(e)
     end
 
     def send_response(message, recipient_id, callback_url)
@@ -57,26 +55,24 @@ module CommandWorkers
     end
 
     def http_service
-      @http_service ||= Service::ForwardService.new(self.logger)
+      @http_service ||= Service::ForwardService.new(logger)
     end
 
     def send_request(options, command_params)
-      sms_body = command_params.strip_keyword ? options.sms_tokens.join(" ") : options.sms_body
+      sms_body = command_params.strip_keyword ? options.sms_tokens.join(' ') : options.sms_body
       response = http_service.send(command_params.http_method.downcase,
                                    command_params.url,
                                    command_params.username,
                                    command_params.password,
-                                   {
-                                     command_params.from_param_name     => options.from,
-                                     command_params.sms_body_param_name => sms_body
-                                   })
+                                   command_params.from_param_name     => options.from,
+                                   command_params.sms_body_param_name => sms_body)
       if response.status == 0
         return OpenStruct.new(
-          body:    "Couldn't connect to #{@http_response.env[:url].to_s}",
+          body:    "Couldn't connect to #{@http_response.env[:url]}",
           headers: {}
         )
       end
-      return response
+      response
     end
   end
 end

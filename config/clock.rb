@@ -24,18 +24,18 @@ module Clockwork
   end
 
   if Rails.configuration.twilio_polling_enabled
-    every(1.hour, 'Twilio::SmsPollingWorker', :at => '**:15')
-    every(1.hour, 'Twilio::VoicePollingWorker', :at => '**:45')
+    every(1.hour, 'Twilio::SmsPollingWorker', at: '**:15')
+    every(1.hour, 'Twilio::VoicePollingWorker', at: '**:45')
   end
 
-  every(1.hour, 'MarkOldRecipientsAsInconclusive', :at => '**:30')
+  every(1.hour, 'MarkOldRecipientsAsInconclusive', at: '**:30')
 
   ['**:00', '**:30'].each do |time|
-    every(1.hour, 'Messages::CheckMessagesForCompletion', :at => time)
+    every(1.hour, 'Messages::CheckMessagesForCompletion', at: time)
   end
 
   begin
-    raise "Rails.configuration.custom_report_account_id not set" unless Rails.configuration.custom_report_account_id
+    raise 'Rails.configuration.custom_report_account_id not set' unless Rails.configuration.custom_report_account_id
     top_of_hour = (0..23).map { |hh| "#{hh}:00" }
     every(1.day, 'Uscmshim12hSubjectSends', at: top_of_hour) { Geckoboard::Uscmshim12hSubjectSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_12h_subject_sends') }
     every(1.day, 'Uscmshim24hSends', at: top_of_hour) { Geckoboard::Uscmshim24hSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_24h_sends') }
@@ -47,6 +47,4 @@ module Clockwork
   rescue => e
     Rails.logger.warn("Not scheduling custom reporting jobs: #{e}")
   end
-
 end
-

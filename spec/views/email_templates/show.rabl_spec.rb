@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 describe 'email_templates/show.rabl' do
   let(:account) { create(:account) }
@@ -12,12 +12,12 @@ describe 'email_templates/show.rabl' do
 
   it 'should work when valid' do
     render
-    expect(rendered).to be_json_for(email_template).
-          with_attributes(:id, :body, :subject, :link_tracking_parameters,
-                          :macros, :open_tracking_enabled, :click_tracking_enabled).
-                      with_timestamps(:created_at).
-                      with_links( 'self' => templates_email_path(email_template),
-                                  'account' => account_path(account),
-                                  'from_address' => from_address_path(from_address) )
+    expect(rendered).to be_json_for(email_template)
+      .with_attributes(:id, :body, :subject, :link_tracking_parameters,
+                       :macros, :open_tracking_enabled, :click_tracking_enabled)
+      .with_timestamps(:created_at)
+      .with_links('self' => templates_email_path(email_template),
+                  'account' => account_path(account),
+                  'from_address' => from_address_path(from_address))
   end
 end

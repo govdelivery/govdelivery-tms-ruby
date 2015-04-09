@@ -13,30 +13,30 @@ describe EmailTemplate do
 
   let(:account) { create(:account) }
   let(:other_account) { create(:account) }
-  let(:user){ account.users.create(email: 'test@evotest.govdelivery.com', password: "test_password") }
+  let(:user) { account.users.create(email: 'test@evotest.govdelivery.com', password: 'test_password') }
   let(:from_address) { account.default_from_address }
 
   subject { create(:email_template, account: account, user: user, from_address: from_address) }
 
-  it "should validate macros" do
+  it 'should validate macros' do
     expect(subject).to be_valid
-    subject.macros = "Not a Hash"
+    subject.macros = 'Not a Hash'
     expect(subject).not_to be_valid
-    expect(subject.errors.messages).to include(macros: ["must be a hash or null"])
+    expect(subject.errors.messages).to include(macros: ['must be a hash or null'])
   end
 
-  it "should validate that user belongs to account" do
+  it 'should validate that user belongs to account' do
     expect(subject).to be_valid
-    other_user = other_account.users.create(email: "test2@evotest.govdelivery.com", password: "test_password")
+    other_user = other_account.users.create(email: 'test2@evotest.govdelivery.com', password: 'test_password')
     subject.user = other_user
     expect(subject).not_to be_valid
-    expect(subject.errors.messages).to include(user: ["must belong to same account as email template"])
+    expect(subject.errors.messages).to include(user: ['must belong to same account as email template'])
   end
 
-  it "should validate that from_address belongs to account" do
+  it 'should validate that from_address belongs to account' do
     expect(subject).to be_valid
     subject.from_address = other_account.default_from_address
     expect(subject).not_to be_valid
-    expect(subject.errors.messages).to include(from_address: ["must belong to same account as email template"])
+    expect(subject.errors.messages).to include(from_address: ['must belong to same account as email template'])
   end
 end

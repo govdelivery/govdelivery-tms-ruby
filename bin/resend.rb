@@ -1,7 +1,6 @@
 require 'benchmark'
 
 class Resend
-
   BATCH_SIZE = 100
 
   def initialize
@@ -12,13 +11,13 @@ class Resend
     if @quit
       exit
     else
-      puts "Quitting after batch ..."
+      puts 'Quitting after batch ...'
       @quit = true
     end
   end
 
   def wait_for_sidekiq_queue_to_be_empty
-    while (Sidekiq::Queue.new.size > 0)
+    while Sidekiq::Queue.new.size > 0
       @stdout_logger.debug "Sidekiq::Queue.new.size is #{Sidekiq::Queue.new.size}"
       sleep 1
     end
@@ -27,17 +26,17 @@ class Resend
   def resend_email_stream(email_id_stream)
     @stdout_logger = Logger.new(STDOUT)
     @already_sent = Set.new
-    if File.exists?('sent.log')
-      File.open("sent.log").each_line { |line| @already_sent << line.split.first.to_i if line.present? }
+    if File.exist?('sent.log')
+      File.open('sent.log').each_line { |line| @already_sent << line.split.first.to_i if line.present? }
     end
     @stdout_logger.debug "Already sent #{@already_sent.size} emails"
     @sent_logger = Logger.new('sent.log')
     @failed_logger = Logger.new('failed.log')
     benchmark = Benchmark.measure do
-      while !email_id_stream.eof?
+      until email_id_stream.eof?
         return if @quit
         wait_for_sidekiq_queue_to_be_empty
-        email_ids = BATCH_SIZE.times.map{email_id_stream.gets.try(:chomp)}.compact
+        email_ids = BATCH_SIZE.times.map { email_id_stream.gets.try(:chomp) }.compact
         resend_emails_concurrenty(email_ids)
       end
     end
@@ -47,16 +46,14 @@ class Resend
   end
 
   def resend_emails_concurrenty(email_ids)
-    executor = Java::java.util.concurrent.Executors.newFixedThreadPool(32)
+    executor = Java.java.util.concurrent.Executors.newFixedThreadPool(32)
     futures = email_ids.map { |id|
       task = proc do
         resend_email(id)
       end
       executor.submit(task)
     }
-    futures.each {|future|
-      future.get
-    }
+    futures.each(&:get)
     executor.shutdown
   end
 
@@ -73,10 +70,10 @@ class Resend
     end
     if saved
       CreateRecipientsWorker.perform_async(
-        :recipients => email.async_recipients,
-        :klass => email.class.name,
-        :message_id => email.id,
-        :send_options => {}
+        recipients: email.async_recipients,
+        klass: email.class.name,
+        message_id: email.id,
+        send_options: {}
       )
       @sent_logger.debug("#{email_id} #{email.id}")
       @stdout_logger.debug "Queued resend of message ##{email_id} as ##{email.id}"
@@ -85,14 +82,14 @@ class Resend
       @failed_logger.debug "MESSAGE_IDS::#{email_id}\n#{email.errors.full_messages.inspect}"
     end
   rescue
-    @stdout_logger.debug "Error resending email ##{email_id}: #{$!.message}"
-    @failed_logger.debug "MESSAGE_IDS::#{email_id} #{email.try(:id) || 'nil'}\n#{$!.message}\n#{$!.backtrace.join("\n")}"
+    @stdout_logger.debug "Error resending email ##{email_id}: #{$ERROR_INFO.message}"
+    @failed_logger.debug "MESSAGE_IDS::#{email_id} #{email.try(:id) || 'nil'}\n#{$ERROR_INFO.message}\n#{$ERROR_INFO.backtrace.join("\n")}"
   end
 
   def copy_email(original)
     email = EmailMessage.new
     email.user = original.user
-    email.account = email.user.account 
+    email.account = email.user.account
     email.body = original.body
     email.from_name = original.from_name
     email.subject = original.subject
@@ -102,12 +99,11 @@ class Resend
     email.async_recipients = original.recipients.map { |recipient| recipient.attributes.slice('email') }
     email
   end
-
 end
 
-if __FILE__ == $0
+if __FILE__ == $PROGRAM_NAME
   file = File.open(ARGV.first, 'r')
-  require File.expand_path("../../config/environment", __FILE__)
+  require File.expand_path('../../config/environment', __FILE__)
   resend = Resend.new
   trap('INT') do
     resend.quit!

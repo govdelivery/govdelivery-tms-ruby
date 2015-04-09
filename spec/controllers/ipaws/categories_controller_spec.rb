@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 describe IPAWS::CategoriesController do
-
-  describe "GET index" do
+  describe 'GET index' do
     it 'returns the array of IPAWS categories' do
       user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
       sign_in user
@@ -20,5 +19,4 @@ describe IPAWS::CategoriesController do
       expect(response.response_code).to eq(403)
     end
   end
-
 end

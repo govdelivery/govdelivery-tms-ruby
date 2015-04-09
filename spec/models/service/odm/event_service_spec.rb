@@ -14,13 +14,13 @@ module Service
 
           Fetcher.expects(:new).with(type, creds, odm_service).returns(fetcher)
           Sequence.expects(:new).with(type, vendor).returns(sequence)
-          EventIterator.expects(:new).with(fetcher, sequence).returns([1,2,3])
+          EventIterator.expects(:new).with(fetcher, sequence).returns([1, 2, 3])
 
           EventService.expects(:credentials).with(vendor).returns(creds)
           EventService.expects(:odm).returns(odm_service)
 
           events = EventService.send("#{type}_events", vendor)
-          expect(events).to eq([1,2,3])
+          expect(events).to eq([1, 2, 3])
         end
       end
     end

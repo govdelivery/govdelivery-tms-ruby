@@ -3,11 +3,11 @@ require 'rails_helper'
 describe 'MessageControllers' do
   describe SmsMessagesController do
     render_views
-    let(:user) {
+    let(:user) do
       sms_vendor = create(:sms_vendor)
       account = Account.create!(sms_vendor: sms_vendor, name: 'name')
-      account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop")
-    }
+      account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')
+    end
 
     before do
       sign_in user
@@ -24,13 +24,13 @@ describe 'MessageControllers' do
         end
       end
 
-      let(:message) {
+      let(:message) do
         add_recipients!(create_message(:sms))
-      }
-      let(:json) {
+      end
+      let(:json) do
         get :show, id: message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
-      }
+      end
       it_behaves_like 'a non-new message response'
       it 'has correct sms-specific attributes' do
         expect(json['body']).to eq(message.body)
@@ -42,10 +42,10 @@ describe 'MessageControllers' do
   end
   describe VoiceMessagesController do
     render_views
-    let(:user) {
+    let(:user) do
       account = create(:account_with_voice)
-      account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop")
-    }
+      account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')
+    end
 
     before do
       sign_in user
@@ -66,11 +66,11 @@ describe 'MessageControllers' do
         let(:message) do
           add_recipients!(create_message(:voice))
         end
-        let(:json) {
+        let(:json) do
           get :show, id: message.id
           expect(response.status).to eq(200)
           HashWithIndifferentAccess.new(JSON.parse(response.body))
-        }
+        end
         it 'has 0 for all recipient_counts' do
           expect(json['recipient_counts']['total']).to eq(7)
           VoiceRecipient.aasm.states.map(&:to_s).each do |status|
@@ -78,13 +78,13 @@ describe 'MessageControllers' do
           end
         end
       end
-      let(:message) {
+      let(:message) do
         add_recipients!(create_message(:voice))
-      }
-      let(:json) {
+      end
+      let(:json) do
         get :show, id: message.id
         HashWithIndifferentAccess.new(JSON.parse(response.body))
-      }
+      end
       it_behaves_like 'a non-new message response'
       it 'has correct voice-specific attributes' do
         expect(json['play_url']).to eq(message.play_url)
@@ -103,9 +103,10 @@ describe 'MessageControllers' do
     m.save!
     m
   end
+
   def add_recipients!(m)
     VoiceRecipient.aasm.states.map(&:to_s).each_with_index do |status, i|
-      attrs = {phone: "555444#{i}111"}
+      attrs = { phone: "555444#{i}111" }
       r = m.recipients.create!(attrs)
       r.update_attribute(:status, status)
     end

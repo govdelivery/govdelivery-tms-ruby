@@ -34,12 +34,11 @@ class KeywordCommandsController < ApplicationController
   end
 
   def special_keyword
-    name = ['stop', 'start', 'help', 'default'].select { |k| k == params[:keyword_id] }.first
+    name = %w(stop start help default).find { |k| k == params[:keyword_id] }
     @account.keywords.where(name: name).first
   end
 
   def find_command
     @command = @keyword.commands.find(params[:id])
   end
-
 end

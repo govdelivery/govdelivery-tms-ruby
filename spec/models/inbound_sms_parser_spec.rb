@@ -6,93 +6,90 @@ describe InboundSmsParser do
 
   context "given a shared vendor with prefix: 'abc'" do
     context "sms_body: 'abc' yields:" do
-      subject{ InboundSmsParser.parse 'abc', account.sms_vendor }
+      subject { InboundSmsParser.parse 'abc', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
       its(:message)    { should be_blank }
       its(:account_id) { should eql(account.id) }
     end
 
     context "sms_body: 'blah gibberish with CAPS and ٸ unicode' yields:" do
-      subject{ InboundSmsParser.parse 'blah gibberish with CAPS and ٸ unicode', account.sms_vendor }
+      subject { InboundSmsParser.parse 'blah gibberish with CAPS and ٸ unicode', account.sms_vendor }
       its(:prefix)     { should be_blank }
       its(:message)    { should eql('blah gibberish with caps and ٸ unicode') }
       its(:account_id) { should be_blank }
-      it "should respond with help" do
+      it 'should respond with help' do
         expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
-
   end
 
   context "given a shared vendor with prefix 'abc' and an account with keyword 'xyz' " do
-
     context "sms_body: 'abc xyz' yields:" do
-      subject{ InboundSmsParser.parse 'abc xyz', account.sms_vendor }
+      subject { InboundSmsParser.parse 'abc xyz', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
       its(:message)    { should be_blank }
       its(:account_id) { should eql(account.id) }
     end
 
     context "sms_body: 'abc xyz wut' yields:" do
-      subject{ InboundSmsParser.parse 'abc xyz wut', account.sms_vendor }
+      subject { InboundSmsParser.parse 'abc xyz wut', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
       its(:message)    { should eql('wut') }
       its(:account_id) { should eql(account.id) }
     end
 
     context "sms_body: 'xyz' yields:" do
-      subject{ InboundSmsParser.parse 'xyz', account.sms_vendor }
+      subject { InboundSmsParser.parse 'xyz', account.sms_vendor }
       its(:prefix)     { should be_blank }
       its(:message)    { should eql('xyz') }
       its(:account_id) { should be_blank }
-      it "should respond with help" do
+      it 'should respond with help' do
         expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
     context "sms_body: 'help I fell down' yields:" do
-      subject{ InboundSmsParser.parse 'help I fell down', account.sms_vendor }
+      subject { InboundSmsParser.parse 'help I fell down', account.sms_vendor }
       its(:prefix)     { should be_blank }
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should be_blank }
-      it "should respond with help" do
+      it 'should respond with help' do
         expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
     context "sms_body: 'abc help I fell down' yields:" do
-      subject{ InboundSmsParser.parse 'abc help I fell down', account.sms_vendor }
+      subject { InboundSmsParser.parse 'abc help I fell down', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
       its(:message)    { should eql('i fell down') }
       its(:account_id) { should eql(account.id) }
-      it "should respond with help" do
+      it 'should respond with help' do
         expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
 
     context "sms_body: 'abc unsubscribe' yields:" do
-      subject{ InboundSmsParser.parse 'abc unsubscribe me@you.com', account.sms_vendor }
+      subject { InboundSmsParser.parse 'abc unsubscribe me@you.com', account.sms_vendor }
       its(:prefix)     { should eql('abc') }
       its(:message)    { should eql('me@you.com') }
       its(:account_id) { should eql(account.id) }
-      it "should respond with stop" do
+      it 'should respond with stop' do
         expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_STOP_TEXT
       end
     end
 
     context "blank sms_body: ' ' yields:" do
-      subject{ InboundSmsParser.parse ' ', account.sms_vendor }
+      subject { InboundSmsParser.parse ' ', account.sms_vendor }
       its(:prefix)     { should eql(nil) }
       its(:message)    { should be_blank }
       its(:account_id) { should be_blank }
-      it "should respond with help" do
+      it 'should respond with help' do
         expect(subject.keyword.send(:response_text)).to eql Service::Keyword::DEFAULT_HELP_TEXT
       end
     end
-
   end
 
-  def setup_account prefix, keyword_name
+  def setup_account(prefix, keyword_name)
     # account with sms prefix
     create(:account_with_sms, :shared, prefix: prefix).tap do |account|
       # keyword

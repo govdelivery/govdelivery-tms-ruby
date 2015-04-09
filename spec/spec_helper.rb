@@ -4,4 +4,3 @@ end
 
 require 'rspec/its'
 require 'celluloid/test'
-

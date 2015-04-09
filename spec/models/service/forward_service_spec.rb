@@ -4,23 +4,23 @@ require 'spec_helper'
 describe Service::ForwardService do
   let(:client) { Service::ForwardService.new }
   let(:body) { { foo: :bar } }
-  let(:url) { "http://www.foo.com/a/sub/dir" }
+  let(:url) { 'http://www.foo.com/a/sub/dir' }
 
   it 'should post the parameters' do
-    req = stub("request object", headers: {})
+    req = stub('request object', headers: {})
     req.expects(:body=).with(body)
-    post = mock("post object")
+    post = mock('post object')
     post.expects(:post).with(url).yields(req)
     client.expects(:connection).with(nil, nil).returns(post)
     client.post(url, nil, nil, body)
   end
 
   it 'should get the parameters' do
-    req = stub("request object", headers: {})
-    params = mock()
+    req = stub('request object', headers: {})
+    params = mock
     params.expects(:merge!).with(body)
     req.expects(:params).returns(params)
-    get = mock("get object")
+    get = mock('get object')
     get.expects(:get).with(url).yields(req)
     client.expects(:connection).with(nil, nil).returns(get)
 

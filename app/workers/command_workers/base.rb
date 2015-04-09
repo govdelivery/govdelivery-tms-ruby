@@ -10,7 +10,6 @@ module CommandWorkers
       base.sidekiq_retries_exhausted do |msg|
         Sidekiq.logger.warn "Sidekiq job failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
       end
-
     end
 
     module InstanceMethods
@@ -21,9 +20,8 @@ module CommandWorkers
         self.options = CommandParameters.new(opts)
         @command = Command.includes(keyword: :account).find(options.command_id)
         yield if block_given?
-        @command.process_response(options, self.http_response)
+        @command.process_response(options, http_response)
       end
-
     end
   end
 end

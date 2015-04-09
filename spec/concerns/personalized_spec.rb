@@ -4,17 +4,16 @@ require 'json'
 require File.expand_path('../../../app/concerns/personalized', __FILE__)
 
 class ImportantMessage
-  def self.serialize(attrib); end
-  def self.attr_accessible(*args); end
-  def self.attr_readonly(*args); end
-  def self.validate(*args); end
+  def self.serialize(_attrib); end
+  def self.attr_accessible(*_args); end
+  def self.attr_readonly(*_args); end
+  def self.validate(*_args); end
 
   include Personalized
 
   def body
-    "[[injections]] here and [[FLUBBER]] there [pea] ugly manhole covers"
+    '[[injections]] here and [[FLUBBER]] there [pea] ugly manhole covers'
   end
-
 end
 
 describe Personalized do

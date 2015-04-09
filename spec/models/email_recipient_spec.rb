@@ -1,30 +1,30 @@
 require 'rails_helper'
 
 describe EmailRecipient do
-  let(:macros) { {'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value'} }
+  let(:macros) { { 'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value' } }
   let(:vendor) { create(:email_vendor) }
   let(:account) { create(:account, email_vendor: vendor, name: 'account') }
   let(:email_message) { create(:email_message, account: account) }
-  let(:other_email) {
+  let(:other_email) do
     em = create(:email_message, account: account)
     em.recipients.build(email: 'doo@doo.com')
     em.save
     em
-  }
+  end
   let(:user) { User.create(email: 'admin@example.com', password: 'retek01!').tap { |u| u.account = account } }
 
-  subject {
+  subject do
     r         = email_message.recipients.build
     r.message = email_message
     r
-  }
+  end
 
   its(:email) { should be_nil }
   it { is_expected.not_to be_valid }
 
   context 'with an email' do
     before do
-      subject.email='hi@man.com'
+      subject.email = 'hi@man.com'
       subject.save!
     end
     it 'should have the correct ODM record designator' do
@@ -34,7 +34,7 @@ describe EmailRecipient do
       expect(subject.class.from_x_tms_recipent(subject.x_tms_recipient)).to eq(subject)
     end
     it 'should have the right message sendable_recipients using Recipient#to_send' do
-      other_email #init
+      other_email # init
       expect(email_message.sendable_recipients.all).to eq(email_message.recipients.all)
     end
     context 'and macros' do
@@ -47,7 +47,7 @@ describe EmailRecipient do
         # remove one from default hash
         expect(subject.to_odm('five' => nil, 'two' => nil)).to eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::five_value::two_value")
         # merging in defaults
-        expect(subject.to_odm({'one' => nil, 'seven' => 'seven_value'})).to eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::one_value::seven_value")
+        expect(subject.to_odm('one' => nil, 'seven' => 'seven_value')).to eq("hi@man.com::#{subject.id}::#{subject.x_tms_recipient}::one_value::seven_value")
       end
     end
 
@@ -97,12 +97,12 @@ describe EmailRecipient do
         end
         it 'should save clicks' do
           expect(subject.email_recipient_clicks.count).to eq(0)
-          subject.clicked!("http://foo.bar.com", DateTime.now)
+          subject.clicked!('http://foo.bar.com', DateTime.now)
           expect(subject.email_recipient_clicks.count).to eq(1)
         end
         it 'should save opens' do
           expect(subject.email_recipient_opens.count).to eq(0)
-          subject.opened!("1.1.1.1", DateTime.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
+          subject.opened!('1.1.1.1', DateTime.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
           expect(subject.email_recipient_opens.count).to eq(1)
         end
 
@@ -127,15 +127,15 @@ describe EmailRecipient do
     context 'status updates' do
       it 'should have an error_message' do
         failed_recipient = subject
-        failed_recipient.failed!(:ack, (sent_at = Time.now), 'error_message')
+        failed_recipient.failed!(:ack, Time.now, 'error_message')
         expect(failed_recipient.error_message).to eq 'error_message'
         expect(failed_recipient.failed?).to be true
       end
 
       it 'should truncate a too-long error message' do
         failed_recipient = subject
-        failed_recipient.failed!(:ack, (sent_at = Time.now), 'a' * 600)
-        expect(failed_recipient.error_message).to eq 'a'*512
+        failed_recipient.failed!(:ack, Time.now, 'a' * 600)
+        expect(failed_recipient.error_message).to eq 'a' * 512
         expect(failed_recipient.failed?).to be true
       end
 
@@ -159,14 +159,14 @@ describe EmailRecipient do
   context 'timeout_expired' do
     let(:vendor) { create(:email_vendor) }
     let(:account) { create(:account, email_vendor: vendor, name: 'account') }
-    let(:messages) {
-      [1, 2].map { |x|
+    let(:messages) do
+      [1, 2].map do |x|
         m = create(:email_message, account: account, body: "body #{x}")
         m.ready!(nil, [email: "from-message#{x}@example.com"])
         m.sending!
         m
-      }
-    }
+      end
+    end
     before do
       # less than a day ago
       messages[0].recipients.update_all(sent_at: 23.hours.ago)

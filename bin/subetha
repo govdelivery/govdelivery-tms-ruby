@@ -1,9 +1,8 @@
 #!/usr/bin/env jruby
 
-require File.expand_path("../../config/environment", __FILE__)
+require File.expand_path('../../config/environment', __FILE__)
 
 class SubethaRunner
-
   def run
     self_read, self_write = IO.pipe
 
@@ -43,13 +42,9 @@ class SubethaRunner
     end
   end
 
-
   def smtp
     @smtp ||= Subetha::Listener.new({})
   end
-
 end
 
-
 SubethaRunner.new.run
-

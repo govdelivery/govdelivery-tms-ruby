@@ -1,15 +1,12 @@
 module IPAWS
   class Vendor < ActiveRecord::Base
-
-    if defined?(JRUBY_VERSION)
-      java_import com.govdelivery.ipaws.IPAWSClient
-    end
+    java_import com.govdelivery.ipaws.IPAWSClient if defined?(JRUBY_VERSION)
 
     self.table_name = 'ipaws_vendors'
 
     has_many :accounts, foreign_key: :ipaws_vendor_id, inverse_of: :ipaws_vendor
 
-    validates :cog_id, :user_id, :public_password_encrypted, :private_password_encrypted, :jks, presence: true 
+    validates :cog_id, :user_id, :public_password_encrypted, :private_password_encrypted, :jks, presence: true
 
     attr_accessible
     attr_encrypted :public_password, attribute: :public_password_encrypted
@@ -54,7 +51,7 @@ module IPAWS
 
     def nwem_areas
       # Combines attributes in subParaListItem with root item and flattens into a single hash.
-      client.getNWEMAuxData.as_json.map do |item| 
+      client.getNWEMAuxData.as_json.map do |item|
         if sub_items = item.delete('subParaListItem')
           item.merge! sub_items.reduce(&:merge!)
         end
@@ -62,7 +59,7 @@ module IPAWS
       end
     end
 
-    def client(reload=false)
+    def client(reload = false)
       @client = nil if reload
       @client ||= begin
         write_jks_file
@@ -73,7 +70,7 @@ module IPAWS
     private
 
     def reform_cap_response(cap_response)
-      # The CAP response provided by FEMA is in a strange format:  
+      # The CAP response provided by FEMA is in a strange format:
       # 1. The response attributes are not structurally grouped.
       # 2. The response attributes are not themselves under any sort of key (empty string).
       cap_response = cap_response.as_json
@@ -94,8 +91,7 @@ module IPAWS
     def write_jks_file
       path = jks_path
       FileUtils.mkdir_p File.dirname(path)
-      File.open(path, 'wb') { |f| f.write(jks) } unless File.exists?(path)
+      File.open(path, 'wb') { |f| f.write(jks) } unless File.exist?(path)
     end
-
   end
 end

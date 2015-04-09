@@ -8,7 +8,7 @@ module Analytics
       'xact.bounce_listener'
     end
 
-    def on_message(message, partition, offset)
+    def on_message(message, _partition, _offset)
       logger.info("#{self.class} received #{message}")
       Analytics::ProcessBounce.perform_async(message.to_hash)
     end

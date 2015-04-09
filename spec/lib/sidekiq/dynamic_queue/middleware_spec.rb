@@ -6,16 +6,16 @@ describe Sidekiq::DynamicQueue::Middleware do
   class RadWorker
     include Sidekiq::Worker
     sidekiq_options queue:             'wubble',
-                    dynamic_queue_key: ->(args) {
+                    dynamic_queue_key: ->(args) do
                       args['value'].reverse
-                    }
+                    end
   end
 
   it 'should change the queue' do
     Sidekiq::RateLimitedQueue.expects(:includes_queue?).returns(true)
     queue = 'wubble'
-    item  = {'args' => [{'value' => 'moms'}], 'queue' => 'wubble'}
-    expect(subject.call(RadWorker, item, queue) { 'foo' }).to eq({"args" => [{"value" => "moms"}], "queue" => "wubble_smom"})
+    item  = { 'args' => [{ 'value' => 'moms' }], 'queue' => 'wubble' }
+    expect(subject.call(RadWorker, item, queue) { 'foo' }).to eq('args' => [{ 'value' => 'moms' }], 'queue' => 'wubble_smom')
     expect(item['queue']).to eq 'wubble_smom'
     expect(queue).to eq 'wubble_smom'
   end
@@ -23,7 +23,7 @@ describe Sidekiq::DynamicQueue::Middleware do
   it 'should not change the queue' do
     Sidekiq::RateLimitedQueue.expects(:includes_queue?).returns(false)
     queue = 'wubble'
-    item  = {'args' => [{'value' => 'moms'}], 'queue' => 'wubble'}
+    item  = { 'args' => [{ 'value' => 'moms' }], 'queue' => 'wubble' }
     expect(subject.call(RadWorker, item, queue) { 'foo' }).to eq(item)
     expect(item['queue']).to eq 'wubble'
     expect(queue).to eq 'wubble'
@@ -32,10 +32,9 @@ describe Sidekiq::DynamicQueue::Middleware do
   it 'should work with a string' do
     Sidekiq::RateLimitedQueue.expects(:includes_queue?).returns(false)
     queue = 'wubble'
-    item  = {'args' => [{'value' => 'moms'}], 'queue' => 'wubble'}
+    item  = { 'args' => [{ 'value' => 'moms' }], 'queue' => 'wubble' }
     expect(subject.call('RadWorker', item, queue) { 'foo' }).to eq(item)
     expect(item['queue']).to eq 'wubble'
     expect(queue).to eq 'wubble'
   end
-
 end

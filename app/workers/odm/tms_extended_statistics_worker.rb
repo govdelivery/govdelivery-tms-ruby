@@ -10,15 +10,15 @@ module Odm
     end
 
     def process_vendor(vendor)
-      self.service.delivery_events(vendor).each do |event|
+      service.delivery_events(vendor).each do |event|
         with_recipient(event, vendor.recipients.incomplete) do |recipient|
           update_recipient(recipient, event)
         end
       end
     end
 
-    def sent_at delivery_event
-      Time.at(delivery_event.at.to_gregorian_calendar.time.time/1000)
+    def sent_at(delivery_event)
+      Time.at(delivery_event.at.to_gregorian_calendar.time.time / 1000)
     end
 
     def update_recipient(recipient, delivery_event)

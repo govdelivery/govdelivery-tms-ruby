@@ -1,11 +1,11 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../../config/environment", __FILE__)
+ENV['RAILS_ENV'] ||= 'test'
+require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'rspec/its'
 require 'celluloid/test'
 
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 FakeWeb.allow_net_connect = false
 
@@ -17,14 +17,14 @@ RSpec.configure do |config|
   end
   config.use_transactional_fixtures                 = true
   config.infer_base_class_for_anonymous_controllers = true
-  config.order                                      = "random"
+  config.order                                      = 'random'
   config.infer_spec_type_from_file_location!
 
-  #Sidekiq needs this, requiring fakeredis/rspec isn't enough
+  # Sidekiq needs this, requiring fakeredis/rspec isn't enough
   fakeredis_opts = {
-    url:       "redis://127.0.0.1:6379/1",
-    namespace: "spec",
-    driver:    Redis::Connection::Memory}
+    url:       'redis://127.0.0.1:6379/1',
+    namespace: 'spec',
+    driver:    Redis::Connection::Memory }
 
   Sidekiq.configure_client do |conf|
     conf.redis = fakeredis_opts
@@ -33,20 +33,19 @@ RSpec.configure do |config|
   Sidekiq.configure_server do |conf|
     conf.redis = fakeredis_opts
   end
-
 end
 
 RSpec::Matchers.define :be_a_valid_twilio_sms_response do
   match do |response|
     xml_doc = Nokogiri::XML(response.body)
-    !xml_doc.xpath("/Response//Sms").empty?
+    !xml_doc.xpath('/Response//Sms').empty?
   end
   failure_message do |response|
     "expected \n\n#{response.body}\n to be a valid Twilio SMS response"
   end
 end
 
-def stub_command_action_create!(command_params, http_response, command_action, body=http_response.body)
+def stub_command_action_create!(command_params, http_response, command_action, body = http_response.body)
   command_action.expects(:update!).with(
     error_message: nil,
     status:        http_response.status,
@@ -55,8 +54,8 @@ def stub_command_action_create!(command_params, http_response, command_action, b
   CommandAction.expects(:where).with(
     inbound_message_id: command_params.inbound_message_id,
     command_id:         command_params.command_id).returns(
-    mock('first_or_initialize', first_or_initialize: command_action)
-  )
+      mock('first_or_initialize', first_or_initialize: command_action)
+    )
 end
 
 def stub_command_action_error!(command_params, command_action, error_message)
@@ -69,18 +68,18 @@ def stub_command_action_error!(command_params, command_action, error_message)
   CommandAction.expects(:where).with(
     inbound_message_id: command_params.inbound_message_id,
     command_id:         command_params.command_id).returns(
-    mock('first_or_initialize', first_or_initialize: mock_relation)
-  )
+      mock('first_or_initialize', first_or_initialize: mock_relation)
+    )
 end
 
-def exception_check(worker, expected_message, params=nil)
+def exception_check(worker, expected_message, params = nil)
   begin
     if params
       worker.perform(params)
     else
       worker.perform
     end
-  rescue Java::java::lang::Throwable => jt
+  rescue Java.java.lang::Throwable => jt
     java_exception_raised = false
   rescue Exception => rex
     ruby_exception_raised = true

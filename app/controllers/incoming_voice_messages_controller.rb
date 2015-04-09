@@ -25,7 +25,7 @@ class IncomingVoiceMessagesController < ApplicationController
 
   def find_from_number
     Rails.logger.info params.inspect
-    @from_number = @account.from_numbers.where("phone_number = ?",params[:phone_number]).first
+    @from_number = @account.from_numbers.where('phone_number = ?', params[:phone_number]).first
   end
 
   def find_voice_message

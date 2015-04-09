@@ -328,8 +328,3 @@ IPAWS::EventCode.all = [
     cmas: true
   )
 ]
-
-
-
-
-

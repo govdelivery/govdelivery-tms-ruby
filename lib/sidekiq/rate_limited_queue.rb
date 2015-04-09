@@ -5,7 +5,7 @@ module Sidekiq
     delegate :pause!, :unpause!, :paused?, to: :queue
 
     PREFIX         = 'throttled_queue'
-    QUEUE_LIST_KEY = [PREFIX, "queues"].join(':')
+    QUEUE_LIST_KEY = [PREFIX, 'queues'].join(':')
 
     def self.throttled_queues
       Sidekiq.redis_pool.with { |conn| conn.smembers(QUEUE_LIST_KEY) }
@@ -26,16 +26,14 @@ module Sidekiq
     end
 
     def enforce_rate_limit!
-      return false unless self.interval
+      return false unless interval
       job_count = current.to_i
       if rate_limited = (job_count == max_jobs)
-        logger.info("Queue #{self.name} had #{job_count.to_i} jobs performed within #{self.interval}-second interval, pausing.")
+        logger.info("Queue #{name} had #{job_count.to_i} jobs performed within #{interval}-second interval, pausing.")
         self.pause!
       else
         redis_pool.with do |conn|
-          if conn.incr(key)==1
-            conn.expire(key, interval)
-          end
+          conn.expire(key, interval) if conn.incr(key) == 1
         end
       end
       rate_limited
@@ -43,7 +41,7 @@ module Sidekiq
 
     def check_rate_limit!
       if paused? && was_rate_limited = (current.nil? && rate_limiting_enabled?)
-        logger.info("Queue #{self.name} was rate limited and key expired, unpausing.")
+        logger.info("Queue #{name} was rate limited and key expired, unpausing.")
         self.unpause!
       end
       !!was_rate_limited
@@ -60,13 +58,11 @@ module Sidekiq
     end
 
     def current
-      redis_pool.with { |conn| conn.get(self.key) }
+      redis_pool.with { |conn| conn.get(key) }
     end
 
     def queue
-      @queue ||= Sidekiq::Queue.new(self.name)
+      @queue ||= Sidekiq::Queue.new(name)
     end
   end
 end
-
-

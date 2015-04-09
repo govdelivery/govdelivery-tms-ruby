@@ -6,20 +6,19 @@ class CreateAccount
     parse_options(argv)
     boot_rails
 
-    if(@options[:list])
+    if @options[:list]
       list_accounts
-    elsif(@options[:update_account])
+    elsif @options[:update_account]
       update_account(@options)
-    elsif(@options[:account_id])
+    elsif @options[:account_id]
       display_account(Account.find(@options[:account_id]))
     else
       create_account(@options)
     end
-
   end
 
   def boot_rails
-    require File.expand_path("../../config/environment", __FILE__)
+    require File.expand_path('../../config/environment', __FILE__)
   end
 
   def parse_options(argv)
@@ -55,61 +54,61 @@ Examples:
 
 Options:
 USAGE
-      opts.on("-l", "--list", "List Accounts") do |p|
+      opts.on('-l', '--list', 'List Accounts') do |p|
         @options[:list] = p
       end
-      opts.on("-i", "--account_id ID", "Database ID of account to display") do |p|
+      opts.on('-i', '--account_id ID', 'Database ID of account to display') do |p|
         @options[:account_id] = p
       end
-      opts.on("-n", "--name ACCOUNTNAME") do |p|
+      opts.on('-n', '--name ACCOUNTNAME') do |p|
         @options[:account_name] = p.to_s
       end
-      opts.on("-v", "--voice_vendor VOICEVENDOR", "The database id of the desired voice vendor") do |p|
+      opts.on('-v', '--voice_vendor VOICEVENDOR', 'The database id of the desired voice vendor') do |p|
         @options[:account_voice_vendor] = p
       end
-      opts.on("-t", "--sms_vendor SMSVENDOR", "The database id of the desired sms vendor") do |p|
+      opts.on('-t', '--sms_vendor SMSVENDOR', 'The database id of the desired sms vendor') do |p|
         @options[:account_sms_vendor] = p
       end
-      opts.on("-e", "--email_vendor EMAILVENDOR", "The database id of the desired email vendor") do |p|
+      opts.on('-e', '--email_vendor EMAILVENDOR', 'The database id of the desired email vendor') do |p|
         @options[:account_email_vendor] = p
       end
-      opts.on("-a", "--ipaws_vendor IPAWSVENDOR", "The database id of the desired IPAWS vendor") do |p|
+      opts.on('-a', '--ipaws_vendor IPAWSVENDOR', 'The database id of the desired IPAWS vendor') do |p|
         @options[:account_ipaws_vendor] = p
       end
-      opts.on("-f", "--from_address [FROMADDRESS]", "The default from address for this account; required if there is an email vendor.") do |p|
+      opts.on('-f', '--from_address [FROMADDRESS]', 'The default from address for this account; required if there is an email vendor.') do |p|
         @options[:account_from_address] = p
       end
-      opts.on("-o", "--from_number [FROMNUMBER]", "The default from number for this account; required if there is a voice vendor.") do |p|
+      opts.on('-o', '--from_number [FROMNUMBER]', 'The default from number for this account; required if there is a voice vendor.') do |p|
         @options[:account_from_number] = p
       end
-      opts.on("-r", "--reply_to [REPLYTO]", "The default reply-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
+      opts.on('-r', '--reply_to [REPLYTO]', 'The default reply-to email address for this account.  Defaults to the default from address if not supplied.') do |p|
         @options[:account_reply_to] = p
       end
-      opts.on("-z", "--errors_to [ERRORSTO]", "The default errors-to email address for this account.  Defaults to the default from address if not supplied.") do |p|
+      opts.on('-z', '--errors_to [ERRORSTO]', 'The default errors-to email address for this account.  Defaults to the default from address if not supplied.') do |p|
         @options[:account_errors_to] = p
       end
-      opts.on("-L", "--link_tracking_parameters [TRACKINGPARAMS]", "Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.") do |p|
+      opts.on('-L', '--link_tracking_parameters [TRACKINGPARAMS]', 'Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.') do |p|
         @options[:account_link_tracking_parameters] = p
       end
-      opts.on("-p", "--help_text [HELP_TEXT]", "Optional, defaults to sms vendor help text") do |p|
+      opts.on('-p', '--help_text [HELP_TEXT]', 'Optional, defaults to sms vendor help text') do |p|
         @options[:help_text] = p
       end
-      opts.on("-s", "--stop_text [STOP_TEXT]", "Optional, defaults to sms vendor stop text") do |p|
+      opts.on('-s', '--stop_text [STOP_TEXT]', 'Optional, defaults to sms vendor stop text') do |p|
         @options[:stop_text] = p
       end
-      opts.on("-S", "--start_text [START_TEXT]", "Optional, defaults to sms vendor start text") do |p|
+      opts.on('-S', '--start_text [START_TEXT]', 'Optional, defaults to sms vendor start text') do |p|
         @options[:start_text] = p
       end
-      opts.on("-D", "--default_text [DEFAULT_TEXT]", "Optional, defaults to sms vendor help text") do |p|
+      opts.on('-D', '--default_text [DEFAULT_TEXT]', 'Optional, defaults to sms vendor help text') do |p|
         @options[:default_text] = p
       end
-      opts.on("-d", "--dcm_account_codes ACCOUNTCODES") do |p|
+      opts.on('-d', '--dcm_account_codes ACCOUNTCODES') do |p|
         @options[:dcm_account_codes] = p.split(/,/)
       end
-      opts.on("-x", "--sms_prefix PREFIX", "Prefix for SMS commands (required if using a shared sms vendor)") do |p|
+      opts.on('-x', '--sms_prefix PREFIX', 'Prefix for SMS commands (required if using a shared sms vendor)') do |p|
         @options[:sms_prefix] = p
       end
-      opts.on("-U", "--update", "Update fields of an account. -i ACCOUNT_ID is required. Updateable fields are -n, -t, -p, -s, -S, and -D") do |p|
+      opts.on('-U', '--update', 'Update fields of an account. -i ACCOUNT_ID is required. Updateable fields are -n, -t, -p, -s, -S, and -D') do |_p|
         @options[:update_account] = true
       end
     end.parse!(argv)
@@ -128,45 +127,40 @@ USAGE
     a.ipaws_vendor_id = @options[:account_ipaws_vendor]
     a.dcm_account_codes = @options[:dcm_account_codes]
     # create an sms prefix if the sms vendor is shared
-    if(@options[:sms_prefix] && SmsVendor.find(@options[:account_sms_vendor]).shared?)
-      a.sms_prefixes.build(:prefix=>@options[:sms_prefix])
+    if @options[:sms_prefix] && SmsVendor.find(@options[:account_sms_vendor]).shared?
+      a.sms_prefixes.build(prefix: @options[:sms_prefix])
     end
 
-    if(@options[:account_from_address])
-      a.from_addresses.build({
-        :from_email   => @options[:account_from_address],
-        :reply_to     => @options[:account_reply_to],
-        :errors_to    => @options[:account_errors_to],
-        :is_default   => true
-      })
+    if @options[:account_from_address]
+      a.from_addresses.build(from_email: @options[:account_from_address],
+                             reply_to: @options[:account_reply_to],
+                             errors_to: @options[:account_errors_to],
+                             is_default: true)
     end
 
-    if(@options[:account_link_tracking_parameters])
+    if @options[:account_link_tracking_parameters]
       a.link_tracking_parameters = @options[:account_link_tracking_parameters]
     end
 
-    if (@options[:account_from_number])
-      a.from_numbers.build({
-         phone_number: @options[:account_from_number],
-         is_default: true
-        })
+    if @options[:account_from_number]
+      a.from_numbers.build(phone_number: @options[:account_from_number],
+                           is_default: true)
     end
 
     a.save
 
-    if(!a.errors.empty?)
+    if !a.errors.empty?
       puts a.errors.messages
     else
       set_sms_texts(a, options)
-      puts "Created Account id: " + a.id.to_s
+      puts 'Created Account id: ' + a.id.to_s
       display_account(a)
     end
-
   end
 
   def update_account(options)
-    if not @options[:account_id]
-      puts "Error: Must provide account ID to update via -i/--account_id"
+    unless @options[:account_id]
+      puts 'Error: Must provide account ID to update via -i/--account_id'
       return
     end
 
@@ -180,18 +174,16 @@ USAGE
     updates = {}
 
     options_to_fields.each do |k, v|
-      if options.include?(k)
-        updates[v] = options[k]
-      end
+      updates[v] = options[k] if options.include?(k)
     end
 
     a.update(updates)
 
-    if (!a.errors.empty?)
+    if !a.errors.empty?
       puts a.errors.messages
     else
       set_sms_texts(a, options)
-      puts "Updated Account id: " + a.id.to_s
+      puts 'Updated Account id: ' + a.id.to_s
       display_account(a)
     end
   end
@@ -203,36 +195,36 @@ USAGE
   end
 
   def display_account(account)
-    puts "#{account.name}", "-" * 60
+    puts "#{account.name}", '-' * 60
 
-    tputs "id:", account.id.to_s
-    tputs "name:", account.name
-    tputs "sms vendor:", account.sms_vendor_id.to_s
-    tputs "voice vendor:", account.voice_vendor_id.to_s
-    tputs "email vendor:", account.email_vendor_id.to_s
-    tputs "ipaws vendor:", account.ipaws_vendor_id.to_s
-    ['default', 'help', 'stop', 'start'].each do |type|
+    tputs 'id:', account.id.to_s
+    tputs 'name:', account.name
+    tputs 'sms vendor:', account.sms_vendor_id.to_s
+    tputs 'voice vendor:', account.voice_vendor_id.to_s
+    tputs 'email vendor:', account.email_vendor_id.to_s
+    tputs 'ipaws vendor:', account.ipaws_vendor_id.to_s
+    %w(default help stop start).each do |type|
       tputs "#{type} text:", account.send(:"#{type}_keyword").response_text if account.send(:"#{type}_keyword").try(:response_text)
     end
-    if(account.email_vendor_id)
-      tputs "default from email:", account.default_from_address.from_email.to_s
-      tputs "default reply-to:", account.default_from_address.reply_to.to_s
-      tputs "default errors-to:", account.default_from_address.errors_to.to_s
-      tputs "link_tracking_parameters:", account.link_tracking_parameters.to_s
+    if account.email_vendor_id
+      tputs 'default from email:', account.default_from_address.from_email.to_s
+      tputs 'default reply-to:', account.default_from_address.reply_to.to_s
+      tputs 'default errors-to:', account.default_from_address.errors_to.to_s
+      tputs 'link_tracking_parameters:', account.link_tracking_parameters.to_s
     end
     account.sms_prefixes.each do |p|
-      tputs "sms prefix:", p.prefix
+      tputs 'sms prefix:', p.prefix
     end
-    tputs "dcm accounts:", account.dcm_account_codes.to_a.join(",")
-    puts ""
+    tputs 'dcm accounts:', account.dcm_account_codes.to_a.join(',')
+    puts ''
   end
 
-  def tputs(key,value)
+  def tputs(key, value)
     puts "\t#{key.ljust(30)}#{value}"
     end
 
   def set_sms_texts(account, options)
-    ['default', 'help', 'stop', 'start'].each do |type|
+    %w(default help stop start).each do |type|
       next unless options[:"#{type}_text"]
       keyword = account.send(:"#{type}_keyword")
       keyword.response_text = options[:"#{type}_text"]
@@ -241,7 +233,4 @@ USAGE
   end
 end
 
-if __FILE__ == $0
-  CreateAccount.new.run_from_options(ARGV)
-end
-
+CreateAccount.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME

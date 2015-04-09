@@ -19,38 +19,35 @@ require 'rails_helper'
 # that an instance is receiving a specific message.
 
 describe CommandActionsController do
-
   let(:vendor) { create(:sms_vendor) }
   let(:account) { create(:account, sms_vendor: vendor) }
   let(:inbound_message) { create(:inbound_message, body: 'body', from: 'from', vendor: vendor, keyword: keyword, account: account) }
-  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
-  let(:keyword) { k=account.keywords.new(name: "HI").tap { |k| k.account = account }; k.save!; k }
-  let(:params) { {dcm_account_code: 'ACME', dcm_topic_codes: ['ACME_1', 'ACME_2']} }
-  let(:command) { keyword.commands.create(command_type: :dcm_subscribe, name: "ALLIGATORZ", params: params) }
+  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+  let(:keyword) { k = account.keywords.new(name: 'HI').tap { |k| k.account = account }; k.save!; k }
+  let(:params) { { dcm_account_code: 'ACME', dcm_topic_codes: %w(ACME_1 ACME_2) } }
+  let(:command) { keyword.commands.create(command_type: :dcm_subscribe, name: 'ALLIGATORZ', params: params) }
 
   let(:model) { CommandAction }
 
   let(:command_actions) do
     3.times.collect do |i|
       stub('CommandAction',
-           id: 100+i,
-           inbound_message_id: 200+i,
-           command_id: 300+i,
-           command: stub(keyword_id: 400+i),
+           id: 100 + i,
+           inbound_message_id: 200 + i,
+           command_id: 300 + i,
+           command: stub(keyword_id: 400 + i),
            response_body: 'http body',
            status: 200,
            content_type: 'text/plain',
            created_at: i.days.ago
-      )
+          )
     end
   end
 
   let(:valid_command_action) do
-    CommandAction.new({
-      response_body: 'http body',
-      status: 200,
-      content_type: 'text/plain',
-    }).tap do |ca|
+    CommandAction.new(response_body: 'http body',
+                      status: 200,
+                      content_type: 'text/plain').tap do |ca|
       ca.inbound_message = inbound_message
       ca.command         = command
       ca.save!
@@ -61,15 +58,15 @@ describe CommandActionsController do
     sign_in user
   end
 
-  describe "GET index" do
-    it "works with inbound message" do
+  describe 'GET index' do
+    it 'works with inbound message' do
       command_action = valid_command_action
       get :index, sms_id: inbound_message.id
       expect(response.response_code).to eq(200)
       expect(assigns(:parent)).to eq(inbound_message)
       expect(assigns(:command_actions)).to eq([command_action])
     end
-    it "works with command" do
+    it 'works with command' do
       command_action = valid_command_action
       get :index, command_id: command.id, keyword_id: keyword.id
       expect(response.response_code).to eq(200)
@@ -78,15 +75,15 @@ describe CommandActionsController do
     end
   end
 
-  describe "GET show" do
-    it "works with inbound message" do
+  describe 'GET show' do
+    it 'works with inbound message' do
       command_action = valid_command_action
       get :show, sms_id: inbound_message.id, id: command_action.to_param
       expect(response.response_code).to eq(200)
       expect(assigns(:parent)).to eq(inbound_message)
       expect(assigns(:command_action)).to eq(command_action)
     end
-    it "works with command" do
+    it 'works with command' do
       command_action = valid_command_action
       get :show, command_id: command.id, keyword_id: keyword.id, id: command_action.to_param
       expect(response.response_code).to eq(200)
@@ -96,7 +93,6 @@ describe CommandActionsController do
   end
 
   it_should_have_a_pageable_index(:command_actions, InboundMessage) do |test|
-    {sms_id: test.inbound_message.id}
+    { sms_id: test.inbound_message.id }
   end
-
 end

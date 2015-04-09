@@ -10,7 +10,6 @@ class LoopbackSmsWorker < LoopbackMessageWorker
       new:          '15005550000'
     }
 
-
   def perform(options)
     @message = SmsMessage.find(options['message_id'])
     super
@@ -19,5 +18,4 @@ class LoopbackSmsWorker < LoopbackMessageWorker
   def target(recipient)
     recipient.phone
   end
-
 end

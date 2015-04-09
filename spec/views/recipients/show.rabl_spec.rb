@@ -1,7 +1,6 @@
 require File.expand_path('../../../rails_helper', __FILE__)
 
 describe 'recipients/show.rabl' do
-
   context 'an sms recipient' do
     let(:message) do
       stub('message', id: 22, to_param: '22', class: SmsMessage)
@@ -22,7 +21,6 @@ describe 'recipients/show.rabl' do
            valid?: true)
     end
 
-
     before do
       assign(:recipient, recipient)
       Rabl::Engine.any_instance.expects(:url_for).with(has_entries(controller: 'sms_messages', id: 22)).returns(sms_path(22))
@@ -31,10 +29,10 @@ describe 'recipients/show.rabl' do
       render
     end
     it 'should have one item' do
-      expect(rendered).to be_json_for(recipient).
-                        with_timestamps(:created_at, :completed_at).
-                        with_attributes(:formatted_phone, :phone, :status).
-                        with_links('sms_message' => sms_path(22), 'self' => sms_recipient_path(22, 11))
+      expect(rendered).to be_json_for(recipient)
+        .with_timestamps(:created_at, :completed_at)
+        .with_attributes(:formatted_phone, :phone, :status)
+        .with_links('sms_message' => sms_path(22), 'self' => sms_recipient_path(22, 11))
     end
   end
 
@@ -54,10 +52,9 @@ describe 'recipients/show.rabl' do
            sent_at: Time.now,
            error_message: nil,
            completed_at: Time.now,
-           macros: {"name" => "Henry Hankson"},
+           macros: { 'name' => 'Henry Hankson' },
            valid?: true)
     end
-
 
     before do
       assign(:recipient, recipient)
@@ -67,10 +64,10 @@ describe 'recipients/show.rabl' do
       render
     end
     it 'should have one item' do
-      expect(rendered).to be_json_for(recipient).
-                        with_timestamps(:created_at, :completed_at).
-                        with_attributes(:status, :email, :macros).
-                        with_links('email_message' => email_path(22), 'self' => email_recipient_path(22, 11))
+      expect(rendered).to be_json_for(recipient)
+        .with_timestamps(:created_at, :completed_at)
+        .with_attributes(:status, :email, :macros)
+        .with_links('email_message' => email_path(22), 'self' => email_recipient_path(22, 11))
     end
 
     it 'should not have an error_message' do
@@ -80,7 +77,7 @@ describe 'recipients/show.rabl' do
 
     context 'with an error message' do
       it 'should have an error_message if present' do
-        assign(:recipient, recipient.tap{|r| r.stubs(:error_message).returns('oops')})
+        assign(:recipient, recipient.tap { |r| r.stubs(:error_message).returns('oops') })
         json_data = ActiveSupport::JSON.decode(render)
         expect(json_data).to include('error_message' => 'oops')
       end

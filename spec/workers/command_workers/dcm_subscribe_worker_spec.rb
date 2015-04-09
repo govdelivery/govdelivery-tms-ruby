@@ -2,7 +2,7 @@ require 'rails_helper'
 describe CommandWorkers::DcmSubscribeWorker do
   let(:phone_number) { '+14443332222' }
   let(:account_code) { 'ACCOUNT_CODE' }
-  let(:topic_codes) { ['TOPIC_CODE', 'TOPIC_2'] }
+  let(:topic_codes) { %w(TOPIC_CODE TOPIC_2) }
   let(:subscribe_args) { ['foo@bar.com'] }
   let(:client) { mock('dcm_client') }
 
@@ -16,35 +16,35 @@ describe CommandWorkers::DcmSubscribeWorker do
   let(:http_response) do
     stub('http_response',
          status:  200,
-         headers: {'Content-Type' => 'andrew/json'},
+         headers: { 'Content-Type' => 'andrew/json' },
          body:    'foo')
   end
 
   let(:http_404_response) do
     stub('http_response_404',
          status:  404,
-         headers: {'Content-Type' => 'andrew/json'},
+         headers: { 'Content-Type' => 'andrew/json' },
          body:    'nope')
   end
 
   let(:http_failure_response) do
     stub('http_response_422',
          status:  422,
-         headers: {'Content-Type' => 'andrew/json'},
+         headers: { 'Content-Type' => 'andrew/json' },
          body:    'error: you suck')
   end
 
   let(:options) do
     {
-      from:               "+12222222222",
+      from:               '+12222222222',
       inbound_message_id: create(:inbound_message).id,
       command_id:         command.id
     }
   end
 
-  let(:command_parameters) {
+  let(:command_parameters) do
     build(:subscribe_command_parameters)
-  }
+  end
 
   subject do
     CommandWorkers::DcmSubscribeWorker.new
@@ -59,12 +59,12 @@ describe CommandWorkers::DcmSubscribeWorker do
     end
 
     it 'ignores 422s' do
-      subject.expects(:request_subscription).raises(DCMClient::Error::UnprocessableEntity.new("foo", http_failure_response))
+      subject.expects(:request_subscription).raises(DCMClient::Error::UnprocessableEntity.new('foo', http_failure_response))
       expect { subject.perform(options.merge(from: 'number')) }.to_not raise_error
     end
 
     it 'ignores 404s' do
-      subject.expects(:request_subscription).raises(DCMClient::Error::NotFound.new("foo", http_404_response))
+      subject.expects(:request_subscription).raises(DCMClient::Error::NotFound.new('foo', http_404_response))
       expect { subject.perform(options) }.to_not raise_error
     end
 
@@ -88,8 +88,7 @@ describe CommandWorkers::DcmSubscribeWorker do
     end
   end
 
-  context "with subscribe args" do
-
+  context 'with subscribe args' do
     it 'should call email_subscribe on the DCM Client when argument has an asterisk' do
       options[:sms_tokens] = ['em@il']
       client.expects(:email_subscribe).with('em@il', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes)
@@ -102,5 +101,4 @@ describe CommandWorkers::DcmSubscribeWorker do
       subject.request_subscription(client, '5', CommandParameters.new(options), command_parameters)
     end
   end
-
 end

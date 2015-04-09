@@ -6,7 +6,7 @@ describe SmsVendor do
   let(:from) { '+12223334444' }
   subject { vendor }
 
-  describe "when valid" do
+  describe 'when valid' do
     it { expect(vendor.valid?).to eq(true) }
   end
 
@@ -25,7 +25,7 @@ describe SmsVendor do
 
   [:name, :username, :password].each do |field|
     describe "when #{field} is too long" do
-      before { vendor.send("#{field}=", "W"*257) }
+      before { vendor.send("#{field}=", 'W' * 257) }
       it { expect(vendor.valid?).to eq(false) }
     end
   end
@@ -51,7 +51,7 @@ describe SmsVendor do
   describe '#create_inbound_message!' do
     it 'creates an inbound message' do
       vendor.stubs(:accounts).returns([])
-      expect { vendor.create_inbound_message!(from: from, body: 'msg', keyword: nil ) }.to change { vendor.inbound_messages.count }.by 1
+      expect { vendor.create_inbound_message!(from: from, body: 'msg', keyword: nil) }.to change { vendor.inbound_messages.count }.by 1
     end
   end
 
@@ -59,21 +59,20 @@ describe SmsVendor do
     it 'creates a stop request and calls stop on all accounts' do
       command_params = CommandParameters.new(from: '+15552223323')
       vendor.stubs(:accounts).returns([mock('account1', stop: true), mock('account1', stop: true)])
-      expect {
+      expect do
         vendor.stop!(command_params)
-      }.to change { vendor.stop_requests.count }.by 1
+      end.to change { vendor.stop_requests.count }.by 1
     end
   end
 
   describe '#start!' do
     it 'deletes a stop request' do
-      phone ='+15552223323'
+      phone = '+15552223323'
       command_parameters = CommandParameters.new(from: phone)
       vendor.stop_requests.create!(phone: phone)
-      expect {
+      expect do
         vendor.start!(command_parameters)
-      }.to change { vendor.stop_requests.count }.by -1
+      end.to change { vendor.stop_requests.count }.by -1
     end
   end
-
 end

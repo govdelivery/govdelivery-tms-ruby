@@ -11,7 +11,7 @@ require './config/clock.rb'
 require './lib/clockwork/sidekiq_clockwork_scheduler.rb'
 require './config/initializers/yakety_yak'
 
-default=Xact::Application.config.sidekiq[:default]
+default = Xact::Application.config.sidekiq[:default]
 
 class Sidekiq::Middleware::Server::LogAllTheThings
   attr_reader :logger
@@ -20,7 +20,7 @@ class Sidekiq::Middleware::Server::LogAllTheThings
     @logger = logger
   end
 
-  def call(worker, job, queue)
+  def call(_worker, job, _queue)
     logger.info("Invoking job: #{job.inspect}")
     yield
   end
@@ -31,12 +31,11 @@ Sidekiq.configure_server do |config|
 
   config.redis                 = default.merge(Xact::Application.config.sidekiq[:server])
   config.options[:concurrency] = 30
-  config.options[:queues]      = ['sender', 'default', 'webhook', 'stats', 'low']
+  config.options[:queues]      = %w(sender default webhook stats low)
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
   end
   SidekiqClockworkScheduler.new.async.run
-
 
   if Rails.configuration.analytics[:enabled]
     require 'rjack-slf4j/log4j12'
@@ -47,7 +46,7 @@ Sidekiq.configure_server do |config|
 
   Sidekiq::RateLimitedQueue::Configuration.load!(Rails.root.join('config', 'sidekiq_rate_limited_queues.yml'))
 
-  Rails.logger.info "Background services have started."
+  Rails.logger.info 'Background services have started.'
 end
 
 require 'sidekiq/dynamic_queue/setup'
@@ -60,4 +59,3 @@ end
 SidekiqUniqueJobs.config.unique_args_enabled = true
 
 Sidekiq::Web.app_url = '/'
-

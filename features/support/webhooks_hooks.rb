@@ -8,8 +8,8 @@ After('@webhooks') do |scenario|
     end
   end
 
-  if not scenario.failed?
-    STDOUT.puts "Deleting Callback URIs"
+  unless scenario.failed?
+    STDOUT.puts 'Deleting Callback URIs'
     @capi.destroy_all_callback_uris
   end
 end

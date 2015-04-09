@@ -12,9 +12,7 @@ module SimpleTokenAuthentication
     # Build an authentication token record if
     # there are zero.
     def ensure_authentication_token
-      if authentication_tokens.count < 1
-        multi_generate_authentication_token
-      end
+      multi_generate_authentication_token if authentication_tokens.count < 1
     end
 
     def multi_generate_authentication_token
@@ -35,7 +33,7 @@ module SimpleTokenAuthentication
     end
 
     module ClassMethods
-      def acts_as_multi_token_authenticatable(options = {})
+      def acts_as_multi_token_authenticatable(_options = {})
         include SimpleTokenAuthentication::ActsAsMultiTokenAuthenticatable
         before_save :ensure_authentication_token
       end

@@ -10,7 +10,7 @@ Xact::Application.configure do
 
   # Configure static asset server for tests with Cache-Control for performance
   config.serve_static_assets = true
-  config.static_cache_control = "public, max-age=3600"
+  config.static_cache_control = 'public, max-age=3600'
 
   # Log error messages when you accidentally call methods on nil
   config.whiny_nils = true
@@ -33,12 +33,12 @@ Xact::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
-  routes.default_url_options = {host: 'test.host'}
+  routes.default_url_options = { host: 'test.host' }
 
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.
-  config.public_callback = false  
+  config.public_callback = false
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175

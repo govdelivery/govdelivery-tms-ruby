@@ -6,21 +6,21 @@ class EmailRecipient < ActiveRecord::Base
 
   attr_accessible :email
   validates_presence_of :message, unless: :skip_message_validation
-  validates :email, presence: true, length: {maximum: 256}, email: true
+  validates :email, presence: true, length: { maximum: 256 }, email: true
 
   ##
   # The conditions on these scopes add message_id, which is at the front of the index on those tables
   # (and will become the partition key in the near future). Removing this condition will make
   # these relations perform very poorly.
   #
-  has_many :email_recipient_clicks, ->(record) { where("email_recipient_clicks.email_message_id = ?", record.message_id) }
-  has_many :email_recipient_opens, ->(record) { where("email_recipient_opens.email_message_id = ?", record.message_id) }
+  has_many :email_recipient_clicks, ->(record) { where('email_recipient_clicks.email_message_id = ?', record.message_id) }
+  has_many :email_recipient_opens, ->(record) { where('email_recipient_opens.email_message_id = ?', record.message_id) }
 
   scope :status_columns, -> { select(column_names - ['macros']) }
 
   def self.from_x_tms_recipent(header)
     xtr = GovDelivery::Crypt::XTmsRecipient.decrypt(header)
-    self.status_columns.where(email: xtr.email).find(xtr.recipient_id)
+    status_columns.where(email: xtr.email).find(xtr.recipient_id)
   end
 
   ##
@@ -33,21 +33,20 @@ class EmailRecipient < ActiveRecord::Base
   # @param defaults [Hash] the default macros - i.e. self.message.macros
   # @return [String]
   #
-  def to_odm(defaults={})
-    record = [self.email,self.id, self.x_tms_recipient].join("::")
-    defaults.merge(self.macros || {}).tap do |hsh|
+  def to_odm(defaults = {})
+    record = [email, id, x_tms_recipient].join('::')
+    defaults.merge(macros || {}).tap do |hsh|
       unless hsh.empty?
         hsh.keys.sort.each do |k|
-          record << "::#{hsh[k]}" if defaults.has_key?(k)
+          record << "::#{hsh[k]}" if defaults.key?(k)
         end
       end
     end unless defaults.nil?
     record
   end
 
-
   def arf!(_, _, error_message)
-    self.update_attribute(:error_message, error_message)
+    update_attribute(:error_message, error_message)
   end
 
   def hard_bounce!(*args)
@@ -81,6 +80,6 @@ class EmailRecipient < ActiveRecord::Base
   end
 
   def x_tms_recipient
-    GovDelivery::Crypt::XTmsRecipient.encrypt(self.email, self.id)
+    GovDelivery::Crypt::XTmsRecipient.encrypt(email, id)
   end
 end

@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 describe IPAWS::ResponseTypesController do
-
-  describe "GET index" do
+  describe 'GET index' do
     it 'returns the array of IPAWS response types' do
       user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
       sign_in user
@@ -20,5 +19,4 @@ describe IPAWS::ResponseTypesController do
       expect(response.response_code).to eq(403)
     end
   end
-
 end

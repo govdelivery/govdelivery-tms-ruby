@@ -12,6 +12,6 @@ class AddVendorToSmsMessages < ActiveRecord::Migration
     SQL
 
     # make it not null
-    change_column :sms_messages, :sms_vendor_id, :integer, :null => false
+    change_column :sms_messages, :sms_vendor_id, :integer, null: false
   end
 end

@@ -3,19 +3,18 @@ class LoopbackEmailWorker < LoopbackMessageWorker
   sidekiq_options retry: 0,
                   queue: :sender,
                   dynamic_queue_key:
-                         ->(args) {
+                         ->(args) do
                            args['subject'].try(:parameterize)
-                         }
+                         end
 
-  @magic_addresses=
-    {
-      sent:         'sent@sink.govdelivery.com',
-      blacklisted:  'blacklisted@sink.govdelivery.com',
-      failed:       'failed@sink.govdelivery.com',
-      canceled:     'canceled@sink.govdelivery.com',
-      inconclusive: 'inconclusive@sink.govdelivery.com',
-      sending:      'sending@sink.govdelivery.com'
-    }
+  @magic_addresses =     {
+    sent:         'sent@sink.govdelivery.com',
+    blacklisted:  'blacklisted@sink.govdelivery.com',
+    failed:       'failed@sink.govdelivery.com',
+    canceled:     'canceled@sink.govdelivery.com',
+    inconclusive: 'inconclusive@sink.govdelivery.com',
+    sending:      'sending@sink.govdelivery.com'
+  }
 
   def perform(options)
     @message = EmailMessage.find(options['message_id'])
@@ -25,5 +24,4 @@ class LoopbackEmailWorker < LoopbackMessageWorker
   def target(recipient)
     recipient.email
   end
-
 end

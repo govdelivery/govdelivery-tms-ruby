@@ -17,12 +17,11 @@ Rabl.configure do |config|
   # config.xml_options = { :dasherize  => true, :skip_types => false }
   # config.view_paths = []
 
-  unless ['development', 'test', 'ci'].include?(Rails.env.to_s)
-    #config.cache_all_output = true
-    #config.cache_sources    = true
-    config.view_paths       = [Rails.root.join("app/views")]
+  unless %w(development test ci).include?(Rails.env.to_s)
+    # config.cache_all_output = true
+    # config.cache_sources    = true
+    config.view_paths       = [Rails.root.join('app/views')]
   end
 end
 
 ActiveSupport::JSON::Encoding.time_precision = 0
-

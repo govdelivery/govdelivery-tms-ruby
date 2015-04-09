@@ -8,7 +8,7 @@ class FromNumber < ActiveRecord::Base
 
   before_save :ensure_unique_defaultness
   before_validation :normalize_phone_number
-  validates :phone_number, presence: true, uniqueness: {scope: :account_id}
+  validates :phone_number, presence: true, uniqueness: { scope: :account_id }
 
   def voice_message
     last_incoming_voice_message && !last_incoming_voice_message.is_expired? ? last_incoming_voice_message : default_incoming_voice_message
@@ -19,9 +19,9 @@ class FromNumber < ActiveRecord::Base
   ##
   # There should only be one default from number at a given time.
   #
-  def ensure_unique_defaultness(*args)
+  def ensure_unique_defaultness(*_args)
     if current_default = account.from_numbers.where(is_default: true).first
-      if (self.is_default? && current_default != self)
+      if self.is_default? && current_default != self
         current_default.update_attributes(is_default: false)
       end
     else

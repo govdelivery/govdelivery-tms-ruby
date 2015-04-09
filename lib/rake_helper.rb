@@ -40,26 +40,26 @@ end
 def shared_twilio_valid_test_vendors_config
   config = shared_loopback_vendors_config
   config[:sms_vendor_name] = 'Test - Shared Twilio Valid Test SMS Vendor'
-  return config
+  config
 end
 
 def shared_twilio_invalid_number_test_vendors_config
   config = shared_loopback_vendors_config
   config[:sms_vendor_name] = 'Test - Shared Twilio Invalid Number Test SMS Vendor'
-  return config
+  config
 end
 
 def shared_live_email_vendors_config
   config = shared_loopback_vendors_config
   case Rails.env
-    when "qc"
-      config[:email_vendor_name] = 'ODM Sender'
-    when "integration", "stage"
-      config[:email_vendor_name] = 'TMS Extended Sender'
-    else
-      config[:email_vendor_name] = 'Test - Shared ODM Email Vendor'
+  when 'qc'
+    config[:email_vendor_name] = 'ODM Sender'
+  when 'integration', 'stage'
+    config[:email_vendor_name] = 'TMS Extended Sender'
+  else
+    config[:email_vendor_name] = 'Test - Shared ODM Email Vendor'
   end
-  return config
+  config
 end
 
 def shared_live_phone_vendors_config
@@ -67,33 +67,33 @@ def shared_live_phone_vendors_config
   config[:sms_vendor_name] = 'Test - Shared Live SMS Vendor'
   config[:voice_vendor_name] = 'Test - Shared Live Voice Vendor'
   config[:from_number] = twilio_live_numbers[Rails.env]
-  return config
+  config
 end
 
 def seed_dcm_account_id
   case Rails.env
-    when "qc"
-      "CUKEAUTO_QC"
-    when "integration"
-      "CUKEAUTO_INT"
-    when "stage"
-      "CUKEAUTO_STAGE"
+  when 'qc'
+    'CUKEAUTO_QC'
+  when 'integration'
+    'CUKEAUTO_INT'
+  when 'stage'
+    'CUKEAUTO_STAGE'
   end
 end
 
 def seed_dcm_topic_codes
   case Rails.env
-    when "qc"
-      ["CUKEAUTO_QC_SMS"]
-    when "integration"
-      ["CUKEAUTO_INT_SMS"]
-    when "stage"
-      ["CUKEAUTO_STAGE_SMS"]
+  when 'qc'
+    ['CUKEAUTO_QC_SMS']
+  when 'integration'
+    ['CUKEAUTO_INT_SMS']
+  when 'stage'
+    ['CUKEAUTO_STAGE_SMS']
   end
 end
 
 def set_record_config(r, config)
-  config.each do |k,v|
+  config.each do |k, v|
     r.send("#{k}=", v)
   end
 end
@@ -108,21 +108,20 @@ def create_or_verify_by_name(klass, config, pre_save = nil)
       pre_save.call(r) if pre_save
       r.save!
     end
-    puts "Verified"
+    puts 'Verified'
   else
     r = klass.new(config)
     puts "Creating #{config[:name]}"
     pre_save.call(r) if pre_save
     r.save!
-    puts "Created"
+    puts 'Created'
   end
-  return r
+  r
 end
 
 def create_test_account(test_name, account_vendors_config)
   sms_shared_vendor = SmsVendor.find_by(name: account_vendors_config[:sms_vendor_name])
   sms_prefix_str = test_name.downcase.tr(' ', '_')
-
 
   account_config = {
     name: Rails.env.capitalize + " #{test_name} Test Account",
@@ -140,32 +139,32 @@ def create_test_account(test_name, account_vendors_config)
 
   user_config = {
     email: Rails.env + "-#{test_name.downcase.tr(' ', '_')}-test@govdelivery.com",
-    password: "retek01!",
+    password: 'retek01!',
     admin: false
   }
 
   lba = create_or_verify_by_name(
     Account,
     account_config,
-    lambda { |lba|
-      if lba.from_addresses.find_by(from_email: account_email_addresses_config[:from_email]).blank?
-        puts "\tCreating #{lba.name} From Addresses"
-        lba.from_addresses.build(account_email_addresses_config)
+    lambda do |lb|
+      if lb.from_addresses.find_by(from_email: account_email_addresses_config[:from_email]).blank?
+        puts "\tCreating #{lb.name} From Addresses"
+        lb.from_addresses.build(account_email_addresses_config)
         puts "\tCreated"
       end
 
-      if lba.sms_prefixes.find_by(prefix: sms_prefix_str).blank?
-        sms_prefix = lba.sms_prefixes.build(prefix: sms_prefix_str, sms_vendor: sms_shared_vendor)
+      if lb.sms_prefixes.find_by(prefix: sms_prefix_str).blank?
+        sms_prefix = lb.sms_prefixes.build(prefix: sms_prefix_str, sms_vendor: sms_shared_vendor)
         sms_prefix.save!
         puts "SMS Prefix created for #{account_config[:name]}: #{sms_prefix.prefix}"
       end
 
-      if lba.from_numbers.blank?
-        from_number = lba.from_numbers.build(from_number: account_vendors_config['from_number'])
+      if lb.from_numbers.blank?
+        from_number = lb.from_numbers.build(from_number: account_vendors_config['from_number'])
         from_number.save!
         puts "Added #{from_number.from_number} phone number to account."
       end
-    }
+    end
   )
   puts "#{account_config[:name]} Account Number: #{lba.id}"
 
@@ -179,9 +178,9 @@ def create_test_account(test_name, account_vendors_config)
     puts "User with email #{user_config[:email]} exists for #{account_config[:name]}"
     set_record_config(user, user_config)
     # encrypted_password is always considered to be changed on save
-    if user.changed? && !(user.changes.keys - ["encrypted_password"]).empty?
+    if user.changed? && !(user.changes.keys - ['encrypted_password']).empty?
       changes = user.changes
-      changes.delete("encrypted_password")
+      changes.delete('encrypted_password')
       puts
       puts "\tSetting user with email #{user_config[:email]} to #{changes}"
       user.save!
@@ -196,5 +195,5 @@ def create_test_account(test_name, account_vendors_config)
 
   puts "#{user_config[:name]} Auth Token: "
   puts "\t#{token}"
-  return lba
+  lba
 end

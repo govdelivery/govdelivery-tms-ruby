@@ -18,9 +18,8 @@ class InboundMessagesController < ApplicationController
   protected
 
   def finder
-    current_user.sms_vendor.inbound_messages.
-      includes(:command_actions).
-      where(account_id: current_user.account.id)
+    current_user.sms_vendor.inbound_messages
+      .includes(:command_actions)
+      .where(account_id: current_user.account.id)
   end
-
 end

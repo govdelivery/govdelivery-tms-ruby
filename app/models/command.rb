@@ -11,7 +11,7 @@ class Command < ActiveRecord::Base
   validates_presence_of :command_type
 
   validates_length_of :name, maximum: 255, allow_nil: true
-  validates :params, length: {maximum: 4000}, allow_nil: true
+  validates :params, length: { maximum: 4000 }, allow_nil: true
   before_save :set_name
   validate :validate_command
   validate :validate_keyword
@@ -21,33 +21,33 @@ class Command < ActiveRecord::Base
   has_many :command_actions, dependent: :nullify
 
   # Execute this command with the provided options and additional parameters
-  def call(command_parameters=CommandParameters.new)
-    command_parameters.command_id = self.id
+  def call(command_parameters = CommandParameters.new)
+    command_parameters.command_id = id
     command_strategy.perform_async!(command_parameters)
   end
 
   def process_error(job_params, error_message)
-    self.params.merge!(job_params)
-    command_strategy.process_error(self.params, error_message)
+    params.merge!(job_params)
+    command_strategy.process_error(params, error_message)
   end
 
   def process_response(job_params, http_response)
-    self.params.merge!(job_params)
-    command_strategy.process_response(self.account, self.params, http_response)
+    params.merge!(job_params)
+    command_strategy.process_response(account, params, http_response)
   end
 
   # Grab the executable portion of this command
   def command_strategy
-    CommandType[self.command_type]
+    CommandType[command_type]
   end
 
   # The name of this command's type.
   def command_type_name
-    CommandType[self.command_type].name.to_s
+    CommandType[command_type].name.to_s
   end
 
   def to_s
-    "#<#{self.class.name}:#{self.object_id}> #{CommandType[self.command_type]}"
+    "#<#{self.class.name}:#{object_id}> #{CommandType[command_type]}"
   end
 
   def params=(command_parameters)
@@ -68,23 +68,23 @@ class Command < ActiveRecord::Base
 
   # Copies the name from the command unless it was specified explicitly.
   def set_name
-    if self.name.blank? || (self.command_type_changed? && !self.command_type_was.nil?)
+    if name.blank? || (self.command_type_changed? && !command_type_was.nil?)
       self.name = command_type_name
     end
   end
 
   def validate_command
     return unless keyword && account
-    if !(CommandType[self.command_type.to_sym] rescue nil)
+    if !(CommandType[command_type.to_sym] rescue nil)
       errors.add(:command_type, 'is invalid')
-    elsif (cmd_errors = CommandType[self.command_type].validate_params(params, self.account)).any?
-      errors.add(:params, "has invalid #{self.command_type} parameters: #{cmd_errors.full_messages.join(', ')}")
+    elsif (cmd_errors = CommandType[command_type].validate_params(params, account)).any?
+      errors.add(:params, "has invalid #{command_type} parameters: #{cmd_errors.full_messages.join(', ')}")
     end
     errors.empty?
   end
 
   def validate_keyword
-    #ordering is important here
+    # ordering is important here
     if keyword.nil?
       errors.add(:keyword, 'keyword required')
     elsif account.nil?

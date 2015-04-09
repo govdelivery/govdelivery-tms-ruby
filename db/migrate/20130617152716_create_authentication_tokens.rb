@@ -1,8 +1,8 @@
 class CreateAuthenticationTokens < ActiveRecord::Migration
   def change
-    create_table :authentication_tokens, :force => true do |t|
-      t.references :user, :null => false
-      t.string :token, :null => false
+    create_table :authentication_tokens, force: true do |t|
+      t.references :user, null: false
+      t.string :token, null: false
       t.timestamps
     end
 

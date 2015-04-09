@@ -2,7 +2,7 @@ class IndexOpensAndClicks < ActiveRecord::Migration
   def up
     # If you aren't running enterprise edition, you get ORA-00439
     # because online index building is an enterprise feature.
-    online = ['development', 'test'].include?(Rails.env) ? '' : 'ONLINE'
+    online = %w(development test).include?(Rails.env) ? '' : 'ONLINE'
 
     safely do
       remove_index :email_recipient_opens, name: 'ero_idx1'
@@ -28,11 +28,9 @@ class IndexOpensAndClicks < ActiveRecord::Migration
   end
 
   def safely
-    begin
-      yield 
-    rescue Exception => e
-      puts "Swallowed error: #{e}"
-    end
+    yield
+  rescue Exception => e
+    puts "Swallowed error: #{e}"
   end
 
   def down

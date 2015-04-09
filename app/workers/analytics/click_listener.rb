@@ -8,9 +8,9 @@ module Analytics
       'xact.click_listener'
     end
 
-    def on_message(message, partition, offset)
+    def on_message(message, _partition, _offset)
       logger.info("#{self.class} received #{message}")
-      logger.info("#{self.client.partition_status}")
+      logger.info("#{client.partition_status}")
     end
 
     def logger

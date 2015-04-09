@@ -32,16 +32,16 @@ describe Twilio::SmsPollingWorker do
   let(:twilio_client) do
     client = stub('twilio_client')
     client.expects(:get).with('sid1').returns(
-                                              stub('recipient 1',
-                                                   sid: 'sid1',
-                                                   status: 'sent',
-                                                   date_sent: "Mon, 04 Feb 2011 12:07:07 -0600"))
+      stub('recipient 1',
+           sid: 'sid1',
+           status: 'sent',
+           date_sent: 'Mon, 04 Feb 2011 12:07:07 -0600'))
     client.expects(:get).with('sid2').returns(
-                                              stub('recipient 1',
-                                                   sid: 'sid2',
-                                                   status: 'sending',
-                                                   date_sent: nil
-                                                   ))
+      stub('recipient 1',
+           sid: 'sid2',
+           status: 'sending',
+           date_sent: nil
+          ))
     client.expects(:get).with('sid3').raises(Twilio::REST::RequestError, 'whoops')
     client
   end

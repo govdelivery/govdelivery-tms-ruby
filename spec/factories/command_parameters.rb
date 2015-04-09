@@ -1,6 +1,5 @@
 FactoryGirl.define do
-
-  factory :command_parameters , class: CommandParameters do
+  factory :command_parameters, class: CommandParameters do
     skip_create
 
     factory :forward_command_parameters do
@@ -11,13 +10,13 @@ FactoryGirl.define do
 
     factory :subscribe_command_parameters do
       dcm_account_code 'ACME'
-      dcm_topic_codes ["ACME","VANDELAY"]
+      dcm_topic_codes %w(ACME VANDELAY)
       command_type :dcm_subscribe
     end
 
     factory :unsubscribe_command_parameters do
       command_type :dcm_subscribe
-      dcm_account_codes ["ACME","VANDELAY"]
+      dcm_account_codes %w(ACME VANDELAY)
     end
   end
 end

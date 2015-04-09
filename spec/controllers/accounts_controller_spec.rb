@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.shared_examples "an account endpoint" do
+RSpec.shared_examples 'an account endpoint' do
   it 'should succeed' do
     expect(response.status).to eq(201)
   end
@@ -25,7 +25,7 @@ RSpec.shared_examples "an account endpoint" do
 
   context 'and then updates it' do
     before do
-      patch :update, id: @account.id, account: {name: 'bar'}
+      patch :update, id: @account.id, account: { name: 'bar' }
     end
     it 'should succeed' do
       expect(response.status).to eq(200)
@@ -43,15 +43,17 @@ RSpec.shared_examples "an account endpoint" do
 end
 
 describe AccountsController, type: :controller do
-  let (:account) { create :account,
-                          sms_vendor:   create(:sms_vendor),
-                          email_vendor: create(:email_vendor),
-                          voice_vendor: create(:voice_vendor),
-                          ipaws_vendor: create(:ipaws_vendor) }
-  let (:user) { create :user, account: account, admin: false }
-  let (:admin_user) { create :user, account: account, admin: true }
+  let(:account) do
+    create :account,
+           sms_vendor:   create(:sms_vendor),
+           email_vendor: create(:email_vendor),
+           voice_vendor: create(:voice_vendor),
+           ipaws_vendor: create(:ipaws_vendor)
+  end
+  let(:user) { create :user, account: account, admin: false }
+  let(:admin_user) { create :user, account: account, admin: true }
 
-  context "an admin user" do
+  context 'an admin user' do
     before do
       sign_in admin_user
     end
@@ -59,20 +61,20 @@ describe AccountsController, type: :controller do
     context 'who creates an account with a nested request' do
       before do
         post :create,
-             account:      {name:                  'yesss',
-                            voice_vendor_id:       create(:voice_vendor).id,
-                            email_vendor_id:       create(:email_vendor).id,
-                            sms_vendor_id:         create(:sms_vendor).id,
-                            ipaws_vendor_id:       create(:ipaws_vendor).id,
-                            dcm_account_codes:     ['ACME'],
-                            help_text:             'halp',
-                            stop_text:             'u stoped',
-                            default_response_text: 'foo',
-                            link_tracking_parameters: 'foo=bar'},
-             from_address: {from_email: 'from@test.com',
-                            reply_to:   'reply-to@test.com',
-                            errors_to:  'errors-to@test.com'},
-             from_number: {phone_number: '8885551234'}
+             account:      { name:                  'yesss',
+                             voice_vendor_id:       create(:voice_vendor).id,
+                             email_vendor_id:       create(:email_vendor).id,
+                             sms_vendor_id:         create(:sms_vendor).id,
+                             ipaws_vendor_id:       create(:ipaws_vendor).id,
+                             dcm_account_codes:     ['ACME'],
+                             help_text:             'halp',
+                             stop_text:             'u stoped',
+                             default_response_text: 'foo',
+                             link_tracking_parameters: 'foo=bar' },
+             from_address: { from_email: 'from@test.com',
+                             reply_to:   'reply-to@test.com',
+                             errors_to:  'errors-to@test.com' },
+             from_number: { phone_number: '8885551234' }
         @account = assigns(:account)
         expect(@account.sms_vendor).to_not be nil
         expect(@account.email_vendor).to_not be nil
@@ -80,8 +82,7 @@ describe AccountsController, type: :controller do
         expect(@account.voice_vendor).to_not be nil
       end
 
-      it_behaves_like "an account endpoint"
-
+      it_behaves_like 'an account endpoint'
     end
 
     context 'who creates an account with a flat request' do
@@ -108,8 +109,7 @@ describe AccountsController, type: :controller do
         expect(@account.voice_vendor).to_not be nil
       end
 
-      it_behaves_like "an account endpoint"
-
+      it_behaves_like 'an account endpoint'
     end
 
     context 'who creates an account with a nils on non-email fields' do
@@ -136,12 +136,11 @@ describe AccountsController, type: :controller do
         expect(@account.voice_vendor).to be nil
       end
 
-      it_behaves_like "an account endpoint"
-
+      it_behaves_like 'an account endpoint'
     end
   end
 
-  context "a non-admin user" do
+  context 'a non-admin user' do
     before do
       sign_in user
     end
@@ -160,8 +159,6 @@ describe AccountsController, type: :controller do
 
       delete :destroy, id: 1
       expect(response.status).to eq(403)
-
     end
   end
-
 end

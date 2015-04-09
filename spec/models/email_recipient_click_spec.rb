@@ -4,20 +4,18 @@ describe EmailRecipientClick do
   let(:vendor) { create(:email_vendor) }
   let(:account) { create(:account, email_vendor: vendor) }
 
-  let(:email_message) { 
+  let(:email_message) do
     EmailMessage.new(body: 'short body', subject: 'fuuu').tap do |em|
-      em.account=account
+      em.account = account
       em.save!
     end
-  }
-  
-  let(:email_recipient) { 
-    email_message.recipients.build(email: 'ortega_jets@evotest.govdelivery.com').tap do |r|
-      r.save!
-    end
-  }
+  end
 
-  subject { 
+  let(:email_recipient) do
+    email_message.recipients.build(email: 'ortega_jets@evotest.govdelivery.com').tap(&:save!)
+  end
+
+  subject do
     EmailRecipientClick.new.tap do |erc|
       erc.email_message = email_message
       erc.email_recipient = email_recipient
@@ -25,10 +23,10 @@ describe EmailRecipientClick do
       erc.url = 'http://dontclickonthis.com/very_bad_stuff.html'
       erc.clicked_at = DateTime.now
     end
-  }
+  end
 
   it { is_expected.to be_valid }
-  
+
   [:email_message, :email_recipient, :url, :email, :clicked_at].each do |attr|
     context "when #{attr} is nil" do
       before do
@@ -38,7 +36,7 @@ describe EmailRecipientClick do
     end
   end
 
-  it "should select proper columns for list" do
+  it 'should select proper columns for list' do
     subject.save!
     result = email_recipient.email_recipient_clicks.indexed.first
     cols     = [:email_recipient_id, :email_message_id, :clicked_at, :id, :url]

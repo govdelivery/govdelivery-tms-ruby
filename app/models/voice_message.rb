@@ -14,8 +14,8 @@ class VoiceMessage < ActiveRecord::Base
   after_create :create_script
 
   def create_script
-    return unless self.say_text.present?
-    self.create_call_script!(say_text: self.say_text)
+    return unless say_text.present?
+    self.create_call_script!(say_text: say_text)
   end
 
   def recipients_who_human
@@ -52,19 +52,17 @@ class VoiceMessage < ActiveRecord::Base
   end
 
   def from_number_allowed?
-    unless account.from_number_allowed?(self.from_number)
-      errors.add(:from_number, "is not authorized to send on this account")
+    unless account.from_number_allowed?(from_number)
+      errors.add(:from_number, 'is not authorized to send on this account')
     end
   end
 
   def retry_attribute_defaults
-    self.max_retries||=0 if self.has_attribute? :max_retries
-    self.retry_delay||=300 if self.has_attribute? :retry_delay
+    self.max_retries ||= 0 if self.has_attribute? :max_retries
+    self.retry_delay ||= 300 if self.has_attribute? :retry_delay
   end
 
   def set_from_number
-    if from_number.nil? && account
-      self.from_number = account.from_number
-    end
+    self.from_number = account.from_number if from_number.nil? && account
   end
 end

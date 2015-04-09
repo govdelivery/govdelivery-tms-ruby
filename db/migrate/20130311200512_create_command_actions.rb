@@ -4,9 +4,9 @@ class CreateCommandActions < ActiveRecord::Migration
       t.references :command
       t.references :inbound_message
       t.integer :http_response_code
-      t.string :http_content_type, :limit => 100
-      t.string :http_body, :limit => 500
-      t.datetime :created_at, :null => false
+      t.string :http_content_type, limit: 100
+      t.string :http_body, limit: 500
+      t.datetime :created_at, null: false
     end
 
     change_table :inbound_messages do |t|

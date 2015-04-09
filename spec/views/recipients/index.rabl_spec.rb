@@ -7,8 +7,8 @@ describe 'recipients/index.rabl' do
   let(:recipients) do
     5.times.map do |i|
       stub('recipient',
-           id: 11+i,
-           message_id: 22+i,
+           id: 11 + i,
+           message_id: 22 + i,
            message: message,
            formatted_phone: '+16125551212',
            phone: '6125551212',
@@ -20,7 +20,6 @@ describe 'recipients/index.rabl' do
            valid?: true)
     end
   end
-
 
   before do
     assign(:recipients, recipients)

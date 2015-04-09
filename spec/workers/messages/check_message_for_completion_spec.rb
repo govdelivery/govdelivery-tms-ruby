@@ -1,10 +1,9 @@
 require 'rails_helper'
 describe Messages::CheckMessageForCompletion do
-
   subject { Messages::CheckMessageForCompletion.new }
 
   it 'should work on a message' do
-    message=mock('message', completed?: false, complete!: false, id: 7)
+    message = mock('message', completed?: false, complete!: false, id: 7)
     lock   = mock('lock', without_message: mock('scope', find: message))
     SmsMessage.expects(:lock).returns(lock)
 
@@ -12,7 +11,7 @@ describe Messages::CheckMessageForCompletion do
   end
 
   it 'should silently exit if message is already complete' do
-    message=mock('message', completed?: true)
+    message = mock('message', completed?: true)
     lock   = mock('lock', without_message: mock('scope', find: message))
     SmsMessage.expects(:lock).returns(lock)
 

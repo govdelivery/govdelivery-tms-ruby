@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   has_many :account_voice_messages, through: :account, source: VoiceMessage.table_name
   has_many :email_templates
 
-  scope :for_token, ->(token) { joins(:authentication_tokens).where("authentication_tokens.token" => token) }
+  scope :for_token, ->(token) { joins(:authentication_tokens).where('authentication_tokens.token' => token) }
 
   before_validation :downcase_email
 
@@ -29,11 +29,11 @@ class User < ActiveRecord::Base
   delegate :voice_vendor, to: :account
 
   def self.with_token(token)
-    self.for_token(token).first
+    for_token(token).first
   end
 
   def to_s
-    self.email.downcase
+    email.downcase
   end
 
   def email_messages_indexed
@@ -41,13 +41,12 @@ class User < ActiveRecord::Base
   end
 
   def after_database_authentication
-    logger.info("logged in as #{self.to_s}")
+    logger.info("logged in as #{self}")
   end
 
   private
 
   def downcase_email
-    self.email.downcase! if self.email
+    email.downcase! if email
   end
-
 end

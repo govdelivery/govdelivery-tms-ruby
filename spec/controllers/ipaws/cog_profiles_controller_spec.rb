@@ -3,10 +3,9 @@ require 'rails_helper'
 if defined? JRUBY_VERSION
 
   describe IPAWS::CogProfilesController do
-
     let(:ipaws_credentials) do
       {
-        ipaws_user_id: 12345,
+        ipaws_user_id: 12_345,
         ipaws_cog_id: 'IPAWS_OPEN_12345',
         ipaws_jks_base64: 'AAAAAAA',
         ipaws_public_password: 'alligator',
@@ -16,34 +15,34 @@ if defined? JRUBY_VERSION
 
     let(:ipaws_response) do
       [
-        {"cogid"=>"120082"},
-        {"name"=>"GovDelivery"},
-        {"description"=>"GovDelivery"},
-        {"categoryName"=>"IPAWS-OPEN"},
-        {"organizationName"=>"CIV"},
-        {"cogEnabled"=>"Y"},
-        {"caeAuthorized"=>"Y"},
-        {"caeCmasAuthorized"=>"Y"},
-        {"eanAuthorized"=>"N"},
-        {"allEventCode"=>"N"},
-        {"allGeoCode"=>"N"},
-        {"easAuthorized"=>"Y"},
-        {"cmasAlertAuthorized"=>"Y"},
-        {"cmamTextAuthorized"=>"Y"},
-        {"publicAlertAuthorized"=>"Y"},
-        {"broadcastAuthorized"=>"N"},
-        {"email"=>"joe.bloom@govdelivery.com"},
-        {"eventCodes"=>nil,
-          "subParaListItem"=>[
-          {"ALL"=>"FRW"},
-          {"ALL"=>"SVR"},
-          {"ALL"=>"SPW"},
-          {"ALL"=>"LAE"},
-          {"ALL"=>"CAE"},
-          {"ALL"=>"WSW"},
-          {"ALL"=>"CEM"}]
+        { 'cogid' => '120082' },
+        { 'name' => 'GovDelivery' },
+        { 'description' => 'GovDelivery' },
+        { 'categoryName' => 'IPAWS-OPEN' },
+        { 'organizationName' => 'CIV' },
+        { 'cogEnabled' => 'Y' },
+        { 'caeAuthorized' => 'Y' },
+        { 'caeCmasAuthorized' => 'Y' },
+        { 'eanAuthorized' => 'N' },
+        { 'allEventCode' => 'N' },
+        { 'allGeoCode' => 'N' },
+        { 'easAuthorized' => 'Y' },
+        { 'cmasAlertAuthorized' => 'Y' },
+        { 'cmamTextAuthorized' => 'Y' },
+        { 'publicAlertAuthorized' => 'Y' },
+        { 'broadcastAuthorized' => 'N' },
+        { 'email' => 'joe.bloom@govdelivery.com' },
+        { 'eventCodes' => nil,
+          'subParaListItem' => [
+            { 'ALL' => 'FRW' },
+            { 'ALL' => 'SVR' },
+            { 'ALL' => 'SPW' },
+            { 'ALL' => 'LAE' },
+            { 'ALL' => 'CAE' },
+            { 'ALL' => 'WSW' },
+            { 'ALL' => 'CEM' }]
         },
-        {"geoCodes"=>nil, "subParaListItem"=>[{"SAME"=>"039035"}]}
+        { 'geoCodes' => nil, 'subParaListItem' => [{ 'SAME' => '039035' }] }
       ]
     end
 
@@ -51,7 +50,7 @@ if defined? JRUBY_VERSION
       IPAWS::Vendor::IPAWSClient.any_instance.stubs(:getCOGProfile).returns(ipaws_response)
     end
 
-    describe "GET :show" do
+    describe 'GET :show' do
       it 'returns data from IPAWS/FEMA' do
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
@@ -69,7 +68,6 @@ if defined? JRUBY_VERSION
         expect(response.response_code).to eq(403)
       end
     end
-
   end
 
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'command_actions/index.rabl' do
   let(:command_actions) do
-    5.times.map do |i|
+    5.times.map do |_i|
       stub('CommandAction',
            id: 1,
            inbound_message_id: 2,
@@ -12,12 +12,12 @@ describe 'command_actions/index.rabl' do
            status: 200,
            content_type: 'text/plain',
            created_at: Time.now.beginning_of_day
-      )
+          )
     end
   end
 
   let(:stop_command_actions) do
-    5.times.map do |i|
+    5.times.map do |_i|
       stub('CommandAction',
            id: 1,
            inbound_message_id: 2,
@@ -27,11 +27,11 @@ describe 'command_actions/index.rabl' do
            status: 200,
            content_type: 'text/plain',
            created_at: Time.now.beginning_of_day
-      )
+          )
     end
   end
 
-  context "with keywords" do
+  context 'with keywords' do
     before do
       assign(:command_actions, command_actions)
       Rabl::Engine.any_instance.stubs(:url_for).returns('/fake')
@@ -43,7 +43,7 @@ describe 'command_actions/index.rabl' do
       expect(rendered).to have_json_size(5)
     end
   end
-  context "for stop/help commands" do
+  context 'for stop/help commands' do
     before do
       assign(:command_actions, stop_command_actions)
       Rabl::Engine.any_instance.stubs(:url_for).returns('/fake')

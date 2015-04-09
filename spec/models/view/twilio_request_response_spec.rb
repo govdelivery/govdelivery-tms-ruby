@@ -2,10 +2,10 @@ require_relative '../../../app/models/view/twilio_request_response'
 require 'spec_helper'
 
 describe View::TwilioRequestResponse do
-  subject {
+  subject do
     vendor = stub(foobar: :omg_lol)
     View::TwilioRequestResponse.new(vendor, nil)
-  }
+  end
   it 'delegates to vendor' do
     expect(subject.foobar).to eq(:omg_lol)
   end

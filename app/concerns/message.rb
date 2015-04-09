@@ -34,8 +34,8 @@ module Message
       end
     end
 
-    scope :without_message, -> { select(*(self.attribute_names-['body', 'subject', 'macros', 'play_url', 'say_text', 'max_retries', 'retry_delay'])) }
-    scope :not_yet_sending, -> { where(status: ['new', 'queued']) }
+    scope :without_message, -> { select(*(attribute_names - %w(body subject macros play_url say_text max_retries retry_delay))) }
+    scope :not_yet_sending, -> { where(status: %w(new queued)) }
 
     # don't raise an error if complete! fails
     def complete_with_exception_handler!
@@ -54,9 +54,9 @@ module Message
     attr_accessor :async_recipients
     attr_accessible :recipients_attributes, :async_recipients
 
-    has_many :recipients, -> { order("#{self.quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC") },
+    has_many :recipients, -> { order("#{quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC") },
              dependent: :delete_all,
-             class_name: self.name.gsub('Message', 'Recipient'),
+             class_name: name.gsub('Message', 'Recipient'),
              foreign_key: 'message_id' do
       def build_without_message(attrs)
         recipient = build(attrs)
@@ -95,7 +95,7 @@ module Message
     success          = false
     recipient_params.each do |r|
       # not using a relation here to avoid holding references and leaking
-      recipient                         = klass.new(r.merge(vendor: self.vendor, message_id: self.id))
+      recipient                         = klass.new(r.merge(vendor: vendor, message_id: id))
       recipient.skip_message_validation = true
       success                           = true if recipient.save
     end
@@ -106,8 +106,8 @@ module Message
   # message
   def recipient_build_time
     if recipients.count > 0
-      first = self.created_at
-      last = recipients.reorder("created_at desc").select("created_at").first.created_at
+      first = created_at
+      last = recipients.reorder('created_at desc').find('created_at').created_at
       (last - first)
     else
       0.0
@@ -119,7 +119,7 @@ module Message
   end
 
   def recipient_counts
-    {'total' => recipients.count}.merge(recipient_state_counts)
+    { 'total' => recipients.count }.merge(recipient_state_counts)
   end
 
   def recipients_who_failed
@@ -131,7 +131,7 @@ module Message
   end
 
   def to_s
-    "#{self.class.name} (id #{self.id}"
+    "#{self.class.name} (id #{id}"
   end
 
   protected
@@ -153,7 +153,7 @@ module Message
     Recipient.incomplete_statuses.collect { |state| counts[state] }.sum == 0
   end
 
-  def on_sending(*args)
+  def on_sending(*_args)
     self.sent_at = Time.now
   end
 
@@ -169,25 +169,25 @@ module Message
   def has_valid_async_recipients?
     if async_recipients && async_recipients.is_a?(Array)
       async_recipients.delete_if { |attrs| !attrs.is_a?(Hash) }
-      #if the first 500 recipients are all invalid, let's just assume things are broken
+      # if the first 500 recipients are all invalid, let's just assume things are broken
       begin
-        return true if async_recipients[0, 500].any? { |attrs| self.recipients.build_without_message(attrs).valid? }
+        return true if async_recipients[0, 500].any? { |attrs| recipients.build_without_message(attrs).valid? }
       ensure
-        self.recipients.clear
+        recipients.clear
       end
     end
     errors.add(:recipients, 'must contain at least one valid recipient')
-    return false
+    false
   end
 
   def set_account_from_user
-    self.account ||= self.user.account if user
+    self.account ||= user.account if user
   end
 
   private
 
-  def has_recipients?(*args)
-    self.recipients.any?
+  def has_recipients?(*_args)
+    recipients.any?
   end
 
   def recipient_state_counts

@@ -14,14 +14,14 @@ describe View::EmailRecipientEvent do
 
   describe '#event_at' do
     it 'dispatches to opened_at' do
-      t = Time.at(1359784800)
+      t = Time.at(1_359_784_800)
       open = mock(opened_at: t)
       open.stubs(class: stub(name: 'EmailRecipientOpen'))
       subject = View::EmailRecipientEvent.new(open, nil)
       expect(subject.event_at).to eq(t)
     end
     it 'dispatches to clicked_at' do
-      t = Time.at(1359784800)
+      t = Time.at(1_359_784_800)
       click = mock(clicked_at: t)
       click.stubs(class: stub(name: 'EmailRecipientClick'))
       subject = View::EmailRecipientEvent.new(click, nil)
@@ -31,7 +31,7 @@ describe View::EmailRecipientEvent do
 
   describe '#_links' do
     it 'gets correct links' do
-      event = stub(id: 99999, email_message_id: 9284375, email_recipient_id: 12435243)
+      event = stub(id: 99_999, email_message_id: 9_284_375, email_recipient_id: 12_435_243)
       context = stub
       context.stubs(:controller_name).returns('opens')
       self_opts = {

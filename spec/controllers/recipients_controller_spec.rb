@@ -4,18 +4,18 @@ describe RecipientsController do
   let(:vendor) { create(:sms_vendor) }
 
   let(:account) { create(:account, sms_vendor: vendor, name: 'name') }
-  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
-  let(:message) { user.sms_messages.create(body: "A"*160) }
-  let(:voice_message) { user.voice_messages.create(play_url: "http://your.mom") }
+  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+  let(:message) { user.sms_messages.create(body: 'A' * 160) }
+  let(:voice_message) { user.voice_messages.create(play_url: 'http://your.mom') }
   let(:recipients) do
-    3.times.map { |i| message.recipients.build(phone: (6125551200 + i).to_s) }
+    3.times.map { |i| message.recipients.build(phone: (6_125_551_200 + i).to_s) }
   end
   let(:voice_recipients) do
-    3.times.map { |i| voice_message.recipients.create!(phone: (6125551200 + i).to_s, status: :sending) }
+    3.times.map { |i| voice_message.recipients.create!(phone: (6_125_551_200 + i).to_s, status: :sending) }
   end
-  let(:email_message) { user.email_messages.create(subject: "subs", from_name: 'dude', body: 'hi') }
+  let(:email_message) { user.email_messages.create(subject: 'subs', from_name: 'dude', body: 'hi') }
   let(:email_recipients) do
-    3.times.map { |i| email_message.recipients.build(email: "dude#{i}@sink.govdelivery.com", macros:{"foo" => "paper"}) }
+    3.times.map { |i| email_message.recipients.build(email: "dude#{i}@sink.govdelivery.com", macros: { 'foo' => 'paper' }) }
   end
 
   before do
@@ -96,16 +96,13 @@ describe RecipientsController do
       expect(response.headers['Link']).to match(/next/)
       expect(response.headers['Link']).to match(/last/)
     end
-
   end
 
   context 'SmsMessage' do
-
     context '#page' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
         SmsMessage.any_instance.expects(:recipients).returns(stub(page: recipients))
-
 
         get :index, sms_id: 1, format: :json, page: 2
         expect(assigns(:page)).to eq(2)
@@ -136,7 +133,6 @@ describe RecipientsController do
       end
     end
 
-
     context '#show' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
@@ -150,12 +146,10 @@ describe RecipientsController do
   end
 
   context 'VoiceMessage' do
-
     context '#page' do
       it 'should work' do
         stub_pagination(recipients, 2, 5)
         VoiceMessage.any_instance.expects(:recipients).returns(stub(page: recipients))
-
 
         get :index, voice_id: 1, format: :json, page: 2
         expect(assigns(:page)).to eq(2)

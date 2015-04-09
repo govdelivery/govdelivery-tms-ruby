@@ -17,22 +17,19 @@ class TwilioRequestsController < ApplicationController
                                                from:         params['From'],
                                                callback_url: callback_url)
 
-
-    #parse it
+    # parse it
     prefix, keyword_service, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
 
-    #store it
-    inbound_msg = vendor.create_inbound_message!({ from:  command_parameters.from,
-                                                   to:    command_parameters.to,
-                                                   body:  command_parameters.sms_body,
-                                                   account_id: account_id,  #used for scoped reporting, can be blank
-                                                   keyword: keyword_service.keyword,
-                                                   keyword_response: keyword_service.response_text})
+    # store it
+    inbound_msg = vendor.create_inbound_message!(from:  command_parameters.from,
+                                                 to:    command_parameters.to,
+                                                 body:  command_parameters.sms_body,
+                                                 account_id: account_id,  # used for scoped reporting, can be blank
+                                                 keyword: keyword_service.keyword,
+                                                 keyword_response: keyword_service.response_text)
 
     command_parameters.merge!(sms_tokens:         message.split,
                               inbound_message_id: inbound_msg.id)
-
-
 
     # we don't respond inline to "ignored" messages,
     # but keyword commands still execute and could cause messages to be sent

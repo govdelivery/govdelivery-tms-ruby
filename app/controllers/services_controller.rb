@@ -2,7 +2,7 @@ class ServicesController < ApplicationController
   before_filter :find_user
 
   # root routing does not work as advertised. it should only allow GET
-  before_filter ->(c){ render_405 unless request.method == "GET" }
+  before_filter ->(_c) { render_405 unless request.method == 'GET' }
 
   def index
     @services = { self: root_path }
@@ -36,18 +36,15 @@ class ServicesController < ApplicationController
       @services[:ipaws_alerts] = ipaws_alerts_path
     end
 
-    if current_user.admin?
-      @services[:accounts] = accounts_path
-    end
+    @services[:accounts] = accounts_path if current_user.admin?
 
     @services[:webhooks] = webhooks_path
   end
-
 
   private
 
   def render_405
     response['Allow'] = 'GET'
-    render(json: ["only GET method allowed"], status: 405) and return
+    render(json: ['only GET method allowed'], status: 405) && return
   end
 end

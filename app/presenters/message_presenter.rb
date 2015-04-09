@@ -9,27 +9,27 @@ class MessagePresenter < SimpleDelegator
 
   def _links
     if @message.new_record?
-      {self: new_link,} #create failed
+      { self: new_link } # create failed
     else
-      {self: self_link,}.
-        merge(recipient_action_links).
-        merge(email_links).
-        merge(voice_links)
+      { self: self_link }
+        .merge(recipient_action_links)
+        .merge(email_links)
+        .merge(voice_links)
     end
   end
 
   def recipient_action_links
     { recipients: recipients_link,
       failed: failed_link,
-      sent: sent_link,}
+      sent: sent_link }
   end
 
   def email_links
-    message_type == 'email' ? {clicked: clicked_link, opened: opened_link} : {}
+    message_type == 'email' ? { clicked: clicked_link, opened: opened_link } : {}
   end
 
   def voice_links
-    message_type == 'voice' ? {human: human_link, machine: machine_link, busy: busy_link, no_answer: no_answer_link, could_not_connect: could_not_connect_link} : {}
+    message_type == 'voice' ? { human: human_link, machine: machine_link, busy: busy_link, no_answer: no_answer_link, could_not_connect: could_not_connect_link } : {}
   end
 
   private
@@ -38,13 +38,13 @@ class MessagePresenter < SimpleDelegator
     context.send(:"#{message_type}_path", id: @message.id)
   end
 
-  #polymorphic_path doesn't work here
+  # polymorphic_path doesn't work here
   def message_type
-    @message.class.name.underscore.split('_').first #sms,voice,email
+    @message.class.name.underscore.split('_').first # sms,voice,email
   end
 
   def new_link
-    context.send(:"#{message_type}_index_path") #could also be #new, but this can be POST'ed to.
+    context.send(:"#{message_type}_index_path") # could also be #new, but this can be POST'ed to.
   end
 
   def failed_link

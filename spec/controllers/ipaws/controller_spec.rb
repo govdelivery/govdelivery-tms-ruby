@@ -1,16 +1,15 @@
 require 'rails_helper'
 
 describe IPAWS::Controller, type: :controller do
-  let (:user) { create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor)) }
+  let(:user) { create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor)) }
 
-  describe "a CAP exception that indicates their server is borked" do
-
+  describe 'a CAP exception that indicates their server is borked' do
     controller do
       def index
-        sex            = Java::ServicesIpawsFemaGovIpaws_capservice::CAPServiceException.new
-        sex.error_code ='503'
-        sex.message    = 'CAPServiceException'
-        raise Java::ServicesIpawsFemaGovIpaws_capservice::CAPSoapException.new("everything is terrible", sex)
+        cap            = Java::ServicesIpawsFemaGovIpaws_capservice::CAPServiceException.new
+        cap.error_code = '503'
+        cap.message    = 'CAPServiceException'
+        raise Java::ServicesIpawsFemaGovIpaws_capservice::CAPSoapException.new('everything is terrible', cap)
       end
     end
 
@@ -24,8 +23,7 @@ describe IPAWS::Controller, type: :controller do
     end
   end
 
-  describe "a CAP exception that indicates some java problems on our side" do
-
+  describe 'a CAP exception that indicates some java problems on our side' do
     controller do
       def index
         raise Java::JavaLang::RuntimeException.new('foo')
@@ -34,10 +32,9 @@ describe IPAWS::Controller, type: :controller do
 
     it 'should return a 502 error' do
       sign_in user
-      expect {
+      expect do
         get :index, format: :json
-      }.to raise_error(RuntimeError)
+      end.to raise_error(RuntimeError)
     end
   end
-
 end

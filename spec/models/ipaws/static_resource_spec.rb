@@ -1,14 +1,13 @@
 require 'rails_helper'
 
 describe IPAWS::StaticResource do
-
   class StaticResource
     include IPAWS::StaticResource
   end
 
   before do
     StaticResource.all = []
-  end 
+  end
 
   describe '.as_json' do
     it 'returns an array of hashes containing all the event code attributes' do
@@ -25,5 +24,4 @@ describe IPAWS::StaticResource do
       expect(static_resource.as_json.keys).to match_array(IPAWS::StaticResource::ATTRIBUTES.map(&:to_s))
     end
   end
-
 end
