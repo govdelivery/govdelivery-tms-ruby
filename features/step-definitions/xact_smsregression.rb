@@ -50,7 +50,7 @@ Given(/^I post a new SMS message and retrieve the message details$/) do
     puts 'message details found'.green
   else
     raise 'message details not found'.red
-  end    
+  end
 end
 
 Given(/^I post a new SMS message and retrieve the recipient details$/) do
@@ -115,12 +115,12 @@ def client_2
       client_2 = GovDelivery::TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', api_root: 'https://int-tms.govdelivery.com') #will send from (612) 255-6225
     elsif ENV['XACT_ENV'] == 'stage'
       client_2 = GovDelivery::TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', api_root: 'https://stage-tms.govdelivery.com') #will send from (612) 255-6247
-    elsif ENV['XACT_ENV'] == 'prod'  
+    elsif ENV['XACT_ENV'] == 'prod'
       client_2 = GovDelivery::TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com') #THIS TEST DOESNT RUN IN PROD
     end
 end
 
-def phone_number_to  
+def phone_number_to
   if ENV['XACT_ENV'] == 'qc'
     '+16519684981'
   elsif ENV['XACT_ENV'] == 'integration'
@@ -128,7 +128,7 @@ def phone_number_to
   elsif ENV['XACT_ENV'] == 'stage'
     '+16124247727'
   end
-end  
+end
 
 def phone_number_from
   if ENV['XACT_ENV'] == 'qc'
@@ -172,13 +172,14 @@ Given(/^I rapidly send a keyword via SMS$/) do
     @a = @client.account.messages.list(        date_created: Date.today, #grab full list of messages sent today
         body: "This is a text response from a remote website.",
         direction: "incoming",
-        from: phone_number_to #sort by ).take(5).each do |call| 
-      puts call.body 
+        from: phone_number_to
+      ).take(5).each do |call|
+      puts call.body
     end
 
-    @b = @a[0].uri #find uri of "reply" message, 
+    @b = @a[0].uri #find uri of "reply" message,
 
-  sleep(2)  
+  sleep(2)
   @request = HTTPI::Request.new #call to twilio callsid json
   @request.headers["Content-Type"] = "application/json"
   @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
@@ -191,15 +192,15 @@ Given(/^I rapidly send a keyword via SMS$/) do
   i = 0
   until JSON.parse(@response.raw_body)["body"] == "This is a text file from a remote website." #loop until call status = completed
     STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
-    @response = HTTPI.get(@request) 
+    @response = HTTPI.get(@request)
     STDOUT.puts 'waiting for status for 6 seconds'.blue
     sleep(6)
-    i+=1 
+    i+=1
     if i>10
       raise 'waited 60 seconds for message to be delivered, but it was not found.'.red
-    end  
-  end 
-  puts 'Message found'.green 
+    end
+  end
+  puts 'Message found'.green
 end
 
 
@@ -216,11 +217,11 @@ Given(/^I send an SMS with an invalid word or command$/) do
   sleep(10)
     @a = @client.account.messages.list(          date_created: Date.today, #grab full list of messages sent today
           to: phone_number_from, #sort by
-          #:direction => "incoming").each do |_call| 
+          #:direction => "incoming").each do |_call|
     end
-    @b = @a[0].uri #find uri of "reply" message, 
+    @b = @a[0].uri #find uri of "reply" message,
 
-  sleep(2)  
+  sleep(2)
   @request = HTTPI::Request.new #call to twilio callsid json
   @request.headers["Content-Type"] = "application/json"
   @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
@@ -233,15 +234,15 @@ Given(/^I send an SMS with an invalid word or command$/) do
   i = 0
   until JSON.parse(@response.raw_body)["body"] == "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." #loop until call status = completed
     STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
-    @response = HTTPI.get(@request) 
+    @response = HTTPI.get(@request)
     STDOUT.puts 'waiting for status for 5 seconds'.blue
     sleep(5)
-    i+=1 
+    i+=1
     if i>9
       raise 'waited 45 seconds for message to be delivered, but it was not found.'.red
-    end  
-  end 
-  puts 'Help message found'.green 
+    end
+  end
+  puts 'Help message found'.green
 end
 
 
@@ -257,30 +258,29 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
   sleep(1)
     @a = @client.account.messages.list(          date_created: Date.today, #grab full list of messages sent today
           to: phone_number_from, #sort by
-          direction: "reply").each do |_call| 
+          direction: "reply").each do |_call|
     end
-    @b = @a[0].uri #find uri of "reply" message, 
-  
+    @b = @a[0].uri #find uri of "reply" message,
+
   sleep(2)
   @request = HTTPI::Request.new #call to twilio callsid json
   @request.headers["Content-Type"] = "application/json"
   @request.auth.basic("AC189315456a80a4d1d4f82f4a732ad77e", "88e3775ad71e487c7c90b848a55a5c88")
   @request.url = 'https://api.twilio.com' + @b
   @response = HTTPI.get(@request)
-    #binding.pry
   puts @response.raw_body
-  
+
   sleep(2)
   i = 0
   until JSON.parse(@response.raw_body)["body"] == "Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month." #loop until call status = completed
     STDOUT.puts JSON.parse(@response.raw_body)["status"].yellow
-    @response = HTTPI.get(@request) 
+    @response = HTTPI.get(@request)
     STDOUT.puts 'waiting for status for 5 seconds'.blue
     sleep(5)
-    i+=1 
+    i+=1
     if i>9 #fails after 45 seconds
       raise 'waited 45 seconds for message to be delivered, but it was not found.'.red
-    end  
-  end 
-  puts 'Help message found'.green 
+    end
+  end
+  puts 'Help message found'.green
 end
