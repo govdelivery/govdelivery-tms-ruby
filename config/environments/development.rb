@@ -24,7 +24,7 @@ Xact::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   # Raise exception on mass assignment protection for Active Record models
-  #config.active_record.mass_assignment_sanitizer = :strict
+  # config.active_record.mass_assignment_sanitizer = :strict
 
   # Do not compress assets
   config.assets.compress = false
@@ -35,14 +35,14 @@ Xact::Application.configure do
   routes.default_url_options =
     config.action_controller.default_url_options =
       if ENV['NGROK_HOSTNAME'].present?
-        {host: ENV['NGROK_HOSTNAME'], protocol: config.protocol, port: 80}
+        { host: ENV['NGROK_HOSTNAME'], protocol: config.protocol, port: 80 }
       else
-        {host: 'localhost', port: 3000, protocol: config.protocol}
+        { host: 'localhost', port: 3000, protocol: config.protocol }
       end
 
   # Expands the lines which load the assets
   config.assets.debug = true
-  
+
   # Used to determine whether to send the callback_url parameter when sending
   # a SMS Message.  We don't want to send a callback_url parameter when the application
   # is not accessible from the internet.

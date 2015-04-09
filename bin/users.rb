@@ -6,16 +6,15 @@ class CreateUser
     parse_options(argv)
     boot_rails
 
-    if(@options[:list])
+    if @options[:list]
       list_users
     else
       create_account(@options)
     end
-
   end
 
   def boot_rails
-    require File.expand_path("../../config/environment", __FILE__)
+    require File.expand_path('../../config/environment', __FILE__)
   end
 
   def parse_options(argv)
@@ -36,19 +35,19 @@ Examples:
 
 Options:
 USAGE
-      opts.on("-l", "--list", "List Users") do |p|
+      opts.on('-l', '--list', 'List Users') do |p|
         @options[:list] = p.to_s
       end
-      opts.on("-a", "--name Account ID") do |p|
+      opts.on('-a', '--name Account ID') do |p|
         @options[:user_account_id] = p.to_s
       end
-      opts.on("-e", "--email Email (username)") do |p|
+      opts.on('-e', '--email Email (username)') do |p|
         @options[:user_email] = p.to_s
       end
-      opts.on("-p", "--password Password") do |p|
+      opts.on('-p', '--password Password') do |p|
         @options[:user_password] = p.to_s
       end
-      opts.on("-s", "--admin Admin") do |p|
+      opts.on('-s', '--admin Admin') do |p|
         @options[:user_admin] = p
       end
     end.parse!(argv)
@@ -58,7 +57,7 @@ USAGE
     puts(str) unless RAILS_ENV == 'test'
   end
 
-  def create_account(options)
+  def create_account(_options)
     u = User.new
     u.account_id = @options[:user_account_id]
     u.email = @options[:user_email]
@@ -67,16 +66,16 @@ USAGE
 
     u.save
 
-    if(u.errors.present?)
+    if u.errors.present?
       puts u.errors.messages
     else
-      puts "Created User id: " + u.id.to_s
+      puts 'Created User id: ' + u.id.to_s
       display_user(u)
     end
   end
 
   def list_users
-    puts "User.all\n";
+    puts "User.all\n"
     User.all.each { |u| display_user(u) }
   end
 
@@ -84,16 +83,10 @@ USAGE
     puts "\tid: " + u.id.to_s + "\n"
     puts "\temail: " + u.email + "\n"
     puts "\taccount_id: " + u.account_id.to_s + "\n"
-    puts "\tauth token: " + (u.authentication_tokens.first.try(:token) || "(n/a)") + "\n"
+    puts "\tauth token: " + (u.authentication_tokens.first.try(:token) || '(n/a)') + "\n"
     puts "\tadmin: " + u.admin.to_s + "\n"
     puts "\n"
   end
-
-
 end
 
-
-
-if __FILE__ == $0
-  CreateUser.new.run_from_options(ARGV)
-end
+CreateUser.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME

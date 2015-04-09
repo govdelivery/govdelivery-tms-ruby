@@ -26,18 +26,18 @@ module Service
       def self.click_events(vendor)
         event_iterator(vendor, :click)
       end
-      
+
       private
 
       def self.credentials(vendor)
-        cred=Credentials.new
-        cred.username=vendor.username
-        cred.password=vendor.password
+        cred = Credentials.new
+        cred.username = vendor.username
+        cred.password = vendor.password
         cred
       end
 
       def self.event_iterator(vendor, type)
-        creds = self.credentials(vendor)
+        creds = credentials(vendor)
         EventIterator.new(Fetcher.new(type, creds, odm), Sequence.new(type, vendor))
       end
 

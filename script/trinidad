@@ -5,7 +5,7 @@
 require 'lock_jar'
 LockJar.load
 
-require "trinidad"
+require 'trinidad'
 
 Trinidad::CommandLineParser.parse(ARGV)
 Trinidad::Server.new(Trinidad.configuration).start

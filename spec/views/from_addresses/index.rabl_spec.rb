@@ -4,8 +4,8 @@ describe 'from_addresses/index.rabl' do
   let(:from_addresses) do
     5.times.map do |i|
       stub('from_address',
-           id:             22+i,
-           to_param:       (22+i).to_s,
+           id:             22 + i,
+           to_param:       (22 + i).to_s,
            from_email:     'ben@sink.govdelivery.com',
            reply_to_email: 'andrew@sink.govdelivery.com',
            bounce_email:   'bill@sink.govdelivery.com',

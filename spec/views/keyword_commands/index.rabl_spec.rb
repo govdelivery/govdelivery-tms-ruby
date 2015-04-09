@@ -8,13 +8,13 @@ describe 'keyword_commands/index.rabl' do
            id: 100,
            name: "CMD_#{i}",
            command_type: :dcm_subscribe,
-           params: CommandParameters.new(dcm_account_code: ["foo"], dcm_topic_codes: ['XXX']),
+           params: CommandParameters.new(dcm_account_code: ['foo'], dcm_topic_codes: ['XXX']),
            created_at: i.days.ago,
            updated_at: i.days.ago,
            keyword_id: 101,
            errors: [],
            command_actions: []
-      )
+          )
     end
   end
 

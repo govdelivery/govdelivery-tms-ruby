@@ -4,7 +4,7 @@ class MarkOldRecipientsAsInconclusive
   include Workers::Base
   sidekiq_options queue: :low, unique: true, retry: false, unique_job_expiration: (60 * 60) * 24 # 1 day, let's be conservative
 
-  def perform(*args)
+  def perform(*_args)
     [SmsRecipient, VoiceRecipient, EmailRecipient].each do |relation|
       relation.timeout_expired.find_each do |recipient|
         begin
@@ -15,5 +15,4 @@ class MarkOldRecipientsAsInconclusive
       end
     end
   end
-
 end

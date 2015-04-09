@@ -2,13 +2,10 @@ module Sidekiq
   module DynamicQueue
     module Middleware
       class Client
-
-        def call(worker, item, queue, redis_pool=nil)
+        def call(worker, item, queue, _redis_pool = nil)
           yield
           item['queue'] = queue_for(worker, item, queue)
-          if item['queue'] != queue
-            queue.gsub!(queue.dup, item['queue'])
-          end
+          queue.gsub!(queue.dup, item['queue']) if item['queue'] != queue
           item
         end
 
@@ -18,7 +15,6 @@ module Sidekiq
           possible_queue = [msg['queue'], queue_proc.call(*msg['args'])].compact.join('_')
           Sidekiq::RateLimitedQueue.includes_queue?(possible_queue) ? possible_queue : queue
         end
-
       end
     end
   end

@@ -1,7 +1,6 @@
 FactoryGirl.define do
-  
   trait :voice_sequence do
-    sequence(:from_number){|i| "888555123{i}" }
+    sequence(:from_number) { |_i| '888555123{i}' }
   end
 
   factory :default_from_number, class: FromNumber, traits: [:voice_sequence] do
@@ -12,4 +11,3 @@ FactoryGirl.define do
     is_default false
   end
 end
-

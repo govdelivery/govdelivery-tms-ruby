@@ -4,6 +4,6 @@ class UpdateEmailVendors < ActiveRecord::Migration
       t.remove :username
       t.remove :password
     end
-    EmailVendor.where(:worker=>'OdmWorker').update_all(:worker=>'Odm::TmsExtendedSenderWorker')
+    EmailVendor.where(worker: 'OdmWorker').update_all(worker: 'Odm::TmsExtendedSenderWorker')
   end
 end

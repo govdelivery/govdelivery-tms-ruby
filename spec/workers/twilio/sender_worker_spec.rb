@@ -3,24 +3,24 @@ require File.expand_path('../../../../app/workers/base', __FILE__)
 
 describe Twilio::SenderWorker do
   context 'a voice send' do
-    let(:account){ create(:account_with_voice) }
-    let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
-    let(:message) { account.voice_messages.create!(play_url: 'http://localhost/file.mp3', recipients_attributes: [{phone: "5554443333", vendor: account.voice_vendor}]) }
+    let(:account) { create(:account_with_voice) }
+    let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+    let(:message) { account.voice_messages.create!(play_url: 'http://localhost/file.mp3', recipients_attributes: [{ phone: '5554443333', vendor: account.voice_vendor }]) }
     let(:client) { stub }
 
-
-    #need to add recipient stubs and verify recipients are modified correctly
+    # need to add recipient stubs and verify recipients are modified correctly
     context 'a very happy send' do
       it 'should work' do
         twilio_calls = mock('calls', create: OpenStruct.new(sid: 'abc123', status: 'completed'))
         client.stubs(:account).returns(stub('calls', calls: twilio_calls))
         Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
-        expect { subject.perform(
-          message_id: message.id,
-          message_class: message.class.name,
-          recipient_id: message.recipients.first.id,
-          callback_url: 'http://localhost')
-        }.to change { message.recipients.where(ack: 'abc123').count }.by 1
+        expect do
+          subject.perform(
+            message_id: message.id,
+            message_class: message.class.name,
+            recipient_id: message.recipients.first.id,
+            callback_url: 'http://localhost')
+        end.to change { message.recipients.where(ack: 'abc123').count }.by 1
       end
     end
 
@@ -29,25 +29,26 @@ describe Twilio::SenderWorker do
         it 'should raise an exception' do
           twilio_calls = mock
           twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
-          client.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
+          client.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, 'yarrr'))
           client.stubs(:account).returns(stub('calls', calls: twilio_calls))
           Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
-          expect { subject.perform(
-            message_id: message.id,
-            message_class: message.class.name,
-            recipient_id: message.recipients.first.id,
-            callback_url: 'http://localhost')
-          }.to raise_exception(Sidekiq::Retries::Retry)
+          expect do
+            subject.perform(
+              message_id: message.id,
+              message_class: message.class.name,
+              recipient_id: message.recipients.first.id,
+              callback_url: 'http://localhost')
+          end.to raise_exception(Sidekiq::Retries::Retry)
         end
       end
     end
 
-    context "a send that returns a 400 from Twilio" do
+    context 'a send that returns a 400 from Twilio' do
       it 'should fail the recipient but not the job' do
         response = 400
         twilio_calls = mock
         twilio_calls.expects(:create).raises(Twilio::REST::RequestError.new('error'))
-        client.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, "yarrr"))
+        client.expects(:last_response).returns(Net::HTTPBadRequest.new(response.to_s, response, 'yarrr'))
         client.stubs(:account).returns(stub('calls', calls: twilio_calls))
         Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(client)
         subject.perform(
@@ -63,18 +64,17 @@ describe Twilio::SenderWorker do
       end
     end
 
-    context "a send that blows up because we such" do
+    context 'a send that blows up because we such' do
       it 'should retry' do
-        response     = 400
-        twilio_calls = mock
         subject.expects(:find_message_and_recipient).raises(RuntimeError, 'foo')
-        client.stubs(:account).returns(stub('calls', calls: twilio_calls))
-        expect { subject.perform(
-          message_id:    message.id,
-          message_class: message.class.name,
-          recipient_id:  message.recipients.first.id,
-          callback_url:  'http://localhost')
-        }.to raise_exception(Sidekiq::Retries::Retry)
+        client.stubs(:account).returns(stub('calls', calls: mock))
+        expect do
+          subject.perform(
+            message_id:    message.id,
+            message_class: message.class.name,
+            recipient_id:  message.recipients.first.id,
+            callback_url:  'http://localhost')
+        end.to raise_exception(Sidekiq::Retries::Retry)
       end
     end
 
@@ -86,14 +86,14 @@ describe Twilio::SenderWorker do
         ex = ActiveRecord::ConnectionTimeoutError.new('this could be anything')
         subject.class.expects(:complete_recipient!).raises(ex)
         subject.class.expects(:delay).returns(mock('DelayedClass', complete_recipient!: 'jid'))
-        expect { subject.perform(
-          message_id: message.id,
-          message_class: message.class.name,
-          recipient_id: message.recipients.first.id,
-          callback_url: 'http://localhost')
-        }.to raise_exception(ActiveRecord::ConnectionTimeoutError, 'this could be anything')
+        expect do
+          subject.perform(
+            message_id: message.id,
+            message_class: message.class.name,
+            recipient_id: message.recipients.first.id,
+            callback_url: 'http://localhost')
+        end.to raise_exception(ActiveRecord::ConnectionTimeoutError, 'this could be anything')
       end
     end
-
   end
 end

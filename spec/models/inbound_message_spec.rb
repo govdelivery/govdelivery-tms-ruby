@@ -1,12 +1,11 @@
 require 'rails_helper'
 
 describe InboundMessage do
-
   subject { build_stubbed(:inbound_message) }
   it { is_expected.to be_valid }
-  it { is_expected.to validate_presence_of( :body ) }
-  it { is_expected.to validate_presence_of( :from ) }
-  it { is_expected.to validate_presence_of( :vendor ) }
+  it { is_expected.to validate_presence_of(:body) }
+  it { is_expected.to validate_presence_of(:from) }
+  it { is_expected.to validate_presence_of(:vendor) }
 
   it 'is ignored if not actionable' do
     subject.expects(:actionable?).returns(false)
@@ -40,10 +39,9 @@ describe InboundMessage do
     context 'updating the pending status' do
       before do
         @inbound_message = create(:inbound_message,
-                                  keyword: create(:custom_keyword, response_text: nil).
-                                    tap { |k| k.commands << build(:forward_command)}.
-                                    tap { |k| k.commands << build(:forward_command)})
-
+                                  keyword: create(:custom_keyword, response_text: nil)
+                                    .tap { |k| k.commands << build(:forward_command) }
+                                    .tap { |k| k.commands << build(:forward_command) })
       end
       it 'should be :pending after one of two commands have completed' do
         expect(@inbound_message.command_status).to eql(:pending)
@@ -62,17 +60,15 @@ describe InboundMessage do
 
       it 'should be :failure if told to fail once' do
         expect(@inbound_message.command_status).to eql(:pending)
-        @inbound_message.update_status! fail=true
+        @inbound_message.update_status! true
         expect(@inbound_message.command_status).to eql(:failure)
-        @inbound_message.update_status! fail=false
-        expect(@inbound_message.command_status).to eql(:failure) #still a failure
+        @inbound_message.update_status! false
+        expect(@inbound_message.command_status).to eql(:failure) # still a failure
       end
-
     end
-
   end
 
-  context "auto-responses" do
+  context 'auto-responses' do
     let(:inbound_message_with_response) do
       create(:inbound_message,
              keyword: create(:custom_keyword, response_text: 'respondzzz'),
@@ -124,19 +120,17 @@ describe InboundMessage do
 
   it 'publishes an event on create' do
     message = build(:inbound_message,
-                      keyword: create(:custom_keyword, response_text: nil).
-                        tap { |k| k.commands << build(:forward_command)}.
-                        tap { |k| k.commands << build(:forward_command)})
+                    keyword: create(:custom_keyword, response_text: nil)
+                      .tap { |k| k.commands << build(:forward_command) }
+                      .tap { |k| k.commands << build(:forward_command) })
 
     expected = {
       channel: 'sms_channel',
-      message: has_entries({
-        v: '1',
-        to_phone: message.to,
-        from_phone: message.from,
-        body: message.body,
-        uri: 'xact:sms:inbound'
-      })
+      message: has_entries(v: '1',
+                           to_phone: message.to,
+                           from_phone: message.from,
+                           body: message.body,
+                           uri: 'xact:sms:inbound')
     }
     Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
     message.save!

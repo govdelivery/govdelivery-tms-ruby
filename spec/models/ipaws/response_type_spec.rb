@@ -1,11 +1,10 @@
 require 'rails_helper'
 
 describe IPAWS::ResponseType do
-
   describe '.all' do
     it 'returns a list of ResponseTypes' do
       expect(IPAWS::ResponseType.all).to be_present
-      IPAWS::ResponseType.all.each do |response_type| 
+      IPAWS::ResponseType.all.each do |response_type|
         expect(response_type).to be_instance_of(IPAWS::ResponseType)
       end
     end
@@ -39,10 +38,8 @@ describe IPAWS::ResponseType do
   it 'contains true/false/nil values for :cap_exchange, :core_ipaws_profile, :nwem, :eas_and_public, and :cmas' do
     IPAWS::ResponseType.all.each do |response_type|
       [:cap_exchange, :core_ipaws_profile, :nwem, :eas_and_public, :cmas].each do |attribute|
-        value = response_type.send(attribute)
         expect([true, false, nil]).to include(response_type.send(attribute))
       end
     end
   end
-
 end

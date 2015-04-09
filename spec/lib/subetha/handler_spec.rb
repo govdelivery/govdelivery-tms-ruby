@@ -2,7 +2,6 @@ require 'rails_helper'
 
 describe Subetha::Handler do
   context 'auth' do
-
     context 'bad credentials' do
       let(:message_context) do
         stub('message_context',
@@ -56,7 +55,7 @@ describe Subetha::Handler do
     let(:message_no_subject) { File.read(Rails.root.join('test', 'fixtures', 'invalid_message.eml')) }
     subject do
       Subetha::Handler.new(nil).tap do |h|
-        h.user=user
+        h.user = user
       end
     end
 

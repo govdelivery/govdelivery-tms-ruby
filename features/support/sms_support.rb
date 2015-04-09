@@ -1,7 +1,6 @@
 require 'colored'
 
-
-#Before('@2waystatic') do |scenario|
+# Before('@2waystatic') do |scenario|
 #  # Register Twilio Requests Controller of the Environment we're interested in with the Xact Twilio Test number
 #
 #  @twilio_sms_receiver_uri = "#{xact_url}/twilio_requests"
@@ -9,11 +8,11 @@ require 'colored'
 #  twil.account.incoming_phone_numbers.get(twilio_xact_test_number[:sid]).update(
 #    :sms_url => @twilio_sms_receiver_uri
 #  )
-#end
+# end
 
 After('@keyword') do |scenario|
   if !scenario.failed? && defined?(@keyword)
-    STDOUT.puts "Deleting keyword created for this test".blue
+    STDOUT.puts 'Deleting keyword created for this test'.blue
     @keyword.delete
   end
 end

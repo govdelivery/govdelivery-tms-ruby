@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe "routing to email messages" do
-  it "routes to email_messages#create" do
-    expect(post("/messages/email")).to route_to("email_messages#create")
+describe 'routing to email messages' do
+  it 'routes to email_messages#create' do
+    expect(post('/messages/email')).to route_to('email_messages#create')
   end
 
   it 'paginates email_messages#index' do
@@ -11,13 +11,13 @@ describe "routing to email messages" do
 end
 
 describe 'routing to email recipients' do
-  it "routes to recipients#clicked" do
-    expect(get("/messages/email/1/recipients/clicked")).to route_to("recipients#clicked", email_id: '1')
+  it 'routes to recipients#clicked' do
+    expect(get('/messages/email/1/recipients/clicked')).to route_to('recipients#clicked', email_id: '1')
   end
 
-  it "routes to recipients#opened" do
-    expect(get("/messages/email/1/recipients/opened")).to route_to("recipients#opened", email_id: '1')
-  end    
+  it 'routes to recipients#opened' do
+    expect(get('/messages/email/1/recipients/opened')).to route_to('recipients#opened', email_id: '1')
+  end
 end
 
 describe 'routing to email statistics' do

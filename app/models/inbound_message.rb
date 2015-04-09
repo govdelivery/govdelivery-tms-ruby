@@ -1,6 +1,6 @@
 class InboundMessage < ActiveRecord::Base
   belongs_to :vendor, inverse_of: :inbound_messages, class_name: 'SmsVendor'
-  belongs_to :account #used for scoped reporting, can be blank
+  belongs_to :account # used for scoped reporting, can be blank
   belongs_to :keyword, inverse_of: :inbound_messages
   enum :command_status, [:no_action, :pending, :failure, :success, :ignored]
 
@@ -16,7 +16,7 @@ class InboundMessage < ActiveRecord::Base
   before_create :see_if_this_should_be_ignored
   after_create :publish_event
 
-  def update_status! fail=false
+  def update_status!(fail = false)
     if fail
       update_attribute :command_status, :failure
     else
@@ -34,13 +34,13 @@ class InboundMessage < ActiveRecord::Base
   # intended to prevent infinite loops caused by auto-response messages.
   #
   def actionable?
-    compare_date = self.created_at || DateTime.now
+    compare_date = created_at || DateTime.now
     table = self.class.arel_table
     threshold = (compare_date - Xact::Application.config.auto_response_threshold.minutes).to_datetime
-    self.class.where("created_at >= ?", threshold).
-               where(body: self.body).
-               where(caller_phone: self.caller_phone).
-               where(table[:id].not_eq(self.id)).count == 0
+    self.class.where('created_at >= ?', threshold)
+      .where(body: body)
+      .where(caller_phone: caller_phone)
+      .where(table[:id].not_eq(id)).count == 0
   end
 
   ##
@@ -55,29 +55,27 @@ class InboundMessage < ActiveRecord::Base
   protected
 
   def see_if_this_should_be_ignored
-    unless actionable?
-      ignore!
-    end
+    ignore! unless actionable?
   end
 
   def publish_event
     Analytics::PublisherWorker.perform_async(channel: 'sms_channel', message: {
-      uri:        'xact:sms:inbound',
-      v:          '1',
-      from_phone: from,
-      to_phone:   to,
-      body:       body,
-      created_at: created_at
-    })
+                                               uri:        'xact:sms:inbound',
+                                               v:          '1',
+                                               from_phone: from,
+                                               to_phone:   to,
+                                               body:       body,
+                                               created_at: created_at
+                                             })
   end
 
   def set_response_status
     self.command_status = if !keyword.try(:commands).blank?
-      :pending
-    elsif keyword.try(:response_text)
-      :success
-    else
-      :no_action
-    end
+                            :pending
+                          elsif keyword.try(:response_text)
+                            :success
+                          else
+                            :no_action
+                          end
   end
 end

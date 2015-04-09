@@ -23,12 +23,12 @@ module Subetha
         org.subethamail.smtp.auth.EasyAuthenticationHandlerFactory.new do |email, password|
           begin
             raise 'nope' unless User.with_token(password).present?
-          rescue Java::java::lang::Throwable, StandardError => e
+          rescue Java.java.lang::Throwable, StandardError => e
             Sidekiq.logger.info "failed to authenticate user #{email}"
             raise LoginFailedException.new
           end
         end
-      #@server.require_auth = true
+      # @server.require_auth = true
       server.start
     end
 
@@ -50,13 +50,12 @@ module Subetha
     def defaults
       {
         port:             2525,
-        software_name:    "GovDelivery TMS",
+        software_name:    'GovDelivery TMS',
         max_connections:  100,
         max_recipients:   500,
         max_message_size: 10_000_000,
-        host_name:        "#{Rails.env =~ /production/ ? '' : "#{Rails.env.to_s.split("-")[0]}-"}tms.govdelivery.com"
+        host_name:        "#{Rails.env =~ /production/ ? '' : "#{Rails.env.to_s.split('-')[0]}-"}tms.govdelivery.com"
       }
     end
-
   end
 end

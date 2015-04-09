@@ -1,9 +1,8 @@
 FactoryGirl.define do
-
   sequence(:short_code, '100000')
 
   trait :vendor do
-    sequence(:name) {|n| "name#{n}" }
+    sequence(:name) { |n| "name#{n}" }
     worker 'LoopbackMessageWorker'
   end
 

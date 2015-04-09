@@ -9,5 +9,4 @@ class AddFromAddressFields < ActiveRecord::Migration
       t.datetime :created_at
     end
   end
-
 end

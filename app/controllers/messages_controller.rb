@@ -23,10 +23,10 @@ class MessagesController < ApplicationController
     params[:message][:async_recipients] = params[:message].delete(:recipients) if params[:message]
     @message = @message_scope.build(params[:message])
     if @message.save_with_async_recipients
-      CreateRecipientsWorker.perform_async({recipients: @message.async_recipients,
-                                            klass:        @message.class.name,
-                                            message_id:   @message.id,
-                                            send_options: send_options})
+      CreateRecipientsWorker.perform_async(recipients: @message.async_recipients,
+                                           klass:        @message.class.name,
+                                           message_id:   @message.id,
+                                           send_options: send_options)
     end
     respond_with(@message)
   end
@@ -34,15 +34,15 @@ class MessagesController < ApplicationController
   protected
 
   def set_scope
-    raise "@message_scope must be set in MessagesController subclass"
+    raise '@message_scope must be set in MessagesController subclass'
   end
 
   def set_attr
-    raise "@content_attribute must be set in MessagesController subclass"
+    raise '@content_attribute must be set in MessagesController subclass'
   end
 
   def send_options
-    opts = {message_url: twiml_url}
+    opts = { message_url: twiml_url }
     opts[:callback_url] = twilio_status_callbacks_url(format: :xml) if Rails.configuration.public_callback
     opts
   end

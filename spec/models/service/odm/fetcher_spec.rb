@@ -10,36 +10,34 @@ module Service
       ActivityRequest = Struct.new(:max_results, :sequence)
     end
     describe Fetcher do
-      it "only allows real methods" do
-        expect{Fetcher.new(:invalid, 'creds', nil, 1000)}.to raise_error
+      it 'only allows real methods' do
+        expect { Fetcher.new(:invalid, 'creds', nil, 1000) }.to raise_error
       end
       it "doesn't allow a batch_size of zero" do
-        expect{Fetcher.new(:delivery, 'creds', nil, 0)}.to raise_error
+        expect { Fetcher.new(:delivery, 'creds', nil, 0) }.to raise_error
       end
       describe 'with a service that raises' do
         it 'allows service exceptions to bubble' do
           service = mock
           service.expects(:delivery_activity_since).raises(Exception.new('foo'))
-          expect{Fetcher.new(:delivery, 'creds', service, 1000).fetch('a sequence')}.to raise_error
+          expect { Fetcher.new(:delivery, 'creds', service, 1000).fetch('a sequence') }.to raise_error
         end
       end
       [:open, :delivery, :click].each do |type|
         describe "with a service that returns #{type}_activity_batch" do
-          let(:activity_batch) {
-            OpenStruct.new(type => ['event'] * 5, next_sequence: 'the next one')
-          }
+          let(:activity_batch) { OpenStruct.new(type => ['event'] * 5, next_sequence: 'the next one') }
 
-          let(:activity_request) {
+          let(:activity_request) do
             req = OpenStruct.new(max_results: 0)
             ActivityRequest.expects(:new).returns(req)
             req
-          }
+          end
 
-          let(:service) {
+          let(:service) do
             service = mock
             service.expects("#{type}_activity_since").with('creds', activity_request).returns(activity_batch)
             service
-          }
+          end
 
           it 'maps activity stuff to a Fetcher::Batch' do
             batch = Fetcher.new(type, 'creds', service, 1000).fetch('a sequence')
@@ -69,4 +67,3 @@ module Service
     end
   end
 end
-

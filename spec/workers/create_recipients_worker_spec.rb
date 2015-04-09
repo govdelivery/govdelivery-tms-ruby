@@ -10,7 +10,7 @@ describe CreateRecipientsWorker do
     message.expects(:ready!).with(nil, recipient_params)
     SmsMessage.expects(:find).with(1).returns(message)
 
-    worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => recipient_params, 'klass'=>'SmsMessage')
+    worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => recipient_params, 'klass' => 'SmsMessage')
   end
 
   it 'should complete if there are no recipients' do
@@ -20,7 +20,6 @@ describe CreateRecipientsWorker do
     message.expects(:complete!).returns(true)
     VoiceMessage.expects(:find).with(1).returns(message)
 
-    worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass'=>'VoiceMessage')
+    worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass' => 'VoiceMessage')
   end
-
 end

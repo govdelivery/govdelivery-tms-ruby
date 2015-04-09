@@ -15,11 +15,11 @@ class EmailTemplate < ActiveRecord::Base
   validate :valid_macros
 
   def valid_macros
-    errors.add(:macros, "must be a hash or null") unless self.try(:macros).nil? || self.macros.is_a?(Hash)
+    errors.add(:macros, 'must be a hash or null') unless try(:macros).nil? || macros.is_a?(Hash)
   end
 
   def user_and_address_belong_to_account
-    errors.add(:from_address, "must belong to same account as email template") unless account && account.from_addresses.where(id: from_address_id).any?
-    errors.add(:user, "must belong to same account as email template") unless account && account.users.where(id: user_id).any?
+    errors.add(:from_address, 'must belong to same account as email template') unless account && account.from_addresses.where(id: from_address_id).any?
+    errors.add(:user, 'must belong to same account as email template') unless account && account.users.where(id: user_id).any?
   end
 end

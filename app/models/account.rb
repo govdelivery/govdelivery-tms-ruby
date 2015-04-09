@@ -45,14 +45,14 @@ class Account < ActiveRecord::Base
   before_validation :normalize_dcm_account_codes
   before_validation :generate_sid, on: :create
 
-  validates :name, presence: true, length: {maximum: 255}, uniqueness: true
+  validates :name, presence: true, length: { maximum: 255 }, uniqueness: true
   validates :sid, presence: true
   validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
   validate :has_one_default_from_number, if: '!voice_vendor_id.blank?'
   validate :validate_sms_prefixes, :validate_sms_vendor
   # ONE: HYRULE, TWO: STRONGMAIL
   validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
-                                message: "%{value} is not a valid link_encoder" }
+                                        message: '%{value} is not a valid link_encoder' }
 
   scope :with_sms, where('sms_vendor_id is not null')
 
@@ -62,12 +62,12 @@ class Account < ActiveRecord::Base
   end
 
   def feature_enabled?(feature)
-    !!self.send("#{feature}_vendor")
+    !!send("#{feature}_vendor")
   end
 
-  ['start', 'stop', 'help'].each do |name|
+  %w(start stop help).each do |name|
     define_method(name) do |command_parameters|
-      keyword = self.send(:"#{name}_keyword")
+      keyword = send(:"#{name}_keyword")
       keyword.commands.each do |command|
         command.call(command_parameters)
       end if keyword
@@ -102,20 +102,20 @@ class Account < ActiveRecord::Base
   end
 
   def start!(command_parameters)
-    stop_requests.where(phone: command_parameters.from).delete_all #its ok if it doesn't exist
+    stop_requests.where(phone: command_parameters.from).delete_all # its ok if it doesn't exist
     start(command_parameters)
   end
 
   def from_email_allowed?(email)
-    !email.nil? && from_addresses.where("lower(from_email) = ?", email.downcase).count == 1
+    !email.nil? && from_addresses.where('lower(from_email) = ?', email.downcase).count == 1
   end
 
   def from_number_allowed?(phone)
-    !phone.nil? && from_numbers.where("phone_number = ?", phone).count == 1
+    !phone.nil? && from_numbers.where('phone_number = ?', phone).count == 1
   end
 
   # some sugar for working with keywords on the console
-  def keywords arg=nil
+  def keywords(arg = nil)
     if arg
       super.where(name: arg).first
     else
@@ -131,16 +131,16 @@ class Account < ActiveRecord::Base
   end
 
   def destroy
-    sms_vendor.destroy if sms_vendor.try(:account_ids) == [self.id]
-    email_vendor.destroy if email_vendor.try(:account_ids) == [self.id]
-    voice_vendor.destroy if voice_vendor.try(:account_ids) == [self.id]
+    sms_vendor.destroy if sms_vendor.try(:account_ids) == [id]
+    email_vendor.destroy if email_vendor.try(:account_ids) == [id]
+    voice_vendor.destroy if voice_vendor.try(:account_ids) == [id]
 
     # if you put this in a before_destroy, associations get deleted first which breaks things
     # lolz: https://github.com/rails/rails/issues/670
     self.class.connection.unprepared_statement do
       [EmailRecipient, SmsRecipient, VoiceRecipient, CallScript, EmailRecipientClick, EmailRecipientOpen].each do |klass|
         assoc = klass.name.tableize.pluralize
-        self.class.connection.delete("DELETE FROM #{assoc} WHERE id IN (#{self.send(assoc).select("#{assoc}.id").except(:order).to_sql})")
+        self.class.connection.delete("DELETE FROM #{assoc} WHERE id IN (#{send(assoc).select("#{assoc}.id").except(:order).to_sql})")
       end
     end
 
@@ -159,7 +159,7 @@ class Account < ActiveRecord::Base
   def generate_sid
     loop do
       self.sid = SecureRandom.hex(16)
-      break unless Account.where(sid: self.sid).any?
+      break unless Account.where(sid: sid).any?
     end
   end
 
@@ -176,14 +176,14 @@ class Account < ActiveRecord::Base
   # so that unsaved, new accounts can get validated, too.
   #
   def has_one_default_from_address
-    unless from_addresses.find_all{|fa| fa.is_default? }.count == 1
-      errors.add(:default_from_address, "cannot be nil")
+    unless from_addresses.find_all(&:is_default?).count == 1
+      errors.add(:default_from_address, 'cannot be nil')
     end
   end
 
   def has_one_default_from_number
-    unless from_numbers.find_all{|fa| fa.is_default? }.count == 1
-      errors.add(:default_from_number, "cannot be nil")
+    unless from_numbers.find_all(&:is_default?).count == 1
+      errors.add(:default_from_number, 'cannot be nil')
     end
   end
 
@@ -193,13 +193,13 @@ class Account < ActiveRecord::Base
 
   def validate_sms_vendor
     if sms_vendor_id_changed? && sms_vendor && sms_vendor.accounts.count > 0 && !sms_vendor.shared?
-      errors.add(:shared_vendor, "Vendor specified is not shared and already has one account")
+      errors.add(:shared_vendor, 'Vendor specified is not shared and already has one account')
     end
   end
 
   def validate_sms_prefixes
     if shared_sms_vendor? && sms_prefixes.size < 1
-      errors.add(:sms_prefixes, "At least 1 SmsPrefix is required with a shared vendor")
+      errors.add(:sms_prefixes, 'At least 1 SmsPrefix is required with a shared vendor')
     end
   end
 

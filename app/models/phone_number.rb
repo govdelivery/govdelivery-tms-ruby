@@ -12,7 +12,7 @@ PhoneNumber = Struct.new(:number) do
   def dcm
     return unless (formatted = e164)
     country_code, *rest = Phony.split(formatted.slice(1..-1))
-    [country_code, rest.join].join("+")
+    [country_code, rest.join].join('+')
   end
 
   # 468311 => 468311
@@ -26,5 +26,4 @@ PhoneNumber = Struct.new(:number) do
       e164
     end
   end
-
 end

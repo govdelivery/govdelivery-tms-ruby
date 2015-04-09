@@ -13,47 +13,47 @@ class RecipientsController < ApplicationController
     @recipient = @message.recipients.find(params[:id])
   end
 
-  #email
+  # email
   def clicked
     render_recipient_subset(:clicked)
   end
 
-  #email
+  # email
   def opened
     render_recipient_subset(:opened)
   end
 
-  #sms,voice,email
+  # sms,voice,email
   def failed
     render_recipient_subset(:failed)
   end
 
-  #sms,voice,email
+  # sms,voice,email
   def sent
     render_recipient_subset(:sent)
   end
 
-  #voice
+  # voice
   def human
     render_recipient_subset(:human)
   end
 
-  #voice
+  # voice
   def machine
     render_recipient_subset(:machine)
   end
 
-  #voice
+  # voice
   def busy
     render_recipient_subset(:busy)
   end
 
-  #voice
+  # voice
   def no_answer
     render_recipient_subset(:no_answer)
   end
 
-  #voice
+  # voice
   def could_not_connect
     render_recipient_subset(:could_not_connect)
   end
@@ -81,7 +81,7 @@ class RecipientsController < ApplicationController
 
   def verify_no_create_in_progress
     if (Rails.cache.exist?(CreateRecipientsWorker.job_key(@message.id)) rescue false)
-      render json: {message: 'Recipient list is being built and is not yet complete'}, status: 202 and return false
+      render json: { message: 'Recipient list is being built and is not yet complete' }, status: 202 and return false
     end
   end
 
@@ -96,5 +96,4 @@ class RecipientsController < ApplicationController
   def set_email_recipient_attributes
     @content_attributes = [:email, :macros]
   end
-
 end

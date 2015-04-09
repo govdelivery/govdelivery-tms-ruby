@@ -5,23 +5,23 @@ class CreateVendor
   def run_from_options(argv)
     parse_options(argv)
     boot_rails
-    if(@options[:list])
-      list_vendors()
-    elsif(@options[:vendor_type] == "SmsVendor")
+    if @options[:list]
+      list_vendors
+    elsif (@options[:vendor_type] == 'SmsVendor')
       create_sms_vendor(@options)
-    elsif(@options[:vendor_type] == "VoiceVendor")
+    elsif (@options[:vendor_type] == 'VoiceVendor')
       create_voice_vendor(@options)
-    elsif(@options[:vendor_type] == "EmailVendor")
+    elsif (@options[:vendor_type] == 'EmailVendor')
       create_email_vendor(@options)
-    elsif(@options[:vendor_type] == "IPAWSVendor")
+    elsif (@options[:vendor_type] == 'IPAWSVendor')
       create_ipaws_vendor(@options)
     else
-      puts "Incorrect Vendor type. see --help"
+      puts 'Incorrect Vendor type. see --help'
     end
   end
 
   def boot_rails
-    require File.expand_path("../../config/environment", __FILE__)
+    require File.expand_path('../../config/environment', __FILE__)
   end
 
   def parse_options(argv)
@@ -51,49 +51,48 @@ Examples:
 
 Options:
 USAGE
-      opts.on("-l", "--list", "List all Vendors") do |p|
+      opts.on('-l', '--list', 'List all Vendors') do |p|
         @options[:list] = p
       end
-      opts.on("-t", "--type Vendor Type") do |p|
+      opts.on('-t', '--type Vendor Type') do |p|
         @options[:vendor_type] = p.to_s
       end
-      opts.on("-n", "--name Vendor Name") do |p|
+      opts.on('-n', '--name Vendor Name') do |p|
         @options[:vendor_name] = p.to_s
       end
-      opts.on("-u", "--username Vendor User Name") do |p|
+      opts.on('-u', '--username Vendor User Name') do |p|
         @options[:vendor_username] = p.to_s
       end
-      opts.on("-p", "--password Vendor Password") do |p|
+      opts.on('-p', '--password Vendor Password') do |p|
         @options[:vendor_password] = p.to_s
       end
-      opts.on("-f", "--from Vendor From") do |p|
+      opts.on('-f', '--from Vendor From') do |p|
         @options[:vendor_from] = p.to_s
       end
-      opts.on("-w", "--worker Vendor Worker") do |p|
+      opts.on('-w', '--worker Vendor Worker') do |p|
         @options[:vendor_worker] = p.to_s
       end
-      opts.on("-h", "--help_text Vendor Help Text") do |p|
+      opts.on('-h', '--help_text Vendor Help Text') do |p|
         @options[:vendor_help_text] = p.to_s
       end
-      opts.on("-s", "--stop_text Vendor Stop Text") do |p|
+      opts.on('-s', '--stop_text Vendor Stop Text') do |p|
         @options[:vendor_stop_text] = p.to_s
       end
-      opts.on("-S", "--start_text Vendor Start Text") do |p|
+      opts.on('-S', '--start_text Vendor Start Text') do |p|
         @options[:vendor_start_text] = p.to_s
       end
-      opts.on("-a", "--shared", "Indicate if this SMS vendor is shared or exclusive.  If you pass this argument, the SMS vendor will be shared.") do |p|
+      opts.on('-a', '--shared', 'Indicate if this SMS vendor is shared or exclusive.  If you pass this argument, the SMS vendor will be shared.') do |_p|
         @options[:shared] = true
       end
-      opts.on("-c", "--cog-id IPAWS::Vendor COG ID") do |p|
+      opts.on('-c', '--cog-id IPAWS::Vendor COG ID') do |p|
         @options[:vendor_cog_id] = p.to_s
       end
-      opts.on("-r", "--private-password IPAWS::Vendor private password") do |p|
+      opts.on('-r', '--private-password IPAWS::Vendor private password') do |p|
         @options[:vendor_private_password] = p.to_s
       end
-      opts.on("-j", "--jks IPAWS::Vendor JKS file") do |p|
+      opts.on('-j', '--jks IPAWS::Vendor JKS file') do |p|
         @options[:vendor_jks_file] = p.to_s
       end
-
     end.parse!(argv)
   end
 
@@ -101,8 +100,7 @@ USAGE
     puts(str) unless RAILS_ENV == 'test'
   end
 
-  def create_sms_vendor(options)
-
+  def create_sms_vendor(_options)
     v = SmsVendor.new
     v.name = @options[:vendor_name]
     v.username = @options[:vendor_username]
@@ -116,16 +114,14 @@ USAGE
 
     v.save
 
-    if(v.errors)
+    if v.errors
       puts v.errors.messages
     else
-      puts "Created SmsVendor id: " + v.id.to_s
+      puts 'Created SmsVendor id: ' + v.id.to_s
     end
-
   end
 
-  def create_voice_vendor(options)
-
+  def create_voice_vendor(_options)
     v = VoiceVendor.new
     v.name = @options[:vendor_name]
     v.username = @options[:vendor_username]
@@ -135,28 +131,25 @@ USAGE
 
     v.save
 
-    if(v.errors)
+    if v.errors
       puts v.errors.messages
     else
-      puts "Created VoiceVendor id: " + v.id.to_s
+      puts 'Created VoiceVendor id: ' + v.id.to_s
     end
-
   end
 
-  def create_email_vendor(options)
-
+  def create_email_vendor(_options)
     v = EmailVendor.new
     v.name = @options[:vendor_name]
     v.worker = @options[:vendor_worker]
 
     v.save
 
-    if(v.errors)
+    if v.errors
       puts v.errors.messages
     else
-      puts "Created EmailVendor id: " + v.id.to_s
+      puts 'Created EmailVendor id: ' + v.id.to_s
     end
-
   end
 
   def create_ipaws_vendor(options)
@@ -174,8 +167,7 @@ USAGE
   end
 
   def list_vendors
-
-    puts "SmsVendor.all\n";
+    puts "SmsVendor.all\n"
     SmsVendor.all.each { |v|
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
@@ -184,29 +176,22 @@ USAGE
       puts "\n"
     }
 
-    puts "VoiceVendor.all\n";
+    puts "VoiceVendor.all\n"
     VoiceVendor.all.each { |v|
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
-      #puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
+      # puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
       puts "\n"
     }
 
-    puts "EmailVendor.all\n";
+    puts "EmailVendor.all\n"
     EmailVendor.all.each { |v|
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
       puts "\tworker: " + v.worker.to_s + "\n"
       puts "\n"
     }
-
   end
-
 end
 
-
-
-if __FILE__ == $0
-  CreateVendor.new.run_from_options(ARGV)
-end
-
+CreateVendor.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME

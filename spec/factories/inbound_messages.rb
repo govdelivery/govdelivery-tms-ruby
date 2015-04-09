@@ -1,5 +1,4 @@
 FactoryGirl.define do
-
   factory :inbound_message do
     vendor factory: :sms_vendor
     keyword factory: :custom_keyword
@@ -10,7 +9,6 @@ FactoryGirl.define do
     command_status :no_action
 
     factory :inbound_stop_request do
-
     end
   end
 end

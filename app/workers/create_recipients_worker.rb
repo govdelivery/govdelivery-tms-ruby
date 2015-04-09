@@ -13,7 +13,7 @@ class CreateRecipientsWorker
   end
 
   def self.job_key(message_id)
-    "xact:#{self.to_s.underscore}_in_progress_#{message_id}"
+    "xact:#{to_s.underscore}_in_progress_#{message_id}"
   end
 
   def perform(options)
@@ -22,14 +22,14 @@ class CreateRecipientsWorker
 
     begin
       message.ready!(nil, recipient_params)
-      args = {message_id: message.id}.merge!(options['send_options'])
+      args = { message_id: message.id }.merge!(options['send_options'])
       if message.respond_to?(:subject)
         args['subject']    = message.subject
         args['account_id'] = message.account_id
       end
       message.worker.perform_async(args)
     rescue AASM::InvalidTransition => e
-      logger.warn("Failed to queue or complete #{message.to_s}") unless message.complete!
+      logger.warn("Failed to queue or complete #{message}") unless message.complete!
     end
   ensure
     Rails.cache.delete(self.class.job_key(message.id)) if message

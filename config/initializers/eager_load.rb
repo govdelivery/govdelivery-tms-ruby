@@ -2,6 +2,4 @@
 
 require 'command_type/base'
 
-if defined?(JRUBY_VERSION)
-  LockJar.load
-end
+LockJar.load if defined?(JRUBY_VERSION)

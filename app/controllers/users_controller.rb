@@ -1,8 +1,10 @@
 require 'ostruct'
 
 class UsersController < ApplicationController
-  before_filter ->(c) { render(json: {error: "forbidden"},
-                               status: :forbidden) unless current_user.admin? }
+  before_filter lambda { |_c|
+    render(json: { error: 'forbidden' },
+           status: :forbidden) unless current_user.admin?
+  }
 
   def index
     account_obj = Account.find(params[:account_id])

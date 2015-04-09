@@ -30,14 +30,14 @@ describe FromNumber do
   end
 
   context 'with no from_number' do
-    subject { account.from_numbers.build() }
+    subject { account.from_numbers.build }
     it { is_expected.not_to be_valid }
   end
 
   context 'with incoming voice messages' do
-    subject {
+    subject do
       account.from_numbers.create(is_default: true, phone_number: '8885559876')
-    }
+    end
     it 'should save valid voice message' do
       a = subject.incoming_voice_messages.build(say_text: 'poo', is_default: true)
       expect(a).to be_valid

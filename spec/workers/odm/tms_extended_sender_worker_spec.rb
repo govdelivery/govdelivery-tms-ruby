@@ -13,25 +13,25 @@ if defined?(JRUBY_VERSION)
       s
     end
     let(:email_message) do
-      msg = account.email_messages.new({'body'                   => '[[foo]] msg body',
-                                        'subject'                => '[[foo]] msg subject',
-                                        'from_name'              => 'Emailing Cat',
-                                        'from_email'             => 'from@cat.com',
-                                        'reply_to'               => 'reply@cat.com',
-                                        'errors_to'              => 'errors@cat.com',
-                                        'open_tracking_enabled'  => false,
-                                        'click_tracking_enabled' => true,
-                                        'macros'                 => {'macro1' => 'foo', 'macro2' => 'bar'}})
+      msg = account.email_messages.new('body'                   => '[[foo]] msg body',
+                                       'subject'                => '[[foo]] msg subject',
+                                       'from_name'              => 'Emailing Cat',
+                                       'from_email'             => 'from@cat.com',
+                                       'reply_to'               => 'reply@cat.com',
+                                       'errors_to'              => 'errors@cat.com',
+                                       'open_tracking_enabled'  => false,
+                                       'click_tracking_enabled' => true,
+                                       'macros'                 => { 'macro1' => 'foo', 'macro2' => 'bar' })
       msg.stubs('recipients').returns(recipients)
       msg
     end
-    let(:extended_message) {
+    let(:extended_message) do
       mock('extended_message').tap do |m|
         m.expects(:subject=).with('##foo## msg subject')
         m.expects(:body=).with('##foo## msg body')
         m.expects(:from_name=).with('Emailing Cat')
         m.expects(:from_email=).with(email_message.from_email)
-        m.expects(:headers).returns(mock('getHeaders()', :<< => true))
+        m.expects(:headers).returns(mock('getHeaders()', '<<' => true))
         m.expects(:errors_to_email=).with(email_message.errors_to)
         m.expects(:reply_to_email=).with(email_message.reply_to)
         m.expects(:email_column=).with('email')
@@ -42,13 +42,10 @@ if defined?(JRUBY_VERSION)
         m.expects(:link_encoder=).with(account.link_encoder == 'TWO' ? Java::ComGovdeliveryTmsTmsextended::LinkEncoder::TWO : nil)
         m.stubs(:to).returns([])
       end
-    }
-    let (:params) do
-      p ={'message_id' => 11, 'account_id' => account.id}
-      p
     end
-    let (:odm_v2) { mock(' Odm::TmsExtendedSenderWorker::ODMv2') }
-    let (:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', getTMSExtendedPort: odm_v2) }
+    let(:params) { { 'message_id' => 11, 'account_id' => account.id } }
+    let(:odm_v2) { mock(' Odm::TmsExtendedSenderWorker::ODMv2') }
+    let(:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', getTMSExtendedPort: odm_v2) }
 
     context 'dynamic_queue_key' do
       it 'should work with subject' do
@@ -58,7 +55,6 @@ if defined?(JRUBY_VERSION)
         expect(tk_proc.call(params.merge('subject' => 'goooo'))).to eq('goooo')
       end
     end
-
 
     context 'a very happy send with no link_encoder' do
       it 'should work' do
@@ -74,7 +70,7 @@ if defined?(JRUBY_VERSION)
       end
       it 'should fail unless message is queued' do
         EmailMessage.expects(:find).with(11).returns(email_message)
-        expect { worker.perform(params) }.to raise_error(RuntimeError, "EmailMessage  is not ready for delivery!")
+        expect { worker.perform(params) }.to raise_error(RuntimeError, 'EmailMessage  is not ready for delivery!')
       end
     end
 
@@ -92,7 +88,7 @@ if defined?(JRUBY_VERSION)
       end
       it 'should fail unless message is queued' do
         EmailMessage.expects(:find).with(11).returns(email_message)
-        expect { worker.perform(params) }.to raise_error(RuntimeError, "EmailMessage  is not ready for delivery!")
+        expect { worker.perform(params) }.to raise_error(RuntimeError, 'EmailMessage  is not ready for delivery!')
       end
     end
 
@@ -115,15 +111,14 @@ if defined?(JRUBY_VERSION)
     end
 
     context 'odm throws error' do
-
       it 'should catch Throwable and throw Ruby Exception' do
         email_message.stubs(:queued?).returns(true)
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
         Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
-        odm_v2.expects(:send_message).raises(Java::java::lang::Exception.new("hello Exception"))
+        odm_v2.expects(:send_message).raises(Java.java.lang::Exception.new('hello Exception'))
 
-        exception_check(worker, "hello Exception", params)
+        exception_check(worker, 'hello Exception', params)
       end
 
       it 'should catch TMSFault and throw Ruby Exception' do
@@ -131,9 +126,9 @@ if defined?(JRUBY_VERSION)
         ExtendedMessage.expects(:new).returns(extended_message)
         EmailMessage.expects(:find).with(11).returns(email_message)
         Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
-        odm_v2.expects(:send_message).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new("hello TMSFault", nil))
+        odm_v2.expects(:send_message).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new('hello TMSFault', nil))
 
-        exception_check(worker, "ODM Error: hello TMSFault", params)
+        exception_check(worker, 'ODM Error: hello TMSFault', params)
       end
     end
 

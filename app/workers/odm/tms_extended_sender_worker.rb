@@ -4,16 +4,16 @@ module Odm
   class TmsExtendedSenderWorker < Odm::TmsExtendedWorker
     sidekiq_options retry:             10,
                     queue:             :sender,
-                    dynamic_queue_key: ->(args) {
+                    dynamic_queue_key: ->(args) do
                       args['subject'].try(:parameterize)
-                    }
+                    end
 
     def perform(options)
       super { deliver(options['message_id']) }
     end
 
     def deliver(message_id)
-      message, msg, vendor, account =nil
+      message, msg, vendor, account = nil
       ActiveRecord::Base.connection_pool.with_connection do
         message = EmailMessage.find(message_id)
         raise "#{message.class.name} #{message.id} is not ready for delivery!" unless message.queued?
@@ -29,7 +29,7 @@ module Odm
           msg.reply_to_email      = message.reply_to
           msg.email_column        = 'email'
           msg.recipient_id_column = 'recipient_id'
-          msg.headers << odm_header("X-TMS-Recipient", "##x_tms_recipient##")
+          msg.headers << odm_header('X-TMS-Recipient', '##x_tms_recipient##')
           msg.record_designator   = message.odm_record_designator
           msg.track_clicks        = message.click_tracking_enabled?
           msg.track_opens         = message.open_tracking_enabled?
@@ -53,6 +53,7 @@ module Odm
     end
 
     private
+
     def odm_header(name, value)
       h       = Header.new
       h.name  = name

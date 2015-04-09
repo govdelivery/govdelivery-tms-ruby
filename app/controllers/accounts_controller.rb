@@ -1,7 +1,8 @@
 class AccountsController < ApplicationController
-
-  before_filter ->(c) { render(json:   {error: "forbidden"},
-                               status: :forbidden) unless current_user.admin? }
+  before_filter lambda { |_c|
+    render(json:   { error: 'forbidden' },
+           status: :forbidden) unless current_user.admin?
+  }
   before_filter :find_account, only: [:show, :update, :destroy]
   before_filter :wrap_accounts_parameters
 
@@ -14,7 +15,7 @@ class AccountsController < ApplicationController
     if params[:from_address]
       @account.from_addresses.build(params[:from_address].merge!(is_default: true))
     end
-    if not @account.voice_vendor.nil? and params[:from_number]
+    if !@account.voice_vendor.nil? && params[:from_number]
       @account.from_numbers.build(params[:from_number].merge!(is_default: true))
     end
     @account.save!

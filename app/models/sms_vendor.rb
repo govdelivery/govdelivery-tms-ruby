@@ -29,7 +29,7 @@ class SmsVendor < ActiveRecord::Base
   end
 
   def start!(command_parameters)
-    stop_requests.where(phone: command_parameters.from).delete_all #its ok if it doesn't exist
+    stop_requests.where(phone: command_parameters.from).delete_all # its ok if it doesn't exist
     accounts.each { |a| a.start(command_parameters) }
   end
 

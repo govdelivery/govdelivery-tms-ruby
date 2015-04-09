@@ -2,8 +2,8 @@
 # Get newrelic controller instrumentation working with rails-api
 # https://github.com/rails-api/rails-api/issues/34
 #
-require "new_relic/agent/instrumentation/rails3/action_controller"
-require "new_relic/agent/instrumentation/rails3/errors"
+require 'new_relic/agent/instrumentation/rails3/action_controller'
+require 'new_relic/agent/instrumentation/rails3/errors'
 
 class ApplicationController < ActionController::API
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation
@@ -39,10 +39,11 @@ class ApplicationController < ActionController::API
 
   # URL helper methods will use this set of options as defaults
   def default_url_options
-    {protocol: Rails.configuration.protocol}
+    { protocol: Rails.configuration.protocol }
   end
 
   protected
+
   def authenticate_entity_from_token!(entity_class)
     # Set the authentication token params if not already present,
     # see http://stackoverflow.com/questions/11017348/rails-api-authentication-by-headers-token
@@ -65,13 +66,12 @@ class ApplicationController < ActionController::API
     end
   end
 
-
   ##
   # Pull the X-AUTH-TOKEN header out of the request and put
   # it in the params hash.
   def extract_token_header
     if request.headers['X-AUTH-TOKEN']
-      params.merge!({auth_token: request.headers['X-AUTH-TOKEN']})
+      params.merge!(auth_token: request.headers['X-AUTH-TOKEN'])
     end
   end
 
@@ -86,18 +86,16 @@ class ApplicationController < ActionController::API
 
   def render_malformed_json(e)
     instrument_captured_error(e)
-    render json: {error: "Something went wrong parsing your request JSON"}, status: :bad_request
+    render json: { error: 'Something went wrong parsing your request JSON' }, status: :bad_request
   end
 
   def render_invalid_record(e)
     instrument_captured_error(e)
-    render json: {errors: e.record.errors.messages}, status: :unprocessable_entity
+    render json: { errors: e.record.errors.messages }, status: :unprocessable_entity
   end
 
   def find_user
-    if user_signed_in?
-      @account = current_user.account
-    end
+    @account = current_user.account if user_signed_in?
   end
 
   def set_page
@@ -115,14 +113,14 @@ class ApplicationController < ActionController::API
     ps = params.merge(only_path: true, format: nil)
     unless scope.first_page?
       links[:first] = url_for(ps.merge(param_name => 1))
-      links[:prev] = url_for(ps.merge(param_name => scope.current_page-1))
+      links[:prev] = url_for(ps.merge(param_name => scope.current_page - 1))
     end
     unless scope.last_page?
-      links[:next] = url_for(ps.merge(param_name => scope.current_page+1))
+      links[:next] = url_for(ps.merge(param_name => scope.current_page + 1))
       links[:last] = url_for(ps.merge(param_name => scope.total_pages))
     end
 
-    links.collect { |k, v| %Q|<#{v}>; rel="#{k}",| }.join("")
+    links.collect { |k, v| %(<#{v}>; rel="#{k}",) }.join('')
   end
 
   def respond_with(*resources, &block)

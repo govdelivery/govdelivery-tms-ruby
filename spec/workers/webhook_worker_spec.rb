@@ -8,13 +8,13 @@ describe WebhookWorker do
   end
   let(:connection_404) do
     stub('faraday 404').tap do |obj|
-      obj.stubs(:post).raises(Faraday::Error::ResourceNotFound, {status: 404, headers: {}, body: 'nope'})
+      obj.stubs(:post).raises(Faraday::Error::ResourceNotFound, status: 404, headers: {}, body: 'nope')
     end
   end
 
   let(:connection_500) do
     stub('faraday 500').tap do |obj|
-      obj.stubs(:post).raises(Faraday::Error::ClientError, {status: 500, headers: {}, body: 'nope'})
+      obj.stubs(:post).raises(Faraday::Error::ClientError, status: 500, headers: {}, body: 'nope')
     end
   end
 
@@ -25,21 +25,20 @@ describe WebhookWorker do
 
   it 'should fail on timeout' do
     subject.stubs(:connection).returns(connection_timeout)
-    expect {
-      subject.perform('url' => 'http://www.google.com', 'params' => {hi: 'true'})
-    }.to raise_error(Faraday::Error::TimeoutError)
+    expect do
+      subject.perform('url' => 'http://www.google.com', 'params' => { hi: 'true' })
+    end.to raise_error(Faraday::Error::TimeoutError)
   end
 
   it 'should fail on 500' do
     subject.stubs(:connection).returns(connection_500)
-    expect {
-      subject.perform('url' => 'http://www.google.com', 'params' => {hi: 'true'})
-    }.to raise_error(Faraday::Error::ClientError)
-
+    expect do
+      subject.perform('url' => 'http://www.google.com', 'params' => { hi: 'true' })
+    end.to raise_error(Faraday::Error::ClientError)
   end
 
   it 'should ignore 404' do
     subject.stubs(:connection).returns(connection_404)
-    subject.perform('url' => 'http://www.google.com', 'params' => {hi: 'true'})
+    subject.perform('url' => 'http://www.google.com', 'params' => { hi: 'true' })
   end
 end

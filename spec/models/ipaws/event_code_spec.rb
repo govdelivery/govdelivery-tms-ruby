@@ -1,11 +1,10 @@
 require 'rails_helper'
 
 describe IPAWS::EventCode do
-
   describe '.all' do
     it 'returns a list of EventCodes' do
       expect(IPAWS::EventCode.all).to be_present
-      IPAWS::EventCode.all.each do |event_code| 
+      IPAWS::EventCode.all.each do |event_code|
         expect(event_code).to be_instance_of(IPAWS::EventCode)
       end
     end
@@ -40,10 +39,8 @@ describe IPAWS::EventCode do
   it 'contains true/false/nil values for :cap_exchange, :core_ipaws_profile, :nwem, :eas_and_public, and :cmas' do
     IPAWS::EventCode.all.each do |event_code|
       [:cap_exchange, :core_ipaws_profile, :nwem, :eas_and_public, :cmas].each do |attribute|
-        value = event_code.send(attribute)
         expect([true, false, nil]).to include(event_code.send(attribute))
       end
     end
   end
-
 end

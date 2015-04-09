@@ -1,30 +1,30 @@
 class TokensController < ApplicationController
   before_filter :assert_admin!
   def index
-    u=User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
+    u = User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
     render json: {
-      tokens: u.authentication_tokens.map{|t|
+      tokens: u.authentication_tokens.map do|t|
         TokenView.new(t).render
-      }
+      end
     }
   end
 
   def create
-    u=User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
-    t=u.authentication_tokens.build
+    u = User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
+    t = u.authentication_tokens.build
     t.token = u.generate_token
     u.save!
     render json: TokenView.new(t).render
   end
 
   def show
-    u=User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
-    t=u.authentication_tokens.find(params[:id])
+    u = User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
+    t = u.authentication_tokens.find(params[:id])
     render json: TokenView.new(t).render
   end
 
   def destroy
-    u=User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
+    u = User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
     token = u.authentication_tokens.find(params[:id])
     token.destroy
     render json: TokenView.new(token)
@@ -39,7 +39,7 @@ class TokensController < ApplicationController
 
   TokenView = Struct.new(:token) do
     def render
-      {token: token.token, id: token.id, created_at: token.created_at}
+      { token: token.token, id: token.id, created_at: token.created_at }
     end
   end
 end

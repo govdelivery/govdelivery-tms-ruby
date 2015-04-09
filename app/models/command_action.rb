@@ -5,14 +5,14 @@ class CommandAction < ActiveRecord::Base
   belongs_to :command
   belongs_to :inbound_message
   validates :inbound_message, presence: true
-  validates :status, presence: true, if: "error_message.nil?"
-  validates :error_message, length: {maximum: 255}
-  validates :error_message, presence: true, if: "status.nil?"
+  validates :status, presence: true, if: 'error_message.nil?'
+  validates :error_message, length: { maximum: 255 }
+  validates :error_message, presence: true, if: 'status.nil?'
 
   before_validation :trim_body, on: :create
   after_save :update_inbound_message
 
-  scope :successes, where("status BETWEEN 200 AND 299")
+  scope :successes, where('status BETWEEN 200 AND 299')
 
   def success?
     (200..299).include?(status) && response_body.present?
@@ -32,5 +32,4 @@ class CommandAction < ActiveRecord::Base
   def update_inbound_message
     inbound_message.update_status!(fail?)
   end
-
 end

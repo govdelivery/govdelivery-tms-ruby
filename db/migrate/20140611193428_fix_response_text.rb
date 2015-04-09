@@ -5,7 +5,7 @@ class FixResponseText < ActiveRecord::Migration
     rescue
     end
 
-    Account.all.select{ |a| a.sms_vendor.present? }.each do |account|
+    Account.all.select { |a| a.sms_vendor.present? }.each do |account|
       rt = account.read_attribute(:help_text) || Keywords::DEFAULT_HELP_TEXT
       account.create_default_keyword!(response_text: rt) if account.default_keyword.nil?
 

@@ -26,11 +26,11 @@ describe FromAddress do
     subject { account.from_addresses.build(from_email: 'hey@dude.com', bounce_email: 'bounce@dude.com', reply_to_email: 'replyto@dude.com') }
     it { is_expected.to be_valid }
     it 'should use from email for bounce and reply-to' do
-      expect(subject.bounce_email).to eq("bounce@dude.com")
-      expect(subject.errors_to).to    eq("bounce@dude.com")
+      expect(subject.bounce_email).to eq('bounce@dude.com')
+      expect(subject.errors_to).to eq('bounce@dude.com')
 
       expect(subject.reply_to_email).to eq('replyto@dude.com')
-      expect(subject.reply_to).to       eq('replyto@dude.com')
+      expect(subject.reply_to).to eq('replyto@dude.com')
     end
   end
 
@@ -40,10 +40,12 @@ describe FromAddress do
   end
 
   context 'with no from_email' do
-    subject { account.from_addresses.build(
-      bounce_email:   'bounce@dude.com', 
-      reply_to_email: 'replyto@dude.com'
-      ) }
+    subject do
+      account.from_addresses.build(
+        bounce_email:   'bounce@dude.com',
+        reply_to_email: 'replyto@dude.com'
+      )
+    end
     it { is_expected.not_to be_valid }
   end
 end

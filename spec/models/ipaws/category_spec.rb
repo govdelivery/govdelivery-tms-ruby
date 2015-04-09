@@ -1,11 +1,10 @@
 require 'rails_helper'
 
 describe IPAWS::Category do
-
   describe '.all' do
     it 'returns a list of Categorys' do
       expect(IPAWS::Category.all).to be_present
-      IPAWS::Category.all.each do |category| 
+      IPAWS::Category.all.each do |category|
         expect(category).to be_instance_of(IPAWS::Category)
       end
     end
@@ -39,10 +38,8 @@ describe IPAWS::Category do
   it 'contains true/false/nil values for :cap_exchange, :core_ipaws_profile, :nwem, :eas_and_public, and :cmas' do
     IPAWS::Category.all.each do |category|
       [:cap_exchange, :core_ipaws_profile, :nwem, :eas_and_public, :cmas].each do |attribute|
-        value = category.send(attribute)
         expect([true, false, nil]).to include(category.send(attribute))
       end
     end
   end
-
 end

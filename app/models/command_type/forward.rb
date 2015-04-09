@@ -1,14 +1,14 @@
 module CommandType
   class Forward < Base
     STRING_FIELDS = [
-                      :from_param_name,
-                      :http_method,
-                      :password,
-                      :sms_body_param_name,
-                      :strip_keyword,
-                      :url,
-                      :username
-                    ].freeze
+      :from_param_name,
+      :http_method,
+      :password,
+      :sms_body_param_name,
+      :strip_keyword,
+      :url,
+      :username
+    ].freeze
 
     def initialize
       super(STRING_FIELDS.dup, [])
@@ -37,6 +37,5 @@ module CommandType
       message.save!
       message
     end
-
   end
 end

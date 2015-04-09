@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Geckoboard::UscmshimReporting do
-  let(:account){ create(:account_with_sms) }
+  let(:account) { create(:account_with_sms) }
 
   subject { Geckoboard::UscmshimReporting.new }
 
@@ -11,10 +11,10 @@ describe Geckoboard::UscmshimReporting do
       message.created_at = message.created_at - 1.hour
       message.save!
     end
-    subject.expects(:write_to_file).with("name.json", {
-      "item" => [
-        {"text" => '', "value" => 3},
-        {"text" => '', "value" => 0}
+    subject.expects(:write_to_file).with('name.json', {
+      'item' => [
+        { 'text' => '', 'value' => 3 },
+        { 'text' => '', 'value' => 0 }
       ]
     }.to_json)
     subject.perform(account.id, 'CREATED_AT', 'name')

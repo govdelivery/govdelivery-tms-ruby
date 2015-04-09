@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe VoiceRecipient do
-  subject {
+  subject do
     m         = VoiceMessage.new(play_url: 'http://coffee.website.ninja')
     a         = create(:account_with_voice)
     u         = User.create(email: 'admin@get-endorsed-by-bens-mom.com', password: 'retek01!')
@@ -11,12 +11,12 @@ describe VoiceRecipient do
     r.message = m
     r.vendor  = a.voice_vendor
     r
-  }
+  end
 
   its(:phone) { should be_nil }
   it { is_expected.not_to be_valid } # validates_presence_of :phone
 
-  describe "when phone is not a number" do
+  describe 'when phone is not a number' do
     before do
       subject.phone = 'invalid'
       subject.save!
@@ -25,7 +25,7 @@ describe VoiceRecipient do
     its(:formatted_phone) { should be_nil }
   end
 
-  describe "when phone starts with zero" do
+  describe 'when phone starts with zero' do
     before do
       subject.phone = '0001112222'
       subject.save
@@ -34,7 +34,7 @@ describe VoiceRecipient do
     its(:formatted_phone) { should be_nil }
   end
 
-  describe "when phone has wrong # of digits" do
+  describe 'when phone has wrong # of digits' do
     before do
       subject.phone = '223'
       subject.save!
@@ -43,16 +43,16 @@ describe VoiceRecipient do
     its(:formatted_phone) { should be nil }
   end
 
-  describe "when phone is a non-string number" do
+  describe 'when phone is a non-string number' do
     before do
-      subject.phone = 6125015456
+      subject.phone = 6_125_015_456
       subject.save!
     end
     it { is_expected.to be_valid }
     its(:formatted_phone) { should eq '+16125015456' }
   end
 
-  describe "when phone is valid" do
+  describe 'when phone is valid' do
     before do
       subject.phone = '6515551212'
     end
@@ -63,12 +63,12 @@ describe VoiceRecipient do
     end
 
     it 'has an ack that is too long' do
-      subject.ack = 'A'*257
+      subject.ack = 'A' * 257
       expect(subject).not_to be_valid
     end
 
     it 'has an error message that is too long' do
-      subject.error_message = 'A'*513
+      subject.error_message = 'A' * 513
       expect(subject).to be_valid
     end
   end

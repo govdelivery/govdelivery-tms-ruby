@@ -1,4 +1,4 @@
-require File.expand_path("../../../../app/models/view/recipient_links", __FILE__)
+require File.expand_path('../../../../app/models/view/recipient_links', __FILE__)
 require 'spec_helper'
 require 'active_support/core_ext'
 
@@ -15,10 +15,10 @@ describe View::RecipientLinks do
     let(:recipient) { fake_recipient('email') }
     let(:context) { build_context(recipient) }
     it 'gets correct links for an email recipient' do
-      expected_links = {self: 'the recipient url',
-                        email_message: 'the message url',
-                        clicks: 'the clicks url',
-                        opens: 'the opens url'}
+      expected_links = { self: 'the recipient url',
+                         email_message: 'the message url',
+                         clicks: 'the clicks url',
+                         opens: 'the opens url' }
       expect(View::RecipientLinks.new(recipient, context)._links).to eq(expected_links)
     end
   end
@@ -34,10 +34,10 @@ describe View::RecipientLinks do
 
   def fake_recipient(type)
     message_class = stub(table_name: "#{type.downcase}_messages", name: "#{type.capitalize}Message")
-    recipient = stub(id: 99999,
-                     message: stub(class: message_class),
-                     message_id: 9284375,
-                     class: stub(name: "#{type.capitalize}Recipient"))
+    stub(id: 99_999,
+         message: stub(class: message_class),
+         message_id: 9_284_375,
+         class: stub(name: "#{type.capitalize}Recipient"))
   end
 
   def build_opts(recipient)
@@ -50,11 +50,11 @@ describe View::RecipientLinks do
 
   def build_opts_without_stats(recipient, message_class)
     base_opts = base_url_for_opts('show')
-    {recipient: base_opts.merge(controller: 'recipients', id: recipient.id),
-     message: base_opts.merge(controller: message_class.table_name, id: recipient.message_id)}
+    { recipient: base_opts.merge(controller: 'recipients', id: recipient.id),
+      message: base_opts.merge(controller: message_class.table_name, id: recipient.message_id) }
   end
 
-  def build_opts_with_stats(recipient, message_class)
+  def build_opts_with_stats(recipient, _message_class)
     base_stats_opts = build_stats_opts(recipient.id, recipient.message_id)
     {
       clicks: base_stats_opts.merge(controller: 'clicks'),
@@ -68,6 +68,6 @@ describe View::RecipientLinks do
   end
 
   def base_url_for_opts(action)
-    {only_path: true, format: nil, action: action}
+    { only_path: true, format: nil, action: action }
   end
 end

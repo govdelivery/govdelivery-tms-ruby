@@ -1,17 +1,19 @@
 require 'rails_helper'
 describe ServicesController do
-  let (:account) { create :account,
-                          sms_vendor:   create(:sms_vendor),
-                          email_vendor: create(:email_vendor),
-                          voice_vendor: create(:voice_vendor),
-                          ipaws_vendor: create(:ipaws_vendor) }
-  let (:user) { create :user, account: account }
+  let(:account) do
+    create :account,
+           sms_vendor:   create(:sms_vendor),
+           email_vendor: create(:email_vendor),
+           voice_vendor: create(:voice_vendor),
+           ipaws_vendor: create(:ipaws_vendor)
+  end
+  let(:user) { create :user, account: account }
 
   before do
     sign_in user
   end
 
-  it "should show services" do
+  it 'should show services' do
     get :index
     expect(response.response_code).to eq(200)
     expect(assigns(:services)).to be == {
@@ -33,14 +35,13 @@ describe ServicesController do
       ipaws_nwem_authorization: ipaws_nwem_authorization_path,
       ipaws_nwem_areas: ipaws_nwem_areas_path,
       ipaws_alerts: ipaws_alerts_path,
-      webhooks: webhooks_path,
+      webhooks: webhooks_path
     }
   end
 
-  it "should not allow any method other than GET" do
+  it 'should not allow any method other than GET' do
     post :index
     expect(response.headers).to include('Allow' => 'GET')
     expect(response.response_code).to eq(405)
   end
-
 end

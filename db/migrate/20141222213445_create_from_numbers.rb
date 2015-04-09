@@ -4,7 +4,7 @@ class CreateFromNumbers < ActiveRecord::Migration
       t.references :account
       t.string :phone_number
       t.datetime :created_at
-      t.boolean :is_default, :default => false
+      t.boolean :is_default, default: false
     end
   end
 end

@@ -9,7 +9,7 @@ module Service
       end
 
       def each(&block)
-        return self unless(block)
+        return self unless block
         begin
           batch = @transactor.call do
             do_batch(block)

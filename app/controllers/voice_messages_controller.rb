@@ -12,6 +12,6 @@ class VoiceMessagesController < MessagesController
 
   def set_attr
     @content_attributes = [:play_url]
-    @content_attributes.concat([:recipient_detail_counts, :from_number]) unless action_name=='index'
+    @content_attributes.concat([:recipient_detail_counts, :from_number]) unless action_name == 'index'
   end
 end

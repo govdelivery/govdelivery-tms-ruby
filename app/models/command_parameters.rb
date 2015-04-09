@@ -21,7 +21,7 @@ class CommandParameters
   # Some attributes in this collection may be persisted in the database as Command#params (marshalled
   # into YAML). Think hard about removing an attribute (maybe you want to do a data migration or
   # handle the missing method error).
-  PARAMS=[
+  PARAMS = [
     :account_id,          # the xact account id corresponding to this command,
     :callback_url,        # a callback url for the external sms/voice service to call if needed
     :sms_body,            # the full body string of the incoming sms message
@@ -42,7 +42,7 @@ class CommandParameters
     :command_id           # initiating command id
   ]
   attr_accessor *PARAMS
-  #attr_accessible *PARAMS
+  # attr_accessible *PARAMS
 
   # These are only required for validation, and are not (or shouldn't be) persisted or mass-assigned
   attr_accessor :command_type, :account
@@ -50,12 +50,12 @@ class CommandParameters
   # This is not persisted anywhere.  The getter/setter is used for bi-directional
   # encryption. If this property were in PARAMS, it would be serialized into the
   # database, which is exactly what we don't want.
-  attr_encrypted :password, encode: true, key: "blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon"
-  #attr_accessible :password
+  attr_encrypted :password, encode: true, key: 'blackleggery our rub discretionally how hitch bisontine that tree hemogastric he finishing transmissibility new spoon'
+  # attr_accessible :password
 
   def merge!(params)
     params.to_hash.each do |attr, value|
-      self.public_send("#{attr}=", value) if self.respond_to?("#{attr}=")
+      public_send("#{attr}=", value) if self.respond_to?("#{attr}=")
     end
   end
 
@@ -67,59 +67,59 @@ class CommandParameters
       # instance_variable_get is being used to avoid any mutations caused by
       # lazy getters (i.e. ones with default values)
       hsh.merge(p => instance_variable_get("@#{p}"))
-    end.keep_if{|k,v| !v.nil? }
+    end.keep_if { |_k, v| !v.nil? }
   end
 
   def to_s
-    "#<#{self.class} #{self.to_hash}>"
+    "#<#{self.class} #{to_hash}>"
   end
 
   # This is what tells YAML which properties on this object
   # are to be included in serialization.
   def to_yaml_properties
-    to_hash.keys.map{|p| "@#{p}"}
+    to_hash.keys.map { |p| "@#{p}" }
   end
 
   ##
   # The name of the sms body variable sent during a forward command
   def sms_body_param_name
-    @sms_body_param_name ||= "sms_body"
+    @sms_body_param_name ||= 'sms_body'
   end
 
   ##
   # The name of the phone number variable sent during a forward command
   def from_param_name
-    @from_param_name ||= "from"
+    @from_param_name ||= 'from'
   end
 
   private
 
   def validate_string_fields
     command_type.required_string_fields.each do |f|
-      errors.add(f, :blank) if self.send(f).blank?
+      errors.add(f, :blank) if send(f).blank?
     end
   end
 
   def validate_array_fields
     command_type.required_array_fields.each do |f|
-      errors.add(f, :blank) if self.send(f).blank?
-      errors.add(f, "must be an array") unless self.send(f).is_a?(Array)
+      errors.add(f, :blank) if send(f).blank?
+      errors.add(f, 'must be an array') unless send(f).is_a?(Array)
     end
   end
 
-  def valid_account_codes?(account, codes=dcm_account_codes)
+  def valid_account_codes?(account, codes = dcm_account_codes)
     (codes || []).map(&:upcase).to_set.subset?(account.dcm_account_codes.to_set)
   end
 
   def valid_account_code?(account)
-    valid_account_codes?(account, [self.dcm_account_code].compact)
+    valid_account_codes?(account, [dcm_account_code].compact)
   end
 
   def validate_dcm_account
     if command_type.required_string_fields.include?(:dcm_account_code) && !valid_account_code?(account)
-      errors.add(:dcm_account_code, "is not a valid code")
+      errors.add(:dcm_account_code, 'is not a valid code')
     elsif command_type.required_array_fields.include?(:dcm_account_codes) && !valid_account_codes?(account)
-      errors.add(:dcm_account_codes, "contain one or more invalid account codes")
+      errors.add(:dcm_account_codes, 'contain one or more invalid account codes')
     end
   end
 end

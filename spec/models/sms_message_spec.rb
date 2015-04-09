@@ -3,33 +3,33 @@ require 'rails_helper'
 describe SmsMessage do
   let(:vendor) { create(:sms_vendor) }
   let(:shared_vendor) { create(:shared_sms_vendor) }
-  let(:account) { account = vendor.accounts.create!(name: 'name') }
+  let(:account) { vendor.accounts.create!(name: 'name') }
   let(:shared_account) { create(:account_with_sms, :shared, prefix: 'hi', sms_vendor: shared_vendor) }
   let(:other_shared_account) { create(:account_with_sms, :shared, prefix: 'hi-too', sms_vendor: shared_vendor) }
-  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: "schwoop") }
+  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
 
-  context "when short body is empty" do
+  context 'when short body is empty' do
     let(:message) { account.sms_messages.build(body: nil) }
     it { expect(message).not_to be_valid }
   end
 
-  context "without an account" do
-    let(:message) { SmsMessage.new(body: "Hello") }
+  context 'without an account' do
+    let(:message) { SmsMessage.new(body: 'Hello') }
     subject { message }
     it { is_expected.not_to be_valid }
   end
 
-  context "sms message" do
+  context 'sms message' do
     let(:message) { account.sms_messages.build(body: 'short body') }
 
     subject { message }
 
-    context "when valid" do
+    context 'when valid' do
       it { is_expected.to be_valid }
     end
 
-    context "when short body is too long" do
-      before { message.body = "A"*161 }
+    context 'when short body is too long' do
+      before { message.body = 'A' * 161 }
       it { is_expected.not_to be_valid }
     end
 
@@ -51,10 +51,10 @@ describe SmsMessage do
     end
 
     context 'when recipients list is valid' do
-      before { message.async_recipients = [{phone: '+16125015456'}] }
+      before { message.async_recipients = [{ phone: '+16125015456' }] }
       it 'should be invalid' do
         expect(subject.save_with_async_recipients).to eq(true)
-        expect(subject.async_recipients).to eq([{phone: '+16125015456'}])
+        expect(subject.async_recipients).to eq([{ phone: '+16125015456' }])
         expect(subject.recipients).to eq([])
       end
     end
@@ -67,7 +67,7 @@ describe SmsMessage do
             subject.recipients.create!(phone: '5555555555')
 
             recip = subject.recipients.reload.first
-            recip.send(:"#{type}!", "http://dudes.com/tyler", DateTime.now)
+            recip.send(:"#{type}!", 'http://dudes.com/tyler', DateTime.now)
           end
           it { expect(subject.send(:"recipients_who_#{type}").count).to eq(1) }
         end
@@ -76,7 +76,7 @@ describe SmsMessage do
   end
 
   context 'a message with valid recipients attributes' do
-    let(:message) { account.sms_messages.build(body: "A"*160, recipients_attributes: [{phone: "6515551212"}]) }
+    let(:message) { account.sms_messages.build(body: 'A' * 160, recipients_attributes: [{ phone: '6515551212' }]) }
     it { expect(message).to be_valid }
     it { expect(message).to have(1).recipients }
     it { expect(message.worker).to eq(LoopbackMessageWorker) }
@@ -85,10 +85,10 @@ describe SmsMessage do
   context 'a message on a shared vendor with blacklisted and legit recips' do
     let(:shared_message) do
       shared_account.sms_messages.create!(
-        body:                  "FOOO",
-        recipients_attributes: [{phone: "6515551212", vendor: shared_vendor},
-                                   {phone: "6515551215", vendor: shared_vendor},
-                                   {phone: "6515551218", vendor: shared_vendor}])
+        body:                  'FOOO',
+        recipients_attributes: [{ phone: '6515551212', vendor: shared_vendor },
+                                { phone: '6515551215', vendor: shared_vendor },
+                                { phone: '6515551218', vendor: shared_vendor }])
     end
 
     before do
@@ -113,14 +113,14 @@ describe SmsMessage do
   end
 
   context 'a message with blacklisted and legitimate recipients' do
-    let(:message) {
+    let(:message) do
       create(:sms_message,
              account:               account,
-             body:                  "A"*160,
-             recipients_attributes: [{phone: "6515551212", vendor: vendor}, {phone: "6515551215", vendor: vendor}])
-    }
+             body:                  'A' * 160,
+             recipients_attributes: [{ phone: '6515551212', vendor: vendor }, { phone: '6515551215', vendor: vendor }])
+    end
     before do
-      vendor.stop_requests.create!(phone: "+16515551212")
+      vendor.stop_requests.create!(phone: '+16515551212')
     end
 
     it 'should start out in new state' do
@@ -184,7 +184,7 @@ describe SmsMessage do
         end
 
         it 'should not complete transition with an incomplete receipient' do
-          #expect{message.complete!}.to raise_error(AASM::InvalidTransition)
+          # expect{message.complete!}.to raise_error(AASM::InvalidTransition)
           expect(message.complete!).to be false
         end
 
@@ -198,12 +198,9 @@ describe SmsMessage do
           it 'should be completed at some time' do
             expect(message.completed_at).not_to be_nil
           end
-
         end
       end
-
     end
-
 
     context 'and checked for completion' do
       it 'should change status' do
@@ -217,7 +214,7 @@ describe SmsMessage do
   end
 
   context 'a message with invalid recipients attributes' do
-    let(:message) { account.sms_messages.build(body: "A"*160, recipients_attributes: [{phone: nil}]) }
+    let(:message) { account.sms_messages.build(body: 'A' * 160, recipients_attributes: [{ phone: nil }]) }
     it { expect(message).not_to be_valid }
   end
 
@@ -229,5 +226,4 @@ describe SmsMessage do
     end
     expect(counts['total']).to eq 0
   end
-
 end

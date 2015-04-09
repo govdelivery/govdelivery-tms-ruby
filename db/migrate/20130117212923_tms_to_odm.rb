@@ -1,5 +1,4 @@
 class EmailVendor < ActiveRecord::Base
-
 end
 
 class TmsToOdm < ActiveRecord::Migration

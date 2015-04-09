@@ -17,14 +17,14 @@ class ForwardStopsToDcm
     params_to_forward = %w(To From AccountSid MessageSid SmsSid)
     conn = connection
     # Always post with "stop" so DCM will delete the subscriber.
-    conn.post(Rails.configuration.dcm[:api_root] + '/api/twilio_requests', opts.select { |k, v| params_to_forward.include?(k) }.merge('Body' => 'stop'))
+    conn.post(Rails.configuration.dcm[:api_root] + '/api/twilio_requests', opts.select { |k, _v| params_to_forward.include?(k) }.merge('Body' => 'stop'))
   end
 
   private
 
   def connection
     Faraday.new do |faraday|
-      faraday.use Faraday::Response::Logger, self.logger if self.logger
+      faraday.use Faraday::Response::Logger, logger if logger
       faraday.use Faraday::Response::RaiseError
       faraday.request :url_encoded
       faraday.adapter Faraday.default_adapter

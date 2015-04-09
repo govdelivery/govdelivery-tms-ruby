@@ -32,7 +32,7 @@ Xact::Application.configure do
 
   # See everything in the log (default is :info)
   # Rails.logger.level = Log4r::DEBUG
-  
+
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
 
@@ -60,21 +60,21 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = true
 
-  routes.default_url_options = {host: "tms.govdelivery.com", protocol: 'https'}
+  routes.default_url_options = { host: 'tms.govdelivery.com', protocol: 'https' }
 
-  # Threshold (in minutes) under which multiple inbound messages from a 
-  # user will be ignored.  This is to prevent auto-response messages 
+  # Threshold (in minutes) under which multiple inbound messages from a
+  # user will be ignored.  This is to prevent auto-response messages
   # (as sometimes issued from handsets while people are driving) from entering an infinite
-  # loop.  The corresponding configuration for this value in 
+  # loop.  The corresponding configuration for this value in
   # DCM is "twilio_requests_timeout."  Here it is named differently,
   # as this is not a vendor-specific behavior.
   config.auto_response_threshold = 1
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = ["468311", '89568', '467873', '566948', '99511', '734876', '667873', '99511']
+  config.shared_phone_numbers = %w(468311 89568 467873 566948 99511 734876 667873 99511)
 
-  config.custom_report_account_id = 10060
+  config.custom_report_account_id = 10_060
 
   config.log_level = :warn # this is actually INFO because Log4r is terrible (see railties bootstrap.rb)
 end

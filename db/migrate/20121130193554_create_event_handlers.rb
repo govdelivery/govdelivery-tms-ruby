@@ -3,7 +3,7 @@ class CreateEventHandlers < ActiveRecord::Migration
     has_many :actions
   end
   class Account < ActiveRecord::Base
-    belongs_to :stop_handler, :class_name => 'EventHandler'
+    belongs_to :stop_handler, class_name: 'EventHandler'
     has_one :stop_keyword, -> { where(stop: true) }, class_name: 'Keyword'
   end
   class Action < ActiveRecord::Base

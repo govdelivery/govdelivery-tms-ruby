@@ -24,7 +24,7 @@ Given(/^I post a new SMS message with too many characters$/) do
   if @message.errors["body"] == ["is too long (maximum is 160 characters)"]
     puts 'error found'.green
   else
-    fail 'error not found'.red
+    raise 'error not found'.red
   end
 end
 
@@ -49,7 +49,7 @@ Given(/^I post a new SMS message and retrieve the message details$/) do
   if sms.response.body["_links"]["self"].include?("messages/sms")
     puts 'message details found'.green
   else
-    fail 'message details not found'.red
+    raise 'message details not found'.red
   end    
 end
 
@@ -62,7 +62,7 @@ Given(/^I post a new SMS message and retrieve the recipient details$/) do
   if sms.response.body["_links"].include?("recipients")
     puts 'recipient details found'.green
   else
-    fail 'recipient details not found'.red
+    raise 'recipient details not found'.red
   end
 end
 
@@ -80,7 +80,7 @@ Given(/^I post a new SMS message to an empty recipient$/) do
     if @message.errors["recipients"] == ["must contain at least one valid recipient"]
     puts 'error found'.green
   else
-    fail 'error not found'.red
+    raise 'error not found'.red
   end
 end
 
@@ -169,12 +169,10 @@ Given(/^I rapidly send a keyword via SMS$/) do
   3.times {rapid} #execute "rapid" 3 times
   twiliomation #call to twilio call list
   sleep(2)
-    @a = @client.account.messages.list({ 
-        date_created: Date.today, #grab full list of messages sent today
+    @a = @client.account.messages.list(        date_created: Date.today, #grab full list of messages sent today
         body: "This is a text response from a remote website.",
         direction: "incoming",
-        from: phone_number_to #sort by 
-        }).take(5).each do |call| 
+        from: phone_number_to #sort by ).take(5).each do |call| 
       puts call.body 
     end
 
@@ -198,7 +196,7 @@ Given(/^I rapidly send a keyword via SMS$/) do
     sleep(6)
     i+=1 
     if i>10
-      fail 'waited 60 seconds for message to be delivered, but it was not found.'.red
+      raise 'waited 60 seconds for message to be delivered, but it was not found.'.red
     end  
   end 
   puts 'Message found'.green 
@@ -216,11 +214,9 @@ Given(/^I send an SMS with an invalid word or command$/) do
 
   twiliomation #call to twilio call list
   sleep(10)
-    @a = @client.account.messages.list({ 
-          date_created: Date.today, #grab full list of messages sent today
+    @a = @client.account.messages.list(          date_created: Date.today, #grab full list of messages sent today
           to: phone_number_from, #sort by
-          #:direction => "incoming"
-          }).each do |call| 
+          #:direction => "incoming").each do |_call| 
     end
     @b = @a[0].uri #find uri of "reply" message, 
 
@@ -242,7 +238,7 @@ Given(/^I send an SMS with an invalid word or command$/) do
     sleep(5)
     i+=1 
     if i>9
-      fail 'waited 45 seconds for message to be delivered, but it was not found.'.red
+      raise 'waited 45 seconds for message to be delivered, but it was not found.'.red
     end  
   end 
   puts 'Help message found'.green 
@@ -259,11 +255,9 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
 
   twiliomation #call to twilio call list
   sleep(1)
-    @a = @client.account.messages.list({ 
-          date_created: Date.today, #grab full list of messages sent today
+    @a = @client.account.messages.list(          date_created: Date.today, #grab full list of messages sent today
           to: phone_number_from, #sort by
-          direction: "reply"
-          }).each do |call| 
+          direction: "reply").each do |_call| 
     end
     @b = @a[0].uri #find uri of "reply" message, 
   
@@ -285,7 +279,7 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
     sleep(5)
     i+=1 
     if i>9 #fails after 45 seconds
-      fail 'waited 45 seconds for message to be delivered, but it was not found.'.red
+      raise 'waited 45 seconds for message to be delivered, but it was not found.'.red
     end  
   end 
   puts 'Help message found'.green 

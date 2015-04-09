@@ -1,5 +1,5 @@
-source "http://prod-rubygems1-ep.tops.gdi"
-source "https://ed5779be:de10e893@gems.contribsys.com/"
+source 'http://prod-rubygems1-ep.tops.gdi'
+source 'https://ed5779be:de10e893@gems.contribsys.com/'
 source 'https://rubygems.org'
 
 gem 'aasm'
@@ -12,7 +12,7 @@ gem 'devise'
 gem 'enumify'
 gem 'faraday'
 gem 'faraday_middleware'
-gem "govdelivery-crypt", require: 'govdelivery/crypt'
+gem 'govdelivery-crypt', require: 'govdelivery/crypt'
 gem 'govdelivery-links'
 gem 'jakety_jak', '~>1.1.0'
 gem 'kaminari'
@@ -40,10 +40,10 @@ gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication'
 gem 'sinatra', require: nil
 gem 'slim'
-gem "strip_attributes"
+gem 'strip_attributes'
 gem 'twilio-ruby'
 gem 'valid_email'
-gem "validate_url"
+gem 'validate_url'
 gem 'yakety_yak'
 
 gem 'attr_encrypted'
@@ -91,12 +91,11 @@ group :development, :test do
 end
 
 group :test do
-  gem "configatron"
-  gem "fakeredis", require: "fakeredis/rspec"
+  gem 'configatron'
+  gem 'fakeredis', require: 'fakeredis/rspec'
   gem 'fakeweb'
   gem 'govdelivery-tms', '~>0.8.2'
   gem 'govdelivery-tms-internal', '~>0.0.2'
   gem 'mocha', require: false
   gem 'shoulda-matchers'
 end
-

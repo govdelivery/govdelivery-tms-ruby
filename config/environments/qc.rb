@@ -31,7 +31,7 @@ Xact::Application.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  #Rails.logger.level = Log4r::DEBUG
+  # Rails.logger.level = Log4r::DEBUG
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
@@ -65,7 +65,7 @@ Xact::Application.configure do
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = ['+16519684981','+18573665390']
+  config.shared_phone_numbers = ['+16519684981', '+18573665390']
 
-  config.custom_report_account_id = 10120
+  config.custom_report_account_id = 10_120
 end

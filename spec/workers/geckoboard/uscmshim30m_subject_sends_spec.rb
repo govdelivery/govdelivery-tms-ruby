@@ -6,7 +6,7 @@ describe Geckoboard::Uscmshim30mSubjectSends do
   subject { Geckoboard::Uscmshim30mSubjectSends.new }
 
   before do
-    @messages = create_list(:email_message, 50, subject: "Donkey", account: account)
+    @messages = create_list(:email_message, 50, subject: 'Donkey', account: account)
 
     EmailMessage.update_all(created_at: dbtime)
     @messages.each do |message|
@@ -25,10 +25,10 @@ describe Geckoboard::Uscmshim30mSubjectSends do
     end_time   = dbtime + 1.minute
     start_time = end_time - 30.minutes
     time_range = start_time.to_i...end_time.to_i
-    times      = time_range.step(1.minute).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime("%M") }
+    times      = time_range.step(1.minute).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%M') }
 
     expected = {
-      colors: ["#FCFFF5", "#D1DBBD", "#91AA9D", "#ACF0F2", "#EB7F00", "#54AC92", "#F1B60B", "#097178", "#9E4292", "#9D21D9", "#03DAF7"],
+      colors: ['#FCFFF5', '#D1DBBD', '#91AA9D', '#ACF0F2', '#EB7F00', '#54AC92', '#F1B60B', '#097178', '#9E4292', '#9D21D9', '#03DAF7'],
       credits: {
         enabled: false
       },
@@ -41,11 +41,11 @@ describe Geckoboard::Uscmshim30mSubjectSends do
       chart: {
         type: 'spline',
         style: {
-          color: "#9A9A9A"
+          color: '#9A9A9A'
         },
-        renderTo: "container",
-        backgroundColor: "transparent",
-        lineColor: "rgba(154,154,154,100)",
+        renderTo: 'container',
+        backgroundColor: 'transparent',
+        lineColor: 'rgba(154,154,154,100)',
         plotShadow: false
       },
       xAxis: {
@@ -54,38 +54,38 @@ describe Geckoboard::Uscmshim30mSubjectSends do
       yAxis: {
         title: {
           style: {
-            color: "#9a9a9a"
+            color: '#9a9a9a'
           },
           text: 'Sent Messages'
         }
       },
       tooltip: {
-        borderColor: "rgba(0,0,0,0.85)",
-        backgroundColor: "rgba(0,0,0,0.85)",
+        borderColor: 'rgba(0,0,0,0.85)',
+        backgroundColor: 'rgba(0,0,0,0.85)',
         style: {
-          color: "#9a9a9a"
+          color: '#9a9a9a'
         },
         crosshairs: true,
         shared: true
       },
       series: [
         {
-            name: "Donkey",
-            marker: {
-              symbol: 'circle',
-              radius: 4
-            },
-            lineWidth: 4,
-            data: 29.times.collect{0} << 50
+          name: 'Donkey',
+          marker: {
+            symbol: 'circle',
+            radius: 4
+          },
+          lineWidth: 4,
+          data: 29.times.collect { 0 } << 50
         },
         {
-            name: "Other",
-            marker: {
-              symbol: 'circle',
-              radius: 4
-            },
-            lineWidth: 4,
-            data: 30.times.collect{0}
+          name: 'Other',
+          marker: {
+            symbol: 'circle',
+            radius: 4
+          },
+          lineWidth: 4,
+          data: 30.times.collect { 0 }
         }
       ]
     }

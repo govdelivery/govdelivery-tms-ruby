@@ -3,10 +3,9 @@ require 'rails_helper'
 if defined? JRUBY_VERSION
 
   describe IPAWS::NwemAuthorizationsController do
-
     let(:ipaws_credentials) do
       {
-        ipaws_user_id: 12345,
+        ipaws_user_id: 12_345,
         ipaws_cog_id: 'IPAWS_OPEN_12345',
         ipaws_jks_base64: 'AAAAAAA',
         ipaws_public_password: 'alligator',
@@ -15,14 +14,14 @@ if defined? JRUBY_VERSION
     end
 
     let(:ipaws_response) do
-      [{"cogid"=>"true"}]
+      [{ 'cogid' => 'true' }]
     end
 
     before(:each) do
       IPAWS::Vendor::IPAWSClient.any_instance.stubs(:isCogAuthorized).returns(ipaws_response)
     end
 
-    describe "GET :show" do
+    describe 'GET :show' do
       it 'returns data from IPAWS/FEMA' do
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
@@ -40,7 +39,6 @@ if defined? JRUBY_VERSION
         expect(response.response_code).to eq(403)
       end
     end
-
   end
 
 end

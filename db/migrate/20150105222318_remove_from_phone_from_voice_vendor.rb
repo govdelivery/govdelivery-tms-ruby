@@ -3,7 +3,7 @@ class RemoveFromPhoneFromVoiceVendor < ActiveRecord::Migration
     ::VoiceVendor.all.each do |voice_vendor|
       from_number = voice_vendor.from_phone
       voice_vendor.accounts.each do |account|
-        account.from_numbers.build({phone_number: from_number, is_default: true})
+        account.from_numbers.build(phone_number: from_number, is_default: true)
         account.save!
       end
     end

@@ -1,6 +1,5 @@
 FactoryGirl.define do
-
-  sequence(:command_name){ |i| "command#{i}" }
+  sequence(:command_name) { |i| "command#{i}" }
 
   factory :command do
     name { generate(:command_name) }

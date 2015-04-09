@@ -15,6 +15,5 @@ module GovDelivery
     def hostname
       `hostname`
     end
-
   end
 end

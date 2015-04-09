@@ -11,7 +11,7 @@ module Geckoboard
       messages = EmailMessage.where(account_id: account_id)
       time_range, timestamp_range = time_ranges(24, :hour)
 
-      results = grouped_by_time_format(messages, "CREATED_AT", time_range, 'HH24')
+      results = grouped_by_time_format(messages, 'CREATED_AT', time_range, 'HH24')
 
       data = zeroes(timestamp_range.step(1.hour)).merge(results).sort_by(&:first)
       counts  = data.map(&:second)
@@ -22,14 +22,11 @@ module Geckoboard
         item:     counts,
         settings: {
           axisx:  xlabels,
-          axisy:  [0, max/2, max],
+          axisy:  [0, max / 2, max],
           colour: 'ff9900'
-        }}.to_json
+        } }.to_json
 
       write_to_file("#{basename}.json", output)
     end
   end
 end
-
-
-

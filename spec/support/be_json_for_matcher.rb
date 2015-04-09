@@ -1,5 +1,4 @@
 RSpec::Matchers.define :be_json_for do |expected|
-
   chain :with_attributes do |*attributes|
     @attributes = attributes
   end
@@ -16,7 +15,7 @@ RSpec::Matchers.define :be_json_for do |expected|
     @timestamps = timestamps
   end
 
-  chain :with_errors do |*timestamps|
+  chain :with_errors do |*_timestamps|
     @errors = true
   end
 
@@ -31,21 +30,21 @@ RSpec::Matchers.define :be_json_for do |expected|
   match do |actual|
     json = ActiveSupport::JSON.decode(actual)
 
-    @links      ||= []
-    @objects    ||= []
-    @arrays     ||= []
+    @links ||= []
+    @objects ||= []
+    @arrays ||= []
     @timestamps ||= [:created_at, :updated_at]
-    fail('no attributes specified') unless @attributes
+    raise('no attributes specified') unless @attributes
 
-    fail ('expected _links') if @links.present? and !json.has_key?("_links")
+    raise('expected _links') if @links.present? && !json.key?('_links')
 
     json.each do |k, v|
-      if k=='errors' && @errors
+      if k == 'errors' && @errors
         expect(v).to be_a(Hash)
-      elsif k=='_links'
+      elsif k == '_links'
         @links.each { |rel, href| expect(v[rel.to_s]).to eq(href) }
         expect(@links.keys.length).to eq(v.keys.length)
-      elsif ts=@timestamps.delete(k.to_sym)
+      elsif ts = @timestamps.delete(k.to_sym)
         expect(Time.parse(v).to_s(:json)).to eq(expected.send(ts).to_s(:json))
       elsif @objects.delete(k.to_sym)
         expect(v).to be_a(Hash)
@@ -54,12 +53,11 @@ RSpec::Matchers.define :be_json_for do |expected|
       elsif @attributes.delete(k.to_sym)
         expect(v).to eq(expected.send(k))
       else
-        fail("Unrecognized JSON attribute #{k}: #{rendered}")
+        raise("Unrecognized JSON attribute #{k}: #{rendered}")
       end
     end
     all_attrs = @timestamps + @attributes + @objects
-    fail("Did not find attributes #{all_attrs.join(', ')} in #{json}") unless all_attrs.empty?
+    raise("Did not find attributes #{all_attrs.join(', ')} in #{json}") unless all_attrs.empty?
     true
   end
 end
-
