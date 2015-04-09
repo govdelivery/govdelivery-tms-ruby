@@ -40,7 +40,7 @@ module Message
     # don't raise an error if complete! fails
     def complete_with_exception_handler!
       complete_without_exception_handler!
-    rescue AASM::InvalidTransition => e
+    rescue AASM::InvalidTransition
       return false
     end
 
@@ -154,16 +154,19 @@ module Message
   end
 
   def on_sending(*_args)
-    self.sent_at = Time.now
+    self.sent_at = Time.zone.now
   end
 
   def on_complete
-    self.completed_at = recipients.sent.order('completed_at DESC').first.completed_at rescue Time.now
+    self.completed_at = if recipients
+                          last_recipient = recipients.sent.order('completed_at DESC').first
+                          last_recipient.try(:completed_at)
+                        end || Time.zone.now
   end
 
   def on_cancel
-    recipients.update_all(status: 'canceled', completed_at: Time.now)
-    self.completed_at = Time.now
+    recipients.update_all(status: 'canceled', completed_at: Time.zone.now)
+    self.completed_at = Time.zone.now
   end
 
   def has_valid_async_recipients?

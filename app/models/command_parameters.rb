@@ -41,7 +41,7 @@ class CommandParameters
     :inbound_message_id,  # inbound SMS message id (for recording actions)
     :command_id           # initiating command id
   ]
-  attr_accessor *PARAMS
+  attr_accessor(*PARAMS)
   # attr_accessible *PARAMS
 
   # These are only required for validation, and are not (or shouldn't be) persisted or mass-assigned

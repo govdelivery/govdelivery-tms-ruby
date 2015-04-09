@@ -5,7 +5,7 @@ describe VoiceMessagesController do
   let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
   let(:model) { VoiceMessage }
   let(:messages) do
-    messages = 3.times.collect do |i|
+    3.times.collect do |i|
       m = VoiceMessage.new(play_url: "http://com.com/#{i}",
                            recipients_attributes: [{ phone: '800BUNNIES' }])
       m.created_at = i.days.ago

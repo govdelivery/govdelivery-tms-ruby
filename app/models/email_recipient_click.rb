@@ -3,7 +3,7 @@ class EmailRecipientClick < ActiveRecord::Base
 
   attr_accessible :url, :email
   validates :url, presence: true, length: { maximum: 4000 }
-  validates_presence_of :clicked_at
+  validates :clicked_at, presence: true
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether).
   # On the other hand, the inclusion of URL forces this query to

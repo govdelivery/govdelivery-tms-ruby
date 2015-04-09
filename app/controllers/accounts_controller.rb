@@ -1,10 +1,10 @@
 class AccountsController < ApplicationController
-  before_filter lambda { |_c|
+  before_action lambda { |_c|
     render(json:   { error: 'forbidden' },
            status: :forbidden) unless current_user.admin?
   }
-  before_filter :find_account, only: [:show, :update, :destroy]
-  before_filter :wrap_accounts_parameters
+  before_action :find_account, only: [:show, :update, :destroy]
+  before_action :wrap_accounts_parameters
 
   def index
     @accounts = Account.all

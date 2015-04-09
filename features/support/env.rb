@@ -113,7 +113,7 @@ configatron.voice_vendors.live.vendor.password                  = twilio_live_cr
 configatron.voice_vendors.live.vendor.twilio_test               = false
 
 def message_types
-  message_types = [
+  [
     :email,
     :sms,
     :voice
@@ -121,7 +121,7 @@ def message_types
 end
 
 def event_types
-  event_types = [
+  [
     :sending,
     :sent,
     :failed,
@@ -143,7 +143,7 @@ def magic_addresses(message_type)
 end
 
 def magic_emails
-  magic_emails = {
+  {
     sending: 'sending@sink.govdelivery.com',
     sent: 'sent@sink.govdelivery.com',
     failed: 'failed@sink.govdelivery.com',
@@ -154,7 +154,7 @@ def magic_emails
 end
 
 def magic_phone_numbers
-  magic_phone_numbers = {
+  {
     #:new => "15005550000",
     sending: '15005550001',
     inconclusive: '15005550002',
@@ -184,7 +184,7 @@ def twilio_xact_test_number_2
 end
 
 def tms_client(conf)
-  client = GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
+  GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
 end
 
 #

@@ -13,10 +13,10 @@ describe Geckoboard::Uscmshim12hSubjectSends do
   end
 
   it 'writes sending info for subjects for the past 12 hours in json format to disk' do
-    end_time = Time.now.beginning_of_hour
+    end_time = Time.zone.now.beginning_of_hour
     start_time = end_time - 12.hours
     time_range = start_time.to_i...end_time.to_i
-    times = time_range.step(1.hour).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%H') }
+    times = time_range.step(1.hour).map { |t| Time.zone.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%H') }
 
     subject.expects(:write_to_file).with('name.json', {
       colors: ['#FCFFF5', '#D1DBBD', '#91AA9D', '#ACF0F2', '#EB7F00', '#54AC92', '#F1B60B', '#097178', '#9E4292', '#9D21D9', '#03DAF7'],

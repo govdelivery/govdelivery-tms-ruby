@@ -30,9 +30,9 @@ class ApplicationController < ActionController::API
   # at org.apache.tomcat.util.http.parser.HttpParser.parseMediaType
   # this happens when auth_token is invalid
 
-  before_filter :set_default_format
-  before_filter :authenticate_user!
-  before_filter :set_page, only: :index
+  before_action :set_default_format
+  before_action :authenticate_user!
+  before_action :set_page, only: :index
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
   rescue_from JSON::ParserError, with: :render_malformed_json
@@ -99,7 +99,8 @@ class ApplicationController < ActionController::API
   end
 
   def set_page
-    @page = Integer(params[:page]) rescue 1
+    page = params[:page].to_i
+    @page = (page == 0) ? 1 : page
   end
 
   def set_link_header(scope)

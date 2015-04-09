@@ -35,10 +35,10 @@ class SubethaRunner
   def handle_signal(sig)
     puts "Got #{sig} signal"
     case sig
-      when 'INT'
-        raise Interrupt
-      when 'TERM'
-        raise Interrupt
+    when 'INT'
+      raise Interrupt
+    when 'TERM'
+      raise Interrupt
     end
   end
 

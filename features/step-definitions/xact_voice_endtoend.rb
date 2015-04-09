@@ -15,18 +15,17 @@ Capybara.default_wait_time = 300
 
 def client
   if ENV['XACT_ENV'] == 'qc'
-    client = GovDelivery::TMS::Client.new('52qxcmfNnD1ELyfyQnkq43ToTcFKDsAZ', api_root: 'https://qc-tms.govdelivery.com')
+    GovDelivery::TMS::Client.new('52qxcmfNnD1ELyfyQnkq43ToTcFKDsAZ', api_root: 'https://qc-tms.govdelivery.com')
   elsif ENV['XACT_ENV'] == 'integration'
-    client = GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
+    GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
   elsif ENV['XACT_ENV'] == 'stage'
-    client = GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
+    GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
   elsif ENV['XACT_ENV'] == 'prod'
-    client = GovDelivery::TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com')
+    GovDelivery::TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com')
   end
 end
 
 def voice_message
-  voice_message =
   {
     1 => 'http://xact-webhook-callbacks.herokuapp.com/voice/first.mp3',
     2 => 'http://xact-webhook-callbacks.herokuapp.com/voice/second.mp3',
@@ -90,7 +89,7 @@ end
 Then(/^I should be able to verify the voice message was received$/) do
   twiliomation # call to twilio call list
   sleep(10)
-  @a = @client.account.calls.list(start_time: Date.today,
+  @a = @client.account.calls.list(start_time: Time.zone.today,
                                   status: 'ringing',
                                   from: from_number).each do |call|
     @b = call.uri

@@ -6,9 +6,7 @@ describe Sidekiq::DynamicQueue::Middleware do
   class RadWorker
     include Sidekiq::Worker
     sidekiq_options queue:             'wubble',
-                    dynamic_queue_key: ->(args) do
-                      args['value'].reverse
-                    end
+                    dynamic_queue_key: ->(args) { args['value'].reverse }
   end
 
   it 'should change the queue' do

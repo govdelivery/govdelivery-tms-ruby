@@ -8,12 +8,12 @@ module Geckoboard
     # 'clicks', 10060, ''"CLICKED_AT"''
     def perform(event_type, account_id, basename)
       scope, column = case event_type
-                        when 'clicks'
-                          [EmailRecipientClick, 'CLICKED_AT']
-                        when 'opens'
-                          [EmailRecipientOpen, 'OPENED_AT']
-                        else
-                          raise "unknown event type #{event_type}"
+                      when 'clicks'
+                        [EmailRecipientClick, 'CLICKED_AT']
+                      when 'opens'
+                        [EmailRecipientOpen, 'OPENED_AT']
+                      else
+                        raise "unknown event type #{event_type}"
                       end
       scope = scope.joins(:email_message).where(email_messages: { account_id: account_id })
 

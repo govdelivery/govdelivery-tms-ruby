@@ -82,7 +82,7 @@ module Xact
 
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
     # Rack::SSL has to come before ActionDispatch::Cookies!
-    config.middleware.use Rack::SSL, exclude: lambda { |env| !Rack::Request.new(env).ssl? }
+    config.middleware.use Rack::SSL, exclude: ->(env) { !Rack::Request.new(env).ssl? }
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
 

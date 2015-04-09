@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
   validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
                                         message: '%{value} is not a valid link_encoder' }
 
-  scope :with_sms, where('sms_vendor_id is not null')
+  scope :with_sms, -> { where('sms_vendor_id is not null') }
 
   def create_command!(keyword_name, params)
     keyword = keywords.where(name: keyword_name).first_or_create!
@@ -74,13 +74,13 @@ class Account < ActiveRecord::Base
     end
 
     define_method("#{name}_keyword") do
-      keywords.where(name: name).first
+      keywords.find_by(name: name)
     end
   end
   alias_method :help!, :help
 
   def default_keyword
-    keywords.where(name: 'default').first
+    keywords.find_by(name: 'default')
   end
 
   ##
@@ -117,7 +117,7 @@ class Account < ActiveRecord::Base
   # some sugar for working with keywords on the console
   def keywords(arg = nil)
     if arg
-      super.where(name: arg).first
+      super.find_by(name: arg)
     else
       super
     end

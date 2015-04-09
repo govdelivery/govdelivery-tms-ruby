@@ -77,7 +77,7 @@ Given(/^I post a new SMS message to an empty recipient$/) do
     puts 'error found'.green
   else
     raise 'error not found'.red
-end
+  end
 end
 
 Given(/^I post a new SMS message to invalid recipients I should not receive failed recipients$/) do
@@ -104,13 +104,13 @@ end
 
 def client_2
   if ENV['XACT_ENV'] == 'qc'
-    client_2 = GovDelivery::TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', api_root: 'https://qc-tms.govdelivery.com') # will send from (612) 255-6254
+    GovDelivery::TMS::Client.new('yopyxmk8NBnr5sa9dxwgf9sEiXpiWv1z', api_root: 'https://qc-tms.govdelivery.com') # will send from (612) 255-6254
   elsif ENV['XACT_ENV'] == 'integration'
-    client_2 = GovDelivery::TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', api_root: 'https://int-tms.govdelivery.com') # will send from (612) 255-6225
+    GovDelivery::TMS::Client.new('hycb4FaXB745xxHYEifQNPdXpgrqUtr3', api_root: 'https://int-tms.govdelivery.com') # will send from (612) 255-6225
   elsif ENV['XACT_ENV'] == 'stage'
-    client_2 = GovDelivery::TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', api_root: 'https://stage-tms.govdelivery.com') # will send from (612) 255-6247
+    GovDelivery::TMS::Client.new('pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2', api_root: 'https://stage-tms.govdelivery.com') # will send from (612) 255-6247
   elsif ENV['XACT_ENV'] == 'prod'
-    client_2 = GovDelivery::TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com') # THIS TEST DOESNT RUN IN PROD
+    GovDelivery::TMS::Client.new('7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW', api_root: 'https://tms.govdelivery.com') # THIS TEST DOESNT RUN IN PROD
   end
 end
 
@@ -162,7 +162,7 @@ Given(/^I rapidly send a keyword via SMS$/) do
   3.times { rapid } # execute "rapid" 3 times
   twiliomation # call to twilio call list
   sleep(2)
-  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
+  @a = @client.account.messages.list(date_created: Time.zone.today, # grab full list of messages sent today
                                      body: 'This is a text response from a remote website.',
                                      direction: 'incoming',
                                      from: phone_number_to
@@ -204,7 +204,7 @@ Given(/^I send an SMS with an invalid word or command$/) do
 
   twiliomation # call to twilio call list
   sleep(10)
-  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
+  @a = @client.account.messages.list(date_created: Time.zone.today, # grab full list of messages sent today
                                      to: phone_number_from, # sort by
                                      direction: 'incoming').each do |_call|
   end
@@ -243,7 +243,7 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
 
   twiliomation # call to twilio call list
   sleep(1)
-  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
+  @a = @client.account.messages.list(date_created: Time.zone.today, # grab full list of messages sent today
                                      to: phone_number_from, # sort by
                                      direction: 'reply').each do |_call|
   end

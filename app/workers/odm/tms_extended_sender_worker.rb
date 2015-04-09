@@ -4,9 +4,7 @@ module Odm
   class TmsExtendedSenderWorker < Odm::TmsExtendedWorker
     sidekiq_options retry:             10,
                     queue:             :sender,
-                    dynamic_queue_key: ->(args) do
-                      args['subject'].try(:parameterize)
-                    end
+                    dynamic_queue_key: ->(args) { args['subject'].try(:parameterize) }
 
     def perform(options)
       super { deliver(options['message_id']) }
@@ -41,7 +39,7 @@ module Odm
       ack = odm.send_message(credentials(vendor), msg)
       begin
         self.class.mark_sending(message, ack)
-      rescue ActiveRecord::ConnectionTimeoutError => e
+      rescue ActiveRecord::ConnectionTimeoutError
         self.class.delay(retry: 10).mark_sending(message.id, ack)
       end
       logger.debug("Sent EmailMessage #{message.to_param} (account #{account.name}, admin #{message.user_id}) to ODM")

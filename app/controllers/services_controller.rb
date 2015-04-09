@@ -1,8 +1,8 @@
 class ServicesController < ApplicationController
-  before_filter :find_user
+  before_action :find_user
 
   # root routing does not work as advertised. it should only allow GET
-  before_filter ->(_c) { render_405 unless request.method == 'GET' }
+  before_action ->(_c) { render_405 unless request.method == 'GET' }
 
   def index
     @services = { self: root_path }

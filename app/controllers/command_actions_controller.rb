@@ -1,5 +1,5 @@
 class CommandActionsController < ApplicationController
-  before_filter :find_parent
+  before_action :find_parent
 
   def index
     respond_with(@command_actions = finder.page(@page))

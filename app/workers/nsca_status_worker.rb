@@ -7,12 +7,15 @@ class NscaStatusWorker
     loc  = Rails.configuration.datacenter_location
     pass = Rails.configuration.nsca_password
     case
-      when env.nil?
-        logger.warn('NscaStatusWorker: datacenter_env not set') and return false
-      when loc.nil?
-        logger.warn('NscaStatusWorker: datacenter_location not set') and return false
-      when pass.nil?
-        logger.warn('NscaStatusWorker: nsca_password not set') and return false
+    when env.nil?
+      logger.warn('NscaStatusWorker: datacenter_env not set')
+      return false
+    when loc.nil?
+      logger.warn('NscaStatusWorker: datacenter_location not set')
+      return false
+    when pass.nil?
+      logger.warn('NscaStatusWorker: nsca_password not set')
+      return false
     end
 
     checks.each do |service, scope|

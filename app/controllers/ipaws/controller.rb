@@ -1,8 +1,8 @@
 module IPAWS
   class Controller < ApplicationController
     include FeatureChecker
-    before_filter :find_user
-    around_filter :rescue_from_java
+    before_action :find_user
+    around_action :rescue_from_java
 
     def self.inherited(subclass)
       subclass.feature :ipaws

@@ -24,7 +24,7 @@ class EmailMessagesController < MessagesController
                        current_user.email_messages_indexed
                      else
                        current_user.email_messages
-    end
+                     end
   end
 
   def set_attr

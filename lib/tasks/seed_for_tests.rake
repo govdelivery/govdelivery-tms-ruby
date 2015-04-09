@@ -13,8 +13,8 @@ namespace :db do
   task seed_for_tests: :environment do |_t|
     all_id = 17_331
 
-    created_time = DateTime.new(2012, 12, 22, 10, 43, 34)
-    planted_time = DateTime.new(2012, 12, 22, 11)
+    created_time = Time.zone.new(2012, 12, 22, 10, 43, 34)
+    planted_time = Time.zone.new(2012, 12, 22, 11)
 
     omg = Account.find(10_000)
     u = User.find(10_000)
@@ -161,7 +161,7 @@ namespace :db do
   end # :create_shared_twilio_invalid_number_test_vendor
 
   desc 'Create the Shared Live Phone Vendors.'
-  task create_shared_live_phone_vendors: :environment do |_t|
+  task create_shared_live_phone_vendors: :environment do
     sms_live_test = create_or_verify_by_name(SmsVendor,         name: shared_live_phone_vendors_config[:sms_vendor_name],
                                                                 worker: 'TwilioMessageWorker',
                                                                 username: twilio_live_credentials[:sid],
@@ -172,10 +172,10 @@ namespace :db do
     sms_live_test.shared = true
     sms_live_test.save!
 
-    voice_live_test = create_or_verify_by_name(VoiceVendor,         name: shared_live_phone_vendors_config[:voice_vendor_name],
-                                                                    worker: 'TwilioMessageWorker',
-                                                                    username: twilio_live_credentials[:sid],
-                                                                    password: twilio_live_credentials[:token]
-                                              )
+    create_or_verify_by_name(VoiceVendor,         name: shared_live_phone_vendors_config[:voice_vendor_name],
+                                                  worker: 'TwilioMessageWorker',
+                                                  username: twilio_live_credentials[:sid],
+                                                  password: twilio_live_credentials[:token]
+                            )
   end # :create_shared_twilio_invalid_number_test_vendor
 end # :db namespace

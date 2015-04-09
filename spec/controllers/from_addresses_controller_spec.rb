@@ -28,8 +28,8 @@ RSpec.describe FromAddressesController, type: :controller do
       get :index, page: '2'
       expect(response.response_code).to eq 200
       expect(assigns(:from_addresses)).to_not be nil
-      expect(response.headers['Link']).to match /first/
-      expect(response.headers['Link']).to match /prev/
+      expect(response.headers['Link']).to match(/first/)
+      expect(response.headers['Link']).to match(/prev/)
     end
   end
 end

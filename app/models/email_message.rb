@@ -28,7 +28,7 @@ class EmailMessage < ActiveRecord::Base
   def on_sending(ack = nil)
     self.ack ||= ack
     # ODM vendor sends batch with all recips in message, mark all as sending
-    recipients.with_new_status.update_all(status: 'sending', updated_at: Time.now, sent_at: Time.now)
+    recipients.with_new_status.update_all(status: 'sending', updated_at: Time.zone.now, sent_at: Time.zone.now)
     super
   end
 

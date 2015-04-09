@@ -44,6 +44,6 @@ class LoopbackMessageWorker
   end
 
   def ack
-    @ack ||= "#{(Time.now.to_i + Random.rand(100_000)).to_s(16)}"
+    @ack ||= "#{(Time.zone.now.to_i + Random.rand(100_000)).to_s(16)}"
   end
 end

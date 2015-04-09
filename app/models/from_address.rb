@@ -17,7 +17,7 @@ class FromAddress < ActiveRecord::Base
   # There should only be one default from address at a given time.
   #
   def ensure_unique_defaultness(*_args)
-    if current_default = account.from_addresses.where(is_default: true).first
+    if current_default = account.from_addresses.find_by(is_default: true)
       if self.is_default? && current_default != self
         current_default.update_attributes(is_default: false)
       end

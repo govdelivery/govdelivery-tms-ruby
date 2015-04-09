@@ -21,7 +21,7 @@ describe EmailRecipientOpen do
       ero.email_recipient = email_recipient
       ero.email = email_recipient.email
       ero.event_ip = '1.2.3.4'
-      ero.opened_at = DateTime.now
+      ero.opened_at = Time.zone.now
     end
   end
 

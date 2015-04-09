@@ -7,10 +7,8 @@ class User < ActiveRecord::Base
   belongs_to :account
   has_many :authentication_tokens, dependent: :delete_all
 
-  validates_presence_of :account
-  validates_presence_of :email
-  validates_length_of :email, maximum: 256
-  validates_uniqueness_of :email, scope: :account_id
+  validates :account, presence: true
+  validates :email, presence: true, length: { maximum: 256 }, uniqueness: { scope: :account_id }
 
   has_many :email_messages, -> { order('email_messages.created_at DESC') }
   has_many :account_email_messages, through: :account, source: EmailMessage.table_name
@@ -36,9 +34,7 @@ class User < ActiveRecord::Base
     email.downcase
   end
 
-  def email_messages_indexed
-    email_messages.indexed
-  end
+  delegate :indexed, to: :email_messages, prefix: true
 
   def after_database_authentication
     logger.info("logged in as #{self}")

@@ -45,7 +45,7 @@ module Service
 
     def get_keyword(_text)
       return unless @account
-      @account.keywords.where(name: type || text).first || account.default_keyword
+      @account.keywords.find_by(name: type || text) || account.default_keyword
     end
 
     def execute_commands(command_parameters)

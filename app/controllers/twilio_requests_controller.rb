@@ -1,7 +1,7 @@
 class TwilioRequestsController < ApplicationController
-  skip_before_filter :authenticate_user!
-  skip_before_filter :authenticate_user_from_token!
-  before_filter :dcm_forward!
+  skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user_from_token!
+  before_action :dcm_forward!
   respond_to :xml
 
   def create
@@ -18,7 +18,7 @@ class TwilioRequestsController < ApplicationController
                                                callback_url: callback_url)
 
     # parse it
-    prefix, keyword_service, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
+    _prefix, keyword_service, message, account_id = InboundSmsParser.parse(params['Body'], vendor)
 
     # store it
     inbound_msg = vendor.create_inbound_message!(from:  command_parameters.from,

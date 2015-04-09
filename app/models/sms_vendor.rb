@@ -10,10 +10,10 @@ class SmsVendor < ActiveRecord::Base
   has_many :inbound_messages, -> { order("#{InboundMessage.table_name}.created_at DESC") }, inverse_of: :vendor, foreign_key: 'vendor_id', dependent: :delete_all
   has_many :sms_prefixes, dependent: :destroy
 
-  validates_inclusion_of :shared, in: [true, false]
-  validates_uniqueness_of :from_phone
-  validates_uniqueness_of :name
-  validates_presence_of :from
+  validates :shared, inclusion: { in: [true, false] }
+  validates :from_phone, uniqueness: true
+  validates :name, uniqueness: true
+  validates :from, presence: true
 
   validate :normalize_from_phone
 

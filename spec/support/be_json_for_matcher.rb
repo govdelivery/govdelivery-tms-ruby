@@ -45,7 +45,7 @@ RSpec::Matchers.define :be_json_for do |expected|
         @links.each { |rel, href| expect(v[rel.to_s]).to eq(href) }
         expect(@links.keys.length).to eq(v.keys.length)
       elsif ts = @timestamps.delete(k.to_sym)
-        expect(Time.parse(v).to_s(:json)).to eq(expected.send(ts).to_s(:json))
+        expect(Time.zone.parse(v).to_s(:json)).to eq(expected.send(ts).to_s(:json))
       elsif @objects.delete(k.to_sym)
         expect(v).to be_a(Hash)
       elsif @arrays.delete(k.to_sym)

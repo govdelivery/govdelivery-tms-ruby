@@ -48,7 +48,7 @@ class CreateCommand < Thor
   def list(account_name, keyword_name)
     account = get_account(account_name)
     keyword = get_keyword(account, keyword_name)
-    commands = keyword.commands.collect do |command|
+    keyword.commands.collect do |command|
       say [command.id, command.name].join(' ')
       print_table command.params.to_hash, indent: 4
     end

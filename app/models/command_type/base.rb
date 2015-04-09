@@ -71,8 +71,6 @@ module CommandType
         nil
       when body.respond_to?(:to_json)
         body.to_json
-      else
-        nil
       end
     end
   end

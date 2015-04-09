@@ -1,5 +1,5 @@
 class FromAddressesController < ApplicationController
-  before_filter :find_user
+  before_action :find_user
 
   def index
     @from_addresses = @account.from_addresses.page(@page)

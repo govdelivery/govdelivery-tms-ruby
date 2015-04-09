@@ -37,7 +37,7 @@ class Keyword < ActiveRecord::Base
   end
 
   def name=(n)
-    write_attribute(:name, sanitize_name(n))
+    self[:name] = sanitize_name(n)
   end
 
   def create_command!(params)

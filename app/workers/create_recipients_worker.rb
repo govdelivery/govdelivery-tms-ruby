@@ -28,7 +28,7 @@ class CreateRecipientsWorker
         args['account_id'] = message.account_id
       end
       message.worker.perform_async(args)
-    rescue AASM::InvalidTransition => e
+    rescue AASM::InvalidTransition
       logger.warn("Failed to queue or complete #{message}") unless message.complete!
     end
   ensure

@@ -71,9 +71,9 @@ describe TwilioRequestsController do
       post :create, params
     end
     it 'should create a stop request' do
-      command = account.create_command!('stop',
-                                        params: build(:unsubscribe_command_parameters),
-                                        command_type: :dcm_unsubscribe)
+      account.create_command!('stop',
+                              params: build(:unsubscribe_command_parameters),
+                              command_type: :dcm_unsubscribe)
       expect do
         post :create, params
       end.to change { StopRequest.count }.by(1)

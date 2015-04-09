@@ -79,7 +79,7 @@ Then(/^a subscription should be created$/) do
     else
       raise 'Subscriber not found'.red
     end
-  rescue NoMethodError => e
+  rescue NoMethodError
     raise JSON.pretty_generate(@response)
   end
 
@@ -94,7 +94,6 @@ Given(/^I am subscribed to receive TMS messages$/) do
 
   # subscribe first
   @conf = configatron.accounts.sms_2way_stop
-  client = tms_client(@conf)
   conn = Faraday.new(url: @conf.xact.url) do |faraday|
     faraday.request :url_encoded
     faraday.response :logger
@@ -203,14 +202,14 @@ end
 
 #===STATIC========================================>
 
-Given (/^A keyword with static content is configured for an TMS account$/) do
+Given(/^A keyword with static content is configured for an TMS account$/) do
   @conf = configatron.accounts.sms_2way_static
   client = tms_client(@conf)
   @keyword = client.keywords.build(name: random_string, response_text: random_string)
   @keyword.post
 end
 
-Given (/^I send that keyword as an SMS to TMS$/) do
+Given(/^I send that keyword as an SMS to TMS$/) do
   conn = Faraday.new(url: "#{@conf.xact.url}") do |faraday|
     faraday.request :url_encoded
     faraday.response :logger
@@ -228,7 +227,7 @@ Given (/^I send that keyword as an SMS to TMS$/) do
   end
 end
 
-Then (/^I should receive static content$/) do
+Then(/^I should receive static content$/) do
   twiml = Hash.from_xml @resp.body
   received_content = twiml['Response']['Sms']
   expected_content = @keyword.response_text
@@ -239,13 +238,13 @@ end
 
 def agency_command_params(agency)
   url = case agency.downcase
-    when 'bart'
-      'https://xact-services-stage.herokuapp.com/bart'
-    when 'acetrain'
-      'https://xact-services-stage.herokuapp.com/acetrain'
-    when 'cdc'
-      'https://xact-services-stage.herokuapp.com/knowit'
-  end
+        when 'bart'
+          'https://xact-services-stage.herokuapp.com/bart'
+        when 'acetrain'
+          'https://xact-services-stage.herokuapp.com/acetrain'
+        when 'cdc'
+          'https://xact-services-stage.herokuapp.com/knowit'
+        end
   {
     url:           url,
     http_method:   'get',
@@ -255,34 +254,34 @@ end
 
 def agency_test(agency, check)
   case agency.downcase
-    when 'bart', 'acetrain', 'cdc'
-      expected_condition = 200
-      { condition: proc do
-        actions = check.call
-        actions.any? do |action|
-          action.status == expected_condition &&
-            !action.response_body.blank? &&
-            !action.response_body.include?('We are sorry, but the message you sent is not valid.')
-        end
-      end,
-        msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
-      }
+  when 'bart', 'acetrain', 'cdc'
+    expected_condition = 200
+    { condition: proc do
+      actions = check.call
+      actions.any? do |action|
+        action.status == expected_condition &&
+          !action.response_body.blank? &&
+          !action.response_body.include?('We are sorry, but the message you sent is not valid.')
+      end
+    end,
+      msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
+    }
   end
 end
 
-Given (/^I have an XACT account for (.+)$/) do |agency|
+Given(/^I have an XACT account for (.+)$/) do |agency|
   @conf = configatron.accounts["sms_2way_#{agency.downcase}"]
   @client = tms_client(@conf)
 end
 
-Given (/^I register the keyword (.+)$/) do |agency|
+Given(/^I register the keyword (.+)$/) do |agency|
   # Register a unique keyword each time, so that test failures can save the keyword for review without concern for future test keyword collisions
   @agency_keyword = "#{agency.downcase}#{random_string}"
   @keyword = @client.keywords.build(name: @agency_keyword)
   raise "Could not create #{@agency_keyword} keyword: #{@keyword.errors}" unless @keyword.post
 end
 
-Given (/^I register the (.+) forward command$/) do |agency|
+Given(/^I register the (.+) forward command$/) do |agency|
   @command = @keyword.commands.build(
     name: "#{agency} Forwarding",
     params: agency_command_params(agency),
@@ -291,7 +290,7 @@ Given (/^I register the (.+) forward command$/) do |agency|
   raise "Could not create Forwarding command: #{@command.errors}" unless @command.post
 end
 
-When (/^I text '(.+)' to the (.+) account$/) do |message, _agency|
+When(/^I text '(.+)' to the (.+) account$/) do |message, _agency|
   # Don't actually care about the keyword that is passed to this test
   message = message.split[1..-1].join(' ')
 
@@ -312,28 +311,23 @@ When (/^I text '(.+)' to the (.+) account$/) do |message, _agency|
   end
 end
 
-Then (/^I should receive (.+) content as a response$/) do |agency_name|
+Then(/^I should receive (.+) content as a response$/) do |agency_name|
   # TODO Can we find the actual message that XACT sent back?
 
   check = proc do
     # The API does not provide the command_actions relation on a command if there are no command actions
     # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
     # by the time the test wants to check for one.
-    actions = []
-    begin
-      @command.get
-      @command.command_actions.get
-      actions = @command.command_actions.collection
-    rescue NoMethodError => e
-    end
-    actions
+    @command.get
+    @command.command_actions.get
+    @command.try(:command_actions).try(:collection)
   end
 
   test = agency_test(agency_name, check)
 
   begin
     backoff_check(test[:condition], "for #{agency_name} to send an acceptable response")
-  rescue => e
+  rescue
     msg = test[:msg]
     msg += "\nCommand URL: #{@command.href}"
     raise $ERROR_INFO, "#{$ERROR_INFO}\n#{msg}"

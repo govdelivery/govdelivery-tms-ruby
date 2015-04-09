@@ -10,11 +10,12 @@ module Service
 
       def each(&block)
         return self unless block
-        begin
+        loop do
           batch = @transactor.call do
             do_batch(block)
           end
-        end while (batch.has_more?)
+          break unless batch.has_more?
+        end
       end
 
       def do_batch(block)

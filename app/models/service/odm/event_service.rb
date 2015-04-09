@@ -27,8 +27,6 @@ module Service
         event_iterator(vendor, :click)
       end
 
-      private
-
       def self.credentials(vendor)
         cred = Credentials.new
         cred.username = vendor.username

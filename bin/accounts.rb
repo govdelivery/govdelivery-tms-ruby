@@ -221,7 +221,7 @@ USAGE
 
   def tputs(key, value)
     puts "\t#{key.ljust(30)}#{value}"
-    end
+  end
 
   def set_sms_texts(account, options)
     %w(default help stop start).each do |type|

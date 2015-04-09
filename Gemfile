@@ -86,6 +86,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'rubocop'
   gem 'pry'
   gem 'pry-rails'
 end

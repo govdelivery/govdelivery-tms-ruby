@@ -9,10 +9,8 @@ class IncomingVoiceMessage < ActiveRecord::Base
   validates :expires_in, presence: true, unless: ->(message) { message.is_default? }, on: :create
 
   def is_expired?
-    created_at + expires_in.seconds < Time.now
+    created_at + expires_in.seconds < Time.zone.now
   end
 
-  def phone_number
-    from_number.phone_number
-  end
+  delegate :phone_number, to: :from_number
 end

@@ -26,7 +26,6 @@ def phone_number_2
 end
 
 def voice_message
-  voice_message =
   {
     1 => 'http://xact-webhook-callbacks.herokuapp.com/voice/first.mp3',
     2 => 'http://xact-webhook-callbacks.herokuapp.com/voice/second.mp3',
@@ -62,10 +61,8 @@ Then(/^I should be able to verify that multiple recipients have received the mes
   STDOUT.puts @message.errors unless @message.post
   if @message.response.status == 201
     puts '201 Created'.green
-  elsif
+  else
     raise 'Message was not created'.red
-    @message.errors
-    ap @message.errors
   end
 end
 
@@ -74,10 +71,8 @@ Then(/^I should be able to verify the statuses using good numbers$/) do
   STDOUT.puts @message.errors unless @message.post
   if @message.response.status == 201
     puts '201 Created'.green
-  elsif
+  else
     raise 'Message was not created'.red
-    @message.errors
-    ap @message.errors
   end
 end
 
@@ -89,44 +84,32 @@ Then(/^I should be able to verify the incoming message was received$/) do
 
   if @message.collection[random].attributes.include?(:play_url)
     puts 'Play url found'.green
-  elsif
+  else
     raise 'Play url was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if @message.collection[random].attributes.include?(:status)
     puts 'Status found'.green
-  elsif
+  else
     raise 'Status was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if @message.collection[random].attributes.include?(:created_at)
     puts 'Created at found'.green
-  elsif
+  else
     raise 'Created at was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if @message.collection[random].attributes[:play_url].nil?
     raise 'Play url was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if @message.collection[random].attributes[:created_at].nil?
     raise 'Play url was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if @message.collection[random].attributes[:status].nil?
     raise 'Play url was not found'.red
-    @message.errors
-    ap @message.errors
   end
 end
 
@@ -160,137 +143,103 @@ Then(/^I should be able to verify details of the message$/) do
 
   if voice.response.body['_links'].include?('recipients')
     puts 'Recipients found'.green
-  elsif
+  else
     raise 'Recipients was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('failed')
     puts 'Failed found'.green
-  elsif
+  else
     raise 'Failed was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('self')
     puts 'Self found'.green
-  elsif
+  else
     raise 'Self was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('sent')
     puts 'Sent found'.green
-  elsif
+  else
     raise 'Sent was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('human')
     puts 'Human found'.green
-  elsif
+  else
     raise 'Human was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('machine')
     puts 'Machine found'.green
-  elsif
+  else
     raise 'Machine was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('busy')
     puts 'Busy found'.green
-  elsif
+  else
     raise 'Busy was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('no_answer')
     puts 'No Answer found'.green
-  elsif
+  else
     raise 'No Answer was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['_links'].include?('could_not_connect')
     puts 'Cound not connect found'.green
-  elsif
+  else
     raise 'Could not connect was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('total')
     puts 'Total found'.green
-  elsif
+  else
     raise 'Total was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('new')
     puts 'New found'.green
-  elsif
+  else
     raise 'New was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('sending')
     puts 'Sending found'.green
-  elsif
+  else
     raise 'Sending was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('inconclusive')
     puts 'Inconclusive found'.green
-  elsif
+  else
     raise 'Inconclusive was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('blacklisted')
     puts 'Blacklisted found'.green
-  elsif
+  else
     raise 'Blacklisted was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('canceled')
     puts 'Canceled found'.green
-  elsif
+  else
     raise 'Canceled was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('sent')
     puts 'Sent found'.green
-  elsif
+  else
     raise 'Sent was not found'.red
-    @message.errors
-    ap @message.errors
   end
 
   if voice.response.body['recipient_counts'].include?('failed')
     puts 'Failed found'.green
-  elsif
+  else
     raise 'Failed was not found'.red
-    @message.errors
-    ap @message.errors
   end
 end

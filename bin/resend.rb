@@ -47,12 +47,12 @@ class Resend
 
   def resend_emails_concurrenty(email_ids)
     executor = Java.java.util.concurrent.Executors.newFixedThreadPool(32)
-    futures = email_ids.map { |id|
+    futures = email_ids.map do |id|
       task = proc do
         resend_email(id)
       end
       executor.submit(task)
-    }
+    end
     futures.each(&:get)
     executor.shutdown
   end

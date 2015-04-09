@@ -32,7 +32,7 @@ class VoiceRecipient < ActiveRecord::Base
     vrr.voice_message = message
     vrr.description   = description
     vrr.ack           = ack
-    vrr.completed_at  = date_sent || Time.now
+    vrr.completed_at  = date_sent || Time.zone.now
     vrr.save
   end
 
