@@ -217,7 +217,7 @@ Given(/^I send an SMS with an invalid word or command$/) do
   sleep(10)
     @a = @client.account.messages.list(          date_created: Date.today, #grab full list of messages sent today
           to: phone_number_from, #sort by
-          #:direction => "incoming").each do |_call|
+          direction: "incoming").each do |_call|
     end
     @b = @a[0].uri #find uri of "reply" message,
 
