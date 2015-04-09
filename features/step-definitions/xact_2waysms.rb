@@ -1,4 +1,3 @@
-require 'tms_client'
 require 'colored'
 require 'json'
 require 'awesome_print'

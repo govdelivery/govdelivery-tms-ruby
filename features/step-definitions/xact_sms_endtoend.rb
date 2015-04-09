@@ -1,4 +1,3 @@
-require 'tms_client'
 require 'colored'
 require 'httpi'
 require 'json'

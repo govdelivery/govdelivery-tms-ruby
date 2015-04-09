@@ -2,8 +2,8 @@ require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'configatron'
-require 'tms_client'
 require 'multi_xml'
+require 'govdelivery-tms-internal'
 
 
 Capybara.default_driver = :poltergeist
@@ -186,7 +186,7 @@ def twilio_xact_test_number_2
 end
 
 def tms_client(conf)
-    client = TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
+    client = GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
 end
 
 #
