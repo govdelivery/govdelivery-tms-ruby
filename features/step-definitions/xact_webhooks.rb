@@ -86,7 +86,7 @@ Then(/^the callback registered for each event state should receive a POST referr
       unless recipients_built[message_type]
         begin
           recipients_built[message_type] = message.recipients.get
-        rescue TMS::Request::InProgress
+        rescue GovDelivery::TMS::Request::InProgress
           STDOUT.puts "Recipient list for #{message_type} is not ready"
         end
       end

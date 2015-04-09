@@ -1,5 +1,5 @@
 #!/bin/env ruby
-#encoding: utf-8
+# encoding: utf-8
 
 require 'colored'
 require 'json'
