@@ -83,11 +83,12 @@ Then(/^the callback registered for each event state should receive a POST referr
 
   condition = proc do
     @messages.each do |message_type, message|
-      next unless recipients_built[message_type]
-      begin
-        recipients_built[message_type] = message.recipients.get
-      rescue GovDelivery::TMS::Request::InProgress
-        STDOUT.puts "Recipient list for #{message_type} is not ready"
+      unless recipients_built[message_type]
+        begin
+          recipients_built[message_type] = message.recipients.get
+        rescue GovDelivery::TMS::Request::InProgress
+          STDOUT.puts "Recipient list for #{message_type} is not ready"
+        end
       end
     end
     recipients_built.all? { |_message_type, built| built }
