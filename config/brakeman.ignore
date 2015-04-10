@@ -3,12 +3,12 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "33a6b0e09038bbf9458f8413f37b9bb83b911c85173778c84abbe1823bba5cd7",
+      "fingerprint": "f5361d22b5bb635f3d241306536007142ae8c46fba7ff1ab5d08a7d09fde072a",
       "message": "Possible SQL injection",
       "file": "app/models/account.rb",
-      "line": 138,
+      "line": 143,
       "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "self.send(klass.name.tableize.pluralize).select(\"#{klass.name.tableize.pluralize}.id\")",
+      "code": "self.class.connection.delete(\"DELETE FROM #{klass.name.tableize.pluralize} WHERE id IN (#{send(klass.name.tableize.pluralize).select(\"#{klass.name.tableize.pluralize}.id\").except(:order).to_sql})\")",
       "render_path": null,
       "location": {
         "type": "method",
@@ -92,6 +92,6 @@
       "note": "concerns/vendor.rb limits mass assignment"
     }
   ],
-  "updated": "2015-01-20 13:53:43 -0600",
-  "brakeman_version": "3.0.0"
+  "updated": "2015-04-10 11:10:18 -0500",
+  "brakeman_version": "3.0.2"
 }
