@@ -319,7 +319,7 @@ Then(/^I should receive (.+) content as a response$/) do |agency_name|
     # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
     # by the time the test wants to check for one.
     @command.get
-    @command.command_actions.get
+    @command.try(:command_actions).try(:get)
     @command.try(:command_actions).try(:collection)
   end
 
