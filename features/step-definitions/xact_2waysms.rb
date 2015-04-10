@@ -262,7 +262,7 @@ def agency_test(agency, check)
         action.status == expected_condition &&
           !action.response_body.blank? &&
           !action.response_body.include?('We are sorry, but the message you sent is not valid.')
-      end
+      end if actions
     end,
       msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
     }
