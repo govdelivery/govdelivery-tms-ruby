@@ -67,7 +67,7 @@ describe SmsMessage do
             subject.recipients.create!(phone: '5555555555')
 
             recip = subject.recipients.reload.first
-            recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.zone.now)
+            recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.now)
           end
           it { expect(subject.send(:"recipients_who_#{type}").count).to eq(1) }
         end

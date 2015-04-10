@@ -3,8 +3,8 @@ module Geckoboard
     def zeroes(timestamps)
       # start with 0 for every hour
       timestamps.reduce({}) do |memo, i|
-        # Time objects work as hash keys regardless of time zone (now=Time.zone.now) == now.utc
-        memo.merge(Time.zone.at(i) => 0)
+        # Time objects work as hash keys regardless of time zone (now=Time.now) == now.utc
+        memo.merge(Time.at(i) => 0)
       end
     end
 
@@ -18,7 +18,7 @@ module Geckoboard
     def time_ranges(num_units, unit)
       # Range's end should be up to now but not including now. This means
       # that part of the range is in the future, which is the desired behavior.
-      end_time = Time.zone.now.send(:"beginning_of_#{unit}")
+      end_time = Time.now.send(:"beginning_of_#{unit}")
       start_time = end_time - num_units.send(:"#{unit}s")
       time_range = start_time...end_time
       timestamp_range = start_time.to_i...end_time.to_i

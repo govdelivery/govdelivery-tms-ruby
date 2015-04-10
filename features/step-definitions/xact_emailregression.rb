@@ -28,7 +28,7 @@ end
 And(/^I send an email from an account that has link tracking params configured$/) do
   EmailAdmin.new.admin
   @message = client.email_messages.build(body: '<p><a href="http://www.cnn.com">You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.</a>',
-                                         subject: "XACT-533-2 Email Test for link parameters #{Time.zone.new}",
+                                         subject: "XACT-533-2 Email Test for link parameters #{Time.new}",
                                          from_email: "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: EmailAdmin.new.mail_accounts)
   STDOUT.puts @message.errors unless @message.post

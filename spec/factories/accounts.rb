@@ -80,14 +80,14 @@ FactoryGirl.define do
         recipient           = email.recipients.create!(email: 'hi@mom.com')
         click               = recipient.email_recipient_clicks.build
         click.url           = 'http://dude'
-        click.clicked_at    = Time.zone.now
+        click.clicked_at    = Time.now
         click.email_message = email
         click.email         = recipient.email
         click.save!
 
         opie               = recipient.email_recipient_opens.build
         opie.email_message = email
-        opie.opened_at     = Time.zone.now
+        opie.opened_at     = Time.now
         opie.email         = recipient.email
         opie.event_ip      = '128.101.101.101'
         opie.save!

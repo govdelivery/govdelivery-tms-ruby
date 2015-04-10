@@ -18,7 +18,7 @@ describe RecipientPresenter do
   end
 
   context 'sms with error_message and completed_at' do
-    let(:recipient) { build_stubbed(:sms_recipient, message_id: 101, completed_at: Time.zone.now, error_message: 'not cool', status: 'failed') }
+    let(:recipient) { build_stubbed(:sms_recipient, message_id: 101, completed_at: Time.now, error_message: 'not cool', status: 'failed') }
     it 'should work' do
       expect(presenter.url).to eq(sms_recipient_url(101, recipient))
       expect(presenter.message_url).to eq(sms_url(recipient.message_id))

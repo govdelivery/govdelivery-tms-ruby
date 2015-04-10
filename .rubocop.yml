@@ -4,6 +4,10 @@ AllCops:
     - 'Vagrantfile'
 Style/SingleLineBlockParams:
   Enabled: false
+Rails/TimeZone:
+  Enabled: false
+Rails/Date:
+  Enabled: false
 Style/MultilineBlockChain:
   Enabled: false
 Metrics/LineLength:

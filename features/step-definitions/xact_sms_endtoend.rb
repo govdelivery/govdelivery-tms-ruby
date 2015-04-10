@@ -5,7 +5,7 @@ require 'awesome_print'
 require 'twilio-ruby'
 
 BT = {}
-BT.store(1, Time.zone.new.to_s + '::' + rand(100_000).to_s)
+BT.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
 
 Given(/^I have a user who can receive SMS messages$/) do
   @sms_receiver_uri = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")

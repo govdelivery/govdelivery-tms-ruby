@@ -48,5 +48,5 @@ def backoff_check(condition, desc)
 end
 
 def random_string
-  "#{Time.zone.now.to_i}::#{rand(100_000)}"
+  "#{Time.now.to_i}::#{rand(100_000)}"
 end

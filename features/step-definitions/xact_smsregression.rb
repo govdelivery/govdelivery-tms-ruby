@@ -162,7 +162,7 @@ Given(/^I rapidly send a keyword via SMS$/) do
   3.times { rapid } # execute "rapid" 3 times
   twiliomation # call to twilio call list
   sleep(2)
-  @a = @client.account.messages.list(date_created: Time.zone.today, # grab full list of messages sent today
+  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
                                      body: 'This is a text response from a remote website.',
                                      direction: 'incoming',
                                      from: phone_number_to
@@ -204,7 +204,7 @@ Given(/^I send an SMS with an invalid word or command$/) do
 
   twiliomation # call to twilio call list
   sleep(10)
-  @a = @client.account.messages.list(date_created: Time.zone.today, # grab full list of messages sent today
+  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
                                      to: phone_number_from, # sort by
                                      direction: 'incoming').each do |_call|
   end
@@ -243,7 +243,7 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
 
   twiliomation # call to twilio call list
   sleep(1)
-  @a = @client.account.messages.list(date_created: Time.zone.today, # grab full list of messages sent today
+  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
                                      to: phone_number_from, # sort by
                                      direction: 'reply').each do |_call|
   end

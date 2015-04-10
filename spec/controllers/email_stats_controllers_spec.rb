@@ -17,7 +17,7 @@ require 'rails_helper'
       7.times.map do |i|
         email_recipient.send(:"#{stat}ed!",
                              'some-ip-or-web-address',
-                             Time.zone.at(1_359_784_800 + (i * 60)))
+                             Time.at(1_359_784_800 + (i * 60)))
       end
     end
 

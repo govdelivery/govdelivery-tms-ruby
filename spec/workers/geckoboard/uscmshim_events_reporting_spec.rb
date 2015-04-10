@@ -3,10 +3,10 @@ require 'rails_helper'
 describe Geckoboard::UscmshimEventsReporting do
   let(:account) { create(:account_with_sms) }
   let(:times) do
-    end_time = Time.zone.now.beginning_of_hour
+    end_time = Time.now.beginning_of_hour
     start_time = end_time - 24.hours
     time_range = start_time.to_i...end_time.to_i
-    time_range.step(1.hour).map { |t| Time.zone.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%H') }
+    time_range.step(1.hour).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%H') }
   end
 
   subject { Geckoboard::UscmshimEventsReporting.new }

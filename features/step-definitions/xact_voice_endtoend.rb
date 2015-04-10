@@ -89,7 +89,7 @@ end
 Then(/^I should be able to verify the voice message was received$/) do
   twiliomation # call to twilio call list
   sleep(10)
-  @a = @client.account.calls.list(start_time: Time.zone.today,
+  @a = @client.account.calls.list(start_time: Date.today,
                                   status: 'ringing',
                                   from: from_number).each do |call|
     @b = call.uri

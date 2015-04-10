@@ -10,7 +10,7 @@ describe 'command_actions/show.rabl' do
          response_body: 'http body',
          status: 200,
          content_type: 'text/plain',
-         created_at: Time.zone.now.beginning_of_day
+         created_at: Time.now.beginning_of_day
         )
   end
 

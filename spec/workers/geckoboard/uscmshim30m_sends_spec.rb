@@ -13,10 +13,10 @@ describe Geckoboard::Uscmshim30mSends do
   end
 
   it 'writes sending info for the past 30m in json format to disk' do
-    end_time = Time.zone.now.beginning_of_minute
+    end_time = Time.now.beginning_of_minute
     start_time = end_time - 30.minutes
     time_range = start_time.to_i...end_time.to_i
-    times = time_range.step(1.minute).map { |t| Time.zone.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%M') }
+    times = time_range.step(1.minute).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%M') }
     subject.expects(:write_to_file).with('name.json', {
       'item' => 29.times.collect { 0 } << 3,
       'settings' => {

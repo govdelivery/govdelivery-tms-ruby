@@ -9,7 +9,7 @@ describe IncomingVoiceMessage do
   end
 
   it 'should expire' do
-    message = build_stubbed(:incoming_voice_message, created_at: Time.zone.now - 7.days)
+    message = build_stubbed(:incoming_voice_message, created_at: Time.now - 7.days)
     expect(message.is_expired?).to be true
   end
 end

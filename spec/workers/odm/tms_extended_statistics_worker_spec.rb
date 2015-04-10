@@ -3,7 +3,7 @@ if defined?(JRUBY_VERSION)
 
   describe Odm::TmsExtendedStatisticsWorker do
     before do
-      subject.stubs(:sent_at).returns(Time.zone.now)
+      subject.stubs(:sent_at).returns(Time.now)
     end
 
     let(:worker) { subject }
@@ -29,7 +29,7 @@ if defined?(JRUBY_VERSION)
     # it 'askes delivery_event for sent_at' do
     #   java_import org.joda.time.DateTime
     #   subject.unstub(:sent_at)
-    #   subject.sent_at(stub('delivery_event', at: org.joda.time.Time.zone.now )).should be_kind_of(Time)
+    #   subject.sent_at(stub('delivery_event', at: org.joda.time.Time.now )).should be_kind_of(Time)
     # end
 
     it 'should pass error_message to recipient.failed!() if delivered is false' do

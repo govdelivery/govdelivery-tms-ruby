@@ -36,7 +36,7 @@ class InboundMessage < ActiveRecord::Base
   # intended to prevent infinite loops caused by auto-response messages.
   #
   def actionable?
-    compare_date = created_at || Time.zone.now
+    compare_date = created_at || Time.now
     table = self.class.arel_table
     threshold = (compare_date - Xact::Application.config.auto_response_threshold.minutes).to_datetime
     self.class.where('created_at >= ?', threshold)

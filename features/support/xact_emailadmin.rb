@@ -92,6 +92,6 @@ class EmailAdmin
   end
 
   def subject
-    "XACT-533-2 Email Test for link parameters #{Time.zone.new}"
+    "XACT-533-2 Email Test for link parameters #{Time.new}"
   end
 end

@@ -39,7 +39,7 @@ conf = configatron.accounts.email_endtoend
 
 # globals to generate unique variables
 # email
-expected_subject = {}.store(1, Time.zone.new.to_s + '::' + rand(100_000).to_s)
+expected_subject = {}.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
 link_redirect_works = false
 link_in_email = ''
 expected_link = 'http://govdelivery.com'

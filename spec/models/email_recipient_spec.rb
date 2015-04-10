@@ -86,7 +86,7 @@ describe EmailRecipient do
 
       context 'and is sent' do
         before do
-          subject.sent!('ack', Time.zone.now)
+          subject.sent!('ack', Time.now)
         end
         it 'should update the record' do
           subject.reload
@@ -97,12 +97,12 @@ describe EmailRecipient do
         end
         it 'should save clicks' do
           expect(subject.email_recipient_clicks.count).to eq(0)
-          subject.clicked!('http://foo.bar.com', Time.zone.now)
+          subject.clicked!('http://foo.bar.com', Time.now)
           expect(subject.email_recipient_clicks.count).to eq(1)
         end
         it 'should save opens' do
           expect(subject.email_recipient_opens.count).to eq(0)
-          subject.opened!('1.1.1.1', Time.zone.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
+          subject.opened!('1.1.1.1', Time.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
           expect(subject.email_recipient_opens.count).to eq(1)
         end
 
@@ -127,14 +127,14 @@ describe EmailRecipient do
     context 'status updates' do
       it 'should have an error_message' do
         failed_recipient = subject
-        failed_recipient.failed!(:ack, Time.zone.now, 'error_message')
+        failed_recipient.failed!(:ack, Time.now, 'error_message')
         expect(failed_recipient.error_message).to eq 'error_message'
         expect(failed_recipient.failed?).to be true
       end
 
       it 'should truncate a too-long error message' do
         failed_recipient = subject
-        failed_recipient.failed!(:ack, Time.zone.now, 'a' * 600)
+        failed_recipient.failed!(:ack, Time.now, 'a' * 600)
         expect(failed_recipient.error_message).to eq 'a' * 512
         expect(failed_recipient.failed?).to be true
       end

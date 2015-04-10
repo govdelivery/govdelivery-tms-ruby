@@ -13,8 +13,8 @@ namespace :db do
   task seed_for_tests: :environment do |_t|
     all_id = 17_331
 
-    created_time = Time.zone.new(2012, 12, 22, 10, 43, 34)
-    planted_time = Time.zone.new(2012, 12, 22, 11)
+    created_time = Time.new(2012, 12, 22, 10, 43, 34)
+    planted_time = Time.new(2012, 12, 22, 11)
 
     omg = Account.find(10_000)
     u = User.find(10_000)

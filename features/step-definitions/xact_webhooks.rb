@@ -3,7 +3,7 @@ require 'net/http'
 require 'pp'
 
 SUBJECT = {} # generating a hash value
-SUBJECT.store(1, Time.zone.new) # storing the hash value so we can retrieve it later on
+SUBJECT.store(1, Time.new) # storing the hash value so we can retrieve it later on
 
 ###
 # Some data structures used here

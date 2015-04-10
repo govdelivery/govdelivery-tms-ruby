@@ -154,19 +154,19 @@ module Message
   end
 
   def on_sending(*_args)
-    self.sent_at = Time.zone.now
+    self.sent_at = Time.now
   end
 
   def on_complete
     self.completed_at = if recipients
                           last_recipient = recipients.sent.order('completed_at DESC').first
                           last_recipient.try(:completed_at)
-                        end || Time.zone.now
+                        end || Time.now
   end
 
   def on_cancel
-    recipients.update_all(status: 'canceled', completed_at: Time.zone.now)
-    self.completed_at = Time.zone.now
+    recipients.update_all(status: 'canceled', completed_at: Time.now)
+    self.completed_at = Time.now
   end
 
   def has_valid_async_recipients?

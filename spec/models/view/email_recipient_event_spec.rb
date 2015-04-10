@@ -14,14 +14,14 @@ describe View::EmailRecipientEvent do
 
   describe '#event_at' do
     it 'dispatches to opened_at' do
-      t = Time.zone.at(1_359_784_800)
+      t = Time.at(1_359_784_800)
       open = mock(opened_at: t)
       open.stubs(class: stub(name: 'EmailRecipientOpen'))
       subject = View::EmailRecipientEvent.new(open, nil)
       expect(subject.event_at).to eq(t)
     end
     it 'dispatches to clicked_at' do
-      t = Time.zone.at(1_359_784_800)
+      t = Time.at(1_359_784_800)
       click = mock(clicked_at: t)
       click.stubs(class: stub(name: 'EmailRecipientClick'))
       subject = View::EmailRecipientEvent.new(click, nil)

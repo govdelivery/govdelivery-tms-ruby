@@ -135,7 +135,7 @@ describe EmailMessage do
 
             # one dude twice, the other not at all
             recip = email.recipients.reload.first
-            recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.zone.now)
+            recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.now)
           end
           it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
         end

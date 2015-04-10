@@ -6,7 +6,7 @@ require 'awesome_print'
 class StatusCodes < Test::Unit::TestCase
   def test_xact_status_codes
     bt = {}
-    bt.store(1, Time.zone.new.to_s + '::' + rand(100_000).to_s)
+    bt.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
     expected_subject = bt[1]
     expected_link = 'http://govdelivery.com'
     path = 'https://stage-tms.govdelivery.com/messages/email'

@@ -21,7 +21,7 @@ describe EmailRecipientClick do
       erc.email_recipient = email_recipient
       erc.email = email_recipient.email
       erc.url = 'http://dontclickonthis.com/very_bad_stuff.html'
-      erc.clicked_at = Time.zone.now
+      erc.clicked_at = Time.now
     end
   end
 
