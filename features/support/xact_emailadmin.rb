@@ -29,21 +29,21 @@ class EmailAdmin
 
   def admin
     if ENV['XACT_ENV'] == 'qc'
-      client = GovDelivery::TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
+      GovDelivery::TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
     elsif ENV['XACT_ENV'] == 'integration'
-      client = GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
+      GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
     elsif ENV['XACT_ENV'] == 'stage'
-      client = GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
+      GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
     end
   end
 
   def client
     if ENV['XACT_ENV'] == 'qc'
-      client = GovDelivery::TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
+      GovDelivery::TMS::Client.new('4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu', api_root: 'https://qc-tms.govdelivery.com')
     elsif ENV['XACT_ENV'] == 'integration'
-      client = GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
+      GovDelivery::TMS::Client.new('weppMSnAKp33yi3zuuHdSpN6T2q17yzL', api_root: 'https://int-tms.govdelivery.com')
     elsif ENV['XACT_ENV'] == 'stage'
-      client = GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
+      GovDelivery::TMS::Client.new('Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD', api_root: 'https://stage-tms.govdelivery.com')
     end
   end
 
@@ -92,6 +92,6 @@ class EmailAdmin
   end
 
   def subject
-    "XACT-533-2 Email Test for link parameters #{$x}"
+    "XACT-533-2 Email Test for link parameters #{Time.zone.new}"
   end
 end

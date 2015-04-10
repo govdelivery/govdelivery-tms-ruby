@@ -1,10 +1,10 @@
 class IncomingVoiceMessagesController < ApplicationController
   include FeatureChecker
   wrap_parameters :incoming_voice_message, include: [:from_number, :say_text, :play_url, :is_default, :expires_in], format: [:json, :url_encoded_form]
-  before_filter :find_user
-  before_filter :find_from_number, only: [:create]
-  before_filter :find_voice_message, only: [:show]
-  before_filter :set_page, only: :index
+  before_action :find_user
+  before_action :find_from_number, only: [:create]
+  before_action :find_voice_message, only: [:show]
+  before_action :set_page, only: :index
   feature :voice
 
   def index

@@ -5,7 +5,7 @@ class EmailRecipient < ActiveRecord::Base
   self.delivery_timeout = Rails.configuration.email_delivery_timeout
 
   attr_accessible :email
-  validates_presence_of :message, unless: :skip_message_validation
+  validates :message, presence: { unless: :skip_message_validation }
   validates :email, presence: true, length: { maximum: 256 }, email: true
 
   ##

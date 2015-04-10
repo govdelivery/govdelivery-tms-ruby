@@ -12,7 +12,7 @@ class CommandAction < ActiveRecord::Base
   before_validation :trim_body, on: :create
   after_save :update_inbound_message
 
-  scope :successes, where('status BETWEEN 200 AND 299')
+  scope :successes, -> { where('status BETWEEN 200 AND 299') }
 
   def success?
     (200..299).include?(status) && response_body.present?

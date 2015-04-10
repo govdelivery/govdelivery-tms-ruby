@@ -67,8 +67,8 @@ Xact::Application.routes.draw do
         end
       end
     end
-    { sms: :sms_messages }.each do |_resource, _controller|
-      resources(_resource, only: [:index, :new, :create, :show], controller: _controller) do
+    { sms: :sms_messages }.each do |res, con|
+      resources(res, only: [:index, :new, :create, :show], controller: con) do
         pageable
         resources(:recipients, only: [:index, :show]) do
           pageable
@@ -79,8 +79,8 @@ Xact::Application.routes.draw do
         end
       end
     end
-    { voice: :voice_messages }.each do |_resource, _controller|
-      resources(_resource, only: [:index, :new, :create, :show], controller: _controller) do
+    { voice: :voice_messages }.each do |res, con|
+      resources(res, only: [:index, :new, :create, :show], controller: con) do
         pageable
         resources(:recipients, only: [:index, :show]) do
           pageable

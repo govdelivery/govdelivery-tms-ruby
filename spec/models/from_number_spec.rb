@@ -46,7 +46,7 @@ describe FromNumber do
     it 'should return default voice message' do
       subject.save!
       old_message = subject.incoming_voice_messages.create(say_text: 'old message', is_default: true)
-      old_message.created_at = Time.now - 1.hour
+      old_message.created_at = Time.zone.now - 1.hour
       old_message.save!
       subject.incoming_voice_messages.create(say_text: 'new message', is_default: true)
 
@@ -64,7 +64,7 @@ describe FromNumber do
     it 'should return default when message is expired' do
       subject.save!
       expired_message = subject.incoming_voice_messages.create(say_text: 'expired message', is_default: false, expires_in: 200)
-      expired_message.created_at = Time.now - 24.hours
+      expired_message.created_at = Time.zone.now - 24.hours
       expired_message.save!
       subject.incoming_voice_messages.create(say_text: 'default message', is_default: true)
 

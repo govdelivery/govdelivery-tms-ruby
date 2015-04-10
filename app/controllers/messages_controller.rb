@@ -1,7 +1,7 @@
 class MessagesController < ApplicationController
-  before_filter :find_user
-  before_filter :set_scope
-  before_filter :set_attr
+  before_action :find_user
+  before_action :set_scope
+  before_action :set_attr
 
   def index
     @messages = @message_scope.page(@page)

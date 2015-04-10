@@ -1,6 +1,6 @@
 class EmailTemplatesController < ApplicationController
-  before_filter :find_user
-  before_filter :set_page, only: :index
+  before_action :find_user
+  before_action :set_page, only: :index
 
   def index
     respond_with(@email_templates = account_templates.page(@page))

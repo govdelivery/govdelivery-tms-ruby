@@ -1,6 +1,6 @@
 class WebhooksController < ApplicationController
-  before_filter :find_user
-  before_filter :find_webhook, except: [:index, :create]
+  before_action :find_user
+  before_action :find_webhook, except: [:index, :create]
   wrap_parameters :webhook, include: [:url, :event_type], format: [:json, :url_encoded_form]
 
   def index

@@ -1,7 +1,7 @@
 require 'faraday'
 require 'uri'
 
-class Callbacks_API_Client
+class CallbacksAPIClient
   attr_accessor :callback_uris
   attr_accessor :callbacks_root
   attr_accessor :callbacks_domain
@@ -50,7 +50,7 @@ class Callbacks_API_Client
 
   def destroy_all_callback_uris
     all_callback_endpoints = Array.new(callback_uris)
-    for uri in all_callback_endpoints
+    all_callback_endpoints.each do |uri|
       destroy_callback_uri(uri)
     end
     true

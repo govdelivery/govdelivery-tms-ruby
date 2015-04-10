@@ -7,7 +7,7 @@ describe 'webhooks/show.rabl' do
          to_param: '22',
          url: 'http://fail.com',
          event_type: 'failed',
-         created_at: Time.now,
+         created_at: Time.zone.now,
          errors: {},
          persisted?: true
         )
@@ -19,7 +19,7 @@ describe 'webhooks/show.rabl' do
          to_param: '22',
          url: 'http://fail.com',
          event_type: 'failed',
-         created_at: Time.now,
+         created_at: Time.zone.now,
          errors: { url: "Can't be blank" },
          persisted?: false
         )

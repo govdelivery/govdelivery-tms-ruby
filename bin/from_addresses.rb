@@ -23,18 +23,18 @@ class FromAddressManager
               end
 
     case
-      when options[:list]
-        list(account.from_addresses.order('created_at desc'))
-      when options[:delete]
-        account.from_addresses.destroy_all
-      when options[:from_address]
-        begin
-          account.from_addresses.create!(options[:from_address])
-          out 'From address created.'
-          list(account.reload.from_addresses)
-        rescue ActiveRecord::RecordInvalid => e
-          out "An error occurred: #{e.record.errors.full_messages}"
-        end
+    when options[:list]
+      list(account.from_addresses.order('created_at desc'))
+    when options[:delete]
+      account.from_addresses.destroy_all
+    when options[:from_address]
+      begin
+        account.from_addresses.create!(options[:from_address])
+        out 'From address created.'
+        list(account.reload.from_addresses)
+      rescue ActiveRecord::RecordInvalid => e
+        out "An error occurred: #{e.record.errors.full_messages}"
+      end
     end
   end
 

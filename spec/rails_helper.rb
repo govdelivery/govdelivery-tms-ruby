@@ -79,7 +79,7 @@ def exception_check(worker, expected_message, params = nil)
     else
       worker.perform
     end
-  rescue Java.java.lang::Throwable => jt
+  rescue Java.java.lang::Throwable
     java_exception_raised = false
   rescue Exception => rex
     ruby_exception_raised = true

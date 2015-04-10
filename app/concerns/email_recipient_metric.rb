@@ -5,8 +5,8 @@ module EmailRecipientMetric
     belongs_to :email_message
     belongs_to :email_recipient
 
-    validates_presence_of :email_message
-    validates_presence_of :email_recipient
+    validates :email_message, presence: true
+    validates :email_recipient, presence: true
 
     validates :email, presence: true, length: { maximum: 256 }
   end

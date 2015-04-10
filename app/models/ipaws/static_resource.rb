@@ -6,7 +6,7 @@ module IPAWS
 
     included do
       class_attribute :all
-      attr_accessor *ATTRIBUTES
+      attr_accessor(*ATTRIBUTES)
     end
 
     def initialize(attributes = {})

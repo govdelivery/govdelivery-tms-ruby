@@ -67,7 +67,7 @@ describe EmailMessage do
       before { email.save! }
 
       it 'should be able to create recipients' do
-        rcpt = email.create_recipients([email: 'tyler@dudes.com'])
+        email.create_recipients([email: 'tyler@dudes.com'])
         expect(email.recipients.reload.count).to eq(1)
       end
 
@@ -135,7 +135,7 @@ describe EmailMessage do
 
             # one dude twice, the other not at all
             recip = email.recipients.reload.first
-            recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.now)
+            recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.zone.now)
           end
           it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
         end

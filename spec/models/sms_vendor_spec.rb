@@ -72,7 +72,7 @@ describe SmsVendor do
       vendor.stop_requests.create!(phone: phone)
       expect do
         vendor.start!(command_parameters)
-      end.to change { vendor.stop_requests.count }.by -1
+      end.to change { vendor.stop_requests.count }.by(-1)
     end
   end
 end

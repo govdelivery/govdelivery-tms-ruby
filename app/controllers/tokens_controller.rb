@@ -1,5 +1,5 @@
 class TokensController < ApplicationController
-  before_filter :assert_admin!
+  before_action :assert_admin!
   def index
     u = User.find_by_account_id_and_id(*params.values_at(:account_id, :user_id))
     render json: {

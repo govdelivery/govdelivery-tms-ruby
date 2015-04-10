@@ -88,7 +88,7 @@ module Recipient
   end
 
   def sent!(ack, date_sent = nil, _ = nil)
-    date_sent ||= Time.now
+    date_sent ||= Time.zone.now
     mark_sent!(:sent, ack, date_sent, nil)
   end
 
@@ -118,14 +118,14 @@ module Recipient
 
   def finalize(ack, completed_at, error_message)
     self.ack           = ack if ack.present?
-    self.completed_at  = completed_at || Time.now
+    self.completed_at  = completed_at || Time.zone.now
     self.error_message = error_message
     self.save!
   end
 
   def acknowledge_sent(ack = nil, *_)
     self.ack     = ack
-    self.sent_at = Time.now
+    self.sent_at = Time.zone.now
   end
 
   def set_vendor

@@ -3,7 +3,7 @@ class EmailRecipientOpen < ActiveRecord::Base
 
   attr_accessible
   validates :event_ip, presence: true, length: { maximum: 256 }
-  validates_presence_of :opened_at
+  validates :opened_at, presence: true
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> { select('email_message_id, email_recipient_id, opened_at, id') }

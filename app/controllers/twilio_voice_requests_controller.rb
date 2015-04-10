@@ -1,7 +1,7 @@
 class TwilioVoiceRequestsController < ApplicationController
-  skip_before_filter :authenticate_user!
-  skip_before_filter :authenticate_user_from_token!
-  before_filter :find_from_number
+  skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user_from_token!
+  before_action :find_from_number
   respond_to :xml
 
   def create

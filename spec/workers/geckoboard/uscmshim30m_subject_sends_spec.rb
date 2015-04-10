@@ -25,7 +25,7 @@ describe Geckoboard::Uscmshim30mSubjectSends do
     end_time   = dbtime + 1.minute
     start_time = end_time - 30.minutes
     time_range = start_time.to_i...end_time.to_i
-    times      = time_range.step(1.minute).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%M') }
+    times      = time_range.step(1.minute).map { |t| Time.zone.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%M') }
 
     expected = {
       colors: ['#FCFFF5', '#D1DBBD', '#91AA9D', '#ACF0F2', '#EB7F00', '#54AC92', '#F1B60B', '#097178', '#9E4292', '#9D21D9', '#03DAF7'],

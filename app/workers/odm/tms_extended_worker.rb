@@ -60,7 +60,7 @@ module Odm
     # RecordNotFound (as opposed to find_by_id)
     def find_recipient(recip_id, scope)
       scope.find(recip_id)
-    rescue ActiveRecord::RecordNotFound => e
+    rescue ActiveRecord::RecordNotFound
       logger.warn("#{self.class.name}: Couldn't find recipient #{recip_id}")
       nil
     end
@@ -71,7 +71,7 @@ module Odm
     # other accounts back and the recipient_id can't be parsed as an integer.
     def parse_recipient_id(recip_id)
       Integer(recip_id)
-    rescue ArgumentError, TypeError => e
+    rescue ArgumentError, TypeError
       logger.warn("#{self.class.name}: Couldn't parse recipient id '#{recip_id}' into an integer.")
       nil
     end

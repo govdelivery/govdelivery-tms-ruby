@@ -75,7 +75,7 @@ module IPAWS
       # 2. The response attributes are not themselves under any sort of key (empty string).
       cap_response = cap_response.as_json
       if responses = cap_response.delete('')
-        cap_response['responses'] = responses.in_groups_of(4, fill = false).map do |group|
+        cap_response['responses'] = responses.in_groups_of(4, false).map do |group|
           group.inject { |response, attributes| response.merge(attributes) }
         end
       end

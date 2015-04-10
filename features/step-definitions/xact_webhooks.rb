@@ -2,8 +2,8 @@ require 'uri'
 require 'net/http'
 require 'pp'
 
-$subject = {} # generating a hash value
-$subject.store(1, Time.new) # storing the hash value so we can retrieve it later on
+SUBJECT = {} # generating a hash value
+SUBJECT.store(1, Time.zone.new) # storing the hash value so we can retrieve it later on
 
 ###
 # Some data structures used here
@@ -50,7 +50,7 @@ end
 When(/^I send a message of each type to the magic address of each event state$/) do
   client = tms_client(configatron.accounts.webhooks)
   @messages = {}
-  @messages[:email] = client.email_messages.build(body: 'Webhooks Testing', subject: "#{$subject[1]}")
+  @messages[:email] = client.email_messages.build(body: 'Webhooks Testing', subject: "#{SUBJECT[1]}")
   puts 'Sending to the following Email Addresses'
   magic_emails.each do |event_type, magic_email|
     @messages[:email].recipients.build(email: magic_email)
@@ -83,12 +83,11 @@ Then(/^the callback registered for each event state should receive a POST referr
 
   condition = proc do
     @messages.each do |message_type, message|
-      unless recipients_built[message_type]
-        begin
-          recipients_built[message_type] = message.recipients.get
-        rescue GovDelivery::TMS::Request::InProgress
-          STDOUT.puts "Recipient list for #{message_type} is not ready"
-        end
+      next unless recipients_built[message_type]
+      begin
+        recipients_built[message_type] = message.recipients.get
+      rescue GovDelivery::TMS::Request::InProgress
+        STDOUT.puts "Recipient list for #{message_type} is not ready"
       end
     end
     recipients_built.all? { |_message_type, built| built }
@@ -142,7 +141,7 @@ Then(/^the callback registered for each event state should receive a POST referr
 
       begin
         backoff_check(check_condition, 'have all the payloads expected')
-      rescue => e
+      rescue
         webhooks = tms_client(configatron.accounts.webhooks).webhooks
         webhooks.get
         registered_hooks = webhooks.collection.map(&:attributes)

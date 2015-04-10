@@ -14,10 +14,10 @@ describe 'recipients/show.rabl' do
            formatted_phone: '+16125551212',
            phone: '6125551212',
            status: 'sent',
-           created_at: Time.now,
-           sent_at: Time.now,
+           created_at: Time.zone.now,
+           sent_at: Time.zone.now,
            error_message: nil,
-           completed_at: Time.now,
+           completed_at: Time.zone.now,
            valid?: true)
     end
 
@@ -48,10 +48,10 @@ describe 'recipients/show.rabl' do
            message: message,
            email: 'dude@bros.com',
            status: 'sent',
-           created_at: Time.now,
-           sent_at: Time.now,
+           created_at: Time.zone.now,
+           sent_at: Time.zone.now,
            error_message: nil,
-           completed_at: Time.now,
+           completed_at: Time.zone.now,
            macros: { 'name' => 'Henry Hankson' },
            valid?: true)
     end

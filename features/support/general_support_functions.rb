@@ -1,7 +1,7 @@
 require 'colored'
 
 Before() do |_scenario|
-  @capi = Callbacks_API_Client.new(callbacks_api_root)
+  @capi = CallbacksAPIClient.new(callbacks_api_root)
   @webhooks = []
 end
 
@@ -36,7 +36,7 @@ def backoff_check(condition, desc)
 
   # 2 ^ 9 = ~ 8.5 minutes
   # Max time waited: 17.05 minutes
-  for x in min..max
+  (min..max).each do |x|
     sleep_time = 2**x
     sleep(sleep_time)
     slept_time += sleep_time
@@ -48,5 +48,5 @@ def backoff_check(condition, desc)
 end
 
 def random_string
-  "#{Time.now.to_i}::#{rand(100_000)}"
+  "#{Time.zone.now.to_i}::#{rand(100_000)}"
 end

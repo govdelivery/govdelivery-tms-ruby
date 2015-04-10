@@ -20,8 +20,8 @@ class XACTHelper
       ap @data.code
       ap @data.headers
       ap @data.body
-    rescue Exception => e
-      raise ('Cannot POST email to XACT: ' + e.message).red
+    rescue StandardError => e
+      raise(('Cannot POST email to XACT: ' + e.message).red)
     end
     @data
   end
@@ -49,12 +49,11 @@ class IMAPCleaner
     imap = Net::IMAP.new(server, port, use_ssl)
     imap.login(username, password)
     imap.select('INBOX')
-    messages = imap.search(['ALL']).map do |message_id|
-      msg = imap.fetch(message_id, 'ENVELOPE')[0].attr['ENVELOPE']
-      result = { mailbox: msg.from[0].mailbox, host: msg.from[0].host, subject: msg.subject, created_at: msg.date }
+    imap.search(['ALL']).map do |message_id|
+      imap.fetch(message_id, 'ENVELOPE')[0].attr['ENVELOPE']
       imap.store(message_id, '+FLAGS', [:Deleted])
     end
-  rescue Exception => e
+  rescue StandardError => e
     puts "Error interacting with #{server} IMAP, trying to delete messages (no retry, will clean up next time): " + e.message
   ensure
     imap.logout

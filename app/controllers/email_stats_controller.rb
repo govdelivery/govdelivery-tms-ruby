@@ -1,6 +1,6 @@
 class EmailStatsController < ApplicationController
-  before_filter :find_user
-  before_filter :set_page, only: [:index]
+  before_action :find_user
+  before_action :set_page, only: [:index]
 
   def index
     r = safe_get_recipient(current_user, params[:email_id], params[:recipient_id])

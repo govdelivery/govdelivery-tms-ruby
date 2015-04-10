@@ -13,13 +13,13 @@ Capybara.default_wait_time = 600
 
 def expected_link_prefix
   if ENV['XACT_ENV'] == 'qc'
-    expected_link_prefix = 'http://test-links.govdelivery.com:80'
+    'http://test-links.govdelivery.com:80'
   elsif ENV['XACT_ENV'] == 'integration'
-    expected_link_prefix = 'http://test-links.govdelivery.com:80'
+    'http://test-links.govdelivery.com:80'
   elsif ENV['XACT_ENV'] == 'stage'
-    expected_link_prefix = 'http://stage-links.govdelivery.com:80/track'
+    'http://stage-links.govdelivery.com:80/track'
   elsif ENV['XACT_ENV'] == 'prod'
-    expected_link_prefix = 'https://odlinks.govdelivery.com'
+    'https://odlinks.govdelivery.com'
   end
 end
 
@@ -39,15 +39,13 @@ conf = configatron.accounts.email_endtoend
 
 # globals to generate unique variables
 # email
-$bt = {}
-$bt.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
-expected_subject = $bt[1]
+expected_subject = {}.store(1, Time.zone.new.to_s + '::' + rand(100_000).to_s)
 link_redirect_works = false
 link_in_email = ''
 expected_link = 'http://govdelivery.com'
 # expected_status_code = 201
 
-When /^I POST a new EMAIL message to TMS$/ do
+When(/^I POST a new EMAIL message to TMS$/) do
   next if dev_not_live?
 
   email_body = "This is a test for end to end email delivery. <a href=\\\"#{expected_link}\\\">With a link</a>"
@@ -61,7 +59,7 @@ When /^I POST a new EMAIL message to TMS$/ do
     path)
 end
 
-Then /^I go to Gmail to check for message delivery$/ do
+Then(/^I go to Gmail to check for message delivery$/) do
   next if dev_not_live?
 
   message_list = Hash.new {}
@@ -69,13 +67,11 @@ Then /^I go to Gmail to check for message delivery$/ do
   msg_found = false
   wait_time = 5
   num_iterations = 120 # wait ten minutes if you retry every 5 seconds
-  iter = 0
 
-  while msg_found == false && iter < num_iterations
+  num_iterations.times do |iter|
     STDOUT.puts "Have waited #{wait_time * iter} seconds".blue
     STDOUT.puts "Waiting for #{wait_time} more seconds"
     sleep(wait_time)
-    iter += 1
 
     begin
       STDOUT.puts "Logging into Gmail IMAP looking for subject: #{expected_subject}"
@@ -98,9 +94,6 @@ Then /^I go to Gmail to check for message delivery$/ do
     rescue => e
       STDOUT.puts "Error interacting with Gmail IMAP (will retry in #{wait_time} seconds): " + e.message
       STDOUT.puts e.backtrace
-    ensure
-      # imap.logout
-      # imap.disconnect
     end
 
     if message_list[expected_subject]
@@ -119,6 +112,7 @@ Then /^I go to Gmail to check for message delivery$/ do
           end
         end
       end
+      break
     end
   end # end while
 

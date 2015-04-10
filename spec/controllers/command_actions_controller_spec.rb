@@ -23,7 +23,7 @@ describe CommandActionsController do
   let(:account) { create(:account, sms_vendor: vendor) }
   let(:inbound_message) { create(:inbound_message, body: 'body', from: 'from', vendor: vendor, keyword: keyword, account: account) }
   let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-  let(:keyword) { k = account.keywords.new(name: 'HI').tap { |k| k.account = account }; k.save!; k }
+  let(:keyword) { k = account.keywords.new(name: 'HI').tap { |f| f.account = account }; k.save!; k }
   let(:params) { { dcm_account_code: 'ACME', dcm_topic_codes: %w(ACME_1 ACME_2) } }
   let(:command) { keyword.commands.create(command_type: :dcm_subscribe, name: 'ALLIGATORZ', params: params) }
 

@@ -23,7 +23,7 @@ module Subetha
         org.subethamail.smtp.auth.EasyAuthenticationHandlerFactory.new do |email, password|
           begin
             raise 'nope' unless User.with_token(password).present?
-          rescue Java.java.lang::Throwable, StandardError => e
+          rescue Java.java.lang::Throwable, StandardError
             Sidekiq.logger.info "failed to authenticate user #{email}"
             raise LoginFailedException.new
           end

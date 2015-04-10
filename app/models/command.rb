@@ -8,9 +8,8 @@ class Command < ActiveRecord::Base
   serialize :params, CommandParameters
 
   attr_accessible :command_type, :name, :params
-  validates_presence_of :command_type
-
-  validates_length_of :name, maximum: 255, allow_nil: true
+  validates :command_type, presence: true
+  validates :name, length: { maximum: 255, allow_nil: true }
   validates :params, length: { maximum: 4000 }, allow_nil: true
   before_save :set_name
   validate :validate_command
@@ -75,10 +74,11 @@ class Command < ActiveRecord::Base
 
   def validate_command
     return unless keyword && account
-    if !(CommandType[command_type.to_sym] rescue nil)
+    begin
+      cmd_errors = CommandType[command_type.to_sym].validate_params(params, account)
+      errors.add(:params, "has invalid #{command_type} parameters: #{cmd_errors.full_messages.join(', ')}") if cmd_errors.any?
+    rescue NameError
       errors.add(:command_type, 'is invalid')
-    elsif (cmd_errors = CommandType[command_type].validate_params(params, account)).any?
-      errors.add(:params, "has invalid #{command_type} parameters: #{cmd_errors.full_messages.join(', ')}")
     end
     errors.empty?
   end

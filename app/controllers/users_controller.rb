@@ -1,7 +1,7 @@
 require 'ostruct'
 
 class UsersController < ApplicationController
-  before_filter lambda { |_c|
+  before_action lambda { |_c|
     render(json: { error: 'forbidden' },
            status: :forbidden) unless current_user.admin?
   }

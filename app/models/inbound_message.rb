@@ -6,7 +6,9 @@ class InboundMessage < ActiveRecord::Base
 
   attr_accessible :body, :from, :vendor, :to, :keyword, :keyword_response, :account_id
 
-  validates_presence_of :body, :from, :vendor
+  validates :body, presence: true
+  validates :from, presence: true
+  validates :vendor, presence: true
   alias_attribute :from, :caller_phone # 'caller_phone' is the database column, as 'from' is a reserved word in Oracle (who knew?)
   alias_attribute :to, :vendor_phone
 
@@ -34,7 +36,7 @@ class InboundMessage < ActiveRecord::Base
   # intended to prevent infinite loops caused by auto-response messages.
   #
   def actionable?
-    compare_date = created_at || DateTime.now
+    compare_date = created_at || Time.zone.now
     table = self.class.arel_table
     threshold = (compare_date - Xact::Application.config.auto_response_threshold.minutes).to_datetime
     self.class.where('created_at >= ?', threshold)

@@ -4,10 +4,10 @@ require 'json'
 require 'awesome_print'
 require 'twilio-ruby'
 
-$bt = {}
-$bt.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
+BT = {}
+BT.store(1, Time.zone.new.to_s + '::' + rand(100_000).to_s)
 
-Given (/^I have a user who can receive SMS messages$/)do
+Given(/^I have a user who can receive SMS messages$/) do
   @sms_receiver_uri = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
   @sms_receiver_full_uri = @capi.callbacks_domain + @sms_receiver_uri
 
@@ -25,7 +25,7 @@ Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
   client = tms_client(configatron.accounts.sms_endtoend)
-  message = client.sms_messages.build(body: "#{$bt[1]}")
+  message = client.sms_messages.build(body: "#{BT[1]}")
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
   puts configatron.test_support.twilio.phone.number
   message.post
@@ -42,7 +42,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
 
   passed = false
   payloads = []
-  condition = "#{$bt[1]}"
+  condition = "#{BT[1]}"
 
   check_condition = proc do
     payloads = @capi.get(@sms_receiver_uri)
@@ -53,7 +53,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
   end
   begin
     backoff_check(check_condition, 'for the test user to receive the message I sent')
-  rescue => e
+  rescue
     msg = "Message I sent: '#{condition}'\n"
     msg += "Message URL: #{configatron.xact.url + @message.href}\n"
     msg += "Test user callback URL: #{@sms_receiver_full_uri}\n"
@@ -62,7 +62,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
   end
 
   # ap @list
-  # if @list["payloads"]["body"] == "#{$bt[1]}"
+  # if @list["payloads"]["body"] == "#{BT[1]}"
   #   puts 'body found'
   # else
   #   fail

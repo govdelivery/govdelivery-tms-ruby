@@ -14,7 +14,7 @@ module Messages
         logger.debug("Checking completion status for message #{message.class.name} #{message.id}")
         message.complete!
       end
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
         false
     end
   end

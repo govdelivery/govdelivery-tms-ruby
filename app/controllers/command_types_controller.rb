@@ -1,6 +1,6 @@
 class CommandTypesController < ApplicationController
   include FeatureChecker
-  before_filter :find_user
+  before_action :find_user
   feature :sms
 
   def index

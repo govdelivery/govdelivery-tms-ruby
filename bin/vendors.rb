@@ -168,29 +168,29 @@ USAGE
 
   def list_vendors
     puts "SmsVendor.all\n"
-    SmsVendor.all.each { |v|
+    SmsVendor.all.each do |v|
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
       puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
       puts "\tshared: " + v.shared.to_s + "\n"
       puts "\n"
-    }
+    end
 
     puts "VoiceVendor.all\n"
-    VoiceVendor.all.each { |v|
+    VoiceVendor.all.each do |v|
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
       # puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
       puts "\n"
-    }
+    end
 
     puts "EmailVendor.all\n"
-    EmailVendor.all.each { |v|
+    EmailVendor.all.each do |v|
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
       puts "\tworker: " + v.worker.to_s + "\n"
       puts "\n"
-    }
+    end
   end
 end
 
