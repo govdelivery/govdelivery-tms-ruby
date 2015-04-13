@@ -49,7 +49,7 @@ module Recipient
       end
 
       event :cancel, after: [:finalize, :invoke_webhooks] do
-        transitions from: [:new, :sending], to: :canceled
+        transitions from: [:new, :sending, :inconclusive], to: :canceled
       end
 
       event :blacklist, after: :invoke_webhooks do
