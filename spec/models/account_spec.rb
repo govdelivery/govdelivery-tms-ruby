@@ -203,9 +203,13 @@ describe Account do
       @account.destroy
     end
     it 'is rad' do
-      direct_tables = ActiveRecord::Base.connection.tables
-                      .map { |m| m.classify.constantize rescue nil }.compact
-                      .select { |m| m.column_names.include?('account_id') }
+      direct_tables = ActiveRecord::Base.connection.tables.map do |m|
+        begin
+          m.classify.constantize
+        rescue NameError
+          nil
+        end
+      end.compact.select { |m| m.column_names.include?('account_id') }
 
       direct_tables.each do |klass|
         expect(klass.where(account_id: @account_id).count).to eq 0
@@ -216,6 +220,8 @@ describe Account do
       end
     end
   end
+
+  ActiveRecord::Base.connection.tables.map { |m| m.classify.constantize }
 
   it 'should validate that it cannot be added to a non-shared vendor who already has an account' do
     second_account = create(:account_with_sms)

@@ -21,7 +21,7 @@ module CommandType
 
     # this will get called in the background
     def process_response(_account, params, http_response)
-      content_type = http_response.headers['Content-Type'] rescue nil
+      content_type = http_response.try(:headers).try(:[], 'Content-Type')
       command_action(params).tap do |action|
         action.update!(
           status:        http_response.status,

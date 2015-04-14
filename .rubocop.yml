@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - 'db/**/*'
     - 'Vagrantfile'
+    - 'vendor/**/*'
 Style/SingleLineBlockParams:
   Enabled: false
 Rails/TimeZone:
@@ -55,4 +56,10 @@ Style/RegexpLiteral:
 Style/Next:
   Enabled: false
 Lint/AssignmentInCondition:
+  Enabled: false
+Style/PercentLiteralDelimiters:
+  Enabled: false
+Style/StringLiterals:
+  Enabled: false
+Style/SpaceAroundEqualsInParameterDefault:
   Enabled: false

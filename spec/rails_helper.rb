@@ -49,7 +49,7 @@ def stub_command_action_create!(command_params, http_response, command_action, b
   command_action.expects(:update!).with(
     error_message: nil,
     status:        http_response.status,
-    content_type:  (http_response.headers['Content-Type'] rescue nil),
+    content_type:  http_response.try(:headers).try(:[], 'Content-Type'),
     response_body: body).returns(command_action)
   CommandAction.expects(:where).with(
     inbound_message_id: command_params.inbound_message_id,
@@ -81,7 +81,7 @@ def exception_check(worker, expected_message, params = nil)
     end
   rescue Java.java.lang::Throwable
     java_exception_raised = false
-  rescue Exception => rex
+  rescue StandardError => rex
     ruby_exception_raised = true
     expect(rex.message).to eq(expected_message)
   end

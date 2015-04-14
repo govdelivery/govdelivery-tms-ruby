@@ -28,7 +28,7 @@ module PhoneRecipient
 
   def phone=(ph)
     super.tap do
-      self.formatted_phone = PhoneNumber.new(ph.to_s).e164 rescue nil
+      self.formatted_phone = PhoneNumber.new(ph.to_s).e164
     end
   end
 

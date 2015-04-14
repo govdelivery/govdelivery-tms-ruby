@@ -6,8 +6,7 @@ describe ApplicationController do
   controller do
     # used to test exception handling
     def show
-      raise eval(params[:id])    # ActiveRecord::RecordNotFound
-      # MultiJson::LoadError
+      raise params[:id].constantize
     end
 
     def index
