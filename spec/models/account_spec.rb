@@ -221,8 +221,6 @@ describe Account do
     end
   end
 
-  ActiveRecord::Base.connection.tables.map { |m| m.classify.constantize }
-
   it 'should validate that it cannot be added to a non-shared vendor who already has an account' do
     second_account = create(:account_with_sms)
     vendor = create(:sms_vendor)
