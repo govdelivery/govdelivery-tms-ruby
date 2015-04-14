@@ -80,7 +80,6 @@ Then(/^I should be able to verify the incoming message was received$/) do
   @message = client.voice_messages.get
 
   sleep(2)
-  puts @message.collection[random].attributes
 
   if @message.collection[random].attributes.include?(:play_url)
     puts 'Play url found'.green

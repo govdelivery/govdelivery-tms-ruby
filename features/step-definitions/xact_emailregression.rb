@@ -77,7 +77,7 @@ end
 
 Then(/^I should not be able to see the accounts endpoint$/) do
   @response = HTTPI.get(@request)
-  puts JSON.parse(@response.raw_body)
+
   if JSON.parse(@response.raw_body) == { 'error' => 'forbidden' }
     puts 'Forbidden found, passing test'.green
   else
