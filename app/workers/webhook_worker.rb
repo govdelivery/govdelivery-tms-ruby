@@ -14,6 +14,8 @@ class WebhookWorker
     end
   rescue Faraday::Error::TimeoutError => e
     raise
+  rescue Faraday::Error::SSLError => e
+    logger.warn(e)
   rescue Faraday::Error::ClientError => e
     if (500..599).include?(e.response[:status])
       raise
