@@ -18,6 +18,12 @@ describe WebhookWorker do
     end
   end
 
+  let(:connection_ssl) do
+    stub('faraday ssl').tap do |obj|
+      obj.stubs(:post).raises(Faraday::Error::SSLError, '')
+    end
+  end
+
   subject { WebhookWorker.new }
   it 'should work real nice' do
     subject.stubs(:connection).returns(connection)
@@ -40,5 +46,10 @@ describe WebhookWorker do
   it 'should ignore 404' do
     subject.stubs(:connection).returns(connection_404)
     subject.perform('url' => 'http://www.google.com', 'params' => { hi: 'true' })
+  end
+
+  it 'should ignore bad SSL certs' do
+    subject.stubs(:connection).returns(connection_ssl)
+    subject.perform('url' => 'https://qc-admin.gov-i.net', 'params' => {hi: 'true'})
   end
 end
