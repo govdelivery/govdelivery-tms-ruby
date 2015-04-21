@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
   validates :sid, presence: true
   validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
   validate :has_one_default_from_number, if: '!voice_vendor_id.blank?'
-  validate :validate_sms_prefixes, :validate_sms_vendor
+  validate :validate_sms_vendor_and_prefixes
   # ONE: HYRULE, TWO: STRONGMAIL
   validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
                                         message: '%{value} is not a valid link_encoder' }
@@ -187,19 +187,13 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def shared_sms_vendor?
-    sms_vendor && sms_vendor.shared?
-  end
-
-  def validate_sms_vendor
-    if sms_vendor_id_changed? && sms_vendor && sms_vendor.accounts.count > 0 && !sms_vendor.shared?
-      errors.add(:shared_vendor, 'Vendor specified is not shared and already has one account')
-    end
-  end
-
-  def validate_sms_prefixes
-    if shared_sms_vendor? && sms_prefixes.size < 1
-      errors.add(:sms_prefixes, 'At least 1 SmsPrefix is required with a shared vendor')
+  def validate_sms_vendor_and_prefixes
+    if sms_vendor_id_changed? && sms_vendor && sms_vendor.accounts.count >= (new_record? ? 1 : 2)
+      # they all need to have prefixes
+      if (accounts = sms_vendor.accounts.select { |a| a.sms_prefixes.empty? }).any?
+        errors.add(:sms_vendor, "SMS vendor has accounts without prefixes: #{accounts.map(&:name).join(', ')}")
+      end
+      errors.add(:sms_prefixes, 'At least 1 SmsPrefix is required since SMS vendor has other accounts') if sms_prefixes.none?
     end
   end
 

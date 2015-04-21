@@ -16,7 +16,7 @@ describe SmsVendor do
     expect(v2).not_to be_valid
   end
 
-  [:name, :username, :password, :from, :shared].each do |field|
+  [:name, :username, :password, :from].each do |field|
     describe "when #{field} is empty" do
       before { vendor.send("#{field}=", nil) }
       it { expect(vendor.valid?).to eq(false) }

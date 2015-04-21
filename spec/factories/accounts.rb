@@ -8,10 +8,6 @@ FactoryGirl.define do
       evaluator.from_numbers.build(phone_number: '+18885551234', is_default: true)
     end
 
-    trait :shared do
-      sms_vendor factory: :shared_sms_vendor
-    end
-
     factory :account_with_sms do
       sms_vendor factory: :sms_vendor
 
@@ -36,7 +32,6 @@ FactoryGirl.define do
     end
 
     factory :account_with_stuff do
-      sms_vendor factory: :shared_sms_vendor
       email_vendor factory: :email_vendor
       voice_vendor factory: :voice_vendor
       dcm_account_codes ['cia']
@@ -46,12 +41,8 @@ FactoryGirl.define do
       end
 
       before(:create) do |account, evaluator|
-        if evaluator.prefix.present?
-          sms_prefix = build(:sms_prefix,
-                             account:    account,
-                             prefix:     evaluator.prefix,
-                             sms_vendor: account.sms_vendor)
-          account.sms_prefixes << sms_prefix
+        if evaluator.prefix.present? && account.sms_vendor.present?
+          account.sms_prefixes.build(prefix: evaluator.prefix, sms_vendor: account.sms_vendor)
         end
       end
 

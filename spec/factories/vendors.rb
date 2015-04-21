@@ -13,14 +13,6 @@ FactoryGirl.define do
     username 'username'
     password 'secret'
     from { generate(:short_code) }
-    shared false
-  end
-
-  factory :shared_sms_vendor, class: SmsVendor, traits: [:vendor] do
-    username 'username'
-    password 'secret'
-    from { generate(:short_code) }
-    shared true
   end
 
   factory :voice_vendor, traits: [:vendor] do

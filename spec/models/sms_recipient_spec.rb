@@ -72,7 +72,7 @@ describe SmsRecipient do
     let(:account) { create(:account, sms_vendor: vendor, name: 'account') }
     let(:messages) do
       [1, 2].map do |x|
-        message = create(:sms_message, account: account, body: "body #{x}")
+        message   = create(:sms_message, account: account, body: "body #{x}")
         recipient = message.recipients.create!(phone: "1612555123#{x}")
         recipient.sending!('doo')
         message.ready!
@@ -94,7 +94,7 @@ describe SmsRecipient do
 end
 
 describe SmsRecipient, 'blacklist scopes' do
-  let(:sms_vendor) { create(:shared_sms_vendor) }
+  let(:sms_vendor) { create(:sms_vendor) }
   let(:account) { create(:account_with_sms) }
   let(:sms_message) { create(:sms_message, account: account) }
 
@@ -107,20 +107,32 @@ describe SmsRecipient, 'blacklist scopes' do
     sms_message.recipients.create!(phone: '+16123089082', vendor: sms_vendor)
     create(:stop_request, vendor: sms_vendor, phone: '+16123089082', account_id: account.id)
 
-    # wrong account id - should not be blacklisted
+    # some other account blacklist
     sms_message.recipients.create!(phone: '+16123089083', vendor: sms_vendor)
     create(:stop_request, vendor: sms_vendor, phone: '+16123089083', account_id: 123)
   end
 
-  it 'should get account_blacklisted' do
-    scope = sms_message.recipients.account_blacklisted(sms_vendor.id, account.id)
+  it 'should be blacklisted for account' do
+    scope = sms_message.recipients.blacklisted(sms_vendor.id, account.id)
     expect(scope.count).to eq(2)
     expect(scope.map(&:phone).sort).to eq(['+16123089081', '+16123089082'])
   end
 
-  it 'should get not_account_blacklisted' do
-    scope = sms_message.recipients.not_account_blacklisted(sms_vendor.id, account.id)
+  it 'should be blacklisted for vendor' do
+    scope = sms_message.recipients.blacklisted(sms_vendor.id, nil)
+    expect(scope.count).to eq(1)
+    expect(scope.map(&:phone).sort).to eq(['+16123089081'])
+  end
+
+  it 'should not be blacklisted for account' do
+    scope = sms_message.recipients.not_blacklisted(sms_vendor.id, account.id)
     expect(scope.count).to eq(1)
     expect(scope.map(&:phone)).to eq(['+16123089083'])
+  end
+
+  it 'should not be blacklisted globally' do
+    scope = sms_message.recipients.not_blacklisted(sms_vendor.id, nil)
+    expect(scope.count).to eq(2)
+    expect(scope.map(&:phone)).to eq(['+16123089083', '+16123089082'])
   end
 end

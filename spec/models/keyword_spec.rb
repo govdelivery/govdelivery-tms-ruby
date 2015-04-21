@@ -51,8 +51,7 @@ describe Keyword do
   context 'with duplicate name and same vendor' do
     before do
       subject.save!
-      vendor        = subject.account.sms_vendor
-      vendor.shared = true
+      vendor = subject.account.sms_vendor
       vendor.save!
       @new_keyword         = Keyword.new(name: subject.name)
       @new_keyword.account = subject.account

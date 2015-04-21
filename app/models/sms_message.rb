@@ -1,25 +1,21 @@
 class SmsMessage < ActiveRecord::Base
   include Message
 
-  validates :body, presence: { on: :create }, length: { maximum: 160, on: :create }
+  validates :body, presence: {on: :create}, length: {maximum: 160, on: :create}
   attr_accessible :body
   belongs_to :sms_vendor
 
   before_create :set_sms_vendor
 
   def blacklisted_recipients
-    blacklist_scope(account_id).not_sent
-  end
-
-  def blacklist_scope(account_id)
-    sms_vendor.shared? ? recipients.account_blacklisted(sms_vendor_id, account_id) : recipients.blacklisted(sms_vendor_id)
+    recipients.blacklisted(sms_vendor_id, account_id)
   end
 
   ##
   # override Message#sendable_recipients
   #
   def sendable_recipients
-    sms_vendor.shared? ? recipients.to_send(sms_vendor_id, account.id) : recipients.to_send(sms_vendor_id)
+    recipients.to_send(sms_vendor_id, account.id)
   end
 
   # this is for two-way sms, only one recipient is used

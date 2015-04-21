@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe SmsMessage do
   let(:vendor) { create(:sms_vendor) }
-  let(:shared_vendor) { create(:shared_sms_vendor) }
+  let(:shared_vendor) { create(:sms_vendor, name: 'shared') }
   let(:account) { vendor.accounts.create!(name: 'name') }
-  let(:shared_account) { create(:account_with_sms, :shared, prefix: 'hi', sms_vendor: shared_vendor) }
-  let(:other_shared_account) { create(:account_with_sms, :shared, prefix: 'hi-too', sms_vendor: shared_vendor) }
+  let(:shared_account) { create(:account_with_sms, prefix: 'hi', sms_vendor: shared_vendor) }
+  let(:other_shared_account) { create(:account_with_sms, prefix: 'hi-too', sms_vendor: shared_vendor) }
   let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
 
   context 'when short body is empty' do

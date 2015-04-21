@@ -1,7 +1,6 @@
 class TwilioRequestsController < ApplicationController
   skip_before_action :authenticate_user!
   skip_before_action :authenticate_user_from_token!
-  before_action :dcm_forward!
   respond_to :xml
 
   def create
@@ -33,14 +32,17 @@ class TwilioRequestsController < ApplicationController
 
     # we don't respond inline to "ignored" messages,
     # but keyword commands still execute and could cause messages to be sent
-    response_text = keyword_service.respond!(command_parameters)
-    if inbound_msg.ignored? # to not respond to auto responses
-      Rails.logger.info "ignoring message: #{inbound_msg.inspect}"
+    response_text =   keyword_service.respond!(command_parameters)
+
+    ForwardStopsToDcm.forward_async!(params) if ForwardStopsToDcm.should_forward?(command_parameters.sms_body, command_parameters.to)
+
+    if inbound_msg.ignored? # ignore e.g. autoresponses
+      Rails.logger.info "Ignoring InboundMessage #{inbound_msg.id}"
       response_text = nil
     end
 
-    # if response_text is empty, twillio will not send a response
-    @response      = View::TwilioRequestResponse.new(vendor, response_text)
+    # if response_text is empty, twilio will not send a response
+    @response = View::TwilioRequestResponse.new(vendor, response_text)
   end
 
   def find_vendor
@@ -49,10 +51,5 @@ class TwilioRequestsController < ApplicationController
 
   def callback_url
     twilio_status_callbacks_url(format: :xml) if Rails.configuration.public_callback
-  end
-
-  # This is a hack and is intended to be temporary.
-  def dcm_forward!
-    ForwardStopsToDcm.forward_async!(params)
   end
 end
