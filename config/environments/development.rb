@@ -50,7 +50,6 @@ Xact::Application.configure do
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = ['+16514336311']
 
   config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 

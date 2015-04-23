@@ -70,10 +70,6 @@ Xact::Application.configure do
   # as this is not a vendor-specific behavior.
   config.auto_response_threshold = 1
 
-  # Used for forwarding STOP requests for short codes that are shared between
-  # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = %w(468311 89568 467873 566948 99511 734876 667873 99511)
-
   config.custom_report_account_id = 10_060
 
   config.log_level = :warn # this is actually INFO because Log4r is terrible (see railties bootstrap.rb)

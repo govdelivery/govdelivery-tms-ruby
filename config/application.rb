@@ -155,5 +155,7 @@ module Xact
     config.nsca_password       = Conf.nsca_password
 
     config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
+
+    config.shared_phone_numbers = Conf.shared_phone_numbers
   end
 end
