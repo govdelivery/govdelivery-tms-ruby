@@ -15,7 +15,7 @@ module CommandWorkers
     def perform(opts)
       super do
         begin
-          client             = DCMClient::Client.new(Xact::Application.config.dcm)
+          client             = DCMClient::Subscriber.new(Xact::Application.config.dcm)
           from_number        = PhoneNumber.new(options.from).dcm
           self.http_response = request_subscription(client, from_number, options, command.params)
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 describe CommandWorkers::DcmUnsubscribeWorker do
   let(:config) { { username: 'foo', password: 'bar', api_root: 'http://example.com' } }
-  let(:client) { mock('dcm_client') }
+  let(:client) { mock('DCMClient::Subscriber') }
   let(:account) { create(:account) }
   let(:command) do
     create(:dcm_unsubscribe_command,
@@ -42,8 +42,8 @@ describe CommandWorkers::DcmUnsubscribeWorker do
 
   describe 'perform with one account' do
     before do
-      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME').returns(http_response)
-      DCMClient::Client.expects(:new).with(config).returns(client)
+      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
+      DCMClient::Subscriber.expects(:new).with(config).returns(client)
     end
     specify { subject.perform(options) }
   end
@@ -51,11 +51,11 @@ describe CommandWorkers::DcmUnsubscribeWorker do
   describe 'perform with two accounts and one 404' do
     before do
       client.expects(:delete_wireless_subscriber)
-        .with('1+2222222222', 'VANDELAY')
+        .with('1+2222222222', 'VANDELAY', true, 'SMS_STOP')
         .raises(DCMClient::Error::NotFound.new('foo', response_not_found))
-      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME').returns(http_response)
+      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
 
-      DCMClient::Client.expects(:new).with(config).returns(client)
+      DCMClient::Subscriber.expects(:new).with(config).returns(client)
       account = command.account
       account.dcm_account_codes = %w(ACME VANDELAY).to_set
       account.save!

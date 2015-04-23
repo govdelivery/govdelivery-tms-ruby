@@ -16,13 +16,13 @@ module CommandWorkers
     #
     def perform(opts)
       super do
-        client = DCMClient::Client.new(Xact::Application.config.dcm)
+        client = DCMClient::Subscriber.new(Xact::Application.config.dcm)
         number = PhoneNumber.new(options.from).dcm
 
         # take the HTTP response with the highest response code
         command.params.dcm_account_codes.collect do |dcm_account_code|
           begin
-            self.http_response = client.delete_wireless_subscriber(number, dcm_account_code)
+            self.http_response = client.delete_wireless_subscriber(number, dcm_account_code, true, 'SMS_STOP')
           # we don't care if the DCM subscriber doesn't exist
           rescue DCMClient::Error::NotFound => e
             self.http_response = e.response

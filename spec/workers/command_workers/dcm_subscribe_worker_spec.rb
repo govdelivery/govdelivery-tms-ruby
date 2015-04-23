@@ -54,7 +54,7 @@ describe CommandWorkers::DcmSubscribeWorker do
     let(:number) { '+16518888888' }
 
     it 'passes options to the subscribe command' do
-      DCMClient::Client.any_instance.expects(:wireless_subscribe).with('1+6518888888', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
+      DCMClient::Subscriber.any_instance.expects(:wireless_subscribe).with('1+6518888888', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
       subject.perform(options.merge(from: number))
     end
 
