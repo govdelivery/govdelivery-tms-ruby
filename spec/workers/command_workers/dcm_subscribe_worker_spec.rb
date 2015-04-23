@@ -1,12 +1,12 @@
 require 'rails_helper'
 describe CommandWorkers::DcmSubscribeWorker do
-  let(:phone_number) { '+14443332222' }
-  let(:account_code) { 'ACCOUNT_CODE' }
-  let(:topic_codes) { %w(TOPIC_CODE TOPIC_2) }
-  let(:subscribe_args) { ['foo@bar.com'] }
-  let(:client) { mock('dcm_client') }
+  let(:phone_number) {'+14443332222'}
+  let(:account_code) {'ACCOUNT_CODE'}
+  let(:topic_codes) {%w(TOPIC_CODE TOPIC_2)}
+  let(:subscribe_args) {['foo@bar.com']}
+  let(:client) {mock('dcm_client')}
 
-  let(:account) { create(:account) }
+  let(:account) {create(:account)}
   let(:command) do
     create(:dcm_subscribe_command,
            keyword: account.stop_keyword,
@@ -16,21 +16,21 @@ describe CommandWorkers::DcmSubscribeWorker do
   let(:http_response) do
     stub('http_response',
          status:  200,
-         headers: { 'Content-Type' => 'andrew/json' },
+         headers: {'Content-Type' => 'andrew/json'},
          body:    'foo')
   end
 
   let(:http_404_response) do
     stub('http_response_404',
          status:  404,
-         headers: { 'Content-Type' => 'andrew/json' },
+         headers: {'Content-Type' => 'andrew/json'},
          body:    'nope')
   end
 
   let(:http_failure_response) do
     stub('http_response_422',
          status:  422,
-         headers: { 'Content-Type' => 'andrew/json' },
+         headers: {'Content-Type' => 'andrew/json'},
          body:    'error: you suck')
   end
 
@@ -51,7 +51,7 @@ describe CommandWorkers::DcmSubscribeWorker do
   end
 
   context 'error handling' do
-    let(:number) { '+16518888888' }
+    let(:number) {'+16518888888'}
 
     it 'passes options to the subscribe command' do
       DCMClient::Subscriber.any_instance.expects(:wireless_subscribe).with('1+6518888888', command_parameters.dcm_account_code, command_parameters.dcm_topic_codes).returns(http_response)
@@ -60,27 +60,27 @@ describe CommandWorkers::DcmSubscribeWorker do
 
     it 'ignores 422s' do
       subject.expects(:request_subscription).raises(DCMClient::Error::UnprocessableEntity.new('foo', http_failure_response))
-      expect { subject.perform(options.merge(from: 'number')) }.to_not raise_error
+      expect {subject.perform(options.merge(from: 'number'))}.to_not raise_error
     end
 
     it 'ignores 404s' do
       subject.expects(:request_subscription).raises(DCMClient::Error::NotFound.new('foo', http_404_response))
-      expect { subject.perform(options) }.to_not raise_error
+      expect {subject.perform(options)}.to_not raise_error
     end
 
     it 'raises other dcm client errors' do
       subject.expects(:request_subscription).raises(DCMClient::Error.new('hi'))
-      expect { subject.perform(options) }.to raise_error(DCMClient::Error)
+      expect {subject.perform(options)}.to raise_error(DCMClient::Error)
     end
 
     it 'raises other exceptions' do
       subject.expects(:request_subscription).raises(StandardError.new('hi'))
-      expect { subject.perform(options) }.to raise_error(StandardError)
+      expect {subject.perform(options)}.to raise_error(StandardError)
     end
   end
 
   context 'multiple requests' do
-    subject { CommandWorkers::DcmSubscribeWorker.new }
+    subject {CommandWorkers::DcmSubscribeWorker.new}
     it 'uses lowest status code' do
       subject.http_response = stub(status: 200)
       subject.http_response = stub(status: 404)

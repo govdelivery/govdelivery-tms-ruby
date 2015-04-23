@@ -28,7 +28,7 @@ Given(/^all message types$/) do
 end
 
 And(/^all event types$/) do
-  @event_callback_uris = Hash[event_types.map { |event_type| [event_type, nil] }]
+  @event_callback_uris = Hash[event_types.map { |event_type| [event_type, nil]}]
 end
 
 Then(/^a callback url exists for each event type$/) do
@@ -79,7 +79,7 @@ Then(/^the callback registered for each event state should receive a POST referr
   # TODO: backoff_check shouldn't fix our problems
   # TODO: Figure out what to do if recipients list does not get build - is that a test failure?
 
-  recipients_built = Hash[message_types.map { |message_type| [message_type, false] }]
+  recipients_built = Hash[message_types.map { |message_type| [message_type, false]}]
 
   condition = proc do
     @messages.each do |message_type, message|
@@ -91,7 +91,7 @@ Then(/^the callback registered for each event state should receive a POST referr
         end
       end
     end
-    recipients_built.all? { |_message_type, built| built }
+    recipients_built.all? { |_message_type, built| built}
   end
 
   backoff_check(condition, 'build recipients list')
@@ -135,7 +135,7 @@ Then(/^the callback registered for each event state should receive a POST referr
         payloads = []
         event_callback['payloads'].each do |payload_info|
           payloads << @capi.get(payload_info['url'])
-          passed = payloads.any? { |payload| payload['payload']['recipient_url'] == condition }
+          passed = payloads.any? { |payload| payload['payload']['recipient_url'] == condition}
         end
         passed
       end

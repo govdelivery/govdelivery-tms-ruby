@@ -60,7 +60,7 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = true
 
-  routes.default_url_options = { host: 'tms.govdelivery.com', protocol: 'https' }
+  routes.default_url_options = {host: 'tms.govdelivery.com', protocol: 'https'}
 
   # Threshold (in minutes) under which multiple inbound messages from a
   # user will be ignored.  This is to prevent auto-response messages

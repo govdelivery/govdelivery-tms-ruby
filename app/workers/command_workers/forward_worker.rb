@@ -15,7 +15,7 @@ module CommandWorkers
     include CommandWorkers::Base
 
     sidekiq_options retry: 3, queue: :webhook
-    sidekiq_retry_in { 10 }
+    sidekiq_retry_in {10}
 
     attr_writer :sms_service
 

@@ -13,16 +13,16 @@ describe VoiceRecipient do
     r
   end
 
-  its(:phone) { should be_nil }
-  it { is_expected.not_to be_valid } # validates_presence_of :phone
+  its(:phone) {should be_nil}
+  it {is_expected.not_to be_valid} # validates_presence_of :phone
 
   describe 'when phone is not a number' do
     before do
       subject.phone = 'invalid'
       subject.save!
     end
-    it { is_expected.to be_valid }
-    its(:formatted_phone) { should be_nil }
+    it {is_expected.to be_valid}
+    its(:formatted_phone) {should be_nil}
   end
 
   describe 'when phone starts with zero' do
@@ -30,8 +30,8 @@ describe VoiceRecipient do
       subject.phone = '0001112222'
       subject.save
     end
-    it { is_expected.to be_valid }
-    its(:formatted_phone) { should be_nil }
+    it {is_expected.to be_valid}
+    its(:formatted_phone) {should be_nil}
   end
 
   describe 'when phone has wrong # of digits' do
@@ -39,8 +39,8 @@ describe VoiceRecipient do
       subject.phone = '223'
       subject.save!
     end
-    it { is_expected.to be_valid }
-    its(:formatted_phone) { should be nil }
+    it {is_expected.to be_valid}
+    its(:formatted_phone) {should be nil}
   end
 
   describe 'when phone is a non-string number' do
@@ -48,8 +48,8 @@ describe VoiceRecipient do
       subject.phone = 6_125_015_456
       subject.save!
     end
-    it { is_expected.to be_valid }
-    its(:formatted_phone) { should eq '+16125015456' }
+    it {is_expected.to be_valid}
+    its(:formatted_phone) {should eq '+16125015456'}
   end
 
   describe 'when phone is valid' do
@@ -83,7 +83,7 @@ describe VoiceRecipient do
 
     context 'on first busy' do
       before do
-        expect { subject.failed!('ack', nil, 'busy') }.to raise_error(Recipient::ShouldRetry)
+        expect {subject.failed!('ack', nil, 'busy')}.to raise_error(Recipient::ShouldRetry)
       end
 
       it 'should retry if retries not exhausted' do
@@ -120,7 +120,7 @@ describe VoiceRecipient do
 
       context 'and a second no_answer or busy' do
         it 'should not retry and transition to failed state' do
-          expect { subject.failed!('ack1', nil, :no_answer) }.to_not raise_error
+          expect {subject.failed!('ack1', nil, :no_answer)}.to_not raise_error
           subject.reload
           expect(subject.vendor).to_not be_nil
           expect(subject.completed_at).to_not be_nil

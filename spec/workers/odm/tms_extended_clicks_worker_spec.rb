@@ -2,7 +2,7 @@ require 'rails_helper'
 if defined?(JRUBY_VERSION)
 
   describe Odm::TmsExtendedClicksWorker do
-    subject { Odm::TmsExtendedClicksWorker.new }
+    subject {Odm::TmsExtendedClicksWorker.new}
 
     before do
       # mock database fetch of email vendors
@@ -36,7 +36,7 @@ if defined?(JRUBY_VERSION)
     end
 
     context 'odm throws error' do
-      let(:service)  { double('Service::Odm::EventService') }
+      let(:service)  {double('Service::Odm::EventService')}
 
       it 'should catch Throwable and throw Ruby Exception' do
         Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java.java.lang::Exception.new('hello Exception'))

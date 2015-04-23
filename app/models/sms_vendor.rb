@@ -7,7 +7,7 @@ class SmsVendor < ActiveRecord::Base
   attr_accessible :from
 
   has_many :stop_requests, foreign_key: 'vendor_id', dependent: :delete_all
-  has_many :inbound_messages, -> { order("#{InboundMessage.table_name}.created_at DESC") }, inverse_of: :vendor, foreign_key: 'vendor_id', dependent: :delete_all
+  has_many :inbound_messages, -> {order("#{InboundMessage.table_name}.created_at DESC")}, inverse_of: :vendor, foreign_key: 'vendor_id', dependent: :delete_all
   has_many :sms_prefixes, dependent: :destroy
 
   validates :from_phone, uniqueness: true
@@ -24,12 +24,12 @@ class SmsVendor < ActiveRecord::Base
   # If the short code is the Comm Cloud shared short code for a given environment, forward it.
   def stop!(command_parameters)
     stop_requests.create(phone: command_parameters.from) # add to vendor blacklist
-    accounts.each { |a| a.stop(command_parameters) }
+    accounts.each { |a| a.stop(command_parameters)}
   end
 
   def start!(command_parameters)
     stop_requests.where(phone: command_parameters.from).delete_all
-    accounts.each { |a| a.start(command_parameters) }
+    accounts.each { |a| a.start(command_parameters)}
   end
 
   def delivery_mechanism

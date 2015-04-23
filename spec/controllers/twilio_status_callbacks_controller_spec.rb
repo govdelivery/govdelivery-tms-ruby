@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe TwilioStatusCallbacksController do
   describe 'SMS vendor' do
-    let(:vendor) { create(:sms_vendor) }
-    let(:account) { vendor.accounts.create(name: 'name') }
-    let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-    let(:message) { account.sms_messages.create(body: 'Look out') }
+    let(:vendor) {create(:sms_vendor)}
+    let(:account) {vendor.accounts.create(name: 'name')}
+    let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+    let(:message) {account.sms_messages.create(body: 'Look out')}
     let(:recipient) do
       recipient = message.recipients.build(phone: '+15551112222')
       recipient.ack = 'SM2e4152a68a31e52bbf035e22b77f09ab'
@@ -67,16 +67,16 @@ describe TwilioStatusCallbacksController do
     end
 
     def twilio_status_callback_params(status, sms_sid = recipient.ack)
-      { format: 'xml',
-        'SmsSid' => sms_sid,
-        'SmsStatus' => status
+      {format: 'xml',
+       'SmsSid' => sms_sid,
+       'SmsStatus' => status
       }
     end
   end
   describe 'Voice vendor' do
-    let(:account) { create(:account_with_voice) }
-    let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-    let(:message) { account.voice_messages.create(play_url: 'http://ninja.com.website/hello.wav') }
+    let(:account) {create(:account_with_voice)}
+    let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+    let(:message) {account.voice_messages.create(play_url: 'http://ninja.com.website/hello.wav')}
     let(:recipient) do
       recipient = message.recipients.build(phone: '+15551112222')
       recipient.ack = 'SM2e4152a68a31e52bbf035e22b77f09ab'
@@ -250,10 +250,10 @@ describe TwilioStatusCallbacksController do
     end
 
     def twilio_status_callback_params(status, answeredby = nil, call_sid = recipient.ack)
-      { format: 'xml',
-        'CallSid' => call_sid,
-        'CallStatus' => status,
-        'AnsweredBy' => answeredby
+      {format: 'xml',
+       'CallSid' => call_sid,
+       'CallStatus' => status,
+       'AnsweredBy' => answeredby
       }
     end
   end

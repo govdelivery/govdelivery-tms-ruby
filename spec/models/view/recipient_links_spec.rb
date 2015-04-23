@@ -4,21 +4,21 @@ require 'active_support/core_ext'
 
 describe View::RecipientLinks do
   describe '#_links for non-email recipients' do
-    let(:recipient) { fake_recipient('sms') }
-    let(:context) { build_context(recipient) }
+    let(:recipient) {fake_recipient('sms')}
+    let(:context) {build_context(recipient)}
     it 'gets correct links for a non-email recipient' do
-      expected_links = { self: 'the recipient url', sms_message: 'the message url' }
+      expected_links = {self: 'the recipient url', sms_message: 'the message url'}
       expect(View::RecipientLinks.new(recipient, context)._links).to eq(expected_links)
     end
   end
   describe '#_links for email recipients' do
-    let(:recipient) { fake_recipient('email') }
-    let(:context) { build_context(recipient) }
+    let(:recipient) {fake_recipient('email')}
+    let(:context) {build_context(recipient)}
     it 'gets correct links for an email recipient' do
-      expected_links = { self: 'the recipient url',
-                         email_message: 'the message url',
-                         clicks: 'the clicks url',
-                         opens: 'the opens url' }
+      expected_links = {self: 'the recipient url',
+                        email_message: 'the message url',
+                        clicks: 'the clicks url',
+                        opens: 'the opens url'}
       expect(View::RecipientLinks.new(recipient, context)._links).to eq(expected_links)
     end
   end
@@ -50,8 +50,8 @@ describe View::RecipientLinks do
 
   def build_opts_without_stats(recipient, message_class)
     base_opts = base_url_for_opts('show')
-    { recipient: base_opts.merge(controller: 'recipients', id: recipient.id),
-      message: base_opts.merge(controller: message_class.table_name, id: recipient.message_id) }
+    {recipient: base_opts.merge(controller: 'recipients', id: recipient.id),
+     message: base_opts.merge(controller: message_class.table_name, id: recipient.message_id)}
   end
 
   def build_opts_with_stats(recipient, _message_class)
@@ -68,6 +68,6 @@ describe View::RecipientLinks do
   end
 
   def base_url_for_opts(action)
-    { only_path: true, format: nil, action: action }
+    {only_path: true, format: nil, action: action}
   end
 end

@@ -52,7 +52,7 @@ describe 'recipients/show.rabl' do
            sent_at: Time.now,
            error_message: nil,
            completed_at: Time.now,
-           macros: { 'name' => 'Henry Hankson' },
+           macros: {'name' => 'Henry Hankson'},
            valid?: true)
     end
 
@@ -77,7 +77,7 @@ describe 'recipients/show.rabl' do
 
     context 'with an error message' do
       it 'should have an error_message if present' do
-        assign(:recipient, recipient.tap { |r| r.stubs(:error_message).returns('oops') })
+        assign(:recipient, recipient.tap { |r| r.stubs(:error_message).returns('oops')})
         json_data = ActiveSupport::JSON.decode(render)
         expect(json_data).to include('error_message' => 'oops')
       end

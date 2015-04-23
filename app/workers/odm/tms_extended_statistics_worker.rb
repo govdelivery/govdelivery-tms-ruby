@@ -5,7 +5,7 @@ module Odm
 
     def perform(*args)
       super do
-        EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor) }
+        EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor)}
       end
     end
 

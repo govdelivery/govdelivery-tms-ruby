@@ -2,10 +2,10 @@ class ServicesController < ApplicationController
   before_action :find_user
 
   # root routing does not work as advertised. it should only allow GET
-  before_action ->(_c) { render_405 unless request.method == 'GET' }
+  before_action ->(_c) {render_405 unless request.method == 'GET'}
 
   def index
-    @services = { self: root_path }
+    @services = {self: root_path}
 
     if @account.sms_vendor
       @services[:keywords] = keywords_path

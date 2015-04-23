@@ -14,16 +14,16 @@ class EmailMessage < ActiveRecord::Base
                   :subject
 
   validates :body, presence: true, on: :create
-  validates :subject, presence: true, length: { maximum: 400 }, on: :create
+  validates :subject, presence: true, length: {maximum: 400}, on: :create
   validates :from_email, presence: true
-  validates :reply_to, length: { maximum: 255 }, format: Devise.email_regexp, allow_blank: true
-  validates :errors_to, length: { maximum: 255 }, format: Devise.email_regexp, allow_blank: true
+  validates :reply_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
+  validates :errors_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
 
   before_validation :set_from_email
   validate :from_email_allowed?
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
-  scope :indexed, -> { select('id, user_id, created_at, status, subject') }
+  scope :indexed, -> {select('id, user_id, created_at, status, subject')}
 
   def on_sending(ack = nil)
     self.ack ||= ack

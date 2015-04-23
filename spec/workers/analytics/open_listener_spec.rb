@@ -1,6 +1,6 @@
 require 'rails_helper'
 describe Analytics::OpenListener do
-  subject { Analytics::OpenListener.new }
+  subject {Analytics::OpenListener.new}
 
   it 'should have topic' do
     expect(subject.topic).to eq('open_channel')

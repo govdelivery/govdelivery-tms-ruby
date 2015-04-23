@@ -4,5 +4,5 @@ if defined? ActiveRecord::ConnectionAdapters::OracleEnhancedAdapter
 
   # for migrations, specify defaults for certain DB objects
   ActiveRecord::ConnectionAdapters::OracleEnhancedAdapter.default_tablespaces =
-    { clob: 'TSMS_CLOB01', index: 'TSMS_INDX01', table: 'TSMS_DATA01' }
+    {clob: 'TSMS_CLOB01', index: 'TSMS_INDX01', table: 'TSMS_DATA01'}
 end

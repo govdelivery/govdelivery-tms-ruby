@@ -2,9 +2,9 @@ require_relative '../../../app/models/service/forward_service'
 require 'spec_helper'
 
 describe Service::ForwardService do
-  let(:client) { Service::ForwardService.new }
-  let(:body) { { foo: :bar } }
-  let(:url) { 'http://www.foo.com/a/sub/dir' }
+  let(:client) {Service::ForwardService.new}
+  let(:body) {{foo: :bar}}
+  let(:url) {'http://www.foo.com/a/sub/dir'}
 
   it 'should post the parameters' do
     req = stub('request object', headers: {})

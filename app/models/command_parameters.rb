@@ -67,7 +67,7 @@ class CommandParameters
       # instance_variable_get is being used to avoid any mutations caused by
       # lazy getters (i.e. ones with default values)
       hsh.merge(p => instance_variable_get("@#{p}"))
-    end.keep_if { |_k, v| !v.nil? }
+    end.keep_if { |_k, v| !v.nil?}
   end
 
   def to_s
@@ -77,7 +77,7 @@ class CommandParameters
   # This is what tells YAML which properties on this object
   # are to be included in serialization.
   def to_yaml_properties
-    to_hash.keys.map { |p| "@#{p}" }
+    to_hash.keys.map { |p| "@#{p}"}
   end
 
   ##

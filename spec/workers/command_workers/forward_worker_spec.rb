@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CommandWorkers::ForwardWorker do
-  let(:account) { create(:account_with_sms) }
+  let(:account) {create(:account_with_sms)}
   let(:command) do
     keyword = account.keywords.create(name: 'worker')
     create(:forward_command,
@@ -28,7 +28,7 @@ describe CommandWorkers::ForwardWorker do
   let(:http_response) do
     stub('http_response',
          status:  200,
-         headers: { 'Content-Type' => 'andrew/json' },
+         headers: {'Content-Type' => 'andrew/json'},
          body:    'foo')
   end
 
@@ -59,26 +59,26 @@ describe CommandWorkers::ForwardWorker do
 
     it 'reraises the exception if it is a Faraday::ClientError with a response' do
       subject.stubs(:send_request).raises(Faraday::ClientError.new(StandardError.new('foo'), response_headers))
-      expect { subject.perform(options) }.to raise_error(Faraday::ClientError)
+      expect {subject.perform(options)}.to raise_error(Faraday::ClientError)
       expect(command.command_actions.count).to eq 1
       expect(command.command_actions.first.status).to eq 418
     end
 
     it 'reraises the exception if it is a Faraday::ClientError with no response' do
       subject.stubs(:send_request).raises(Faraday::ClientError, StandardError.new('bar'))
-      expect { subject.perform(options) }.to raise_error(Faraday::ClientError)
+      expect {subject.perform(options)}.to raise_error(Faraday::ClientError)
       expect(command.command_actions.count).to eq 1
       expect(command.command_actions.first.error_message).to eq 'bar'
     end
 
     it 'raises a Sidekiq::Retries::Fail if it is not a Faraday::ClientError in order to fail the job immediately' do
       subject.stubs(:send_request).raises(StandardError)
-      expect { subject.perform(options) }.to raise_error(Sidekiq::Retries::Fail)
+      expect {subject.perform(options)}.to raise_error(Sidekiq::Retries::Fail)
       expect(command.command_actions.count).to eq 0
     end
   end
 
   def response_headers
-    { status: '418', headers: { 'content-type' => 'text/gooo' }, body: 'not really a teapot' }
+    {status: '418', headers: {'content-type' => 'text/gooo'}, body: 'not really a teapot'}
   end
 end

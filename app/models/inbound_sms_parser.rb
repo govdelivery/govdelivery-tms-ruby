@@ -17,7 +17,7 @@ module InboundSmsParser
   # otherwise
   def find_account_id(first_word, vendor)
     account_id = vendor.sms_prefixes.account_id_for_prefix(first_word) if vendor.sms_prefixes.any? && first_word.present?
-    account_id = vendor.accounts.first.id if account_id.blank? && vendor.accounts.count==1
+    account_id = vendor.accounts.first.id if account_id.blank? && vendor.accounts.count == 1
     account_id
   end
 

@@ -35,9 +35,9 @@ Xact::Application.configure do
   routes.default_url_options =
     config.action_controller.default_url_options =
       if ENV['NGROK_HOSTNAME'].present?
-        { host: ENV['NGROK_HOSTNAME'], protocol: config.protocol, port: 80 }
+        {host: ENV['NGROK_HOSTNAME'], protocol: config.protocol, port: 80}
       else
-        { host: 'localhost', port: 3000, protocol: config.protocol }
+        {host: 'localhost', port: 3000, protocol: config.protocol}
       end
 
   # Expands the lines which load the assets

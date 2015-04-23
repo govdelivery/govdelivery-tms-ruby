@@ -5,7 +5,7 @@ require 'rspec/rails'
 require 'rspec/its'
 require 'celluloid/test'
 
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f}
 
 FakeWeb.allow_net_connect = false
 
@@ -24,7 +24,7 @@ RSpec.configure do |config|
   fakeredis_opts = {
     url:       'redis://127.0.0.1:6379/1',
     namespace: 'spec',
-    driver:    Redis::Connection::Memory }
+    driver:    Redis::Connection::Memory}
 
   Sidekiq.configure_client do |conf|
     conf.redis = fakeredis_opts

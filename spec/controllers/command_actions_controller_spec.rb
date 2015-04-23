@@ -19,15 +19,15 @@ require 'rails_helper'
 # that an instance is receiving a specific message.
 
 describe CommandActionsController do
-  let(:vendor) { create(:sms_vendor) }
-  let(:account) { create(:account, sms_vendor: vendor) }
-  let(:inbound_message) { create(:inbound_message, body: 'body', from: 'from', vendor: vendor, keyword: keyword, account: account) }
-  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-  let(:keyword) { k = account.keywords.new(name: 'HI').tap { |f| f.account = account }; k.save!; k }
-  let(:params) { { dcm_account_code: 'ACME', dcm_topic_codes: %w(ACME_1 ACME_2) } }
-  let(:command) { keyword.commands.create(command_type: :dcm_subscribe, name: 'ALLIGATORZ', params: params) }
+  let(:vendor) {create(:sms_vendor)}
+  let(:account) {create(:account, sms_vendor: vendor)}
+  let(:inbound_message) {create(:inbound_message, body: 'body', from: 'from', vendor: vendor, keyword: keyword, account: account)}
+  let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:keyword) {k = account.keywords.new(name: 'HI').tap { |f| f.account = account}; k.save!; k}
+  let(:params) {{dcm_account_code: 'ACME', dcm_topic_codes: %w(ACME_1 ACME_2)}}
+  let(:command) {keyword.commands.create(command_type: :dcm_subscribe, name: 'ALLIGATORZ', params: params)}
 
-  let(:model) { CommandAction }
+  let(:model) {CommandAction}
 
   let(:command_actions) do
     3.times.collect do |i|
@@ -93,6 +93,6 @@ describe CommandActionsController do
   end
 
   it_should_have_a_pageable_index(:command_actions, InboundMessage) do |test|
-    { sms_id: test.inbound_message.id }
+    {sms_id: test.inbound_message.id}
   end
 end

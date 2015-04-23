@@ -127,9 +127,7 @@ USAGE
     a.ipaws_vendor_id = @options[:account_ipaws_vendor]
     a.dcm_account_codes = @options[:dcm_account_codes]
     # create an sms prefix if the sms vendor is shared
-    if @options[:sms_prefix]
-      a.sms_prefixes.build(prefix: @options[:sms_prefix])
-    end
+    a.sms_prefixes.build(prefix: @options[:sms_prefix]) if @options[:sms_prefix]
 
     if @options[:account_from_address]
       a.from_addresses.build(from_email: @options[:account_from_address],

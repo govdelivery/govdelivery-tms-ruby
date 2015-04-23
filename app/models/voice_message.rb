@@ -5,8 +5,8 @@ class VoiceMessage < ActiveRecord::Base
 
   attr_accessible :play_url, :say_text, :max_retries, :retry_delay, :from_number
 
-  validates :play_url, presence: true, unless: ->(message) { message.say_text.present? }, on: :create
-  validates :say_text, presence: true, unless: ->(message) { message.play_url.present? }, on: :create
+  validates :play_url, presence: true, unless: ->(message) {message.say_text.present?}, on: :create
+  validates :say_text, presence: true, unless: ->(message) {message.play_url.present?}, on: :create
 
   before_validation :set_from_number
   validate :from_number_allowed?
@@ -19,30 +19,30 @@ class VoiceMessage < ActiveRecord::Base
   end
 
   def recipients_who_human
-    Kaminari.paginate_array(status_with_attempts('sent').select { |recip| recip.secondary_status == 'human' })
+    Kaminari.paginate_array(status_with_attempts('sent').select { |recip| recip.secondary_status == 'human'})
   end
 
   def recipients_who_machine
-    Kaminari.paginate_array(status_with_attempts('sent').select { |recip| recip.secondary_status == 'machine' })
+    Kaminari.paginate_array(status_with_attempts('sent').select { |recip| recip.secondary_status == 'machine'})
   end
 
   def recipients_who_busy
-    Kaminari.paginate_array(status_with_attempts('failed').select { |recip| recip.secondary_status == 'busy' })
+    Kaminari.paginate_array(status_with_attempts('failed').select { |recip| recip.secondary_status == 'busy'})
   end
 
   def recipients_who_no_answer
-    Kaminari.paginate_array(status_with_attempts('failed').select { |recip| recip.secondary_status == 'no_answer' })
+    Kaminari.paginate_array(status_with_attempts('failed').select { |recip| recip.secondary_status == 'no_answer'})
   end
 
   def recipients_who_could_not_connect
-    Kaminari.paginate_array(status_with_attempts('failed').select { |recip| recip.secondary_status.nil? })
+    Kaminari.paginate_array(status_with_attempts('failed').select { |recip| recip.secondary_status.nil?})
   end
 
   def recipient_detail_counts
     last_status = voice_recipient_attempts.select('voice_recipient_id, max(completed_at) complete').group('voice_recipient_id')
     secondary_groups = voice_recipient_attempts.select('description, count(description) the_count').where('(voice_recipient_id, completed_at) in (?)', last_status).group('description')
-    h = Hash[secondary_groups.map { |r| [r.description, r.the_count] }]
-    Hash[%w(busy no_answer human machine).map { |s| [s, 0] }].merge(h)
+    h = Hash[secondary_groups.map { |r| [r.description, r.the_count]}]
+    Hash[%w(busy no_answer human machine).map { |s| [s, 0]}].merge(h)
   end
 
   protected

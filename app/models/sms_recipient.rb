@@ -5,7 +5,7 @@ class SmsRecipient < ActiveRecord::Base
     incomplete.not_blacklisted(vendor_id, account_id).with_valid_phone_number
   }
 
-  scope :not_sent, -> { where(sent_at: nil) }
+  scope :not_sent, -> {where(sent_at: nil)}
 
   scope :blacklisted, lambda { |vendor_id, account_id|
     sql = <<-SQL

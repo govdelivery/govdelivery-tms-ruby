@@ -2,7 +2,7 @@ class LoopbackEmailWorker < LoopbackMessageWorker
   include Workers::Base
   sidekiq_options retry: 0,
                   queue: :sender,
-                  dynamic_queue_key: ->(args) { args['subject'].try(:parameterize) }
+                  dynamic_queue_key: ->(args) {args['subject'].try(:parameterize)}
 
   @magic_addresses =     {
     sent:         'sent@sink.govdelivery.com',

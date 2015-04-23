@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 describe TwilioDialPlanController do
-  let(:account) { create(:account_with_voice) }
-  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-  let(:message) { account.voice_messages.create(play_url: 'http://mom.com/voice.wav') }
-  let(:tts_message) { account.voice_messages.create(say_text: 'hello donkey 1 2 3 4 5') }
+  let(:account) {create(:account_with_voice)}
+  let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:message) {account.voice_messages.create(play_url: 'http://mom.com/voice.wav')}
+  let(:tts_message) {account.voice_messages.create(say_text: 'hello donkey 1 2 3 4 5')}
   let(:recipient) do
     recipient       = message.recipients.build(phone: '+15551112222')
     recipient.ack = 'CAb8f9080a0f9c5101c8f6a030f8a3bf32'
@@ -39,8 +39,8 @@ describe TwilioDialPlanController do
   end
 
   def twilio_dial_plan_params(call_sid = recipient.ack)
-    { format:   'xml',
-      'CallSid' => call_sid
+    {format:   'xml',
+     'CallSid' => call_sid
     }
   end
 end

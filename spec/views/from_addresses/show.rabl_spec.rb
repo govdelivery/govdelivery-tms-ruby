@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe 'from_addresses/show.rabl' do
-  let(:account) { create(:account) }
-  let(:from_address) { account.default_from_address }
+  let(:account) {create(:account)}
+  let(:from_address) {account.default_from_address}
 
   it 'should tell us stuff' do
     assign(:from_address, from_address)

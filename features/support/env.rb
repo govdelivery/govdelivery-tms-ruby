@@ -166,7 +166,7 @@ def magic_phone_numbers
 end
 
 def status_for_address(magic_addresses, address)
-  matches = magic_addresses.select { |_status, magic_address| magic_address == address }
+  matches = magic_addresses.select { |_status, magic_address| magic_address == address}
   status = matches ? matches.first.first : nil
   status
 end

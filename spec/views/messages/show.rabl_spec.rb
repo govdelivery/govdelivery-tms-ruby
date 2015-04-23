@@ -48,7 +48,7 @@ describe 'messages/show.rabl' do
          new?: true,
          open_tracking_enabled: true,
          click_tracking_enabled: false,
-         macros: { 'fun' => 'times' },
+         macros: {'fun' => 'times'},
          errors: []
         )
   end

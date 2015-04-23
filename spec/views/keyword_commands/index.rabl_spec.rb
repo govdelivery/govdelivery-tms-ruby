@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'keyword_commands/index.rabl' do
-  let(:keyword) { stub('Keyword', id: 101) }
+  let(:keyword) {stub('Keyword', id: 101)}
   let(:commands) do
     5.times.map do |i|
       stub('Command',

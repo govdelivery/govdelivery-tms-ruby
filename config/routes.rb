@@ -1,7 +1,7 @@
 Xact::Application.routes.draw do
   require 'sidekiq/pro/web'
 
-  constraint = ->(request) { request.env['warden'].authenticate? && request.env['warden'].user.admin? }
+  constraint = ->(request) {request.env['warden'].authenticate? && request.env['warden'].user.admin?}
   constraints constraint do
     mount Sidekiq::Web => '/sidekiq'
   end
@@ -67,7 +67,7 @@ Xact::Application.routes.draw do
         end
       end
     end
-    { sms: :sms_messages }.each do |res, con|
+    {sms: :sms_messages}.each do |res, con|
       resources(res, only: [:index, :new, :create, :show], controller: con) do
         pageable
         resources(:recipients, only: [:index, :show]) do
@@ -79,7 +79,7 @@ Xact::Application.routes.draw do
         end
       end
     end
-    { voice: :voice_messages }.each do |res, con|
+    {voice: :voice_messages}.each do |res, con|
       resources(res, only: [:index, :new, :create, :show], controller: con) do
         pageable
         resources(:recipients, only: [:index, :show]) do
@@ -123,7 +123,7 @@ Xact::Application.routes.draw do
   post 'twilio_requests' => 'twilio_requests#create'
   post 'twilio_voice_requests' => 'twilio_voice_requests#create'
   post 'twilio_status_callbacks' => 'twilio_status_callbacks#create'
-  post 'twiml' => 'twilio_dial_plan#show', defaults: { format: 'xml' }
+  post 'twiml' => 'twilio_dial_plan#show', defaults: {format: 'xml'}
 
   %w( 400 401 403 404 405 406 422 500).each do |code|
     get code, to: 'errors#show', code: code

@@ -26,7 +26,7 @@ module Geckoboard
     end
 
     def write_to_file(outfile, output)
-      File.open(File.join(Rails.root, 'public', 'custom_reports', outfile), 'w') { |file| file.write(output) }
+      File.open(File.join(Rails.root, 'public', 'custom_reports', outfile), 'w') { |file| file.write(output)}
     end
 
     def dbconn

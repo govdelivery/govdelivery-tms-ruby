@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe IPAWS::Controller, type: :controller do
-  let(:user) { create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor)) }
+  let(:user) {create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))}
 
   describe 'a CAP exception that indicates their server is borked' do
     controller do

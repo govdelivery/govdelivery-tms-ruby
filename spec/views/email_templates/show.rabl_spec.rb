@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 describe 'email_templates/show.rabl' do
-  let(:account) { create(:account) }
-  let(:user) { create :user, account: account, admin: true }
-  let(:from_address) { account.default_from_address }
-  let(:email_template) { create(:email_template, account: account, user: user, from_address: from_address) }
+  let(:account) {create(:account)}
+  let(:user) {create :user, account: account, admin: true}
+  let(:from_address) {account.default_from_address}
+  let(:email_template) {create(:email_template, account: account, user: user, from_address: from_address)}
 
   before do
     assign(:email_template, email_template)

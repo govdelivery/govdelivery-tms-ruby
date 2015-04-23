@@ -133,9 +133,9 @@ describe TwilioRequestsController, '#create' do
 
   def create_account(prefix, keyword, vendor)
     account = create(:account_with_sms, prefix: prefix, sms_vendor: vendor)
-    account.create_command!(keyword, params: { command_type: :forward,
-                                               http_method: 'POST',
-                                               url: 'http://what.cd' },
+    account.create_command!(keyword, params: {command_type: :forward,
+                                              http_method: 'POST',
+                                              url: 'http://what.cd'},
                                      command_type: :forward)
     account.save!
     account
@@ -144,11 +144,11 @@ describe TwilioRequestsController, '#create' do
   def twilio_request_params(body, vendor)
     @sid ||= ('0' * 34)
     @sid.succ!
-    { format: 'xml',
-      'SmsSid' => @sid,
-      'AccountSid' => vendor.username,
-      'From' => vendor.username,
-      'To' => vendor.from_phone,
-      'Body' => body }
+    {format: 'xml',
+     'SmsSid' => @sid,
+     'AccountSid' => vendor.username,
+     'From' => vendor.username,
+     'To' => vendor.from_phone,
+     'Body' => body}
   end
 end

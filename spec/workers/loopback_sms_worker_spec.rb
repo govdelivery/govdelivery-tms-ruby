@@ -7,10 +7,10 @@ RSpec.describe LoopbackSmsWorker, type: :worker do
                       password: 'dont care',
                       from:     '+15551112222')
   end
-  let(:account) { create(:account, sms_vendor: loopback_vendor) }
-  let(:sms_message) { create(:sms_message, account: account, sms_vendor: loopback_vendor) }
+  let(:account) {create(:account, sms_vendor: loopback_vendor)}
+  let(:sms_message) {create(:sms_message, account: account, sms_vendor: loopback_vendor)}
 
-  subject { LoopbackSmsWorker.new }
+  subject {LoopbackSmsWorker.new}
 
   it 'should have a recipient with each status' do
     LoopbackSmsWorker.magic_addresses.each do |_type, number|

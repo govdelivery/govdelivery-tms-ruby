@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe FromNumber do
-  let(:account) { create(:account_with_voice) }
+  let(:account) {create(:account_with_voice)}
 
   context 'a valid from number' do
     before do
@@ -20,18 +20,18 @@ describe FromNumber do
   end
 
   context 'with account and all addresses' do
-    subject { account.from_numbers.build(phone_number: '5555555555') }
-    it { is_expected.to be_valid }
+    subject {account.from_numbers.build(phone_number: '5555555555')}
+    it {is_expected.to be_valid}
   end
 
   context 'with account and from_number' do
-    subject { account.from_numbers.build(phone_number: '8885556547') }
-    it { is_expected.to be_valid }
+    subject {account.from_numbers.build(phone_number: '8885556547')}
+    it {is_expected.to be_valid}
   end
 
   context 'with no from_number' do
-    subject { account.from_numbers.build }
-    it { is_expected.not_to be_valid }
+    subject {account.from_numbers.build}
+    it {is_expected.not_to be_valid}
   end
 
   context 'with incoming voice messages' do

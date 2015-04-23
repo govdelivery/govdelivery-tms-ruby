@@ -10,10 +10,10 @@ class TwilioStatusCallbacksController < ApplicationController
     rescue Recipient::ShouldRetry # call came back as busy, no answer, or fail...retry
       if @recipient.sending?
         logger.info("retrying #{@recipient.class.name} #{@recipient.id} attempt #{@recipient.retries} (#{transition} - #{secondary_status})")
-        args = { message_id:   @recipient.message.id,
-                 recipient_id: @recipient.id,
-                 message_url:  twiml_url,
-                 callback_url: twilio_status_callbacks_url(format: :xml) }
+        args = {message_id:   @recipient.message.id,
+                recipient_id: @recipient.id,
+                message_url:  twiml_url,
+                callback_url: twilio_status_callbacks_url(format: :xml)}
         @recipient.message.worker.perform_in(@recipient.message.retry_delay.seconds, args)
       end
     end

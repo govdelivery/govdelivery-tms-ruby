@@ -7,8 +7,8 @@ describe CommandAction do
                              response_body:  'something',
                              status:         '201')
     end
-    it { is_expected.to be_valid }
-    it { expect(subject.success?).to be true }
+    it {is_expected.to be_valid}
+    it {expect(subject.success?).to be true}
   end
 
   describe 'a blank response body' do
@@ -17,8 +17,8 @@ describe CommandAction do
                              response_body:  '',
                              status:         '201')
     end
-    it { is_expected.to be_valid }
-    it { expect(subject.success?).to be false }
+    it {is_expected.to be_valid}
+    it {expect(subject.success?).to be false}
   end
 
   describe 'a response of NOT FOUND' do
@@ -27,8 +27,8 @@ describe CommandAction do
                              response_body:  'something',
                              status:         '404')
     end
-    it { is_expected.to be_valid }
-    its(:success?) { should be false }
+    it {is_expected.to be_valid}
+    its(:success?) {should be false}
   end
 
   describe 'an html content type' do
@@ -37,8 +37,8 @@ describe CommandAction do
                              response_body:  'something',
                              status:         '200')
     end
-    it { is_expected.to be_valid }
-    its(:success?) { should be true }
+    it {is_expected.to be_valid}
+    its(:success?) {should be true}
   end
 
   describe 'an HTTP error' do
@@ -48,7 +48,7 @@ describe CommandAction do
             response_body: 'Service Unavailable',
             status:        503)
     end
-    it { is_expected.to be_valid }
+    it {is_expected.to be_valid}
   end
 
   describe 'a network error' do
@@ -59,7 +59,7 @@ describe CommandAction do
             response_body: nil,
             status:        nil)
     end
-    it { is_expected.to be_valid }
+    it {is_expected.to be_valid}
   end
 
   describe 'a nothing' do
@@ -68,6 +68,6 @@ describe CommandAction do
                              response_body:                 nil,
                              status:                        nil)
     end
-    it { is_expected.not_to be_valid }
+    it {is_expected.not_to be_valid}
   end
 end

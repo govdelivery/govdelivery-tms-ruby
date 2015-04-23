@@ -10,7 +10,7 @@ def it_should_validate_as_email(*args)
   args.each do |email_meth|
     context "##{email_meth}" do
       before do
-        subject { create(factory_symbol) }
+        subject {create(factory_symbol)}
       end
 
       it 'should be invalid when not an email' do

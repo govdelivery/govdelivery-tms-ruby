@@ -106,7 +106,7 @@ describe 'MessageControllers' do
 
   def add_recipients!(m)
     VoiceRecipient.aasm.states.map(&:to_s).each_with_index do |status, i|
-      attrs = { phone: "555444#{i}111" }
+      attrs = {phone: "555444#{i}111"}
       r = m.recipients.create!(attrs)
       r.update_attribute(:status, status)
     end

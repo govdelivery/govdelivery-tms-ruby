@@ -5,18 +5,18 @@ class EmailRecipient < ActiveRecord::Base
   self.delivery_timeout = Rails.configuration.email_delivery_timeout
 
   attr_accessible :email
-  validates :message, presence: { unless: :skip_message_validation }
-  validates :email, presence: true, length: { maximum: 256 }, email: true
+  validates :message, presence: {unless: :skip_message_validation}
+  validates :email, presence: true, length: {maximum: 256}, email: true
 
   ##
   # The conditions on these scopes add message_id, which is at the front of the index on those tables
   # (and will become the partition key in the near future). Removing this condition will make
   # these relations perform very poorly.
   #
-  has_many :email_recipient_clicks, ->(record) { where('email_recipient_clicks.email_message_id = ?', record.message_id) }
-  has_many :email_recipient_opens, ->(record) { where('email_recipient_opens.email_message_id = ?', record.message_id) }
+  has_many :email_recipient_clicks, ->(record) {where('email_recipient_clicks.email_message_id = ?', record.message_id)}
+  has_many :email_recipient_opens, ->(record) {where('email_recipient_opens.email_message_id = ?', record.message_id)}
 
-  scope :status_columns, -> { select(column_names - ['macros']) }
+  scope :status_columns, -> {select(column_names - ['macros'])}
 
   def self.from_x_tms_recipent(header)
     xtr = GovDelivery::Crypt::XTmsRecipient.decrypt(header)

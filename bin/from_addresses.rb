@@ -4,10 +4,10 @@ require 'optparse'
 class FromAddressManager
   def list(from_addresses)
     fields = [:id, :created_at, :from_email, :bounce_email, :errors_to, :reply_to, :reply_to_email, :is_default]
-    out fields.map { |f| f.to_s.ljust(25) }.join("\t")
+    out fields.map { |f| f.to_s.ljust(25)}.join("\t")
     out '=' * 220
     from_addresses.map do |fa|
-      out fields.map { |f| fa.send(f).to_s.ljust(30) }.join("\t")
+      out fields.map { |f| fa.send(f).to_s.ljust(30)}.join("\t")
     end
     out '=' * 220
   end

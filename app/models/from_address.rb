@@ -5,9 +5,9 @@ class FromAddress < ActiveRecord::Base
   alias_attribute :reply_to, :reply_to_email
   alias_attribute :errors_to, :bounce_email
 
-  validates :from_email, presence: true, length: { maximum: 255 }, format: Devise.email_regexp, uniqueness: { scope: :account_id }
-  validates :bounce_email,   length: { maximum: 255 }, allow_blank: true, format: Devise.email_regexp
-  validates :reply_to_email, length: { maximum: 255 }, allow_blank: true, format: Devise.email_regexp
+  validates :from_email, presence: true, length: {maximum: 255}, format: Devise.email_regexp, uniqueness: {scope: :account_id}
+  validates :bounce_email,   length: {maximum: 255}, allow_blank: true, format: Devise.email_regexp
+  validates :reply_to_email, length: {maximum: 255}, allow_blank: true, format: Devise.email_regexp
 
   has_many :email_templates
 

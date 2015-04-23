@@ -1,6 +1,6 @@
 class AccountsController < ApplicationController
   before_action lambda { |_c|
-    render(json:   { error: 'forbidden' },
+    render(json:   {error: 'forbidden'},
            status: :forbidden) unless current_user.admin?
   }
   before_action :find_account, only: [:show, :update, :destroy]
@@ -73,7 +73,7 @@ class AccountsController < ApplicationController
       }
 
       wrapper_params.each do |wrapper_name, nested_params|
-        if nested_params.any? { |p| params.include?(p) }
+        if nested_params.any? { |p| params.include?(p)}
           params[wrapper_name] = {}
           nested_params.each do |p|
             params[wrapper_name][p] = params[p] if params.include?(p)

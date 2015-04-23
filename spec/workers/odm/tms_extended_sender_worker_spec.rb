@@ -4,9 +4,9 @@ if defined?(JRUBY_VERSION)
   java_import com.govdelivery.tms.tmsextended.ExtendedMessage
 
   describe Odm::TmsExtendedSenderWorker do
-    let(:worker) { Odm::TmsExtendedSenderWorker.new }
-    let(:odm_vendor) { create(:email_vendor, worker: 'LoopbackMessageWorker') }
-    let(:account) { create(:account, email_vendor: odm_vendor, name: 'name') }
+    let(:worker) {Odm::TmsExtendedSenderWorker.new}
+    let(:odm_vendor) {create(:email_vendor, worker: 'LoopbackMessageWorker')}
+    let(:account) {create(:account, email_vendor: odm_vendor, name: 'name')}
     let(:recipients) do
       s = stub('recipients')
       s.stubs(:find_each).yields(EmailRecipient.new(email: 'email@sink.govdelivery.com')).then.yields(EmailRecipient.new(email: 'email2@sink.govdelivery.com'))
@@ -21,7 +21,7 @@ if defined?(JRUBY_VERSION)
                                        'errors_to'              => 'errors@cat.com',
                                        'open_tracking_enabled'  => false,
                                        'click_tracking_enabled' => true,
-                                       'macros'                 => { 'macro1' => 'foo', 'macro2' => 'bar' })
+                                       'macros'                 => {'macro1' => 'foo', 'macro2' => 'bar'})
       msg.stubs('recipients').returns(recipients)
       msg
     end
@@ -43,9 +43,9 @@ if defined?(JRUBY_VERSION)
         m.stubs(:to).returns([])
       end
     end
-    let(:params) { { 'message_id' => 11, 'account_id' => account.id } }
-    let(:odm_v2) { mock(' Odm::TmsExtendedSenderWorker::ODMv2') }
-    let(:odm_service) { stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', getTMSExtendedPort: odm_v2) }
+    let(:params) {{'message_id' => 11, 'account_id' => account.id}}
+    let(:odm_v2) {mock(' Odm::TmsExtendedSenderWorker::ODMv2')}
+    let(:odm_service) {stub(' Odm::TmsExtendedSenderWorker::ODMv2_Service', getTMSExtendedPort: odm_v2)}
 
     context 'dynamic_queue_key' do
       it 'should work with subject' do
@@ -70,7 +70,7 @@ if defined?(JRUBY_VERSION)
       end
       it 'should fail unless message is queued' do
         EmailMessage.expects(:find).with(11).returns(email_message)
-        expect { worker.perform(params) }.to raise_error(RuntimeError, 'EmailMessage  is not ready for delivery!')
+        expect {worker.perform(params)}.to raise_error(RuntimeError, 'EmailMessage  is not ready for delivery!')
       end
     end
 
@@ -88,7 +88,7 @@ if defined?(JRUBY_VERSION)
       end
       it 'should fail unless message is queued' do
         EmailMessage.expects(:find).with(11).returns(email_message)
-        expect { worker.perform(params) }.to raise_error(RuntimeError, 'EmailMessage  is not ready for delivery!')
+        expect {worker.perform(params)}.to raise_error(RuntimeError, 'EmailMessage  is not ready for delivery!')
       end
     end
 

@@ -47,10 +47,10 @@ Given(/^I create a new forward keyword and command$/) do
   @keyword.post
   @command = @keyword.commands.build(
     name: "#{T[1]}",
-    params: { url: 'https://github.com/govdelivery/tms_client/blob/master/Appraisals', http_method: 'get' },
+    params: {url: 'https://github.com/govdelivery/tms_client/blob/master/Appraisals', http_method: 'get'},
     command_type: :forward)
   @command.post
-  @command.params = { url: 'https://github.com/govdelivery/tms_client/blob/master/Appraisals', http_method: 'post' }
+  @command.params = {url: 'https://github.com/govdelivery/tms_client/blob/master/Appraisals', http_method: 'post'}
   @command.put
 end
 Then(/^I should be able to delete the forward keyword$/) do
@@ -64,7 +64,7 @@ Given(/^I create a new subscribe keyword and command$/) do
   @keyword.post
   @command = @keyword.commands.build(
     name: "#{S[1]}",
-    params: { dcm_account_code: "#{EmailAdmin.new.account_code}", dcm_topic_codes: ["#{EmailAdmin.new.topic_code}"] },
+    params: {dcm_account_code: "#{EmailAdmin.new.account_code}", dcm_topic_codes: ["#{EmailAdmin.new.topic_code}"]},
     command_type: :dcm_subscribe)
   @command.post
 end
@@ -78,7 +78,7 @@ Given(/^I create a new unsubscribe keyword and command$/) do
   @keyword.post
   @command = @keyword.commands.build(
     name: "#{S[1]}",
-    params: { dcm_account_codes: ["#{EmailAdmin.new.account_code}"], dcm_topic_codes: ["#{EmailAdmin.new.topic_code}"] },
+    params: {dcm_account_codes: ["#{EmailAdmin.new.account_code}"], dcm_topic_codes: ["#{EmailAdmin.new.topic_code}"]},
     command_type: :dcm_unsubscribe)
   @command.post
 end
@@ -93,7 +93,7 @@ Given(/^I create a keyword and command with an invalid account code$/) do
   @keyword.post
   @command = @keyword.commands.build(
     name: "#{S[1]}",
-    params: { dcm_account_code: 'CUKEAUTO_NOPE', dcm_topic_codes: ['CUKEAUTO_BROKEN'] },
+    params: {dcm_account_code: 'CUKEAUTO_NOPE', dcm_topic_codes: ['CUKEAUTO_BROKEN']},
     command_type: :dcm_subscribe)
   STDOUT.puts @command.errors unless @command.post
 end

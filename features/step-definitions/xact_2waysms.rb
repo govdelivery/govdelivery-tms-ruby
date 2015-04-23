@@ -21,8 +21,8 @@ Given(/^I create a subscription keyword and command$/) do
     command_type: :dcm_subscribe,
     # do not change the NAME param unless you want to break everything
     name: 'subscribe',
-    params: { dcm_account_code: @conf.xact.account.dcm_account_id,
-              dcm_topic_codes: @conf.xact.account.dcm_topic_codes })
+    params: {dcm_account_code: @conf.xact.account.dcm_account_id,
+             dcm_topic_codes: @conf.xact.account.dcm_topic_codes})
   raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
 
   sleep(2)
@@ -130,7 +130,7 @@ Given(/^I create a stop keyword and command$/) do
     command_type: :dcm_unsubscribe,
     # do not change the NAME param unless you want to break everything
     name: 'unsubscribe',
-    params: { dcm_account_codes: @conf.xact.account.dcm_account_id })
+    params: {dcm_account_codes: @conf.xact.account.dcm_account_id})
   raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
 
   sleep(2)
@@ -256,7 +256,7 @@ def agency_test(agency, check)
   case agency.downcase
   when 'bart', 'acetrain', 'cdc'
     expected_condition = 200
-    { condition: proc do
+    {condition: proc do
       actions = check.call
       actions.any? do |action|
         action.status == expected_condition &&
@@ -264,7 +264,7 @@ def agency_test(agency, check)
           !action.response_body.include?('We are sorry, but the message you sent is not valid.')
       end if actions
     end,
-      msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
+     msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
     }
   end
 end

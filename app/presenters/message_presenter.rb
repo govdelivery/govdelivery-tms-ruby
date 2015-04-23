@@ -9,9 +9,9 @@ class MessagePresenter < SimpleDelegator
 
   def _links
     if @message.new_record?
-      { self: new_link } # create failed
+      {self: new_link} # create failed
     else
-      { self: self_link }
+      {self: self_link}
         .merge(recipient_action_links)
         .merge(email_links)
         .merge(voice_links)
@@ -19,17 +19,17 @@ class MessagePresenter < SimpleDelegator
   end
 
   def recipient_action_links
-    { recipients: recipients_link,
-      failed: failed_link,
-      sent: sent_link }
+    {recipients: recipients_link,
+     failed: failed_link,
+     sent: sent_link}
   end
 
   def email_links
-    message_type == 'email' ? { clicked: clicked_link, opened: opened_link } : {}
+    message_type == 'email' ? {clicked: clicked_link, opened: opened_link} : {}
   end
 
   def voice_links
-    message_type == 'voice' ? { human: human_link, machine: machine_link, busy: busy_link, no_answer: no_answer_link, could_not_connect: could_not_connect_link } : {}
+    message_type == 'voice' ? {human: human_link, machine: machine_link, busy: busy_link, no_answer: no_answer_link, could_not_connect: could_not_connect_link} : {}
   end
 
   private

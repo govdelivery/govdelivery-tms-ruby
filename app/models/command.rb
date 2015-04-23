@@ -9,8 +9,8 @@ class Command < ActiveRecord::Base
 
   attr_accessible :command_type, :name, :params
   validates :command_type, presence: true
-  validates :name, length: { maximum: 255, allow_nil: true }
-  validates :params, length: { maximum: 4000 }, allow_nil: true
+  validates :name, length: {maximum: 255, allow_nil: true}
+  validates :params, length: {maximum: 4000}, allow_nil: true
   before_save :set_name
   validate :validate_command
   validate :validate_keyword

@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 describe Service::Keyword do
-  let(:account) { create(:account_with_sms) }
+  let(:account) {create(:account_with_sms)}
 
   describe 'with an account, vendor, and special text' do
     %w(stop help start).each do |type|
       context type do
-        subject { Service::Keyword.new(type, account.id, account.sms_vendor) }
+        subject {Service::Keyword.new(type, account.id, account.sms_vendor)}
 
         it "sets the keyword to the special, #{type} keyword" do
           expect(subject.keyword).to eql account.send(:"#{type}_keyword")
@@ -41,7 +41,7 @@ describe Service::Keyword do
       @keyword = account.keywords.create(name: 'spatula', response_text: 'SPATULA')
     end
 
-    subject { Service::Keyword.new('spatula', account.id, account.sms_vendor) }
+    subject {Service::Keyword.new('spatula', account.id, account.sms_vendor)}
 
     it 'sets the keyword to the matching keyword' do
       expect(subject.keyword).to eql @keyword
@@ -70,7 +70,7 @@ describe Service::Keyword do
   end
 
   describe 'with an account, vendor, no special text, and no matching keyword' do
-    subject { Service::Keyword.new('spatula', account.id, account.sms_vendor) }
+    subject {Service::Keyword.new('spatula', account.id, account.sms_vendor)}
 
     it 'sets the keyword to the default keyword' do
       expect(subject.keyword).to eql account.default_keyword
@@ -92,9 +92,9 @@ describe Service::Keyword do
   describe 'with a vendor, no account, and special text' do
     %w(stop help start).each do |type|
       context type do
-        let(:vendor) { account.sms_vendor }
+        let(:vendor) {account.sms_vendor}
 
-        subject { Service::Keyword.new(type, nil, vendor) }
+        subject {Service::Keyword.new(type, nil, vendor)}
 
         it 'sets no keyword' do
           expect(subject.keyword).to be_nil
@@ -127,7 +127,7 @@ describe Service::Keyword do
           vendor
         end
 
-        subject { Service::Keyword.new(type, nil, vendor) }
+        subject {Service::Keyword.new(type, nil, vendor)}
 
         it "responds with #{type}_text" do
           expect(subject.response_text).to eql 'custom'
@@ -144,7 +144,7 @@ describe Service::Keyword do
       vendor
     end
 
-    subject { Service::Keyword.new('random', nil, vendor) }
+    subject {Service::Keyword.new('random', nil, vendor)}
 
     it 'should respond with the custom help_text' do
       expect(subject.response_text).to eql 'custom'
@@ -152,9 +152,9 @@ describe Service::Keyword do
   end
 
   describe 'with a vendor, no account, and no special text' do
-    let(:vendor) { account.sms_vendor }
+    let(:vendor) {account.sms_vendor}
 
-    subject { Service::Keyword.new('random', nil, account.sms_vendor) }
+    subject {Service::Keyword.new('random', nil, account.sms_vendor)}
 
     it 'sets no keyword' do
       expect(subject.keyword).to be_nil

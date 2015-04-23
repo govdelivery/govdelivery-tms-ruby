@@ -1,6 +1,6 @@
 require 'rails_helper'
 describe Messages::CheckMessageForCompletion do
-  subject { Messages::CheckMessageForCompletion.new }
+  subject {Messages::CheckMessageForCompletion.new}
 
   it 'should work on a message' do
     message = mock('message', completed?: false, complete!: false, id: 7)

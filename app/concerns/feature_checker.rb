@@ -4,8 +4,8 @@ module FeatureChecker
   included do
     # This check needs to happen after the @account is defined
     def check_if_feature_is_enabled
-      unless self.class.features.blank? || self.class.features.all? { |f| @account.feature_enabled?(f) }
-        render json: { errors: ['This feature is not enabled on your account.  Please contact GovDelivery for further assistance.'] }, status: :forbidden
+      unless self.class.features.blank? || self.class.features.all? { |f| @account.feature_enabled?(f)}
+        render json: {errors: ['This feature is not enabled on your account.  Please contact GovDelivery for further assistance.']}, status: :forbidden
       end
     end
   end

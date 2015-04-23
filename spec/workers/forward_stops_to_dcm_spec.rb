@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe ForwardStopsToDcm do
   context '.should_forward?' do
-    let(:body) { 'asdf' }
+    let(:body) {'asdf'}
     context 'when body is a stop request' do
       before do
         Keyword.expects(:stop?).at_least_once.with(body).returns(true)
@@ -24,14 +24,14 @@ describe ForwardStopsToDcm do
   end
 
   context '#perform' do
-    let(:conn) { mock('Faraday connection') }
+    let(:conn) {mock('Faraday connection')}
     before do
       subject.stubs(:connection).returns(conn)
     end
 
     it 'uses Faraday connection correctly' do
       Rails.stubs(:configuration).returns(stub(
-                                            dcm: { api_root: 'a-url' },
+                                            dcm: {api_root: 'a-url'},
                                             shared_phone_numbers: ['+15554443333']
       ))
 
@@ -40,12 +40,12 @@ describe ForwardStopsToDcm do
     end
     it 'always sends "stop" as the body param' do
       Rails.stubs(:configuration).returns(stub(
-                                            dcm: { api_root: 'a-url' },
+                                            dcm: {api_root: 'a-url'},
                                             shared_phone_numbers: ['+15554443333']
       ))
 
       conn.expects(:post).with('a-url/api/twilio_requests', has_entry('Body', 'stop'))
-      Rails.stubs(:configuration).returns(stub(dcm: { api_root: 'a-url' }, shared_phone_numbers: ['+15554443333']))
+      Rails.stubs(:configuration).returns(stub(dcm: {api_root: 'a-url'}, shared_phone_numbers: ['+15554443333']))
       subject.perform('Body' => 'subscribe')
     end
   end

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :account do
-    sequence(:name) { |n| "ACME_#{n}" }
+    sequence(:name) { |n| "ACME_#{n}"}
     dcm_account_codes ['ACME']
 
     before(:create) do |_account, evaluator|

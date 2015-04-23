@@ -29,18 +29,18 @@ module Twilio
           vendor             = message.vendor
         end
         client = vendor.delivery_mechanism
-        logger.debug { "Sending message to #{recipient.phone}" }
+        logger.debug {"Sending message to #{recipient.phone}"}
         response = client.deliver(message, recipient, callback_url, message_url)
       rescue Twilio::REST::RequestError => e
         raise Sidekiq::Retries::Retry.new(e) if RETRY_CODES.include?(client.last_response_code)
-        logger.warn { "Non-retryable error from Twilio (#{message}): #{e.code} - #{e.message}" }
+        logger.warn {"Non-retryable error from Twilio (#{message}): #{e.code} - #{e.message}"}
         recipient.failed!(nil, nil, e.message)
         return
       rescue StandardError => e
         raise Sidekiq::Retries::Retry.new(e)
       end
 
-      logger.info { "Response from Twilio was #{response.inspect}" }
+      logger.info {"Response from Twilio was #{response.inspect}"}
       begin
         self.class.complete_recipient!(recipient, response.status, response.sid)
       rescue ActiveRecord::ConnectionTimeoutError => e

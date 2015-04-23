@@ -4,10 +4,10 @@ module Odm
   class TmsExtendedSenderWorker < Odm::TmsExtendedWorker
     sidekiq_options retry:             10,
                     queue:             :sender,
-                    dynamic_queue_key: ->(args) { args['subject'].try(:parameterize) }
+                    dynamic_queue_key: ->(args) {args['subject'].try(:parameterize)}
 
     def perform(options)
-      super { deliver(options['message_id']) }
+      super {deliver(options['message_id'])}
     end
 
     def deliver(message_id)
@@ -32,7 +32,7 @@ module Odm
           msg.track_clicks        = message.click_tracking_enabled?
           msg.track_opens         = message.open_tracking_enabled?
           msg.link_encoder        = create_link_encoder(account.link_encoder)
-          message.recipients.find_each { |recipient| msg.to << recipient.to_odm(macros) }
+          message.recipients.find_each { |recipient| msg.to << recipient.to_odm(macros)}
           vendor = message.vendor
         end
       end

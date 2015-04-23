@@ -1,8 +1,8 @@
 FactoryGirl.define do
-  sequence(:command_name) { |i| "command#{i}" }
+  sequence(:command_name) { |i| "command#{i}"}
 
   factory :command do
-    name { generate(:command_name) }
+    name {generate(:command_name)}
 
     factory :dcm_subscribe_command do
       command_type 'dcm_subscribe'

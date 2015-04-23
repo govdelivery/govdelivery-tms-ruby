@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :keyword do
-    name { generate(:keyword_name) }
+    name {generate(:keyword_name)}
 
     # always build the account first
     factory :account_keyword do

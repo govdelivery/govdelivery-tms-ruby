@@ -10,7 +10,7 @@ module IPAWS
     end
 
     def initialize(attributes = {})
-      attributes.each { |k, v| send("#{k}=", v) }
+      attributes.each { |k, v| send("#{k}=", v)}
     end
   end
 end

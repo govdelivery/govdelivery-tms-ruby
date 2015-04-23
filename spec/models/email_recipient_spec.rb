@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 describe EmailRecipient do
-  let(:macros) { { 'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value' } }
-  let(:vendor) { create(:email_vendor) }
-  let(:account) { create(:account, email_vendor: vendor, name: 'account') }
-  let(:email_message) { create(:email_message, account: account) }
+  let(:macros) {{'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value'}}
+  let(:vendor) {create(:email_vendor)}
+  let(:account) {create(:account, email_vendor: vendor, name: 'account')}
+  let(:email_message) {create(:email_message, account: account)}
   let(:other_email) do
     em = create(:email_message, account: account)
     em.recipients.build(email: 'doo@doo.com')
     em.save
     em
   end
-  let(:user) { User.create(email: 'admin@example.com', password: 'retek01!').tap { |u| u.account = account } }
+  let(:user) {User.create(email: 'admin@example.com', password: 'retek01!').tap { |u| u.account = account}}
 
   subject do
     r         = email_message.recipients.build
@@ -19,8 +19,8 @@ describe EmailRecipient do
     r
   end
 
-  its(:email) { should be_nil }
-  it { is_expected.not_to be_valid }
+  its(:email) {should be_nil}
+  it {is_expected.not_to be_valid}
 
   context 'with an email' do
     before do
@@ -157,8 +157,8 @@ describe EmailRecipient do
   end
 
   context 'timeout_expired' do
-    let(:vendor) { create(:email_vendor) }
-    let(:account) { create(:account, email_vendor: vendor, name: 'account') }
+    let(:vendor) {create(:email_vendor)}
+    let(:account) {create(:account, email_vendor: vendor, name: 'account')}
     let(:messages) do
       [1, 2].map do |x|
         m = create(:email_message, account: account, body: "body #{x}")

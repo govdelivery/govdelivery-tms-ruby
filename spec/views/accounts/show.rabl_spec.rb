@@ -1,10 +1,10 @@
 require File.expand_path('../../../rails_helper', __FILE__)
 
 describe 'accounts/show.rabl' do
-  let(:sms_vendor) { create(:sms_vendor) }
-  let(:voice_vendor) { create(:voice_vendor) }
-  let(:email_vendor) { create(:email_vendor) }
-  let(:ipaws_vendor) { create(:ipaws_vendor) }
+  let(:sms_vendor) {create(:sms_vendor)}
+  let(:voice_vendor) {create(:voice_vendor)}
+  let(:email_vendor) {create(:email_vendor)}
+  let(:ipaws_vendor) {create(:ipaws_vendor)}
 
   let(:account) do
     create(:account,
@@ -16,8 +16,8 @@ describe 'accounts/show.rabl' do
            dcm_account_codes:     %w(so rad))
   end
 
-  let(:user) { create :user, account: account, admin: false }
-  let(:admin_user) { create :user, account: account, admin: true }
+  let(:user) {create :user, account: account, admin: false}
+  let(:admin_user) {create :user, account: account, admin: true}
 
   before do
     assign(:account, account)

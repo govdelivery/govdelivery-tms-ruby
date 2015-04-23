@@ -56,7 +56,7 @@ Then(/^those params should resolve within the body of the email I send$/) do
 
   lines = emails.html_part.body.decoded # extracting all of the HTML out of the email since the email is MultiPart
   doc = Nokogiri::HTML.parse(lines) # Using Nokogiri to parse out the HTML to be something more readable
-  URL = doc.css('p a').map { |link| link['href'] }[0] # forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
+  URL = doc.css('p a').map { |link| link['href']}[0] # forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
   puts 'Link found goes to: '.green
   puts URL # outputting the extracted URL with the email for the sake of readability
 
@@ -72,13 +72,13 @@ end
 Given(/^I am a TMS user and not an admin$/) do
   @request = HTTPI::Request.new
   @request.url = EmailAdmin.new.url
-  @request.headers = { 'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => "#{EmailAdmin.new.non_admin}" }
+  @request.headers = {'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => "#{EmailAdmin.new.non_admin}"}
 end
 
 Then(/^I should not be able to see the accounts endpoint$/) do
   @response = HTTPI.get(@request)
 
-  if JSON.parse(@response.raw_body) == { 'error' => 'forbidden' }
+  if JSON.parse(@response.raw_body) == {'error' => 'forbidden'}
     puts 'Forbidden found, passing test'.green
   else
     raise 'Was able to view accounts as a user, test failed'.red
@@ -117,7 +117,7 @@ Given(/^I post a new EMAIL with message and recipient MACROS$/) do
   @message = client.email_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery [[city]] platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.',
                                          subject: 'Regression Test email send',
                                          from_email: "#{EmailAdmin.new.from_email}",
-                                         macros: { 'city' => 'Saint Paul' })
+                                         macros: {'city' => 'Saint Paul'})
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
   STDOUT.puts @message.errors unless @message.post
   email = @message.get
@@ -181,7 +181,7 @@ Given(/^I post a new EMAIL message and retrieve the list recipient counts\/state
   @message = client.email_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery [[city]] platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.',
                                          subject: 'Regression Test email send',
                                          from_email: "#{EmailAdmin.new.from_email}",
-                                         macros: { 'city' => 'Saint Paul' })
+                                         macros: {'city' => 'Saint Paul'})
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
   STDOUT.puts @message.errors unless @message.post
   email = @message.get

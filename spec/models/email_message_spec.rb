@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe EmailMessage do
-  let(:vendor) { create(:email_vendor) }
-  let(:account) { create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3') }    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
-  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+  let(:vendor) {create(:email_vendor)}
+  let(:account) {create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3')}    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
+  let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
   let(:email) do
     build(:email_message,
           user: user,
@@ -30,7 +30,7 @@ describe EmailMessage do
           macros: {}
          )
   end
-  subject { email }
+  subject {email}
 
   it_should_validate_as_email :reply_to, :errors_to
 
@@ -55,7 +55,7 @@ describe EmailMessage do
     end
   end
   context 'with all attributes' do
-    it { is_expected.to be_valid }
+    it {is_expected.to be_valid}
     it 'should set the account' do
       expect(account).not_to be_nil
     end
@@ -64,7 +64,7 @@ describe EmailMessage do
       expect(macroless_email.odm_record_designator).to eq('email::recipient_id::x_tms_recipient')
     end
     context 'and saved' do
-      before { email.save! }
+      before {email.save!}
 
       it 'should be able to create recipients' do
         email.create_recipients([email: 'tyler@dudes.com'])
@@ -80,7 +80,7 @@ describe EmailMessage do
           assert result.send(c)
         end
         not_cols.each do |c|
-          expect { result.send(c) }.to raise_error
+          expect {result.send(c)}.to raise_error
         end
       end
 
@@ -110,7 +110,7 @@ describe EmailMessage do
         end
 
         it 'should not be able to skip queued' do
-          expect { email.sending!(nil, 'dummy_id') }.to raise_error(AASM::InvalidTransition)
+          expect {email.sending!(nil, 'dummy_id')}.to raise_error(AASM::InvalidTransition)
         end
 
         context 'and completed! without a message' do
@@ -131,13 +131,13 @@ describe EmailMessage do
       [:opened, :clicked].each do |type|
         context "with recips who #{type}" do
           before do
-            email.create_recipients([{ email: 'tyler@dudes.com' }, { email: 'ben@dudees.com' }])
+            email.create_recipients([{email: 'tyler@dudes.com'}, {email: 'ben@dudees.com'}])
 
             # one dude twice, the other not at all
             recip = email.recipients.reload.first
             recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.now)
           end
-          it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
+          it {expect(email.send(:"recipients_who_#{type}").count).to eq(1)}
         end
       end
 
@@ -145,13 +145,13 @@ describe EmailMessage do
       [:failed, :sent].each do |type|
         context "with recips who #{type}" do
           before do
-            email.create_recipients([{ email: 'tyler@dudes.com' }, { email: 'ben@dudees.com' }])
+            email.create_recipients([{email: 'tyler@dudes.com'}, {email: 'ben@dudees.com'}])
 
             # one dude twice, the other not at all
             recip = email.recipients.reload.first
             recip.send(:"#{type}!", 'email_ack', nil, nil)
           end
-          it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
+          it {expect(email.send(:"recipients_who_#{type}").count).to eq(1)}
         end
       end
     end

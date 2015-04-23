@@ -1,6 +1,6 @@
 module FixtureHelper
   def create_from_address(attrs = {})
-    FromAddress.create!({ from_email: 'hey@dude.test' }.merge(attrs))
+    FromAddress.create!({from_email: 'hey@dude.test'}.merge(attrs))
   end
 
   def create_sms_vendor(attrs = {})
@@ -10,7 +10,7 @@ module FixtureHelper
       password: 'secret',
       from: '+15555555555',
       shared: false,
-      worker: 'LoopbackMessageWorker' }.merge(attrs))
+      worker: 'LoopbackMessageWorker'}.merge(attrs))
   end
 
   def create_voice_vendor(attrs = {})
@@ -19,15 +19,15 @@ module FixtureHelper
       username: 'username',
       password: 'secret',
       from: '+15555551111',
-      worker: 'LoopbackMessageWorker' }.merge(attrs))
+      worker: 'LoopbackMessageWorker'}.merge(attrs))
   end
 
   def create_email_vendor(attrs = {})
-    EmailVendor.create!({ name: 'new name', worker: 'LoopbackMessageWorker' }.merge(attrs))
+    EmailVendor.create!({name: 'new name', worker: 'LoopbackMessageWorker'}.merge(attrs))
   end
 
   def create_account(attrs = {})
-    Account.new({ name: 'ACME', dcm_account_codes: ['ACME'] }.merge(attrs)).tap do |a|
+    Account.new({name: 'ACME', dcm_account_codes: ['ACME']}.merge(attrs)).tap do |a|
       a.build_from_address(from_email: 'hey@dude.test')
       a.build_from_number(phone_number: '8885551234')
       a.save!

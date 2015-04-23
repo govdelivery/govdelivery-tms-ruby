@@ -15,7 +15,7 @@ class SmsPrefixesCLI < Thor
       q = q.where(sms_vendor_id: sms_vendor.id)
     end
     headers = [['ID', 'PREFIX', 'ACCOUNT NAME', 'SMS VENDOR NAME']]
-    print_table(headers + q.collect { |sms_prefix| [sms_prefix.id, sms_prefix.prefix, sms_prefix.account.try(:name), sms_prefix.sms_vendor.try(:name)] })
+    print_table(headers + q.collect { |sms_prefix| [sms_prefix.id, sms_prefix.prefix, sms_prefix.account.try(:name), sms_prefix.sms_vendor.try(:name)]})
   end
 
   desc 'delete SMS_PREFIX ID', 'destroy an sms prefix'

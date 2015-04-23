@@ -17,7 +17,7 @@ class ImportantMessage
 end
 
 describe Personalized do
-  subject { ImportantMessage.new }
+  subject {ImportantMessage.new}
   context 'translating macros' do
     it 'should work' do
       expect(subject.to_odm(:body)).to eq('##injections## here and ##FLUBBER## there [pea] ugly manhole covers')
