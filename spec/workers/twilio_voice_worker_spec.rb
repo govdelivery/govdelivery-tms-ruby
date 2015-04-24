@@ -1,8 +1,8 @@
 require 'rails_helper'
 describe TwilioVoiceWorker do
-  let(:account) { create(:account_with_voice) }
-  let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-  let(:message) { account.voice_messages.create!(play_url: 'http://localhost/file.mp3', recipients_attributes: [{ phone: '5554443333', vendor: account.voice_vendor }]) }
+  let(:account) {create(:account_with_voice)}
+  let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:message) {account.voice_messages.create!(play_url: 'http://localhost/file.mp3', recipients_attributes: [{phone: '5554443333', vendor: account.voice_vendor}])}
 
   # need to add recipient stubs and verify recipients are modified correctly
   context 'a send' do
@@ -23,6 +23,6 @@ describe TwilioVoiceWorker do
 
   it 'should fail if not in sending state' do
     Twilio::SenderWorker.expects(:perform_async).never
-    expect { subject.perform(message_id: message.id) }.to raise_error Sidekiq::Retries::Retry
+    expect {subject.perform(message_id: message.id)}.to raise_error Sidekiq::Retries::Retry
   end
 end

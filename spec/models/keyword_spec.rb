@@ -2,22 +2,22 @@
 require 'rails_helper'
 
 describe Keyword do
-  let(:account) { create(:account_with_sms) }
-  subject { create(:account_keyword, account: account) }
+  let(:account) {create(:account_with_sms)}
+  subject {create(:account_keyword, account: account)}
 
   context 'when name is valid' do
-    its(:errors) { should be_empty }
+    its(:errors) {should be_empty}
   end
 
   context 'when name is empty' do
-    subject { build(:keyword, name: nil).tap(&:valid?) }
-    its(:errors) { should include(:name) }
+    subject {build(:keyword, name: nil).tap(&:valid?)}
+    its(:errors) {should include(:name)}
   end
 
   (Keyword::RESERVED_KEYWORDS - Keyword::BASE_KEYWORDS).each do |reserved_keyword|
     context "when name is reserved (#{reserved_keyword})" do
-      subject { build(:keyword, name: reserved_keyword, account: account).tap(&:valid?) }
-      its(:errors) { should include(:name) }
+      subject {build(:keyword, name: reserved_keyword, account: account).tap(&:valid?)}
+      its(:errors) {should include(:name)}
     end
   end
 
@@ -32,33 +32,32 @@ describe Keyword do
   end
 
   context 'when name has a space' do
-    subject { build(:keyword, name: 'a b').tap(&:valid?) }
-    its(:errors) { should include(:name) }
+    subject {build(:keyword, name: 'a b').tap(&:valid?)}
+    its(:errors) {should include(:name)}
   end
 
   context 'when response_text is empty' do
-    subject { build(:keyword, response_text: nil).tap(&:valid?) }
-    its(:errors) { should_not include(:response_text) }
+    subject {build(:keyword, response_text: nil).tap(&:valid?)}
+    its(:errors) {should_not include(:response_text)}
   end
 
   [:name, :response_text].each do |field|
     context "when #{field} is too long" do
-      before { subject.send("#{field}=", 'A' * 161) }
-      specify { expect(subject).to be_invalid }
+      before {subject.send("#{field}=", 'A' * 161)}
+      specify {expect(subject).to be_invalid}
     end
   end
 
   context 'with duplicate name and same vendor' do
     before do
       subject.save!
-      vendor        = subject.account.sms_vendor
-      vendor.shared = true
+      vendor = subject.account.sms_vendor
       vendor.save!
       @new_keyword         = Keyword.new(name: subject.name)
       @new_keyword.account = subject.account
     end
 
-    specify { expect(@new_keyword).to be_invalid }
+    specify {expect(@new_keyword).to be_invalid}
 
     context 'and same vendor but different account_id' do
       before do
@@ -73,7 +72,7 @@ describe Keyword do
   end
 
   context 'special keyword services' do
-    let(:account) { create(:account_with_sms) }
+    let(:account) {create(:account_with_sms)}
     before do
       account.help_keyword.create_command!(params: build(:forward_command_parameters), command_type: :forward)
       account.stop_keyword.create_command!(params: build(:forward_command_parameters), command_type: :forward)
@@ -82,7 +81,7 @@ describe Keyword do
 
     %w(help stop start).each do |type|
       describe type do
-        subject { Service::Keyword.new(type, account.id, account.sms_vendor) }
+        subject {Service::Keyword.new(type, account.id, account.sms_vendor)}
         context '#execute_commands' do
           it "should call Account##{type}!" do
             Account.any_instance.expects(:"#{type}!")
@@ -94,7 +93,7 @@ describe Keyword do
   end
 
   describe 'custom keyword' do
-    subject { create(:custom_keyword, name: 'FOOBAR') }
+    subject {create(:custom_keyword, name: 'FOOBAR')}
 
     it 'should be findable in a case-insensitive way with with_name' do
       expect(subject).to be_instance_of(Keyword)
@@ -119,16 +118,16 @@ describe Keyword do
   end
 
   describe '#create_command!' do
-    let(:command) { double('Command', call: true) }
-    let(:command_params) { CommandParameters.new }
-    subject { create(:account_with_sms).stop_keyword }
+    let(:command) {double('Command', call: true)}
+    let(:command_params) {CommandParameters.new}
+    subject {create(:account_with_sms).stop_keyword}
 
     it 'creates a command' do
       expect do
         dcm_account_codes = subject.account.dcm_account_codes.to_a
         subject.create_command!(params:       CommandParameters.new(dcm_account_codes: dcm_account_codes),
                                 command_type: :dcm_unsubscribe)
-      end.to change { Command.count }.by 1
+      end.to change {Command.count}.by 1
     end
 
     it 'an account default keyword can have a forward command' do
@@ -139,7 +138,7 @@ describe Keyword do
       keyword.create_command!(params:       {
                                 command_type: :forward,
                                 http_method:  'POST',
-                                url:          'http://what.cd' },
+                                url:          'http://what.cd'},
                               command_type: :forward)
       keyword.commands.first.call(CommandParameters.new(account_id: '4'))
     end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CommandType::Forward do
-  let(:account) { stub_everything('account', sms_messages: stub(new: SmsMessage.new)) }
+  let(:account) {stub_everything('account', sms_messages: stub(new: SmsMessage.new))}
   let(:command_action) do
     stub('CommandAction',
          content_type:    'text/plain',
@@ -12,9 +12,9 @@ describe CommandType::Forward do
   let(:http_response) do
     OpenStruct.new(body: 'ATLANTA IS FULL OF ZOMBIES, STAY AWAY',
                    status: 200,
-                   headers: { 'Content-Type' => 'text/plain' })
+                   headers: {'Content-Type' => 'text/plain'})
   end
-  let(:http_error_response) { OpenStruct.new(nil) }
+  let(:http_error_response) {OpenStruct.new(nil)}
 
   let(:command_params) do
     CommandParameters.new(url:                 'url',
@@ -30,7 +30,7 @@ describe CommandType::Forward do
                           sms_body_param_name: 'teh_sms_body')
   end
 
-  subject { CommandType::Forward.new }
+  subject {CommandType::Forward.new}
 
   context 'on HTTP error' do
     before do

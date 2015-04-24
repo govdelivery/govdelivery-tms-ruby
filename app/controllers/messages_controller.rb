@@ -42,7 +42,7 @@ class MessagesController < ApplicationController
   end
 
   def send_options
-    opts = { message_url: twiml_url }
+    opts = {message_url: twiml_url}
     opts[:callback_url] = twilio_status_callbacks_url(format: :xml) if Rails.configuration.public_callback
     opts
   end

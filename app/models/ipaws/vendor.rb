@@ -37,7 +37,7 @@ module IPAWS
         # If the item only has subParaListItem, this is our list of statuses.
         response['statuses'] ||= []
         if item.keys == ['subParaListItem']
-          response['statuses'] += item['subParaListItem'].in_groups_of(4, false).map { |hashes| hashes.inject(&:merge!) }
+          response['statuses'] += item['subParaListItem'].in_groups_of(4, false).map { |hashes| hashes.inject(&:merge!)}
         else
           response.merge!(item)
         end
@@ -59,7 +59,7 @@ module IPAWS
       end
     end
 
-    def client(reload = false)
+    def client(reload=false)
       @client = nil if reload
       @client ||= begin
         write_jks_file
@@ -76,7 +76,7 @@ module IPAWS
       cap_response = cap_response.as_json
       if responses = cap_response.delete('')
         cap_response['responses'] = responses.in_groups_of(4, false).map do |group|
-          group.inject { |response, attributes| response.merge(attributes) }
+          group.inject { |response, attributes| response.merge(attributes)}
         end
       end
       cap_response
@@ -91,7 +91,7 @@ module IPAWS
     def write_jks_file
       path = jks_path
       FileUtils.mkdir_p File.dirname(path)
-      File.open(path, 'wb') { |f| f.write(jks) } unless File.exist?(path)
+      File.open(path, 'wb') { |f| f.write(jks)} unless File.exist?(path)
     end
   end
 end

@@ -8,7 +8,7 @@ class KeywordsCLI < Thor
   desc 'list ACCOUNT_NAME', 'list custom keywords for account'
   option :all, desc: 'list both custom and special'
   option :special, desc: 'list only special keywords'
-  def list(account_name = nil)
+  def list(account_name=nil)
     account = get_account(account_name) if account_name
     q = case
         when account.nil?
@@ -20,7 +20,7 @@ class KeywordsCLI < Thor
         else
           account.keywords.custom
         end
-    print_table q.all.collect { |k| [k.id, k.name, k.response_text] }
+    print_table q.all.collect { |k| [k.id, k.name, k.response_text]}
   end
 
   desc 'create ACCOUNT_NAME KEYWORD_NAME', 'create new custom command'
@@ -76,7 +76,7 @@ class KeywordsCLI < Thor
     CSV.foreach(file) do |l|
       keyword_name, account_code, topic_code = l[0..2]
       keyword = account.keywords.build(name: keyword_name)
-      keyword.commands.build(command_type: :dcm_subscribe, params: { dcm_account_code: account_code, dcm_topic_codes: [topic_code] })
+      keyword.commands.build(command_type: :dcm_subscribe, params: {dcm_account_code: account_code, dcm_topic_codes: [topic_code]})
       if keyword.save
         say "successfully created #{keyword.name}", :green
       else

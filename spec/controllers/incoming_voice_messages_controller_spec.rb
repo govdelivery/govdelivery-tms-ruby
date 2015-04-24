@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe IncomingVoiceMessagesController do
-  let(:account) { create(:account_with_voice) }
+  let(:account) {create(:account_with_voice)}
   let(:user) do
     account.users.create(email: 'foo@evotest.govdelivery.com',
                          password: 'schwoop')

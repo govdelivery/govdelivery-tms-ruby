@@ -19,9 +19,9 @@ task :rubocop do
 
   git_files = `git status -uno --porcelain`
   filenames = git_files.split("\n")
-              .reject { |git_file| deleted?(git_file) }
-              .map { |git_file| filename_from(git_file) }
-              .select { |filename| ruby_file?(filename) }
+              .reject { |git_file| deleted?(git_file)}
+              .map { |git_file| filename_from(git_file)}
+              .select { |filename| ruby_file?(filename)}
               .join(' ')
 
   sh "bundle exec rubocop -R #{filenames}" unless filenames.empty?

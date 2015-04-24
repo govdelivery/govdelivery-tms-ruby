@@ -18,7 +18,7 @@ describe LoadBalancerController, 'testing status' do
   describe 'a sad GET show' do
     it 'should render 500' do
       @connection.expects(:select_one).with('SELECT SYSDATE FROM DUAL').raises(Exception.new('OH GOD'))
-      expect { get :show }.to raise_error
+      expect {get :show}.to raise_error
     end
   end
 end

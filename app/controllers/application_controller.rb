@@ -81,12 +81,12 @@ class ApplicationController < ActionController::API
 
   def render_malformed_json(e)
     instrument_captured_error(e)
-    render json: { error: 'Something went wrong parsing your request JSON' }, status: :bad_request
+    render json: {error: 'Something went wrong parsing your request JSON'}, status: :bad_request
   end
 
   def render_invalid_record(e)
     instrument_captured_error(e)
-    render json: { errors: e.record.errors.messages }, status: :unprocessable_entity
+    render json: {errors: e.record.errors.messages}, status: :unprocessable_entity
   end
 
   def find_user
@@ -116,7 +116,7 @@ class ApplicationController < ActionController::API
       links[:last] = url_for(ps.merge(param_name => scope.total_pages))
     end
 
-    links.collect { |k, v| %(<#{v}>; rel="#{k}",) }.join('')
+    links.collect { |k, v| %(<#{v}>; rel="#{k}",)}.join('')
   end
 
   def respond_with(*resources, &block)

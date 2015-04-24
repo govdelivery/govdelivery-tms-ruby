@@ -8,11 +8,11 @@ module Sidekiq
     QUEUE_LIST_KEY = [PREFIX, 'queues'].join(':')
 
     def self.throttled_queues
-      Sidekiq.redis_pool.with { |conn| conn.smembers(QUEUE_LIST_KEY) }
+      Sidekiq.redis_pool.with { |conn| conn.smembers(QUEUE_LIST_KEY)}
     end
 
     def self.includes_queue?(name)
-      Sidekiq.redis_pool.with { |conn| conn.sismember(QUEUE_LIST_KEY, name) }
+      Sidekiq.redis_pool.with { |conn| conn.sismember(QUEUE_LIST_KEY, name)}
     end
 
     def initialize(name, redis_pool)
@@ -58,7 +58,7 @@ module Sidekiq
     end
 
     def current
-      redis_pool.with { |conn| conn.get(key) }
+      redis_pool.with { |conn| conn.get(key)}
     end
 
     def queue

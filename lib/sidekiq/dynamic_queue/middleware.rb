@@ -2,7 +2,7 @@ module Sidekiq
   module DynamicQueue
     module Middleware
       class Client
-        def call(worker, item, queue, _redis_pool = nil)
+        def call(worker, item, queue, _redis_pool=nil)
           yield
           item['queue'] = queue_for(worker, item, queue)
           queue.gsub!(queue.dup, item['queue']) if item['queue'] != queue

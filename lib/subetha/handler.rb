@@ -77,7 +77,7 @@ module Subetha
       data                     = IOUtils.toString(input_stream)
       mail_message             = Mail.new(data)
       self.message                  = user.account.email_messages.build(body: mail_message.body.to_s, subject: mail_message.subject)
-      message.async_recipients = mail_message.to.each.map { |rcpt| { email: rcpt } }
+      message.async_recipients = mail_message.to.each.map { |rcpt| {email: rcpt}}
       if message.save_with_async_recipients
         CreateRecipientsWorker.perform_async(recipients: message.async_recipients,
                                              klass: message.class.name,
@@ -96,7 +96,7 @@ module Subetha
     # ripped from MessagesController
     def send_options
       routes              = Rails.application.routes.url_helpers
-      opts                = { message_url: routes.twiml_url }
+      opts                = {message_url: routes.twiml_url}
       opts[:callback_url] = routes.twilio_status_callbacks_url(format: :xml) if Rails.configuration.public_callback
       opts
     end

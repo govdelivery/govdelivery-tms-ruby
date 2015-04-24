@@ -9,7 +9,7 @@ class FooController
 end
 
 describe FeatureChecker do
-  let(:controller) { FooController.new }
+  let(:controller) {FooController.new}
 
   context 'A disabled feature' do
     before do

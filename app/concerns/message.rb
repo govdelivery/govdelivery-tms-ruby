@@ -34,8 +34,8 @@ module Message
       end
     end
 
-    scope :without_message, -> { select(*(attribute_names - %w(body subject macros play_url say_text max_retries retry_delay))) }
-    scope :not_yet_sending, -> { where(status: %w(new queued)) }
+    scope :without_message, -> {select(*(attribute_names - %w(body subject macros play_url say_text max_retries retry_delay)))}
+    scope :not_yet_sending, -> {where(status: %w(new queued))}
 
     # don't raise an error if complete! fails
     def complete_with_exception_handler!
@@ -54,7 +54,7 @@ module Message
     attr_accessor :async_recipients
     attr_accessible :recipients_attributes, :async_recipients
 
-    has_many :recipients, -> { order("#{quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC") },
+    has_many :recipients, -> {order("#{quoted_table_name.gsub(/MESSAGES/i, 'RECIPIENTS')}.created_at DESC")},
              dependent: :delete_all,
              class_name: name.gsub('Message', 'Recipient'),
              foreign_key: 'message_id' do
@@ -119,7 +119,7 @@ module Message
   end
 
   def recipient_counts
-    { 'total' => recipients.count }.merge(recipient_state_counts)
+    {'total' => recipients.count}.merge(recipient_state_counts)
   end
 
   def recipients_who_failed
@@ -150,7 +150,7 @@ module Message
 
   def check_complete
     counts = recipient_state_counts
-    Recipient.incomplete_statuses.collect { |state| counts[state] }.sum == 0
+    Recipient.incomplete_statuses.collect { |state| counts[state]}.sum == 0
   end
 
   def on_sending(*_args)
@@ -171,10 +171,10 @@ module Message
 
   def has_valid_async_recipients?
     if async_recipients && async_recipients.is_a?(Array)
-      async_recipients.delete_if { |attrs| !attrs.is_a?(Hash) }
+      async_recipients.delete_if { |attrs| !attrs.is_a?(Hash)}
       # if the first 500 recipients are all invalid, let's just assume things are broken
       begin
-        return true if async_recipients[0, 500].any? { |attrs| recipients.build_without_message(attrs).valid? }
+        return true if async_recipients[0, 500].any? { |attrs| recipients.build_without_message(attrs).valid?}
       ensure
         recipients.clear
       end
@@ -195,8 +195,8 @@ module Message
 
   def recipient_state_counts
     groups = recipients.select('count(status) the_count, status').group('status').reorder('')
-    h = Hash[groups.map { |r| [r.status, r.the_count] }]
+    h = Hash[groups.map { |r| [r.status, r.the_count]}]
 
-    Hash[EmailRecipient.aasm.states.map(&:to_s).map { |s| [s, 0] }].merge(h)
+    Hash[EmailRecipient.aasm.states.map(&:to_s).map { |s| [s, 0]}].merge(h)
   end
 end

@@ -44,7 +44,7 @@ module Recipient
 
       event :fail, after: [:invoke_webhooks] do
         transitions from: [:new, :inconclusive], to: :failed, after: :finalize
-        transitions from: :sending, to: :sending, if: -> { !retries_exhausted? }, after: :record_attempt
+        transitions from: :sending, to: :sending, if: -> {!retries_exhausted?}, after: :record_attempt
         transitions from: :sending, to: :failed, if: :retries_exhausted?, after: :finalize
       end
 
@@ -66,17 +66,17 @@ module Recipient
     belongs_to :message, class_name: name.gsub('Recipient', 'Message')
     belongs_to :vendor, class_name: name.gsub('Recipient', 'Vendor')
 
-    scope :to_send, ->(_vendor_id) { where(nil) }
-    scope :with_new_status, -> { where(status: 'new') }
-    scope :incomplete, -> { where(status: Recipient.incomplete_statuses) }
+    scope :to_send, ->(_vendor_id) {where(nil)}
+    scope :with_new_status, -> {where(status: 'new')}
+    scope :incomplete, -> {where(status: Recipient.incomplete_statuses)}
 
-    scope :timeout_expired, -> { sending.where('sent_at < ?', delivery_timeout.ago) }
+    scope :timeout_expired, -> {sending.where('sent_at < ?', delivery_timeout.ago)}
 
     attr_accessible :message_id, :vendor_id, :vendor
 
     before_validation :truncate_values
     before_validation :set_vendor
-    validates :error_message, length: { maximum: 512 }
+    validates :error_message, length: {maximum: 512}
   end
 
   def truncate_values
@@ -87,12 +87,12 @@ module Recipient
     mark_sending!(:sending, ack)
   end
 
-  def sent!(ack, date_sent = nil, _ = nil)
+  def sent!(ack, date_sent=nil, _=nil)
     date_sent ||= Time.now
     mark_sent!(:sent, ack, date_sent, nil)
   end
 
-  def failed!(ack = nil, completed_at = nil, error_message = nil)
+  def failed!(ack=nil, completed_at=nil, error_message=nil)
     fail!(:failed, ack, completed_at, error_message)
   end
 
@@ -100,7 +100,7 @@ module Recipient
     cancel!(:canceled, ack, nil, nil)
   end
 
-  def ack!(ack = nil, *_)
+  def ack!(ack=nil, *_)
     update_attribute(:ack, ack)
   end
 
@@ -123,7 +123,7 @@ module Recipient
     self.save!
   end
 
-  def acknowledge_sent(ack = nil, *_)
+  def acknowledge_sent(ack=nil, *_)
     self.ack     = ack
     self.sent_at = Time.now
   end

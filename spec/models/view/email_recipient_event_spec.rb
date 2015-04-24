@@ -5,7 +5,7 @@ require 'ostruct'
 
 describe View::EmailRecipientEvent do
   describe '#respond_to?' do
-    subject { View::EmailRecipientEvent.new(stub(foobar: :omg_lol), nil) }
+    subject {View::EmailRecipientEvent.new(stub(foobar: :omg_lol), nil)}
     it 'works' do
       expect(subject.foobar).to eq(:omg_lol)
       expect(subject.respond_to?(:foobar)).to be true

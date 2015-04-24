@@ -8,6 +8,6 @@ module EmailRecipientMetric
     validates :email_message, presence: true
     validates :email_recipient, presence: true
 
-    validates :email, presence: true, length: { maximum: 256 }
+    validates :email, presence: true, length: {maximum: 256}
   end
 end

@@ -5,7 +5,7 @@ module Messages
     include Workers::Base
     sidekiq_options queue:       :low,
                     retry:       false,
-                    unique_args: ->(args) { args = args.first; [args['message_class'], args['message_id']] }
+                    unique_args: ->(args) {args = args.first; [args['message_class'], args['message_id']]}
 
     def perform(args)
       klass = args['message_class'].constantize

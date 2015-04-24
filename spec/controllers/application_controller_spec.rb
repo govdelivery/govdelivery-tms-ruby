@@ -15,9 +15,9 @@ describe ApplicationController do
   end
 
   describe 'when handling exceptions' do
-    let(:vendor) { create(:sms_vendor) }
-    let(:account) { vendor.accounts.create(name: 'name') }
-    let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+    let(:vendor) {create(:sms_vendor)}
+    let(:account) {vendor.accounts.create(name: 'name')}
+    let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
 
     before do
       sign_in user
@@ -36,10 +36,10 @@ describe ApplicationController do
   end
 
   describe 'using the X-AUTH-TOKEN header' do
-    let(:vendor) { create(:sms_vendor) }
-    let(:account) { vendor.accounts.create(name: 'name') }
-    let(:user) { account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-    let(:auth_token) { user.authentication_tokens.first.token }
+    let(:vendor) {create(:sms_vendor)}
+    let(:account) {vendor.accounts.create(name: 'name')}
+    let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+    let(:auth_token) {user.authentication_tokens.first.token}
 
     before do
       request.headers['X-AUTH-TOKEN'] = auth_token

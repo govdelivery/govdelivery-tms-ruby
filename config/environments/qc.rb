@@ -63,9 +63,5 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = true
 
-  # Used for forwarding STOP requests for short codes that are shared between
-  # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = ['+16519684981', '+18573665390']
-
   config.custom_report_account_id = 10_120
 end

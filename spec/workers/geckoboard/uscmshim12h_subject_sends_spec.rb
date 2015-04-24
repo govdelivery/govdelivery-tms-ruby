@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe Geckoboard::Uscmshim12hSubjectSends do
-  let(:account) { create(:account_with_sms) }
+  let(:account) {create(:account_with_sms)}
 
-  subject { Geckoboard::Uscmshim12hSubjectSends.new }
+  subject {Geckoboard::Uscmshim12hSubjectSends.new}
   before do
     @messages = create_list(:email_message, 12, subject: 'Donkey', account: account)
     @messages.each do |message|
@@ -16,7 +16,7 @@ describe Geckoboard::Uscmshim12hSubjectSends do
     end_time = Time.now.beginning_of_hour
     start_time = end_time - 12.hours
     time_range = start_time.to_i...end_time.to_i
-    times = time_range.step(1.hour).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%H') }
+    times = time_range.step(1.hour).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%H')}
 
     subject.expects(:write_to_file).with('name.json', {
       colors: ['#FCFFF5', '#D1DBBD', '#91AA9D', '#ACF0F2', '#EB7F00', '#54AC92', '#F1B60B', '#097178', '#9E4292', '#9D21D9', '#03DAF7'],
@@ -67,7 +67,7 @@ describe Geckoboard::Uscmshim12hSubjectSends do
             radius: 4
           },
           lineWidth: 4,
-          data: 11.times.collect { 0 } << 12
+          data: 11.times.collect {0} << 12
         },
         {
           name: 'Other',
@@ -76,7 +76,7 @@ describe Geckoboard::Uscmshim12hSubjectSends do
             radius: 4
           },
           lineWidth: 4,
-          data: 12.times.collect { 0 }
+          data: 12.times.collect {0}
         }
       ]
     }.to_json)

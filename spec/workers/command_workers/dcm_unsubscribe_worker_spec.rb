@@ -1,8 +1,8 @@
 require 'rails_helper'
 describe CommandWorkers::DcmUnsubscribeWorker do
-  let(:config) { { username: 'foo', password: 'bar', api_root: 'http://example.com' } }
-  let(:client) { mock('dcm_client') }
-  let(:account) { create(:account) }
+  let(:config) {{username: 'foo', password: 'bar', api_root: 'http://example.com'}}
+  let(:client) {mock('DCMClient::Subscriber')}
+  let(:account) {create(:account)}
   let(:command) do
     create(:dcm_unsubscribe_command,
            keyword: account.stop_keyword,
@@ -13,14 +13,14 @@ describe CommandWorkers::DcmUnsubscribeWorker do
   let(:http_response) do
     stub('http_response',
          status:  200,
-         headers: { 'Content-Type' => 'andrew/json' },
+         headers: {'Content-Type' => 'andrew/json'},
          body:    'foo')
   end
 
   let(:response_not_found) do
     stub('http_response_404',
          status:  404,
-         headers: { 'Content-Type' => 'andrew/json' },
+         headers: {'Content-Type' => 'andrew/json'},
          body:    'nope')
   end
 
@@ -42,20 +42,20 @@ describe CommandWorkers::DcmUnsubscribeWorker do
 
   describe 'perform with one account' do
     before do
-      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME').returns(http_response)
-      DCMClient::Client.expects(:new).with(config).returns(client)
+      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
+      DCMClient::Subscriber.expects(:new).with(config).returns(client)
     end
-    specify { subject.perform(options) }
+    specify {subject.perform(options)}
   end
 
   describe 'perform with two accounts and one 404' do
     before do
       client.expects(:delete_wireless_subscriber)
-        .with('1+2222222222', 'VANDELAY')
+        .with('1+2222222222', 'VANDELAY', true, 'SMS_STOP')
         .raises(DCMClient::Error::NotFound.new('foo', response_not_found))
-      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME').returns(http_response)
+      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
 
-      DCMClient::Client.expects(:new).with(config).returns(client)
+      DCMClient::Subscriber.expects(:new).with(config).returns(client)
       account = command.account
       account.dcm_account_codes = %w(ACME VANDELAY).to_set
       account.save!

@@ -31,10 +31,10 @@ class Account < ActiveRecord::Base
 
   has_many :email_templates, dependent: :destroy
   has_many :from_addresses, inverse_of: :account, dependent: :destroy
-  has_one :default_from_address, -> { where(is_default: true) }, class_name: FromAddress
+  has_one :default_from_address, -> {where(is_default: true)}, class_name: FromAddress
 
   has_many :from_numbers, inverse_of: :account, dependent: :destroy
-  has_one :default_from_number, -> { where(is_default: true) }, class_name: FromNumber
+  has_one :default_from_number, -> {where(is_default: true)}, class_name: FromNumber
 
   after_create :create_base_keywords!
 
@@ -45,16 +45,16 @@ class Account < ActiveRecord::Base
   before_validation :normalize_dcm_account_codes
   before_validation :generate_sid, on: :create
 
-  validates :name, presence: true, length: { maximum: 255 }, uniqueness: true
+  validates :name, presence: true, length: {maximum: 255}, uniqueness: true
   validates :sid, presence: true
   validate :has_one_default_from_address, if: '!email_vendor_id.blank?'
   validate :has_one_default_from_number, if: '!voice_vendor_id.blank?'
-  validate :validate_sms_prefixes, :validate_sms_vendor
+  validate :validate_sms_vendor_and_prefixes
   # ONE: HYRULE, TWO: STRONGMAIL
-  validates :link_encoder, inclusion: { in: %w(TWO ONE), allow_nil: true,
-                                        message: '%{value} is not a valid link_encoder' }
+  validates :link_encoder, inclusion: {in: %w(TWO ONE), allow_nil: true,
+                                       message: '%{value} is not a valid link_encoder'}
 
-  scope :with_sms, -> { where('sms_vendor_id is not null') }
+  scope :with_sms, -> {where('sms_vendor_id is not null')}
 
   def create_command!(keyword_name, params)
     keyword = keywords.where(name: keyword_name).first_or_create!
@@ -115,7 +115,7 @@ class Account < ActiveRecord::Base
   end
 
   # some sugar for working with keywords on the console
-  def keywords(arg = nil)
+  def keywords(arg=nil)
     if arg
       super.find_by(name: arg)
     else
@@ -187,19 +187,13 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def shared_sms_vendor?
-    sms_vendor && sms_vendor.shared?
-  end
-
-  def validate_sms_vendor
-    if sms_vendor_id_changed? && sms_vendor && sms_vendor.accounts.count > 0 && !sms_vendor.shared?
-      errors.add(:shared_vendor, 'Vendor specified is not shared and already has one account')
-    end
-  end
-
-  def validate_sms_prefixes
-    if shared_sms_vendor? && sms_prefixes.size < 1
-      errors.add(:sms_prefixes, 'At least 1 SmsPrefix is required with a shared vendor')
+  def validate_sms_vendor_and_prefixes
+    if sms_vendor_id_changed? && sms_vendor && sms_vendor.accounts.count >= (new_record? ? 1 : 2)
+      # they all need to have prefixes
+      if (accounts = sms_vendor.accounts.select { |a| a.sms_prefixes.empty?}).any?
+        errors.add(:sms_vendor, "SMS vendor has accounts without prefixes: #{accounts.map(&:name).join(', ')}")
+      end
+      errors.add(:sms_prefixes, 'At least 1 SmsPrefix is required since SMS vendor has other accounts') if sms_prefixes.none?
     end
   end
 

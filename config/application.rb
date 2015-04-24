@@ -82,22 +82,22 @@ module Xact
 
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
     # Rack::SSL has to come before ActionDispatch::Cookies!
-    config.middleware.use Rack::SSL, exclude: ->(env) { !Rack::Request.new(env).ssl? }
+    config.middleware.use Rack::SSL, exclude: ->(env) {!Rack::Request.new(env).ssl?}
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
 
-    redis_opts = { url: Conf.redis_uri }
+    redis_opts = {url: Conf.redis_uri}
 
     if Conf.redis_sentinel_uris.any?
-      redis_opts[:sentinels] = Conf.redis_sentinel_uris.map { |sentinel| { host: sentinel.host, port: sentinel.port.to_i } }
+      redis_opts[:sentinels] = Conf.redis_sentinel_uris.map { |sentinel| {host: sentinel.host, port: sentinel.port.to_i}}
     end
 
-    config.cache_store = :redis_store, redis_opts, { pool_size: 7 }
+    config.cache_store = :redis_store, redis_opts, {pool_size: 7}
 
     # see https://github.com/mperham/sidekiq/wiki/Advanced-Options
     config.sidekiq                = {
-      default: { namespace: 'xact' }.merge!(redis_opts),
-      client:  { size: 20 },
+      default: {namespace: 'xact'}.merge!(redis_opts),
+      client:  {size: 20},
       server:  {}
     }
 
@@ -129,7 +129,7 @@ module Xact
     # override Rack exception application handling of exception status codes
     config.exceptions_app      = routes
 
-    routes.default_url_options     = { host: "#{Rails.env}-tms.govdelivery.com", protocol: 'https' }
+    routes.default_url_options     = {host: "#{Rails.env}-tms.govdelivery.com", protocol: 'https'}
 
     # Threshold (in minutes) under which multiple inbound messages from a
     # user will be ignored.  This is to prevent auto-response messages
@@ -155,5 +155,7 @@ module Xact
     config.nsca_password       = Conf.nsca_password
 
     config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
+
+    config.shared_phone_numbers = Conf.shared_phone_numbers
   end
 end

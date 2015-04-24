@@ -1,13 +1,13 @@
 class VoiceRecipient < ActiveRecord::Base
   include PhoneRecipient
 
-  has_many :voice_recipient_attempts, -> { order('completed_at DESC') }
+  has_many :voice_recipient_attempts, -> {order('completed_at DESC')}
 
   def sent!(ack, completed_at, call_result)
     mark_sent!(:sent, ack, completed_at, call_result)
   end
 
-  def failed!(ack = nil, completed_at = nil, error_message = nil)
+  def failed!(ack=nil, completed_at=nil, error_message=nil)
     fail!(nil, ack, completed_at, error_message)
     raise Recipient::ShouldRetry if self.sending?
   end

@@ -159,7 +159,7 @@ Given(/^I rapidly send a keyword via SMS$/) do
     sleep(0.5)
   end
 
-  3.times { rapid } # execute "rapid" 3 times
+  3.times {rapid} # execute "rapid" 3 times
   twiliomation # call to twilio call list
   sleep(2)
   @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today

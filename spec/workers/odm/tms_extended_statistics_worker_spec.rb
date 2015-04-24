@@ -6,23 +6,23 @@ if defined?(JRUBY_VERSION)
       subject.stubs(:sent_at).returns(Time.now)
     end
 
-    let(:worker) { subject }
+    let(:worker) {subject}
 
-    let(:service_stub) { stub(delivery_events: delivery_events) }
-    let(:delivery_events) { [stub(recipient_id: 'not_numeric', message_id: 'foo', address: 'hey@bob.evotest.com')] }
+    let(:service_stub) {stub(delivery_events: delivery_events)}
+    let(:delivery_events) {[stub(recipient_id: 'not_numeric', message_id: 'foo', address: 'hey@bob.evotest.com')]}
 
-    let(:vendor) { stub(recipients: stub(incomplete: stub(find: nil))) }
+    let(:vendor) {stub(recipients: stub(incomplete: stub(find: nil)))}
 
     it 'should not bomb when given non-numeric recipient_id' do
       worker.service = service_stub
-      expect { worker.process_vendor(vendor) }.to_not raise_error
+      expect {worker.process_vendor(vendor)}.to_not raise_error
     end
 
     it 'should not bomb when ActiveRecord::RecordNotFound is raised' do
       worker.service = service_stub
       worker.stubs(:parse_recipient_id).returns(43)
       vendor.recipients.incomplete.expects(:find).with(43).raises(ActiveRecord::RecordNotFound)
-      expect { worker.process_vendor(vendor) }.to_not raise_error
+      expect {worker.process_vendor(vendor)}.to_not raise_error
     end
 
     # is this breaking ci ?
@@ -38,7 +38,7 @@ if defined?(JRUBY_VERSION)
     end
 
     context 'odm throws error' do
-      let(:service)  { mock('Service::Odm::EventService') }
+      let(:service)  {mock('Service::Odm::EventService')}
 
       before do
         worker.service = service

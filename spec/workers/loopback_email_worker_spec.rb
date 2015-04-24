@@ -4,10 +4,10 @@ RSpec.describe LoopbackEmailWorker, type: :worker do
     EmailVendor.create!(worker: 'LoopbackEmailWorker',
                         name:   'test vendor')
   end
-  let(:account) { create(:account, email_vendor: loopback_vendor) }
-  let(:email_message) { create(:email_message, account: account) }
+  let(:account) {create(:account, email_vendor: loopback_vendor)}
+  let(:email_message) {create(:email_message, account: account)}
 
-  subject { LoopbackEmailWorker.new }
+  subject {LoopbackEmailWorker.new}
 
   it 'should have a recipient with each status' do
     LoopbackEmailWorker.magic_addresses.each do |_type, email|

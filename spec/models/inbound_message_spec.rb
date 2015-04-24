@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe InboundMessage do
-  subject { build_stubbed(:inbound_message) }
-  it { is_expected.to be_valid }
-  it { is_expected.to validate_presence_of(:body) }
-  it { is_expected.to validate_presence_of(:from) }
-  it { is_expected.to validate_presence_of(:vendor) }
+  subject {build_stubbed(:inbound_message)}
+  it {is_expected.to be_valid}
+  it {is_expected.to validate_presence_of(:body)}
+  it {is_expected.to validate_presence_of(:from)}
+  it {is_expected.to validate_presence_of(:vendor)}
 
   it 'is ignored if not actionable' do
     subject.expects(:actionable?).returns(false)
@@ -40,8 +40,8 @@ describe InboundMessage do
       before do
         @inbound_message = create(:inbound_message,
                                   keyword: create(:custom_keyword, response_text: nil)
-                                    .tap { |k| k.commands << build(:forward_command) }
-                                    .tap { |k| k.commands << build(:forward_command) })
+                                    .tap { |k| k.commands << build(:forward_command)}
+                                    .tap { |k| k.commands << build(:forward_command)})
       end
       it 'should be :pending after one of two commands have completed' do
         expect(@inbound_message.command_status).to eql(:pending)
@@ -121,8 +121,8 @@ describe InboundMessage do
   it 'publishes an event on create' do
     message = build(:inbound_message,
                     keyword: create(:custom_keyword, response_text: nil)
-                      .tap { |k| k.commands << build(:forward_command) }
-                      .tap { |k| k.commands << build(:forward_command) })
+                      .tap { |k| k.commands << build(:forward_command)}
+                      .tap { |k| k.commands << build(:forward_command)})
 
     expected = {
       channel: 'sms_channel',

@@ -25,7 +25,7 @@ RSpec.shared_examples 'an account endpoint' do
 
   context 'and then updates it' do
     before do
-      patch :update, id: @account.id, account: { name: 'bar' }
+      patch :update, id: @account.id, account: {name: 'bar'}
     end
     it 'should succeed' do
       expect(response.status).to eq(200)
@@ -50,8 +50,8 @@ describe AccountsController, type: :controller do
            voice_vendor: create(:voice_vendor),
            ipaws_vendor: create(:ipaws_vendor)
   end
-  let(:user) { create :user, account: account, admin: false }
-  let(:admin_user) { create :user, account: account, admin: true }
+  let(:user) {create :user, account: account, admin: false}
+  let(:admin_user) {create :user, account: account, admin: true}
 
   context 'an admin user' do
     before do
@@ -61,20 +61,20 @@ describe AccountsController, type: :controller do
     context 'who creates an account with a nested request' do
       before do
         post :create,
-             account:      { name:                  'yesss',
-                             voice_vendor_id:       create(:voice_vendor).id,
-                             email_vendor_id:       create(:email_vendor).id,
-                             sms_vendor_id:         create(:sms_vendor).id,
-                             ipaws_vendor_id:       create(:ipaws_vendor).id,
-                             dcm_account_codes:     ['ACME'],
-                             help_text:             'halp',
-                             stop_text:             'u stoped',
-                             default_response_text: 'foo',
-                             link_tracking_parameters: 'foo=bar' },
-             from_address: { from_email: 'from@test.com',
-                             reply_to:   'reply-to@test.com',
-                             errors_to:  'errors-to@test.com' },
-             from_number: { phone_number: '8885551234' }
+             account:      {name:                  'yesss',
+                            voice_vendor_id:       create(:voice_vendor).id,
+                            email_vendor_id:       create(:email_vendor).id,
+                            sms_vendor_id:         create(:sms_vendor).id,
+                            ipaws_vendor_id:       create(:ipaws_vendor).id,
+                            dcm_account_codes:     ['ACME'],
+                            help_text:             'halp',
+                            stop_text:             'u stoped',
+                            default_response_text: 'foo',
+                            link_tracking_parameters: 'foo=bar'},
+             from_address: {from_email: 'from@test.com',
+                            reply_to:   'reply-to@test.com',
+                            errors_to:  'errors-to@test.com'},
+             from_number: {phone_number: '8885551234'}
         @account = assigns(:account)
         expect(@account.sms_vendor).to_not be nil
         expect(@account.email_vendor).to_not be nil

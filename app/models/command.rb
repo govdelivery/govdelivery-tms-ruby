@@ -9,8 +9,8 @@ class Command < ActiveRecord::Base
 
   attr_accessible :command_type, :name, :params
   validates :command_type, presence: true
-  validates :name, length: { maximum: 255, allow_nil: true }
-  validates :params, length: { maximum: 4000 }, allow_nil: true
+  validates :name, length: {maximum: 255, allow_nil: true}
+  validates :params, length: {maximum: 4000}, allow_nil: true
   before_save :set_name
   validate :validate_command
   validate :validate_keyword
@@ -20,7 +20,7 @@ class Command < ActiveRecord::Base
   has_many :command_actions, dependent: :nullify
 
   # Execute this command with the provided options and additional parameters
-  def call(command_parameters = CommandParameters.new)
+  def call(command_parameters=CommandParameters.new)
     command_parameters.command_id = id
     command_strategy.perform_async!(command_parameters)
   end

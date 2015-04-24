@@ -11,7 +11,7 @@ module Service
     DEFAULT_START_TEXT = 'Welcome to GovDelivery SMS Alerts. Msg&data rates may apply. Reply HELP for help, STOP to cancel. http://govdelivery.com/wireless for more help. 5 msg/wk.'
     DEFAULT_HELP_TEXT = 'This service is provided by GovDelivery. If you are a customer in need of assistance, please contact customer support.'
 
-    def initialize(text, account_id = nil, vendor = nil)
+    def initialize(text, account_id=nil, vendor=nil)
       @text = text
       @type = special_name(text)
       @account = Account.find(account_id) if account_id
@@ -54,7 +54,7 @@ module Service
     end
 
     def special_name(text)
-      %w(start stop help).detect { |name| ::Keyword.const_get("#{name.upcase}_WORDS").include? text }
+      %w(start stop help).detect { |name| ::Keyword.const_get("#{name.upcase}_WORDS").include? text}
     end
   end
 end

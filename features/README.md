@@ -20,8 +20,6 @@ vendors exist on each testing environment. Again, these accounts were created vi
 |                                               | ODM Sender on QC, TMS Extended Sender on integration and stage.   |
 
 
-*All SMS Vendors are Shared vendors (.shared? == true)*
-
 | SMS Vendor Name                              	        | Notes                                                           	        |
 |--------------------------------------------	        |---------------------------------------------------------------------------|
 | Test - Shared Loopback SMS Vendor          	        | Makes no attempt to actually send SMSs.                                   |

@@ -19,11 +19,11 @@ module Geckoboard
              .merge(results)
              .sort_by(&:first)
              .each_slice(24)
-             .map { |period| period.map(&:second).sum }.reverse # today first
+             .map { |period| period.map(&:second).sum}.reverse # today first
 
-      counts = data.map { |v| { text: '', value: v } }
+      counts = data.map { |v| {text: '', value: v}}
 
-      write_to_file("#{basename}.json", { item: counts }.to_json)
+      write_to_file("#{basename}.json", {item: counts}.to_json)
     end
   end
 end

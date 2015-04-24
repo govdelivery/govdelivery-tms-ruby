@@ -18,7 +18,7 @@ module Service
       # type    :: "delivery" | "open" | "click"
       # creds   :: com.govdelivery.tms.tmsextended.Credentials
       # service :: TMSExtended_Service.new(URL.new(Rails.configuration.odm_endpoint)).getTMSExtendedPort
-      def initialize(type, creds, service, batch_size = Rails.configuration.odm_stats_batch_size)
+      def initialize(type, creds, service, batch_size=Rails.configuration.odm_stats_batch_size)
         raise 'Batch size must be greater than zero.' unless batch_size > 0
         raise 'Type must be one of delivery, open, or click.' unless %w(delivery open click).include?(type.to_s)
         @type = type

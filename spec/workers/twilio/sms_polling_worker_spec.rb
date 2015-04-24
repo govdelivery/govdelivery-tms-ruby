@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe Twilio::SmsPollingWorker do
-  let(:vendor) { create(:sms_vendor) }
-  let(:account) { vendor.accounts.create(name: 'name') }
+  let(:vendor) {create(:sms_vendor)}
+  let(:account) {vendor.accounts.create(name: 'name')}
   let(:sms_recipients) do
     sms_r1 = stub('SmsRecipient 1',
                   status: 'sent',

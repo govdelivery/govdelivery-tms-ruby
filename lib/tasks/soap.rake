@@ -27,7 +27,7 @@ if defined?(JRUBY_VERSION) && ['development', nil].include?(ENV['RAILS_ENV'])
                    destdir: build_dir,
                    xadditionalHeaders: true)
       ant.javac(destdir: build_dir, includeantruntime: false, target: '1.6') do
-        src { path location: src_dir }
+        src {path location: src_dir}
       end
     end
 

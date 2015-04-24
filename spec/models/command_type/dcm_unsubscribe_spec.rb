@@ -2,12 +2,12 @@
 require 'rails_helper'
 
 describe CommandType::DcmUnsubscribe do
-  let(:account) { stub_everything('account') }
-  let(:command_action) { stub('CommandAction', content_type: 'text/plain', save!: true) }
+  let(:account) {stub_everything('account')}
+  let(:command_action) {stub('CommandAction', content_type: 'text/plain', save!: true)}
   let(:http_response) do
-    OpenStruct.new(body: { 'message' => 'ATLANTA IS FULL OF ZOMBIES, STAY AWAY' },
+    OpenStruct.new(body: {'message' => 'ATLANTA IS FULL OF ZOMBIES, STAY AWAY'},
                    status: 200,
-                   headers: { 'Content-Type' => 'text/plain' })
+                   headers: {'Content-Type' => 'text/plain'})
   end
   let(:command_params) do
     CommandParameters.new(url: 'url',
@@ -21,7 +21,7 @@ describe CommandType::DcmUnsubscribe do
                           inbound_message_id: 111)
   end
 
-  subject { CommandType::DcmUnsubscribe.new }
+  subject {CommandType::DcmUnsubscribe.new}
 
   it 'creates a command response and sms message' do
     stub_command_action_create!(command_params, http_response, command_action, http_response.body.to_json)
@@ -31,8 +31,8 @@ describe CommandType::DcmUnsubscribe do
   it 'can be created through the account' do
     account = create(:account_with_sms, dcm_account_codes: %w(xyz uvw))
     account.create_command!('stop',
-                            command_type: 'dcm_unsubscribe', params: { dcm_account_codes: %w(xyz uvw) })
+                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: %w(xyz uvw)})
     account.create_command!('désabonner',
-                            command_type: 'dcm_unsubscribe', params: { dcm_account_codes: %w(xyz uvw) })
+                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: %w(xyz uvw)})
   end
 end

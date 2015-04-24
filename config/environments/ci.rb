@@ -31,7 +31,7 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = false
 
-  routes.default_url_options = { host: 'test.host', port: 3000 }
+  routes.default_url_options = {host: 'test.host', port: 3000}
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
@@ -42,7 +42,7 @@ Xact::Application.configure do
       url:       'redis://it-buildbox1.office.gdi:6379/2',
       namespace: 'xact'
     },
-    client:  { size: 20 },
+    client:  {size: 20},
     server:  {}
   }
 end

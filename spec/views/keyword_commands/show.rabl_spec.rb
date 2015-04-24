@@ -1,7 +1,7 @@
 require File.expand_path('../../../rails_helper', __FILE__)
 
 describe 'keyword_commands/show.rabl' do
-  let(:keyword) { stub('Keyword', to_param: '101') }
+  let(:keyword) {stub('Keyword', to_param: '101')}
   let(:command) do
     stub('Command',
          id: 100,

@@ -13,15 +13,12 @@ module InboundSmsParser
     Keyword.sanitize_string(s)
   end
 
+  # if we can idenfity an account by prefix, use that
+  # otherwise
   def find_account_id(first_word, vendor)
-    if vendor.shared?
-      first_word.present? ? vendor.sms_prefixes.account_id_for_prefix(first_word) : nil
-    else
-      # wow this feels dangerous, private vendors are not enforced
-      # TODO: validate private vendor has one or zero accounts in vendor
-      # nil might resolve to a help, stop or default on the vendor
-      vendor.accounts.first.try(:id)
-    end
+    account_id = vendor.sms_prefixes.account_id_for_prefix(first_word) if vendor.sms_prefixes.any? && first_word.present?
+    account_id = vendor.accounts.first.id if account_id.blank? && vendor.accounts.count == 1
+    account_id
   end
 
   # returns [nil, full string] or [prefix, partial string, account_id]
@@ -54,7 +51,7 @@ module InboundSmsParser
       self[0]
     end
 
-    def keyword
+    def keyword_service
       self[1]
     end
 

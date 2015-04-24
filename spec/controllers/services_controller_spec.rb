@@ -7,7 +7,7 @@ describe ServicesController do
            voice_vendor: create(:voice_vendor),
            ipaws_vendor: create(:ipaws_vendor)
   end
-  let(:user) { create :user, account: account }
+  let(:user) {create :user, account: account}
 
   before do
     sign_in user

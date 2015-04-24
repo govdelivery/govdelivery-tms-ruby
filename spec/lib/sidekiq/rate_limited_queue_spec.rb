@@ -15,7 +15,7 @@ describe Sidekiq::RateLimitedQueue do
   end
 
   context 'limiting sender to 5 jobs every seconds' do
-    subject { Sidekiq::RateLimitedQueue.new('default', Sidekiq.redis_pool) }
+    subject {Sidekiq::RateLimitedQueue.new('default', Sidekiq.redis_pool)}
     it 'should pause the queue after five jobs in two seconds' do
       expect(subject.rate_limiting_enabled?).to be true
 
@@ -33,7 +33,7 @@ describe Sidekiq::RateLimitedQueue do
   end
 
   context 'some other queue' do
-    subject { Sidekiq::RateLimitedQueue.new('ladies', Sidekiq.redis_pool) }
+    subject {Sidekiq::RateLimitedQueue.new('ladies', Sidekiq.redis_pool)}
     it 'should be cool, honey bunny' do
       expect(subject.rate_limiting_enabled?).to be false
     end

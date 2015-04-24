@@ -14,7 +14,7 @@ if defined? JRUBY_VERSION
     end
 
     let(:ipaws_response) do
-      [{ 'ACK' => 'PONG' }]
+      [{'ACK' => 'PONG'}]
     end
 
     before(:each) do
@@ -25,7 +25,7 @@ if defined? JRUBY_VERSION
       it 'returns true/false based on IPAWS Service getACK request' do
         user = create :user, account: create(:account, ipaws_vendor: create(:ipaws_vendor))
         sign_in user
-        get :show, { format: :json }.merge(ipaws_credentials)
+        get :show, {format: :json}.merge(ipaws_credentials)
         expect(response.response_code).to eq(200)
         expect(response.body).to be_present
         data = JSON.parse(response.body)
@@ -35,7 +35,7 @@ if defined? JRUBY_VERSION
       it 'responds with 403 (forbidden) if no IPAWS vendor' do
         user = create :user, account: create(:account, ipaws_vendor: nil)
         sign_in user
-        get :show, { format: :json }.merge(ipaws_credentials)
+        get :show, {format: :json}.merge(ipaws_credentials)
         expect(response.response_code).to eq(403)
       end
     end

@@ -1,12 +1,11 @@
 require 'rails_helper'
 
 describe Account do
-  let(:email_vendor) { create(:email_vendor) }
-  let(:sms_vendor) { create(:sms_vendor) }
-  let(:shared_sms_vendor) { create(:shared_sms_vendor) }
-  let(:voice_vendor) { create(:voice_vendor) }
+  let(:email_vendor) {create(:email_vendor)}
+  let(:sms_vendor) {create(:sms_vendor)}
+  let(:voice_vendor) {create(:voice_vendor)}
 
-  it { is_expected.to belong_to(:ipaws_vendor) }
+  it {is_expected.to belong_to(:ipaws_vendor)}
 
   context 'from_email_allowed?' do
     subject do
@@ -21,62 +20,78 @@ describe Account do
     end
   end
 
-  context 'with shared SMS vendor' do
-    subject { build(:account_with_sms, :shared) }
-
-    context 'without prefixes' do
-      it { is_expected.not_to be_valid }
-    end
-
-    context 'with prefixes' do
-      subject { create(:account_with_sms, :shared, prefix: 'other-pirate') }
-      it { is_expected.to be_valid }
-      it 'can have multiple prefixes' do
-        subject.save!
-        subject.sms_prefixes.create! prefix: 'name01'
-        subject.sms_prefixes.create! prefix: 'name02'
-        expect(subject.sms_vendor.sms_prefixes.count).to eql(3)
-      end
-    end
-  end
-
-  context 'with exclusive SMS vendor' do
+  context 'with SMS vendor' do
     subject do
       Account.new(name: 'name', sms_vendor: sms_vendor, dcm_account_codes: ['ACCOUNT_CODE'])
     end
 
-    it { is_expected.to be_valid }
+    it 'should not require a prefix' do
+      expect(subject.sms_prefixes).to be_empty
+    end
+
+    # you'd want to do this before adding a second account to an SMSVendor
+    it 'should be able to have a prefix' do
+      subject.sms_prefixes.build(prefix: 'FOOB')
+      expect(subject).to be_valid
+    end
+
+    context 'with an existing account with a prefix' do
+      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
+      before do
+        other_account.sms_prefixes.create!(prefix: 'ELSE')
+        subject.sms_vendor.reload
+      end
+      it 'should not be valid' do
+        expect(subject.valid?).to be false
+        expect(subject.errors[:sms_prefixes]).to include 'At least 1 SmsPrefix is required since SMS vendor has other accounts'
+      end
+    end
+
+    context 'with an existing account without a prefix' do
+      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
+      before do
+        other_account
+        subject.sms_vendor.reload
+        subject.sms_prefixes.build(prefix: 'YASSS')
+      end
+      it 'should not be valid' do
+        expect(subject.valid?).to be false
+        expect(subject.errors[:sms_vendor]).to include "SMS vendor has accounts without prefixes: #{other_account.name}"
+      end
+    end
+
+    it {is_expected.to be_valid}
 
     context 'when name is empty' do
-      before { subject.name = nil }
-      it { is_expected.not_to be_valid }
+      before {subject.name = nil}
+      it {is_expected.not_to be_valid}
     end
 
     context 'when name too long' do
-      before { subject.name = 'W' * 257 }
-      it { is_expected.not_to be_valid }
+      before {subject.name = 'W' * 257}
+      it {is_expected.not_to be_valid}
     end
 
     context 'when link_encoder is nil' do
-      before { subject.link_encoder = nil }
-      it { is_expected.to be_valid }
+      before {subject.link_encoder = nil}
+      it {is_expected.to be_valid}
     end
 
     # HYRULE
     context 'when link_encoder is ONE' do
-      before { subject.link_encoder = 'ONE' }
-      it { is_expected.to be_valid }
+      before {subject.link_encoder = 'ONE'}
+      it {is_expected.to be_valid}
     end
 
     # STRONGMAIL
     context 'when link_encoder is TWO' do
-      before { subject.link_encoder = 'TWO' }
-      it { is_expected.to be_valid }
+      before {subject.link_encoder = 'TWO'}
+      it {is_expected.to be_valid}
     end
 
     context 'when link_encoder is invalid' do
-      before { subject.link_encoder = 'blah' }
-      it { is_expected.not_to be_valid }
+      before {subject.link_encoder = 'blah'}
+      it {is_expected.not_to be_valid}
     end
 
     context 'creating a command' do
@@ -109,7 +124,7 @@ describe Account do
           Command.any_instance.expects(:call).with(command_params)
           expect do
             account.stop!(command_params)
-          end.to change { account.stop_requests.count }.by 1
+          end.to change {account.stop_requests.count}.by 1
         end
       end
       context 'with existing stop request for this phone' do
@@ -198,7 +213,7 @@ describe Account do
       @tables.each do |table|
         expect(ActiveRecord::Base.connection.select_value("select count(*) from #{table}")).to eq 0
       end
-      @account    = create(:account_with_stuff)
+      @account    = create(:account_with_stuff, sms_vendor: sms_vendor)
       @account_id = @account.id
       @account.destroy
     end
@@ -209,7 +224,7 @@ describe Account do
         rescue NameError
           nil
         end
-      end.compact.select { |m| m.column_names.include?('account_id') }
+      end.compact.select { |m| m.column_names.include?('account_id')}
 
       direct_tables.each do |klass|
         expect(klass.where(account_id: @account_id).count).to eq 0
@@ -219,15 +234,5 @@ describe Account do
         expect(ActiveRecord::Base.connection.select_value("select count(*) from #{table}")).to eq 0
       end
     end
-  end
-
-  it 'should validate that it cannot be added to a non-shared vendor who already has an account' do
-    second_account = create(:account_with_sms)
-    vendor = create(:sms_vendor)
-    create(:account_with_sms, sms_vendor: vendor)
-    vendor.shared = false
-    vendor.save!
-    second_account.sms_vendor = vendor
-    expect(second_account.valid?).to eq(false)
   end
 end

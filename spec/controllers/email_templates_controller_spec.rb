@@ -1,24 +1,24 @@
 require 'rails_helper'
 
 describe EmailTemplatesController do
-  let(:account) { create(:account) }
-  let(:other_account) { create(:account) }
-  let(:admin_user) { create :user, account: account, admin: true }
-  let(:from_address) { account.default_from_address }
-  let(:new_from_address) { create(:from_address, account: account) }
-  let(:other_from_address) { create(:from_address, account: other_account) }
-  let(:email_templates) { create_list(:email_template, 3, account: account, user: admin_user, from_address: from_address) }
+  let(:account) {create(:account)}
+  let(:other_account) {create(:account)}
+  let(:admin_user) {create :user, account: account, admin: true}
+  let(:from_address) {account.default_from_address}
+  let(:new_from_address) {create(:from_address, account: account)}
+  let(:other_from_address) {create(:from_address, account: other_account)}
+  let(:email_templates) {create_list(:email_template, 3, account: account, user: admin_user, from_address: from_address)}
   let(:valid_params) do
     {
       body: '<html><body>[HELLO]</body></html>',
       subject: 'This is a test',
       link_tracking_parameters: 'tracking=param&one=two',
-      macros: { 'HELLO' => 'WORLD' },
+      macros: {'HELLO' => 'WORLD'},
       click_tracking_enabled: true,
       open_tracking_enabled: true
     }
   end
-  let(:model) { EmailTemplate }
+  let(:model) {EmailTemplate}
 
   before do
     sign_in admin_user
@@ -71,7 +71,7 @@ describe EmailTemplatesController do
   context 'payloads with from_address links' do
     it 'should be able to create a template with that from address' do
       expect(account.email_templates.count).to eq(0)
-      post :create, valid_params.merge(_links: { from_address: new_from_address.id })
+      post :create, valid_params.merge(_links: {from_address: new_from_address.id})
       expect(response.response_code).to eq(201)
       expect(account.email_templates.count).to eq(1)
       expect(account.email_templates.first.from_address.id).to eq(new_from_address.id)
@@ -79,14 +79,14 @@ describe EmailTemplatesController do
 
     it "should not create a template with a from address that doesn't belong to the account" do
       expect(account.email_templates.count).to eq(0)
-      post :create, valid_params.merge(_links: { from_address: other_from_address.id })
+      post :create, valid_params.merge(_links: {from_address: other_from_address.id})
       expect(response.response_code).to eq(422)
       expect(account.email_templates.count).to eq(0)
     end
 
     it 'should be able to update a template to use a new from address' do
       template = email_templates.first
-      patch :update, valid_params.merge(_links: { from_address: new_from_address.id }, id: template.id)
+      patch :update, valid_params.merge(_links: {from_address: new_from_address.id}, id: template.id)
       expect(response.response_code).to eq(200)
       template.reload
       expect(template.from_address.id).to eq(new_from_address.id)
@@ -94,7 +94,7 @@ describe EmailTemplatesController do
 
     it "should not be able to update a template to use a from address that doesn't belong to the account" do
       template = email_templates.first
-      patch :update, valid_params.merge(_links: { from_address: other_from_address.id }, id: template.id)
+      patch :update, valid_params.merge(_links: {from_address: other_from_address.id}, id: template.id)
       expect(response.response_code).to eq(422)
       template.reload
       expect(template.from_address.id).not_to eq(other_from_address.id)

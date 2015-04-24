@@ -39,7 +39,7 @@ class TokensController < ApplicationController
 
   TokenView = Struct.new(:token) do
     def render
-      { token: token.token, id: token.id, created_at: token.created_at }
+      {token: token.token, id: token.id, created_at: token.created_at}
     end
   end
 end

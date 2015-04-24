@@ -19,7 +19,7 @@ describe CommandParameters do
     stub(dcm_account_codes: ['AB'])
   end
 
-  let(:command_parameters) { CommandParameters.new(params) }
+  let(:command_parameters) {CommandParameters.new(params)}
 
   let(:empty_parameters) do
     c = CommandParameters.new

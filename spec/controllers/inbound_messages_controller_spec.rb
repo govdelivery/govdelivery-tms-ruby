@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe InboundMessagesController do
-  let(:vendor) { create(:sms_vendor) }
-  let(:account) { vendor.accounts.create(name: 'name') }
+  let(:vendor) {create(:sms_vendor)}
+  let(:account) {vendor.accounts.create(name: 'name')}
   let(:user) do
     account.users.create(email: 'foo@evotest.govdelivery.com',
                          password: 'schwoop')

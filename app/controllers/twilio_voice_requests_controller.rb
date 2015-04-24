@@ -6,7 +6,7 @@ class TwilioVoiceRequestsController < ApplicationController
 
   def create
     respond_to do |format|
-      format.xml { render xml: twiml_response.text }
+      format.xml {render xml: twiml_response.text}
     end
   end
 

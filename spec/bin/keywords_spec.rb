@@ -10,9 +10,9 @@ class KeywordsCLI
 end
 
 describe KeywordsCLI do
-  let(:account) { create(:account_with_sms, dcm_account_codes: Set.new(['PGXACT'])) }
-  let(:keyword_csv) { File.expand_path('../../../test/fixtures/keyword_import.csv', __FILE__) }
-  let(:keyword_csv_dup) { File.expand_path('../../../test/fixtures/keyword_import_dup.csv', __FILE__) }
+  let(:account) {create(:account_with_sms, dcm_account_codes: Set.new(['PGXACT']))}
+  let(:keyword_csv) {File.expand_path('../../../test/fixtures/keyword_import.csv', __FILE__)}
+  let(:keyword_csv_dup) {File.expand_path('../../../test/fixtures/keyword_import_dup.csv', __FILE__)}
 
   describe 'bulk_create' do
     it 'should bulk create' do
@@ -25,7 +25,7 @@ describe KeywordsCLI do
     end
 
     it 'should raise on non-existent bulk_create file' do
-      expect { KeywordsCLI.new.bulk_create(account.name, 'LKJLKJLKJ') }.to raise_error(Thor::Error)
+      expect {KeywordsCLI.new.bulk_create(account.name, 'LKJLKJLKJ')}.to raise_error(Thor::Error)
     end
 
     it 'should survive a duplicate keyword error' do

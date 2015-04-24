@@ -76,7 +76,7 @@ USAGE
 
   def list_users
     puts "User.all\n"
-    User.all.each { |u| display_user(u) }
+    User.all.each { |u| display_user(u)}
   end
 
   def display_user(u)

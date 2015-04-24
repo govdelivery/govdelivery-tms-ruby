@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 describe KeywordCommandsController do
-  let(:vendor)  { create(:sms_vendor, name: 'name', username: 'username', password: 'secret', worker: 'LoopbackMessageWorker') }
-  let(:account) { vendor.accounts.create! name: 'HELLO ACCOUNT' }
-  let(:user)    { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-  let(:keyword) { create(:keyword, account: account) }
-  let(:command) { Command.new(command_type: :dcm_subscribe, name: 'ALLIGATORZ') }
-  let(:commands) { [stub(name: 'Hello New York')] }
+  let(:vendor)  {create(:sms_vendor, name: 'name', username: 'username', password: 'secret', worker: 'LoopbackMessageWorker')}
+  let(:account) {vendor.accounts.create! name: 'HELLO ACCOUNT'}
+  let(:user)    {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:keyword) {create(:keyword, account: account)}
+  let(:command) {Command.new(command_type: :dcm_subscribe, name: 'ALLIGATORZ')}
+  let(:commands) {[stub(name: 'Hello New York')]}
 
   before do
     sign_in user
@@ -70,7 +70,7 @@ describe KeywordCommandsController do
     {
       name:         'Hello Boston',
       command_type: 'dcm_unsubscribe',
-      params:       { dcm_account_codes: ['ACME'] }
+      params:       {dcm_account_codes: ['ACME']}
     }
   end
 

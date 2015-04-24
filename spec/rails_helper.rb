@@ -5,7 +5,7 @@ require 'rspec/rails'
 require 'rspec/its'
 require 'celluloid/test'
 
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f}
 
 FakeWeb.allow_net_connect = false
 
@@ -24,7 +24,7 @@ RSpec.configure do |config|
   fakeredis_opts = {
     url:       'redis://127.0.0.1:6379/1',
     namespace: 'spec',
-    driver:    Redis::Connection::Memory }
+    driver:    Redis::Connection::Memory}
 
   Sidekiq.configure_client do |conf|
     conf.redis = fakeredis_opts
@@ -45,7 +45,7 @@ RSpec::Matchers.define :be_a_valid_twilio_sms_response do
   end
 end
 
-def stub_command_action_create!(command_params, http_response, command_action, body = http_response.body)
+def stub_command_action_create!(command_params, http_response, command_action, body=http_response.body)
   command_action.expects(:update!).with(
     error_message: nil,
     status:        http_response.status,
@@ -72,7 +72,7 @@ def stub_command_action_error!(command_params, command_action, error_message)
     )
 end
 
-def exception_check(worker, expected_message, params = nil)
+def exception_check(worker, expected_message, params=nil)
   begin
     if params
       worker.perform(params)

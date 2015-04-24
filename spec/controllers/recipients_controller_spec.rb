@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 describe RecipientsController do
-  let(:vendor) { create(:sms_vendor) }
+  let(:vendor) {create(:sms_vendor)}
 
-  let(:account) { create(:account, sms_vendor: vendor, name: 'name') }
-  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
-  let(:message) { user.sms_messages.create(body: 'A' * 160) }
-  let(:voice_message) { user.voice_messages.create(play_url: 'http://your.mom') }
+  let(:account) {create(:account, sms_vendor: vendor, name: 'name')}
+  let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:message) {user.sms_messages.create(body: 'A' * 160)}
+  let(:voice_message) {user.voice_messages.create(play_url: 'http://your.mom')}
   let(:recipients) do
-    3.times.map { |i| message.recipients.build(phone: (6_125_551_200 + i).to_s) }
+    3.times.map { |i| message.recipients.build(phone: (6_125_551_200 + i).to_s)}
   end
   let(:voice_recipients) do
-    3.times.map { |i| voice_message.recipients.create!(phone: (6_125_551_200 + i).to_s, status: :sending) }
+    3.times.map { |i| voice_message.recipients.create!(phone: (6_125_551_200 + i).to_s, status: :sending)}
   end
-  let(:email_message) { user.email_messages.create(subject: 'subs', from_name: 'dude', body: 'hi') }
+  let(:email_message) {user.email_messages.create(subject: 'subs', from_name: 'dude', body: 'hi')}
   let(:email_recipients) do
-    3.times.map { |i| email_message.recipients.build(email: "dude#{i}@sink.govdelivery.com", macros: { 'foo' => 'paper' }) }
+    3.times.map { |i| email_message.recipients.build(email: "dude#{i}@sink.govdelivery.com", macros: {'foo' => 'paper'})}
   end
 
   before do

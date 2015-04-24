@@ -36,7 +36,7 @@ RSpec.describe NscaStatusWorker, type: :worker do
     it "should exit if #{config} is not set" do
       Rails.configuration.stubs(config).returns(nil)
       SendNsca::NscaConnection.expects(:new).never
-      expect { NscaStatusWorker.new.perform }.not_to raise_error
+      expect {NscaStatusWorker.new.perform}.not_to raise_error
     end
   end
 end

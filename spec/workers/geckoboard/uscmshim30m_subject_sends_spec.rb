@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe Geckoboard::Uscmshim30mSubjectSends do
-  let(:account) { create(:account_with_sms) }
-  let(:dbtime) { ActiveRecord::Base.connection.select_value('SELECT cast(sys_extract_utc(systimestamp) as date) - 1/1440 FROM DUAL') }
-  subject { Geckoboard::Uscmshim30mSubjectSends.new }
+  let(:account) {create(:account_with_sms)}
+  let(:dbtime) {ActiveRecord::Base.connection.select_value('SELECT cast(sys_extract_utc(systimestamp) as date) - 1/1440 FROM DUAL')}
+  subject {Geckoboard::Uscmshim30mSubjectSends.new}
 
   before do
     @messages = create_list(:email_message, 50, subject: 'Donkey', account: account)
@@ -25,7 +25,7 @@ describe Geckoboard::Uscmshim30mSubjectSends do
     end_time   = dbtime + 1.minute
     start_time = end_time - 30.minutes
     time_range = start_time.to_i...end_time.to_i
-    times      = time_range.step(1.minute).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%M') }
+    times      = time_range.step(1.minute).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%M')}
 
     expected = {
       colors: ['#FCFFF5', '#D1DBBD', '#91AA9D', '#ACF0F2', '#EB7F00', '#54AC92', '#F1B60B', '#097178', '#9E4292', '#9D21D9', '#03DAF7'],
@@ -76,7 +76,7 @@ describe Geckoboard::Uscmshim30mSubjectSends do
             radius: 4
           },
           lineWidth: 4,
-          data: 29.times.collect { 0 } << 50
+          data: 29.times.collect {0} << 50
         },
         {
           name: 'Other',
@@ -85,7 +85,7 @@ describe Geckoboard::Uscmshim30mSubjectSends do
             radius: 4
           },
           lineWidth: 4,
-          data: 30.times.collect { 0 }
+          data: 30.times.collect {0}
         }
       ]
     }

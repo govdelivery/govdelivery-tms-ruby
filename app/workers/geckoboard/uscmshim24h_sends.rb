@@ -16,7 +16,7 @@ module Geckoboard
       data = zeroes(timestamp_range.step(1.hour)).merge(results).sort_by(&:first)
       counts  = data.map(&:second)
       max     = counts.max
-      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%H') }
+      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%H')}
 
       output = {
         item:     counts,
@@ -24,7 +24,7 @@ module Geckoboard
           axisx:  xlabels,
           axisy:  [0, max / 2, max],
           colour: 'ff9900'
-        } }.to_json
+        }}.to_json
 
       write_to_file("#{basename}.json", output)
     end

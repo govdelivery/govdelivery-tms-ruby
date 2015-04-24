@@ -60,7 +60,7 @@ Xact::Application.configure do
   # is not accessible from the internet.
   config.public_callback = true
 
-  routes.default_url_options = { host: 'tms.govdelivery.com', protocol: 'https' }
+  routes.default_url_options = {host: 'tms.govdelivery.com', protocol: 'https'}
 
   # Threshold (in minutes) under which multiple inbound messages from a
   # user will be ignored.  This is to prevent auto-response messages
@@ -69,10 +69,6 @@ Xact::Application.configure do
   # DCM is "twilio_requests_timeout."  Here it is named differently,
   # as this is not a vendor-specific behavior.
   config.auto_response_threshold = 1
-
-  # Used for forwarding STOP requests for short codes that are shared between
-  # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = %w(468311 89568 467873 566948 99511 734876 667873 99511)
 
   config.custom_report_account_id = 10_060
 

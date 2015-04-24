@@ -25,6 +25,17 @@ describe TwilioRequestsController, '#create' do
       expect(response).to be_a_valid_twilio_sms_response
     end
 
+    it "responds to 'STOP' with vendor stop text and enqueues a ForwardStopsToDcm" do
+      ForwardStopsToDcm.stubs(:should_forward?).returns(true)
+      SmsVendor.any_instance.expects(:stop!).with(kind_of(CommandParameters))
+      ForwardStopsToDcm.expects(:forward_async!)
+      expected_params = twilio_request_params('STOP', @vendor)
+      post :create, expected_params
+      expect(response.response_code).to eq(201)
+      expect(assigns(:response).response_text).to eq Service::Keyword::DEFAULT_STOP_TEXT
+      expect(response).to be_a_valid_twilio_sms_response
+    end
+
     it "responds to 'HELP' with vendor help text" do
       post :create, twilio_request_params('HELP', @vendor)
       expect(response.response_code).to eq(201)
@@ -121,10 +132,10 @@ describe TwilioRequestsController, '#create' do
   end
 
   def create_account(prefix, keyword, vendor)
-    account = create(:account_with_sms, :shared, prefix: prefix, sms_vendor: vendor)
-    account.create_command!(keyword, params: { command_type: :forward,
-                                               http_method: 'POST',
-                                               url: 'http://what.cd' },
+    account = create(:account_with_sms, prefix: prefix, sms_vendor: vendor)
+    account.create_command!(keyword, params: {command_type: :forward,
+                                              http_method: 'POST',
+                                              url: 'http://what.cd'},
                                      command_type: :forward)
     account.save!
     account
@@ -133,11 +144,11 @@ describe TwilioRequestsController, '#create' do
   def twilio_request_params(body, vendor)
     @sid ||= ('0' * 34)
     @sid.succ!
-    { format: 'xml',
-      'SmsSid' => @sid,
-      'AccountSid' => vendor.username,
-      'From' => vendor.username,
-      'To' => vendor.from_phone,
-      'Body' => body }
+    {format: 'xml',
+     'SmsSid' => @sid,
+     'AccountSid' => vendor.username,
+     'From' => vendor.username,
+     'To' => vendor.from_phone,
+     'Body' => body}
   end
 end

@@ -7,7 +7,7 @@ describe Subetha::Handler do
         stub('message_context',
              authentication_handler: stub('authentication_handler', identity: 'WRONNNNG'))
       end
-      subject { Subetha::Handler.new(message_context) }
+      subject {Subetha::Handler.new(message_context)}
 
       it 'should reject with invalid creds' do
         expect do
@@ -17,13 +17,13 @@ describe Subetha::Handler do
     end
 
     context 'good credentials' do
-      let(:account) { create(:account, email_vendor: create(:email_vendor)) }
-      let(:user) { create(:user, account: account) }
+      let(:account) {create(:account, email_vendor: create(:email_vendor))}
+      let(:user) {create(:user, account: account)}
       let(:message_context) do
         stub('message_context',
              authentication_handler: stub('authentication_handler', identity: user.authentication_tokens.first.token))
       end
-      subject { Subetha::Handler.new(message_context) }
+      subject {Subetha::Handler.new(message_context)}
 
       it 'should work' do
         subject.from('hi@mom.com')
@@ -32,13 +32,13 @@ describe Subetha::Handler do
     end
 
     context 'good credentials with email disabled' do
-      let(:account) { create(:account) }
-      let(:user) { create(:user, account: account) }
+      let(:account) {create(:account)}
+      let(:user) {create(:user, account: account)}
       let(:message_context) do
         stub('message_context',
              authentication_handler: stub('authentication_handler', identity: user.authentication_tokens.first.token))
       end
-      subject { Subetha::Handler.new(message_context) }
+      subject {Subetha::Handler.new(message_context)}
 
       it 'should reject' do
         expect do
@@ -49,10 +49,10 @@ describe Subetha::Handler do
   end
 
   context 'sending an email' do
-    let(:account) { create(:account, email_vendor: create(:email_vendor)) }
-    let(:user) { create(:user, account: account) }
-    let(:message) { File.read(Rails.root.join('test', 'fixtures', 'message.eml')) }
-    let(:message_no_subject) { File.read(Rails.root.join('test', 'fixtures', 'invalid_message.eml')) }
+    let(:account) {create(:account, email_vendor: create(:email_vendor))}
+    let(:user) {create(:user, account: account)}
+    let(:message) {File.read(Rails.root.join('test', 'fixtures', 'message.eml'))}
+    let(:message_no_subject) {File.read(Rails.root.join('test', 'fixtures', 'invalid_message.eml'))}
     subject do
       Subetha::Handler.new(nil).tap do |h|
         h.user = user

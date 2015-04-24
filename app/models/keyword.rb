@@ -17,14 +17,14 @@ class Keyword < ActiveRecord::Base
   validates :account, presence: true
   validates :name,
             presence:   true,
-            length:     { maximum: 160 },
-            format:     { without: / /, message: 'No spaces allow in keyword name' },
-            uniqueness: { scope: [:account_id] },
-            exclusion:  { in: RESERVED_KEYWORDS - BASE_KEYWORDS, message: '%{value} is a reserved keyword.' }
-  validates :response_text, length: { maximum: 160 }
+            length:     {maximum: 160},
+            format:     {without: / /, message: 'No spaces allow in keyword name'},
+            uniqueness: {scope: [:account_id]},
+            exclusion:  {in: RESERVED_KEYWORDS - BASE_KEYWORDS, message: '%{value} is a reserved keyword.'}
+  validates :response_text, length: {maximum: 160}
 
-  scope :custom, -> { where.not(name: RESERVED_KEYWORDS) }
-  scope :with_name, ->(name) { where(arel_table[:name].matches(name.downcase)) }
+  scope :custom, -> {where.not(name: RESERVED_KEYWORDS)}
+  scope :with_name, ->(name) {where(arel_table[:name].matches(name.downcase))}
 
   def self.stop?(text)
     # Message is a stop request if it starts with a stop word.
@@ -54,9 +54,9 @@ class Keyword < ActiveRecord::Base
     command
   end
 
-  def execute_commands(params = CommandParameters.new)
+  def execute_commands(params=CommandParameters.new)
     params.account_id = account_id if account_id
-    commands.collect { |a| a.call(params) }
+    commands.collect { |a| a.call(params)}
   end
 
   def self.sanitize_string(n)

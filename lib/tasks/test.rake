@@ -5,7 +5,7 @@ namespace :test do
     begin
       # start WEBrick in a thread
       port = (ENV['WEBRICK_PORT'] || '3000').to_i
-      server = Thread.new { Rack::Server.start(app: Rails.application, Port: port, AccessLog: []) }
+      server = Thread.new {Rack::Server.start(app: Rails.application, Port: port, AccessLog: [])}
       puts 'running integration tests in five seconds...'
       sleep(5)
 

@@ -35,9 +35,9 @@ Xact::Application.configure do
   routes.default_url_options =
     config.action_controller.default_url_options =
       if ENV['NGROK_HOSTNAME'].present?
-        { host: ENV['NGROK_HOSTNAME'], protocol: config.protocol, port: 80 }
+        {host: ENV['NGROK_HOSTNAME'], protocol: config.protocol, port: 80}
       else
-        { host: 'localhost', port: 3000, protocol: config.protocol }
+        {host: 'localhost', port: 3000, protocol: config.protocol}
       end
 
   # Expands the lines which load the assets
@@ -50,7 +50,6 @@ Xact::Application.configure do
 
   # Used for forwarding STOP requests for short codes that are shared between
   # XACT and DCM (GOV311) - XACT-175
-  config.shared_phone_numbers = ['+16514336311']
 
   config.fema_url = 'https://tdl.integration.fema.gov/IPAWS_CAPService/IPAWS'
 

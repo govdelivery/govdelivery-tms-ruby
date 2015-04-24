@@ -15,7 +15,7 @@ module Geckoboard
                       else
                         raise "unknown event type #{event_type}"
                       end
-      scope = scope.joins(:email_message).where(email_messages: { account_id: account_id })
+      scope = scope.joins(:email_message).where(email_messages: {account_id: account_id})
 
       time_range, timestamp_range = time_ranges(24, :hour)
       results = grouped_by_time_format(scope, column, time_range, 'HH24')
@@ -23,7 +23,7 @@ module Geckoboard
 
       counts = data.map(&:second)
       max = counts.max
-      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%H') }
+      xlabels = data.map { |x| x.first.in_time_zone(timezone).strftime('%H')}
       output = {
         item: counts,
         settings: {

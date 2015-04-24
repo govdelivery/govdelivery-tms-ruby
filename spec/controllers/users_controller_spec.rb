@@ -8,8 +8,8 @@ RSpec.describe UsersController, type: :controller do
            voice_vendor: create(:voice_vendor),
            ipaws_vendor: create(:ipaws_vendor)
   end
-  let(:user) { create :user, account: account, admin: false }
-  let(:admin_user) { create :user, account: account, admin: true }
+  let(:user) {create :user, account: account, admin: false}
+  let(:admin_user) {create :user, account: account, admin: true}
 
   context 'an admin user' do
     before do

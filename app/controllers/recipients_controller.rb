@@ -81,7 +81,7 @@ class RecipientsController < ApplicationController
 
   def verify_no_create_in_progress
     if Rails.cache.exist?(CreateRecipientsWorker.job_key(@message.id))
-      render json: { message: 'Recipient list is being built and is not yet complete' }, status: 202
+      render json: {message: 'Recipient list is being built and is not yet complete'}, status: 202
       return false
     end
   end

@@ -11,8 +11,8 @@ module View
     end
 
     def _links
-      { self:      self_link,
-        email_recipient: recipient_link }
+      {self:      self_link,
+       email_recipient: recipient_link}
     end
 
     def event_at
@@ -46,7 +46,7 @@ module View
     end
 
     def recipients_controller_options
-      { controller: 'recipients', only_path: true, format: nil }
+      {controller: 'recipients', only_path: true, format: nil}
     end
   end
 end

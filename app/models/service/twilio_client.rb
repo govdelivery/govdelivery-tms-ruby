@@ -7,7 +7,7 @@ module Service
         @client = Twilio::REST::Client.new(username, password)
       end
 
-      def deliver(message, recipient, callback_url, message_url = nil)
+      def deliver(message, recipient, callback_url, message_url=nil)
         opts = create_options(message, recipient, callback_url, message_url)
         @delivery.create(opts)
       end
@@ -18,7 +18,7 @@ module Service
 
       private
 
-      def create_options(message, recipient, callback_url, message_url = nil)
+      def create_options(message, recipient, callback_url, message_url=nil)
         opts = {
           to: "#{recipient.formatted_phone}",
           from: message.respond_to?(:from_number) ? message.from_number : message.vendor.from

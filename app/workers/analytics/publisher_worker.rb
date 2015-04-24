@@ -3,7 +3,7 @@ module Analytics
   class PublisherWorker
     include Workers::Base
     sidekiq_options retry: 0
-    sidekiq_retry_in { 10 }
+    sidekiq_retry_in {10}
 
     CONNECTION_POOL = ConnectionPool.new(size: 5, timeout: 5) do
       YaketyYak::Publisher.new('xact')

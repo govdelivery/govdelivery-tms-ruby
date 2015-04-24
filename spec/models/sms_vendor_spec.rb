@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 describe SmsVendor do
-  let(:vendor) { create(:sms_vendor) }
-  let(:account) { create(:account, sms_vendor: vendor) }
-  let(:from) { '+12223334444' }
-  subject { vendor }
+  let(:vendor) {create(:sms_vendor)}
+  let(:account) {create(:account, sms_vendor: vendor)}
+  let(:from) {'+12223334444'}
+  subject {vendor}
 
   describe 'when valid' do
-    it { expect(vendor.valid?).to eq(true) }
+    it {expect(vendor.valid?).to eq(true)}
   end
 
   it 'should not allow duplicate from fields' do
@@ -16,17 +16,17 @@ describe SmsVendor do
     expect(v2).not_to be_valid
   end
 
-  [:name, :username, :password, :from, :shared].each do |field|
+  [:name, :username, :password, :from].each do |field|
     describe "when #{field} is empty" do
-      before { vendor.send("#{field}=", nil) }
-      it { expect(vendor.valid?).to eq(false) }
+      before {vendor.send("#{field}=", nil)}
+      it {expect(vendor.valid?).to eq(false)}
     end
   end
 
   [:name, :username, :password].each do |field|
     describe "when #{field} is too long" do
-      before { vendor.send("#{field}=", 'W' * 257) }
-      it { expect(vendor.valid?).to eq(false) }
+      before {vendor.send("#{field}=", 'W' * 257)}
+      it {expect(vendor.valid?).to eq(false)}
     end
   end
 
@@ -51,7 +51,7 @@ describe SmsVendor do
   describe '#create_inbound_message!' do
     it 'creates an inbound message' do
       vendor.stubs(:accounts).returns([])
-      expect { vendor.create_inbound_message!(from: from, body: 'msg', keyword: nil) }.to change { vendor.inbound_messages.count }.by 1
+      expect {vendor.create_inbound_message!(from: from, body: 'msg', keyword: nil)}.to change {vendor.inbound_messages.count}.by 1
     end
   end
 
@@ -61,7 +61,7 @@ describe SmsVendor do
       vendor.stubs(:accounts).returns([mock('account1', stop: true), mock('account1', stop: true)])
       expect do
         vendor.stop!(command_params)
-      end.to change { vendor.stop_requests.count }.by 1
+      end.to change {vendor.stop_requests.count}.by 1
     end
   end
 
@@ -72,7 +72,7 @@ describe SmsVendor do
       vendor.stop_requests.create!(phone: phone)
       expect do
         vendor.start!(command_parameters)
-      end.to change { vendor.stop_requests.count }.by(-1)
+      end.to change {vendor.stop_requests.count}.by(-1)
     end
   end
 end

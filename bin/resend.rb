@@ -27,7 +27,7 @@ class Resend
     @stdout_logger = Logger.new(STDOUT)
     @already_sent = Set.new
     if File.exist?('sent.log')
-      File.open('sent.log').each_line { |line| @already_sent << line.split.first.to_i if line.present? }
+      File.open('sent.log').each_line { |line| @already_sent << line.split.first.to_i if line.present?}
     end
     @stdout_logger.debug "Already sent #{@already_sent.size} emails"
     @sent_logger = Logger.new('sent.log')
@@ -36,7 +36,7 @@ class Resend
       until email_id_stream.eof?
         return if @quit
         wait_for_sidekiq_queue_to_be_empty
-        email_ids = BATCH_SIZE.times.map { email_id_stream.gets.try(:chomp) }.compact
+        email_ids = BATCH_SIZE.times.map {email_id_stream.gets.try(:chomp)}.compact
         resend_emails_concurrenty(email_ids)
       end
     end
@@ -96,7 +96,7 @@ class Resend
     email.open_tracking_enabled = original.open_tracking_enabled
     email.click_tracking_enabled = original.click_tracking_enabled
     email.macros = original.macros
-    email.async_recipients = original.recipients.map { |recipient| recipient.attributes.slice('email') }
+    email.async_recipients = original.recipients.map { |recipient| recipient.attributes.slice('email')}
     email
   end
 end

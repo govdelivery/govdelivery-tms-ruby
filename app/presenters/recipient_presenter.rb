@@ -1,7 +1,7 @@
 class RecipientPresenter < SimpleDelegator
   attr_accessor :context, :account
 
-  def initialize(recipient, account, context = Rails.application.routes.url_helpers)
+  def initialize(recipient, account, context=Rails.application.routes.url_helpers)
     self.context = context
     self.account = account
     super(recipient)
