@@ -25,7 +25,7 @@ class TwilioCanceler
     end
   end
 
-  def self.cancel_all_calls(vm, limit = nil, pool_size = 30)
+  def self.cancel_all_calls(vm, limit=nil, pool_size=30)
     pool = TwilioCanceler.pool(size: pool_size, args: [vm.vendor.username, vm.vendor.password])
     q    = vm.recipients.where(status: %w{inconclusive sending})
     puts "Total inconclusive + sending recipients: #{q.count}"

@@ -25,7 +25,7 @@ class EmailMessage < ActiveRecord::Base
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> {select('id, user_id, created_at, status, subject')}
 
-  def on_sending(ack = nil)
+  def on_sending(ack=nil)
     self.ack ||= ack
     # ODM vendor sends batch with all recips in message, mark all as sending
     recipients.with_new_status.update_all(status: 'sending', updated_at: Time.now, sent_at: Time.now)

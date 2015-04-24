@@ -107,7 +107,7 @@ class CommandParameters
     end
   end
 
-  def valid_account_codes?(account, codes = dcm_account_codes)
+  def valid_account_codes?(account, codes=dcm_account_codes)
     (codes || []).map(&:upcase).to_set.subset?(account.dcm_account_codes.to_set)
   end
 

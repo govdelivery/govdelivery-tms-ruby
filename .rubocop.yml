@@ -62,7 +62,7 @@ Style/PercentLiteralDelimiters:
 Style/StringLiterals:
   Enabled: false
 Style/SpaceAroundEqualsInParameterDefault:
-  Enabled: no_space
+  EnforcedStyle: no_space
 Style/SpaceInsideBlockBraces:
   EnforcedStyle: no_space
 Style/SpaceInsideHashLiteralBraces:

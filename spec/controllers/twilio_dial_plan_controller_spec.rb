@@ -38,7 +38,7 @@ describe TwilioDialPlanController do
     expect(response.body).to match(/To repeat this message, press 1./)
   end
 
-  def twilio_dial_plan_params(call_sid = recipient.ack)
+  def twilio_dial_plan_params(call_sid=recipient.ack)
     {format:   'xml',
      'CallSid' => call_sid
     }

@@ -66,7 +66,7 @@ describe TwilioStatusCallbacksController do
       end
     end
 
-    def twilio_status_callback_params(status, sms_sid = recipient.ack)
+    def twilio_status_callback_params(status, sms_sid=recipient.ack)
       {format: 'xml',
        'SmsSid' => sms_sid,
        'SmsStatus' => status
@@ -249,7 +249,7 @@ describe TwilioStatusCallbacksController do
       end
     end
 
-    def twilio_status_callback_params(status, answeredby = nil, call_sid = recipient.ack)
+    def twilio_status_callback_params(status, answeredby=nil, call_sid=recipient.ack)
       {format: 'xml',
        'CallSid' => call_sid,
        'CallStatus' => status,

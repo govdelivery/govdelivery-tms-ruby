@@ -1,4 +1,4 @@
-def it_should_create_a_message(message_opts = {}, worker = CreateRecipientsWorker)
+def it_should_create_a_message(message_opts={}, worker=CreateRecipientsWorker)
   describe '#create with a valid message' do
     before do
       model.any_instance.expects(:save_with_async_recipients).returns(true)
@@ -25,7 +25,7 @@ def it_should_create_a_message(message_opts = {}, worker = CreateRecipientsWorke
   end
 end
 
-def it_should_have_a_pageable_index(resource, parent_class = User, relation = nil)
+def it_should_have_a_pageable_index(resource, parent_class=User, relation=nil)
   describe 'index' do
     before do
       send(resource).stubs(:total_pages).returns(5)

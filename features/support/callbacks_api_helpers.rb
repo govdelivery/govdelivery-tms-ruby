@@ -18,7 +18,7 @@ class CallbacksAPIClient
     @callback_uris = []
   end
 
-  def create_callback_uri(type = nil, desc = nil)
+  def create_callback_uri(type=nil, desc=nil)
     raise 'Must provide callback type' if type.nil?
     raise "Callback Type #{type} not supported " unless callback_types.include?(type)
 

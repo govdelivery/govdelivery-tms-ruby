@@ -9,7 +9,7 @@ module Sidekiq
           end
         end
 
-        def merge_rate_limited_queues!(queues = Sidekiq.options[:queues], rlqs = Sidekiq::RateLimitedQueue.throttled_queues)
+        def merge_rate_limited_queues!(queues=Sidekiq.options[:queues], rlqs=Sidekiq::RateLimitedQueue.throttled_queues)
           rlqs.reject { |rlq| queues.include?(rlq)}.each do |rlq|
             index = queues.index { |q| rlq =~ /^#{q}/} || queues.length
             queues.insert(index + 1, rlq)

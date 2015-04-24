@@ -1,7 +1,7 @@
 class SmsRecipient < ActiveRecord::Base
   include PhoneRecipient
 
-  scope :to_send, lambda { |vendor_id, account_id = nil|
+  scope :to_send, lambda { |vendor_id, account_id=nil|
     incomplete.not_blacklisted(vendor_id, account_id).with_valid_phone_number
   }
 

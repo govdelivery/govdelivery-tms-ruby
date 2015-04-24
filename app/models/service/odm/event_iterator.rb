@@ -2,7 +2,7 @@ module Service
   module Odm
     class EventIterator
       include Enumerable
-      def initialize(fetcher, sequence, transactor = ActiveRecord::Base.method(:transaction))
+      def initialize(fetcher, sequence, transactor=ActiveRecord::Base.method(:transaction))
         @transactor = transactor
         @fetcher = fetcher
         @sequence = sequence

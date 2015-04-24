@@ -4,7 +4,7 @@ module Service
 
     attr_accessor :logger
 
-    def initialize(logger = nil)
+    def initialize(logger=nil)
       self.logger = logger
     end
 

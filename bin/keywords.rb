@@ -8,7 +8,7 @@ class KeywordsCLI < Thor
   desc 'list ACCOUNT_NAME', 'list custom keywords for account'
   option :all, desc: 'list both custom and special'
   option :special, desc: 'list only special keywords'
-  def list(account_name = nil)
+  def list(account_name=nil)
     account = get_account(account_name) if account_name
     q = case
         when account.nil?

@@ -45,7 +45,7 @@ RSpec::Matchers.define :be_a_valid_twilio_sms_response do
   end
 end
 
-def stub_command_action_create!(command_params, http_response, command_action, body = http_response.body)
+def stub_command_action_create!(command_params, http_response, command_action, body=http_response.body)
   command_action.expects(:update!).with(
     error_message: nil,
     status:        http_response.status,
@@ -72,7 +72,7 @@ def stub_command_action_error!(command_params, command_action, error_message)
     )
 end
 
-def exception_check(worker, expected_message, params = nil)
+def exception_check(worker, expected_message, params=nil)
   begin
     if params
       worker.perform(params)

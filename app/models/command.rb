@@ -20,7 +20,7 @@ class Command < ActiveRecord::Base
   has_many :command_actions, dependent: :nullify
 
   # Execute this command with the provided options and additional parameters
-  def call(command_parameters = CommandParameters.new)
+  def call(command_parameters=CommandParameters.new)
     command_parameters.command_id = id
     command_strategy.perform_async!(command_parameters)
   end

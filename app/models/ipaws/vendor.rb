@@ -59,7 +59,7 @@ module IPAWS
       end
     end
 
-    def client(reload = false)
+    def client(reload=false)
       @client = nil if reload
       @client ||= begin
         write_jks_file

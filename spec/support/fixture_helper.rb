@@ -1,9 +1,9 @@
 module FixtureHelper
-  def create_from_address(attrs = {})
+  def create_from_address(attrs={})
     FromAddress.create!({from_email: 'hey@dude.test'}.merge(attrs))
   end
 
-  def create_sms_vendor(attrs = {})
+  def create_sms_vendor(attrs={})
     SmsVendor.create!({
       name: 'name',
       username: 'username',
@@ -13,7 +13,7 @@ module FixtureHelper
       worker: 'LoopbackMessageWorker'}.merge(attrs))
   end
 
-  def create_voice_vendor(attrs = {})
+  def create_voice_vendor(attrs={})
     VoiceVendor.create!({
       name: 'voice vendor',
       username: 'username',
@@ -22,11 +22,11 @@ module FixtureHelper
       worker: 'LoopbackMessageWorker'}.merge(attrs))
   end
 
-  def create_email_vendor(attrs = {})
+  def create_email_vendor(attrs={})
     EmailVendor.create!({name: 'new name', worker: 'LoopbackMessageWorker'}.merge(attrs))
   end
 
-  def create_account(attrs = {})
+  def create_account(attrs={})
     Account.new({name: 'ACME', dcm_account_codes: ['ACME']}.merge(attrs)).tap do |a|
       a.build_from_address(from_email: 'hey@dude.test')
       a.build_from_number(phone_number: '8885551234')

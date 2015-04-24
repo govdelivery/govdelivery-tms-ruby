@@ -18,7 +18,7 @@ class InboundMessage < ActiveRecord::Base
   before_create :see_if_this_should_be_ignored
   after_create :publish_event
 
-  def update_status!(fail = false)
+  def update_status!(fail=false)
     if fail
       update_attribute :command_status, :failure
     else

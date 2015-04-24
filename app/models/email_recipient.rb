@@ -33,7 +33,7 @@ class EmailRecipient < ActiveRecord::Base
   # @param defaults [Hash] the default macros - i.e. self.message.macros
   # @return [String]
   #
-  def to_odm(defaults = {})
+  def to_odm(defaults={})
     record = [email, id, x_tms_recipient].join('::')
     defaults.merge(macros || {}).tap do |hsh|
       unless hsh.empty?

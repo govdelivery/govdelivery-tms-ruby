@@ -18,7 +18,7 @@ module Twilio
       [message, recipient]
     end
 
-    def perform(options = {})
+    def perform(options={})
       begin
         options.symbolize_keys!
         callback_url               = options[:callback_url]

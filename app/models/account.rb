@@ -115,7 +115,7 @@ class Account < ActiveRecord::Base
   end
 
   # some sugar for working with keywords on the console
-  def keywords(arg = nil)
+  def keywords(arg=nil)
     if arg
       super.find_by(name: arg)
     else

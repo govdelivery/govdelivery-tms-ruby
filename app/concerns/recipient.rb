@@ -87,12 +87,12 @@ module Recipient
     mark_sending!(:sending, ack)
   end
 
-  def sent!(ack, date_sent = nil, _ = nil)
+  def sent!(ack, date_sent=nil, _=nil)
     date_sent ||= Time.now
     mark_sent!(:sent, ack, date_sent, nil)
   end
 
-  def failed!(ack = nil, completed_at = nil, error_message = nil)
+  def failed!(ack=nil, completed_at=nil, error_message=nil)
     fail!(:failed, ack, completed_at, error_message)
   end
 
@@ -100,7 +100,7 @@ module Recipient
     cancel!(:canceled, ack, nil, nil)
   end
 
-  def ack!(ack = nil, *_)
+  def ack!(ack=nil, *_)
     update_attribute(:ack, ack)
   end
 
@@ -123,7 +123,7 @@ module Recipient
     self.save!
   end
 
-  def acknowledge_sent(ack = nil, *_)
+  def acknowledge_sent(ack=nil, *_)
     self.ack     = ack
     self.sent_at = Time.now
   end

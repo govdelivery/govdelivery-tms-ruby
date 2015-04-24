@@ -9,7 +9,7 @@ module IPAWS
       attr_accessor(*ATTRIBUTES)
     end
 
-    def initialize(attributes = {})
+    def initialize(attributes={})
       attributes.each { |k, v| send("#{k}=", v)}
     end
   end

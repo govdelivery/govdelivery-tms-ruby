@@ -98,7 +98,7 @@ def set_record_config(r, config)
   end
 end
 
-def create_or_verify_by_name(klass, config, pre_save = nil)
+def create_or_verify_by_name(klass, config, pre_save=nil)
   r = klass.find_by(name: config[:name])
   if r
     puts "Verifying #{config[:name]}"

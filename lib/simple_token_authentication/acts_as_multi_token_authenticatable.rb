@@ -33,7 +33,7 @@ module SimpleTokenAuthentication
     end
 
     module ClassMethods
-      def acts_as_multi_token_authenticatable(_options = {})
+      def acts_as_multi_token_authenticatable(_options={})
         include SimpleTokenAuthentication::ActsAsMultiTokenAuthenticatable
         before_save :ensure_authentication_token
       end
