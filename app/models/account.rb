@@ -1,10 +1,6 @@
 require 'set'
 
 class Account < ActiveRecord::Base
-  def self.columns
-    super.reject {|c| c.name == "shared"}
-  end
-
   attr_accessible :name, :sms_vendor, :email_vendor, :voice_vendor, :ipaws_vendor,
                   :sms_vendor_id, :email_vendor_id, :voice_vendor_id, :ipaws_vendor_id,
                   :from_address, :dcm_account_codes, :link_tracking_parameters
