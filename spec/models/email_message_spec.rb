@@ -3,7 +3,9 @@ require 'rails_helper'
 describe EmailMessage do
   let(:vendor) {create(:email_vendor)}
   let(:account) {create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3')}    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
+  let(:from_address) {account.default_from_address}
   let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:email_template) {create(:email_template, account: account, user:user, from_address: from_address)}
   let(:email) do
     build(:email_message,
           user: user,
@@ -31,6 +33,20 @@ describe EmailMessage do
          )
   end
   subject {email}
+
+  context "email_template association" do
+    it {is_expected.to belong_to :email_template}
+    it "can be blank" do
+      expect(subject.email_template).to be_blank
+    end
+    it "sets association to blank if email_template is deleted" do
+      subject.email_template = email_template
+      subject.save!
+      email_template.destroy
+      subject.reload
+      expect(subject.email_template).to be_blank
+    end
+  end
 
   it_should_validate_as_email :reply_to, :errors_to
 

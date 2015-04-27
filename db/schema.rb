@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150421181256) do
+ActiveRecord::Schema.define(version: 20150427202538) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                           null: false
@@ -83,8 +83,10 @@ ActiveRecord::Schema.define(version: 20150421181256) do
     t.string   "from_email"
     t.string   "reply_to"
     t.string   "errors_to"
+    t.integer  "email_template_id",                  precision: 38, scale: 0
   end
 
+  add_index "email_messages", ["email_template_id"], name: "i_ema_mes_ema_tem_id", tablespace: "tsms_indx01"
   add_index "email_messages", ["user_id", "created_at", "status", "subject", "id"], name: "em_idx4", tablespace: "tsms_indx01"
 
   create_table "email_recipient_clicks", force: true do |t|
