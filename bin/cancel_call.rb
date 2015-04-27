@@ -31,7 +31,7 @@ class TwilioCanceler
     puts "Total inconclusive + sending recipients: #{q.count}"
     futures = q.limit(limit).map do |recipient|
       puts "cancel async #{recipient.id} #{recipient.ack}"
-      pool.async.future(recipient)
+      pool.future.cancel!(recipient)
     end
     # block until everything returns
     futures.compact.each(&:value)
