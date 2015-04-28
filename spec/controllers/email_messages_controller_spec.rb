@@ -27,6 +27,7 @@ describe EmailMessagesController do
     end
   end
   let(:templated_messages) {create_list(:email_message, 3, email_template: email_template)} 
+  let(:recipients) {[{email: "arbys@everythingsucks.com"}]}
 
   let(:model) {EmailMessage}
 
@@ -69,7 +70,19 @@ describe EmailMessagesController do
                                    :open_tracking_enabled,
                                    :macros)
 
-    it "should use values in the template by default"
+    it "should use values in the template by default" do
+      post :create, message: {recipients: recipients}, _links: {email_template: email_template.id}
+      expect(response.response_code).to eq(201)
+      new_message = assigns(:message)
+      expect(new_message.body).to eq(email_template.body)
+      expect(new_message.subject).to eq(email_template.subject)
+      expect(new_message.macros).to eq(email_template.macros)
+      expect(new_message.click_tracking_enabled).to eq(email_template.click_tracking_enabled)
+      expect(new_message.open_tracking_enabled).to eq(email_template.open_tracking_enabled)
+      expect(new_message.email_template).not_to be_blank
+    end
+
+    it "should use a template link_tracking_parameter if the template specifies it"
     it "should override template values with POSTed values"
     it "should properly resolve template macros"
     it "should properly resolve macros that are POSTed"

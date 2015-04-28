@@ -17,6 +17,16 @@ class EmailMessagesController < MessagesController
                   ],
                   format:  [:json, :url_encoded_form]
 
+  def create
+    transform_links_payload!
+    if params[:email_template_id] 
+      email_template = current_user.email_templates.find(params[:email_template_id])
+      @message_scope = email_template.email_messages
+      params[:message].reverse_merge!(email_template.attributes.to_options.select {|k,v| [:body, :subject, :link_tracking_parameters, :macros, :open_tracking_enabled, :click_tracking_enabled].include?(k)})
+    end
+    super
+  end
+
   protected
 
   def set_scope

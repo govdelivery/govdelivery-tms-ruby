@@ -1,57 +1,11 @@
 require 'rails_helper'
 
 describe 'messages/show.rabl' do
-  let(:sms_message) do
-    stub('sms_message',
-         id: 22,
-         to_param: '22',
-         class: SmsMessage,
-         body: 'hi',
-         completed_at: Time.now,
-         created_at: Time.now,
-         new_record?: false,
-         status: 'new',
-         new?: true,
-         errors: []
-        )
-  end
-  let(:voice_message) do
-    stub('voice_message',
-         id: 22,
-         to_param: '22',
-         class: VoiceMessage,
-         play_url: 'bomb',
-         from_number: '8885551234',
-         completed_at: Time.now,
-         created_at: Time.now,
-         new_record?: false,
-         status: 'new',
-         new?: true,
-         errors: []
-        )
-  end
-  let(:email_message) do
-    stub('email_message',
-         id: 22,
-         to_param: '22',
-         class: EmailMessage,
-         body: 'bomb',
-         subject: 'dude',
-         from_name: 'baby',
-         from_email: 'foo@sink.govdelivery.com',
-         reply_to: 'reply_to@sink.govdelivery.com',
-         errors_to: 'errors_to@sink.govdelivery.com',
-         completed_at: Time.now,
-         created_at: Time.now,
-         new_record?: false,
-         status: 'new',
-         new?: true,
-         open_tracking_enabled: true,
-         click_tracking_enabled: false,
-         macros: {'fun' => 'times'},
-         errors: []
-        )
-  end
+  let(:sms_vendor) { create(:sms_vendor)}
+  let(:account) { create(:account, sms_vendor: sms_vendor)}
+  let(:sms_message) { create(:sms_message, account: account)}
+  let(:voice_message) { create(:voice_message, account: account)}
+  let(:email_message) { create(:email_message, account: account)}
 
   it 'should work with an SMS' do
     Rabl::Engine.any_instance.stubs(:controller_name).returns('sms_messages')

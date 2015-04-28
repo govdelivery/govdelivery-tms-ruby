@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :sms_message do
     body 'Junk 4 U'
+    account
   end
 
   factory :email_message do
@@ -11,5 +12,6 @@ FactoryGirl.define do
 
   factory :voice_message do
     play_url 'http://what.cd/hi'
+    account
   end
 end
