@@ -5,7 +5,7 @@ APP="xact"
 ENV="qc-ep"
 
 CTRL_USER="evodeploy";
-CTRL_SERVER="prod-deploy1-ep.tops.gdi"
+CTRL_SERVER="prod-deploy.ep.gdi"
 CTRL_SCRIPT="/var/repo/scripts/release/deployer.rb"
 CTRL_ARGS=""
 YES="false"
