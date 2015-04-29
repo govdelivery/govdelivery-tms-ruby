@@ -6,10 +6,12 @@ describe EmailMessage do
   let(:from_address) {account.default_from_address}
   let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
   let(:email_template) {create(:email_template, account: account, user:user, from_address: from_address)}
+  let(:email_template_sans_link_params) {create(:email_template, account: account, user:user, from_address: from_address, link_tracking_parameters: nil)}
+  let(:body_with_links) { 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>' }
   let(:email) do
     build(:email_message,
           user: user,
-          body: 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
+          body: body_with_links,
           subject: 'specs before tests',
           from_email: account.from_email,
           open_tracking_enabled: true,
@@ -24,6 +26,7 @@ describe EmailMessage do
   let(:macroless_email) do
     build(:email_message,
           user: user,
+          account: account,
           body: 'longggg body',
           subject: 'specs before tests',
           from_email: account.from_email,
@@ -31,6 +34,21 @@ describe EmailMessage do
           click_tracking_enabled: true,
           macros: {}
          )
+  end
+  let(:templated_email) do
+    build(:email_message,
+          user: user,
+          account: account,
+          body: body_with_links,
+          email_template: email_template)
+  end
+  let(:templated_email_sans_link_params) do
+    build(:email_message,
+          user: user,
+          account: account,
+          body: 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
+          body: body_with_links,
+          email_template: email_template_sans_link_params)
   end
   subject {email}
 
@@ -80,7 +98,11 @@ describe EmailMessage do
       expect(macroless_email.odm_record_designator).to eq('email::recipient_id::x_tms_recipient')
     end
     context 'and saved' do
-      before {email.save!}
+      before do 
+        email.save!
+        templated_email.save!
+        templated_email_sans_link_params.save!
+      end
 
       it 'should be able to create recipients' do
         email.create_recipients([email: 'tyler@dudes.com'])
@@ -103,6 +125,8 @@ describe EmailMessage do
       context 'and ready!' do
         before do
           email.recipients.create!(email: 'bill@busheyworld.ie')
+          templated_email.recipients.create!(email: 'bill@busheyworld.ie')
+          templated_email_sans_link_params.recipients.create!(email: 'bill@busheyworld.ie')
         end
 
         it 'should insert tracking parameters into all links' do
@@ -111,6 +135,27 @@ describe EmailMessage do
           expect(email.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
           expect(email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
           expect(email.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
+        end
+
+        it 'should use template tracking parameters if a template is used' do
+          expect(templated_email.ready!).to be true
+          templated_email.reload
+          expect(templated_email.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
+          expect(templated_email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
+          templated_email.body.scan(/https?:\/\/[\S]+\?([\S]*?)">/) do |query_params|
+            query_params_array = query_params[0].split('&')
+            expect(query_params_array).to include 'tracking=param'
+            expect(query_params_array).to include 'one=two'
+          end
+        end
+
+        it 'should use account tracking parameters if a template without tracking parameters is used' do
+          expect(templated_email_sans_link_params.ready!).to be true
+          templated_email_sans_link_params.reload
+          expect(templated_email_sans_link_params.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
+          expect(templated_email_sans_link_params.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
+          expect(templated_email_sans_link_params.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
+          expect(templated_email_sans_link_params.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
       end
 

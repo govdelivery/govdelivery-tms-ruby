@@ -1,4 +1,5 @@
 class EmailTemplate < ActiveRecord::Base
+  include HasLinkTrackingParameters
   belongs_to :account
   belongs_to :user
   belongs_to :from_address

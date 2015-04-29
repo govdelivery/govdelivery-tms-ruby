@@ -82,7 +82,6 @@ describe EmailMessagesController do
       expect(new_message.email_template).not_to be_blank
     end
 
-    it "should use a template link_tracking_parameter if the template specifies it"
     it "should override template values with POSTed values"
     it "should properly resolve template macros"
     it "should properly resolve macros that are POSTed"

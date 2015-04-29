@@ -26,6 +26,9 @@ class EmailMessage < ActiveRecord::Base
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> {select('id, user_id, created_at, status, subject')}
 
+  def email_template=(email_template)
+  end
+
   def on_sending(ack=nil)
     self.ack ||= ack
     # ODM vendor sends batch with all recips in message, mark all as sending
@@ -94,9 +97,16 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def insert_link_tracking_parameters
-    unless account.link_tracking_parameters_hash.blank?
-      t = GovDelivery::Links::Transformer.new(account.link_tracking_parameters_hash)
+    ltph = if self.email_template && self.email_template.link_tracking_parameters_hash.present?
+      self.email_template.link_tracking_parameters_hash
+    elsif account.link_tracking_parameters_hash.present?
+      self.account.link_tracking_parameters_hash
+    end
+    
+    if ltph
+      t = GovDelivery::Links::Transformer.new(ltph)
       self.body = t.replace_all_hrefs(body)
     end
+
   end
 end
