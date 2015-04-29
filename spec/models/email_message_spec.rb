@@ -64,6 +64,35 @@ describe EmailMessage do
       subject.reload
       expect(subject.email_template).to be_blank
     end
+    it "sets corresponding attributes on the message when email_template is set" do
+      subject.email_template = email_template
+
+      expect(subject.body).to eq(email_template.body)
+      expect(subject.subject).to eq(email_template.subject)
+      expect(subject.macros).to eq(email_template.macros)
+      expect(subject.click_tracking_enabled).to eq(email_template.click_tracking_enabled)
+      expect(subject.open_tracking_enabled).to eq(email_template.open_tracking_enabled)
+    end
+
+    it "does not set already set attributes when email_template is set" do
+      posted_body = "post body"
+      posted_subject = "a [[body]], some [[body]]"
+      posted_macros = "'body' => 'arms and legs'"
+      posted_clicked_tracking_enabled = false
+      posted_open_tracking_enabled = false
+      subject.body = posted_body
+      subject.subject = posted_subject
+      subject.macros = posted_macros
+      subject.click_tracking_enabled = posted_clicked_tracking_enabled
+      subject.open_tracking_enabled = posted_open_tracking_enabled
+      subject.save!
+      new_message = assigns(:message)
+      expect(subject.body).to eq(posted_body)
+      expect(subject.subject).to eq(posted_subject)
+      expect(subject.macros).to eq(posted_macros)
+      expect(subject.click_tracking_enabled).to eq(posted_clicked_tracking_enabled)
+      expect(subject.open_tracking_enabled).to eq(posted_open_tracking_enabled)
+    end
   end
 
   it_should_validate_as_email :reply_to, :errors_to

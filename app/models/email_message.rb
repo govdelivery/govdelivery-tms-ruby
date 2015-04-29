@@ -23,6 +23,8 @@ class EmailMessage < ActiveRecord::Base
   before_validation :set_from_email
   validate :from_email_allowed?
 
+  before_create :apply_template
+
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> {select('id, user_id, created_at, status, subject')}
 
@@ -83,6 +85,14 @@ class EmailMessage < ActiveRecord::Base
 
   def set_from_email
     self.from_email = account.from_email if from_email.nil? && account
+  end
+
+  def apply_template
+    if self.email_template
+      [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+        self[attr] ||= self.email_template[attr]
+      end
+    end
   end
 
   def recipients_with(type)
