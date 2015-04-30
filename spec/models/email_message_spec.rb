@@ -9,12 +9,11 @@ describe EmailMessage do
   let(:email_template_sans_link_params) {create(:email_template, account: account, user:user, from_address: from_address, link_tracking_parameters: nil)}
   let(:body_with_links) { 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>' }
   let(:email) do
-    build(:email_message,
-          user: user,
+    user.email_messages.build(
           body: body_with_links,
           subject: 'specs before tests',
           from_email: account.from_email,
-          open_tracking_enabled: true,
+          open_tracking_enabled: false,
           click_tracking_enabled: true,
           macros: {
             'macro1' => 'foo',
@@ -22,6 +21,17 @@ describe EmailMessage do
             'first' => 'bazeliefooga'
           }
          )
+  end
+  let(:empty_email) do
+    build(:email_message,
+          user:                   user,
+          body:                   nil,
+          subject:                nil,
+          from_email:             nil,
+          open_tracking_enabled:  nil,
+          click_tracking_enabled: nil,
+          macros:                 nil
+    )
   end
   let(:macroless_email) do
     build(:email_message,
@@ -57,41 +67,36 @@ describe EmailMessage do
     it "can be blank" do
       expect(subject.email_template).to be_blank
     end
-    it "sets association to blank if email_template is deleted" do
+  end
+
+  context 'an email message based on a template' do
+    it "nullifies association if email_template is deleted" do
       subject.email_template = email_template
       subject.save!
       email_template.destroy
       subject.reload
-      expect(subject.email_template).to be_blank
-    end
-    it "sets corresponding attributes on the message when email_template is set" do
-      subject.email_template = email_template
-
-      expect(subject.body).to eq(email_template.body)
-      expect(subject.subject).to eq(email_template.subject)
-      expect(subject.macros).to eq(email_template.macros)
-      expect(subject.click_tracking_enabled).to eq(email_template.click_tracking_enabled)
-      expect(subject.open_tracking_enabled).to eq(email_template.open_tracking_enabled)
+      expect(subject.email_template).to be_nil
     end
 
-    it "does not set already set attributes when email_template is set" do
-      posted_body = "post body"
-      posted_subject = "a [[body]], some [[body]]"
-      posted_macros = "'body' => 'arms and legs'"
-      posted_clicked_tracking_enabled = false
-      posted_open_tracking_enabled = false
-      subject.body = posted_body
-      subject.subject = posted_subject
-      subject.macros = posted_macros
-      subject.click_tracking_enabled = posted_clicked_tracking_enabled
-      subject.open_tracking_enabled = posted_open_tracking_enabled
+    it "prefers attributes on the message when set" do
+      email_template.click_tracking_enabled = !subject.click_tracking_enabled
+      email_template.open_tracking_enabled  = !subject.open_tracking_enabled
+      subject.email_template                = email_template
       subject.save!
-      new_message = assigns(:message)
-      expect(subject.body).to eq(posted_body)
-      expect(subject.subject).to eq(posted_subject)
-      expect(subject.macros).to eq(posted_macros)
-      expect(subject.click_tracking_enabled).to eq(posted_clicked_tracking_enabled)
-      expect(subject.open_tracking_enabled).to eq(posted_open_tracking_enabled)
+      %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
+        expect(subject.send(field)).to_not eq(email_template.send(field))
+      end
+    end
+
+    context 'with unspecified attributes' do
+      subject { empty_email }
+      it "uses attributes from template" do
+        subject.email_template = email_template
+        subject.save!
+        %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
+          expect(subject.send(field)).to eq(email_template.send(field))
+        end
+      end
     end
   end
 
@@ -117,6 +122,7 @@ describe EmailMessage do
       expect(email.click_tracking_enabled).to be true
     end
   end
+
   context 'with all attributes' do
     it {is_expected.to be_valid}
     it 'should set the account' do

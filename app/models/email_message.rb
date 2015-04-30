@@ -14,16 +14,17 @@ class EmailMessage < ActiveRecord::Base
                   :reply_to,
                   :subject
 
+  before_validation :set_from_email, on: :create
+  before_validation :apply_defaults, on: :create
+
   validates :body, presence: true, on: :create
   validates :subject, presence: true, length: {maximum: 400}, on: :create
   validates :from_email, presence: true
   validates :reply_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
   validates :errors_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
-
-  before_validation :set_from_email
   validate :from_email_allowed?
 
-  before_create :apply_template
+
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> {select('id, user_id, created_at, status, subject')}
@@ -49,16 +50,6 @@ class EmailMessage < ActiveRecord::Base
 
   def recipients_who_sent
     recipients.sent
-  end
-
-  def open_tracking_enabled=(val)
-    val = val.nil? ? true : val
-    super val
-  end
-
-  def click_tracking_enabled=(val)
-    val = val.nil? ? true : val
-    super val
   end
 
   def reply_to
@@ -87,11 +78,14 @@ class EmailMessage < ActiveRecord::Base
     self.from_email = account.from_email if from_email.nil? && account
   end
 
-  def apply_template
-    return unless self.email_template
-    [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
-      self[attr] ||= self.email_template[attr]
+  def apply_defaults
+    if self.email_template
+      [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil? }.each do |attr|
+        self[attr] = self.email_template[attr] # can't use ||= since it'll overwrite false values
+      end
     end
+    self.open_tracking_enabled =true if open_tracking_enabled.nil?
+    self.click_tracking_enabled=true if click_tracking_enabled.nil?
   end
 
   def recipients_with(type)
