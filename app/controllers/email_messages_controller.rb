@@ -18,7 +18,7 @@ class EmailMessagesController < MessagesController
                   format:  [:json, :url_encoded_form]
 
   def create
-    transform_links_payload!
+    transform_links_payload!(params[:message])
     if params[:message] && template_id = params[:message].delete(:email_template_id)
       params[:message][:email_template] = current_user.email_templates.find_by_id(template_id)
     end

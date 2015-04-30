@@ -148,11 +148,11 @@ class ApplicationController < ActionController::API
     ActionController::Base.default_url_options
   end
 
-  def transform_links_payload!
-    return unless params[:_links].is_a? Hash
-    links = params.delete(:_links)
+  def transform_links_payload!(attributes)
+    return unless attributes[:_links].is_a?(Hash)
+    links = attributes.delete(:_links)
     links.each do |key, value|
-      params["#{key}_id"] = value
+      attributes["#{key}_id"] = value
     end
   end
 end

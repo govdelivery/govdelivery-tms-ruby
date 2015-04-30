@@ -70,7 +70,7 @@ describe EmailMessagesController do
                                    :macros)
 
     it "should apply the template to the message" do
-      post :create, message: {recipients: recipients}, body: nil, _links: {email_template: email_template.id}
+      post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template.id}}
       expect(response.response_code).to eq(201)
       expect(assigns(:message).email_template).to eq(email_template)
       expect(assigns(:message).body).to eq(email_template.body)
