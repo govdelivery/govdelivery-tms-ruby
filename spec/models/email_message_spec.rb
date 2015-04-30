@@ -3,25 +3,40 @@ require 'rails_helper'
 describe EmailMessage do
   let(:vendor) {create(:email_vendor)}
   let(:account) {create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3')}    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
+  let(:from_address) {account.default_from_address}
   let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:email_template) {create(:email_template, account: account, user: user, from_address: from_address)}
+  let(:email_template_sans_link_params) {create(:email_template, account: account, user: user, from_address: from_address, link_tracking_parameters: nil)}
+  let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>'}
   let(:email) do
+    user.email_messages.build(
+      body: body_with_links,
+      subject: 'specs before tests',
+      from_email: account.from_email,
+      open_tracking_enabled: false,
+      click_tracking_enabled: true,
+      macros: {
+        'macro1' => 'foo',
+        'macro2' => 'bar',
+        'first' => 'bazeliefooga'
+      }
+    )
+  end
+  let(:empty_email) do
     build(:email_message,
-          user: user,
-          body: 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
-          subject: 'specs before tests',
-          from_email: account.from_email,
-          open_tracking_enabled: true,
-          click_tracking_enabled: true,
-          macros: {
-            'macro1' => 'foo',
-            'macro2' => 'bar',
-            'first' => 'bazeliefooga'
-          }
+          user:                   user,
+          body:                   nil,
+          subject:                nil,
+          from_email:             nil,
+          open_tracking_enabled:  nil,
+          click_tracking_enabled: nil,
+          macros:                 nil
          )
   end
   let(:macroless_email) do
     build(:email_message,
           user: user,
+          account: account,
           body: 'longggg body',
           subject: 'specs before tests',
           from_email: account.from_email,
@@ -30,7 +45,60 @@ describe EmailMessage do
           macros: {}
          )
   end
+  let(:templated_email) do
+    build(:email_message,
+          user: user,
+          account: account,
+          body: body_with_links,
+          email_template: email_template)
+  end
+  let(:templated_email_sans_link_params) do
+    build(:email_message,
+          user: user,
+          account: account,
+          body: 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
+          body: body_with_links,
+          email_template: email_template_sans_link_params)
+  end
   subject {email}
+
+  context "email_template association" do
+    it {is_expected.to belong_to :email_template}
+    it "can be blank" do
+      expect(subject.email_template).to be_blank
+    end
+  end
+
+  context 'an email message based on a template' do
+    it "nullifies association if email_template is deleted" do
+      subject.email_template = email_template
+      subject.save!
+      email_template.destroy
+      subject.reload
+      expect(subject.email_template).to be_nil
+    end
+
+    it "prefers attributes on the message when set" do
+      email_template.click_tracking_enabled = !subject.click_tracking_enabled
+      email_template.open_tracking_enabled  = !subject.open_tracking_enabled
+      subject.email_template                = email_template
+      subject.save!
+      %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
+        expect(subject.send(field)).to_not eq(email_template.send(field))
+      end
+    end
+
+    context 'with unspecified attributes' do
+      subject {empty_email}
+      it "uses attributes from template" do
+        subject.email_template = email_template
+        subject.save!
+        %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
+          expect(subject.send(field)).to eq(email_template.send(field))
+        end
+      end
+    end
+  end
 
   it_should_validate_as_email :reply_to, :errors_to
 
@@ -54,6 +122,7 @@ describe EmailMessage do
       expect(email.click_tracking_enabled).to be true
     end
   end
+
   context 'with all attributes' do
     it {is_expected.to be_valid}
     it 'should set the account' do
@@ -64,7 +133,11 @@ describe EmailMessage do
       expect(macroless_email.odm_record_designator).to eq('email::recipient_id::x_tms_recipient')
     end
     context 'and saved' do
-      before {email.save!}
+      before do
+        email.save!
+        templated_email.save!
+        templated_email_sans_link_params.save!
+      end
 
       it 'should be able to create recipients' do
         email.create_recipients([email: 'tyler@dudes.com'])
@@ -87,6 +160,8 @@ describe EmailMessage do
       context 'and ready!' do
         before do
           email.recipients.create!(email: 'bill@busheyworld.ie')
+          templated_email.recipients.create!(email: 'bill@busheyworld.ie')
+          templated_email_sans_link_params.recipients.create!(email: 'bill@busheyworld.ie')
         end
 
         it 'should insert tracking parameters into all links' do
@@ -95,6 +170,27 @@ describe EmailMessage do
           expect(email.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
           expect(email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
           expect(email.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
+        end
+
+        it 'should use template tracking parameters if a template is used' do
+          expect(templated_email.ready!).to be true
+          templated_email.reload
+          expect(templated_email.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
+          expect(templated_email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
+          templated_email.body.scan(/https?:\/\/[\S]+\?([\S]*?)">/) do |query_params|
+            query_params_array = query_params[0].split('&')
+            expect(query_params_array).to include 'tracking=param'
+            expect(query_params_array).to include 'one=two'
+          end
+        end
+
+        it 'should use account tracking parameters if a template without tracking parameters is used' do
+          expect(templated_email_sans_link_params.ready!).to be true
+          templated_email_sans_link_params.reload
+          expect(templated_email_sans_link_params.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
+          expect(templated_email_sans_link_params.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
+          expect(templated_email_sans_link_params.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
+          expect(templated_email_sans_link_params.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
       end
 

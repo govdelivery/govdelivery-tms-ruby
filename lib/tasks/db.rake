@@ -21,7 +21,7 @@ namespace :db do
   # Similarly, our app user doesn't have the permission to drop the schema.
   # Instead, purge it of everything to make it empty.
   desc "Drop everything in the defined schema, including tables, sequences, views, procedures, packages, functions, triggers, types, and synonyms"
-  redefine_task :drop => [:environment, :load_config] do
+  redefine_task drop: [:environment, :load_config] do
     # 'structure_drop: db_stored_code' in database.yml will supress 'drop table' statements (except for temp tables)
     raise 'db:drop is only for development and test environments!' unless Rails.env.development? || Rails.env.test?
     # Purge/Disable the recycling bin.

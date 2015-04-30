@@ -1,7 +1,9 @@
 class EmailTemplate < ActiveRecord::Base
+  include HasLinkTrackingParameters
   belongs_to :account
   belongs_to :user
   belongs_to :from_address
+  has_many :email_messages
   serialize :macros
 
   attr_accessible :from_address_id, :body, :subject, :link_tracking_parameters, :open_tracking_enabled, :click_tracking_enabled, :macros

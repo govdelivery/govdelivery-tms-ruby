@@ -3,9 +3,11 @@ class EmailMessage < ActiveRecord::Base
   include Personalized
   has_many :email_recipient_clicks
   has_many :email_recipient_opens
+  belongs_to :email_template
 
   attr_accessible :body,
                   :click_tracking_enabled,
+                  :email_template,
                   :errors_to,
                   :from_email,
                   :from_name,
@@ -13,13 +15,14 @@ class EmailMessage < ActiveRecord::Base
                   :reply_to,
                   :subject
 
+  before_validation :set_from_email, on: :create
+  before_validation :apply_defaults, on: :create
+
   validates :body, presence: true, on: :create
   validates :subject, presence: true, length: {maximum: 400}, on: :create
   validates :from_email, presence: true
   validates :reply_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
   validates :errors_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
-
-  before_validation :set_from_email
   validate :from_email_allowed?
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
@@ -48,16 +51,6 @@ class EmailMessage < ActiveRecord::Base
     recipients.sent
   end
 
-  def open_tracking_enabled=(val)
-    val = val.nil? ? true : val
-    super val
-  end
-
-  def click_tracking_enabled=(val)
-    val = val.nil? ? true : val
-    super val
-  end
-
   def reply_to
     self[:reply_to] || account.reply_to || from_email
   end
@@ -84,6 +77,16 @@ class EmailMessage < ActiveRecord::Base
     self.from_email = account.from_email if from_email.nil? && account
   end
 
+  def apply_defaults
+    if email_template
+      [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil?}.each do |attr|
+        self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values
+      end
+    end
+    self.open_tracking_enabled = true if open_tracking_enabled.nil?
+    self.click_tracking_enabled = true if click_tracking_enabled.nil?
+  end
+
   def recipients_with(type)
     recipients.where(["email_recipients.id in (select distinct(email_recipient_id) from email_recipient_#{type} where email_message_id = ?)", id])
   end
@@ -93,9 +96,7 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def insert_link_tracking_parameters
-    unless account.link_tracking_parameters_hash.blank?
-      t = GovDelivery::Links::Transformer.new(account.link_tracking_parameters_hash)
-      self.body = t.replace_all_hrefs(body)
-    end
+    return unless tracking_params = [email_template.try(:link_tracking_parameters_hash), account.link_tracking_parameters_hash].detect(&:present?)
+    self.body = GovDelivery::Links::Transformer.new(tracking_params).replace_all_hrefs(body)
   end
 end

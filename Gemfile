@@ -14,7 +14,7 @@ gem 'faraday'
 gem 'faraday_middleware'
 gem 'govdelivery-crypt', require: 'govdelivery/crypt'
 gem 'govdelivery-links'
-gem 'jakety_jak', '~>1.1.0'
+gem 'jakety_jak', '~>1.1.0', require: nil
 gem 'kaminari'
 gem 'log4r'
 gem 'newrelic_rpm'
@@ -76,7 +76,6 @@ group :development, :test do
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails'
-  gem 'ruby-debug'
   gem 'yaml_db'
 end
 

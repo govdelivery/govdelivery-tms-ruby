@@ -25,6 +25,21 @@ describe MessagePresenter do
       expect(pres._links[:clicked]).to eql(clicked_email_recipients_path(@message))
       expect(pres._links[:opened]).to eql(opened_email_recipients_path(@message))
     end
+
+    context 'with template' do
+      it 'should include an email_template link' do
+        @email_template = build_stubbed(:email_template)
+        @message = build_stubbed(:email_message, email_template: @email_template)
+        pres = MessagePresenter.new @message, view
+        expect(pres._links[:self]).to eql(email_path(@message))
+        expect(pres._links[:recipients]).to eql(email_recipients_path(@message))
+        expect(pres._links[:failed]).to eql(failed_email_recipients_path(@message))
+        expect(pres._links[:sent]).to eql(sent_email_recipients_path(@message))
+        expect(pres._links[:clicked]).to eql(clicked_email_recipients_path(@message))
+        expect(pres._links[:opened]).to eql(opened_email_recipients_path(@message))
+        expect(pres._links[:email_template]).to eq(templates_email_path(@email_template))
+      end
+    end
   end
 
   context 'voice' do

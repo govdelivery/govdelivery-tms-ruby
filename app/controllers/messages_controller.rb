@@ -22,6 +22,7 @@ class MessagesController < ApplicationController
   def create
     params[:message][:async_recipients] = params[:message].delete(:recipients) if params[:message]
     @message = @message_scope.build(params[:message])
+
     if @message.save_with_async_recipients
       CreateRecipientsWorker.perform_async(recipients: @message.async_recipients,
                                            klass:        @message.class.name,

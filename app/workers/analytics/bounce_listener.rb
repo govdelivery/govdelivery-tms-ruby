@@ -1,3 +1,4 @@
+require 'jakety_jak'
 module Analytics
   class BounceListener < JaketyJak::Subscriber::Managed
     def topic

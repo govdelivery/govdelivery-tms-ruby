@@ -1,3 +1,4 @@
+require 'jakety_jak'
 module Analytics
   class ClickListener < JaketyJak::Subscriber::Managed
     def topic

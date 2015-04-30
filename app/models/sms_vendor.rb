@@ -1,6 +1,6 @@
 class SmsVendor < ActiveRecord::Base
   def self.columns
-      super.reject {|c| c.name == "shared"}
+    super.reject { |c| c.name == "shared"}
   end
 
   include Vendor
