@@ -7,6 +7,7 @@ class EmailMessage < ActiveRecord::Base
 
   attr_accessible :body,
                   :click_tracking_enabled,
+                  :email_template,
                   :errors_to,
                   :from_email,
                   :from_name,
@@ -23,8 +24,6 @@ class EmailMessage < ActiveRecord::Base
   validates :reply_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
   validates :errors_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
   validate :from_email_allowed?
-
-
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> {select('id, user_id, created_at, status, subject')}
@@ -81,7 +80,7 @@ class EmailMessage < ActiveRecord::Base
   def apply_defaults
     if self.email_template
       [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil? }.each do |attr|
-        self[attr] = self.email_template[attr] # can't use ||= since it'll overwrite false values
+        self[attr] = self.email_template[attr] # can't use ||=, it'll overwrite false values
       end
     end
     self.open_tracking_enabled =true if open_tracking_enabled.nil?
@@ -97,16 +96,7 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def insert_link_tracking_parameters
-    ltph = if self.email_template && self.email_template.link_tracking_parameters_hash.present?
-      self.email_template.link_tracking_parameters_hash
-    elsif account.link_tracking_parameters_hash.present?
-      self.account.link_tracking_parameters_hash
-    end
-    
-    if ltph
-      t = GovDelivery::Links::Transformer.new(ltph)
-      self.body = t.replace_all_hrefs(body)
-    end
-
+    return unless tracking_params = [email_template.try(:link_tracking_parameters_hash), account.link_tracking_parameters_hash].detect(&:present?)
+    self.body = GovDelivery::Links::Transformer.new(tracking_params).replace_all_hrefs(body)
   end
 end

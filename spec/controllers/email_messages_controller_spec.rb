@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 describe EmailMessagesController do
-  let(:vendor) {create(:email_vendor, worker: Odm::TMS_EXTENDED_WORKER)}
-  let(:account) {create(:account, name: 'name', email_vendor: vendor)}
-  let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
-  let(:from_address) {account.default_from_address}
+  let(:vendor) { create(:email_vendor, worker: Odm::TMS_EXTENDED_WORKER) }
+  let(:account) { create(:account, name: 'name', email_vendor: vendor) }
+  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+  let(:from_address) { account.default_from_address }
   let(:email_template) { create(:email_template, account: account, user: user, from_address: from_address) }
-  let(:email_template_link) {{email_template: email_template.id}}
-  let(:message) {create(:email_message, user: user)}
-  let(:templated_message) {create(:email_message, user: user, email_template: email_template)}
+  let(:email_template_link) { {email_template: email_template.id} }
+  let(:message) { create(:email_message, user: user) }
+  let(:templated_message) { create(:email_message, user: user, email_template: email_template) }
   let(:messages) do
     3.times.collect do |i|
-      m = EmailMessage.new(
+      m            = EmailMessage.new(
         body:                   "#{'A' * 40} #{i} [[happy]]",
         subject:                'n/a',
         from_email:             'duane@everythingsucks.com',
@@ -26,10 +26,10 @@ describe EmailMessagesController do
       m
     end
   end
-  let(:templated_messages) {create_list(:email_message, 3, email_template: email_template)} 
-  let(:recipients) {[{email: "arbys@everythingsucks.com"}]}
+  let(:templated_messages) { create_list(:email_message, 3, email_template: email_template) }
+  let(:recipients) { [{email: "arbys@everythingsucks.com"}] }
 
-  let(:model) {EmailMessage}
+  let(:model) { EmailMessage }
 
   before do
     sign_in user
@@ -70,13 +70,11 @@ describe EmailMessagesController do
                                    :open_tracking_enabled,
                                    :macros)
 
-    it "should use values in the template by default" do
+    it "should apply the template to the message" do
       post :create, message: {recipients: recipients}, body: nil, _links: {email_template: email_template.id}
       expect(response.response_code).to eq(201)
+      expect(assigns(:message).email_template).to eq(email_template)
+      expect(assigns(:message).body).to eq(email_template.body)
     end
-
-    it "should override template values with POSTed values"
-    it "should properly resolve template macros"
-    it "should properly resolve macros that are POSTed"
   end
 end

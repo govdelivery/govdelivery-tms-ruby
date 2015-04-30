@@ -19,9 +19,8 @@ class EmailMessagesController < MessagesController
 
   def create
     transform_links_payload!
-    if params[:email_template_id] 
-      email_template = current_user.email_templates.find(params[:email_template_id])
-      @message_scope = email_template.email_messages
+    if params[:message] && template_id = params[:message].delete(:email_template_id)
+      params[:message][:email_template] = current_user.email_templates.find_by_id(template_id)
     end
     super
   end
