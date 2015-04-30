@@ -1,3 +1,4 @@
+require 'jakety_jak'
 module Analytics
   class OpenListener < JaketyJak::Subscriber::Managed
     def topic

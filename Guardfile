@@ -11,7 +11,7 @@ notification :tmux,
              line_separator: ' > ', # since we are single line we need a separator
              color_location: '-w -t guard window-status-bg' # to customize which tmux element will change color
 
-guard 'rspec' do
+guard 'rspec', cmd: "bundle exec rspec --fail-fast" do
   watch(/Guardfile/)
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb"}

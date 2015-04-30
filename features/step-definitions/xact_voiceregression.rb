@@ -138,7 +138,6 @@ Then(/^I should be able to verify details of the message$/) do
   sleep(10)
 
   voice = @message.get
-  # binding.pry
 
   if voice.response.body['_links'].include?('recipients')
     puts 'Recipients found'.green

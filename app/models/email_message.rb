@@ -88,10 +88,9 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def apply_template
-    if self.email_template
-      [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
-        self[attr] ||= self.email_template[attr]
-      end
+    return unless self.email_template
+    [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+      self[attr] ||= self.email_template[attr]
     end
   end
 
