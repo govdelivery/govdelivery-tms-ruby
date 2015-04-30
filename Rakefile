@@ -16,6 +16,5 @@ def redefine_task(*args, &block)
   task(*args, &block)
 end
 
-
 Xact::Application.load_tasks
 RuboCop::RakeTask.new

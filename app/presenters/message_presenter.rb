@@ -84,7 +84,7 @@ class MessagePresenter < SimpleDelegator
   end
 
   def insert_email_template_link
-      @message.email_template.blank? ? {} : {email_template: context.templates_email_path(@message.email_template)}
+    @message.email_template.blank? ? {} : {email_template: context.templates_email_path(@message.email_template)}
   end
 
   def recipients_link

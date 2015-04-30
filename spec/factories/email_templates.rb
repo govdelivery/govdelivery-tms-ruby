@@ -3,7 +3,7 @@ FactoryGirl.define do
     body '<html><body>[TEMPLATE]</body></html>'
     subject 'template subject'
     link_tracking_parameters 'tracking=param&one=two'
-    macros { {'[TEMPLATE]' => 'YES'} }
+    macros {{'[TEMPLATE]' => 'YES'}}
     click_tracking_enabled true
     open_tracking_enabled false
     user

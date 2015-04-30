@@ -5,22 +5,22 @@ describe EmailMessage do
   let(:account) {create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3')}    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
   let(:from_address) {account.default_from_address}
   let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
-  let(:email_template) {create(:email_template, account: account, user:user, from_address: from_address)}
-  let(:email_template_sans_link_params) {create(:email_template, account: account, user:user, from_address: from_address, link_tracking_parameters: nil)}
-  let(:body_with_links) { 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>' }
+  let(:email_template) {create(:email_template, account: account, user: user, from_address: from_address)}
+  let(:email_template_sans_link_params) {create(:email_template, account: account, user: user, from_address: from_address, link_tracking_parameters: nil)}
+  let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>'}
   let(:email) do
     user.email_messages.build(
-          body: body_with_links,
-          subject: 'specs before tests',
-          from_email: account.from_email,
-          open_tracking_enabled: false,
-          click_tracking_enabled: true,
-          macros: {
-            'macro1' => 'foo',
-            'macro2' => 'bar',
-            'first' => 'bazeliefooga'
-          }
-         )
+      body: body_with_links,
+      subject: 'specs before tests',
+      from_email: account.from_email,
+      open_tracking_enabled: false,
+      click_tracking_enabled: true,
+      macros: {
+        'macro1' => 'foo',
+        'macro2' => 'bar',
+        'first' => 'bazeliefooga'
+      }
+    )
   end
   let(:empty_email) do
     build(:email_message,
@@ -31,7 +31,7 @@ describe EmailMessage do
           open_tracking_enabled:  nil,
           click_tracking_enabled: nil,
           macros:                 nil
-    )
+         )
   end
   let(:macroless_email) do
     build(:email_message,
@@ -89,7 +89,7 @@ describe EmailMessage do
     end
 
     context 'with unspecified attributes' do
-      subject { empty_email }
+      subject {empty_email}
       it "uses attributes from template" do
         subject.email_template = email_template
         subject.save!
@@ -133,7 +133,7 @@ describe EmailMessage do
       expect(macroless_email.odm_record_designator).to eq('email::recipient_id::x_tms_recipient')
     end
     context 'and saved' do
-      before do 
+      before do
         email.save!
         templated_email.save!
         templated_email_sans_link_params.save!

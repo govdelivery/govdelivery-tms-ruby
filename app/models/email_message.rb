@@ -78,13 +78,13 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def apply_defaults
-    if self.email_template
-      [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil? }.each do |attr|
-        self[attr] = self.email_template[attr] # can't use ||=, it'll overwrite false values
+    if email_template
+      [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil?}.each do |attr|
+        self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values
       end
     end
-    self.open_tracking_enabled =true if open_tracking_enabled.nil?
-    self.click_tracking_enabled=true if click_tracking_enabled.nil?
+    self.open_tracking_enabled = true if open_tracking_enabled.nil?
+    self.click_tracking_enabled = true if click_tracking_enabled.nil?
   end
 
   def recipients_with(type)

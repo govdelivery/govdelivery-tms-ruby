@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe 'messages/show.rabl' do
-  let(:sms_vendor) { create(:sms_vendor)}
-  let(:account) { create(:account, sms_vendor: sms_vendor)}
-  let(:sms_message) { create(:sms_message, account: account)}
-  let(:voice_message) { create(:voice_message, account: account)}
-  let(:email_message) { create(:email_message, account: account)}
+  let(:sms_vendor) {create(:sms_vendor)}
+  let(:account) {create(:account, sms_vendor: sms_vendor)}
+  let(:sms_message) {create(:sms_message, account: account)}
+  let(:voice_message) {create(:voice_message, account: account)}
+  let(:email_message) {create(:email_message, account: account)}
 
   it 'should work with an SMS' do
     Rabl::Engine.any_instance.stubs(:controller_name).returns('sms_messages')
