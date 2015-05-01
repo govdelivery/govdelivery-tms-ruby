@@ -2,6 +2,8 @@ class EmailTemplatesController < ApplicationController
   before_action :find_user
   before_action :set_page, only: :index
 
+  wrap_parameters EmailTemplate, format: [:json, :url_encoded_form]
+
   def index
     respond_with(@email_templates = account_templates.page(@page))
   end
@@ -11,20 +13,13 @@ class EmailTemplatesController < ApplicationController
   end
 
   def create
-    params.except!(:from_address_id)
-    transform_links_payload!
-    template_params = params.reverse_merge(from_address_id: @account.default_from_address.id)
-    @email_template = account_templates.create(template_params) do |template|
-      template.user = current_user
-    end
+    @email_template = account_templates.create(template_params)
     respond_with @email_template
   end
 
   def update
-    params.except!(:from_address_id)
-    transform_links_payload!
     @email_template = find_email_template
-    @email_template.update_attributes(params)
+    @email_template.update_attributes(template_params)
     respond_with(@email_template)
   end
 
@@ -35,8 +30,14 @@ class EmailTemplatesController < ApplicationController
 
   private
 
+  def template_params
+    params[:email_template].except!(:from_address_id)
+    transform_links_payload!(params[:email_template])
+    params[:email_template].reverse_merge(from_address_id: @account.default_from_address.id)
+  end
+
   def account_templates
-    @account.email_templates
+    current_user.email_templates
   end
 
   def find_email_template

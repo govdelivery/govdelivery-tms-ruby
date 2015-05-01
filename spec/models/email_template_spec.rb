@@ -18,6 +18,10 @@ describe EmailTemplate do
 
   subject {create(:email_template, account: account, user: user, from_address: from_address)}
 
+  it 'should use default from address if not specified' do
+    create(:email_template, account: account, user: user, from_address: nil).from_address.should eq account.default_from_address
+  end
+
   it 'should validate macros' do
     expect(subject).to be_valid
     subject.macros = 'Not a Hash'
@@ -27,7 +31,7 @@ describe EmailTemplate do
 
   it 'should validate that user belongs to account' do
     expect(subject).to be_valid
-    other_user = other_account.users.create(email: 'test2@evotest.govdelivery.com', password: 'test_password')
+    other_user   = other_account.users.create(email: 'test2@evotest.govdelivery.com', password: 'test_password')
     subject.user = other_user
     expect(subject).not_to be_valid
     expect(subject.errors.messages).to include(user: ['must belong to same account as email template'])
