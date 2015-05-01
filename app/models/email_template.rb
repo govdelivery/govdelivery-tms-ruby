@@ -17,6 +17,7 @@ class EmailTemplate < ActiveRecord::Base
   validates :account, presence: true
   validate :user_and_address_belong_to_account
   validate :valid_macros
+  validates :open_tracking_enabled, :open_tracking_enabled, inclusion: {in: [true, false]}
 
   protected
 
