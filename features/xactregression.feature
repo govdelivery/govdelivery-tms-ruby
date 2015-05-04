@@ -44,14 +44,14 @@ Feature: XACT Full Regression
     	Given I am a TMS user and not an admin
     	Then I should not be able to see the accounts endpoint
 
-    @XACT-545
-    Scenario: TMS admin verify that templates can be read, updated, listed, and deleted
-    	Given I am a TMS user and not an admin
-    	Then I should be able to create, update, list, and delete templates
+  @XACT-545
+  Scenario: TMS admin verify that templates can be read, updated, listed, and deleted
+    Given I am using a non-admin TMS client
+  	Then I should be able to create, update, list, and delete templates
 
 	@XACT-545
 	Scenario: TMS admin verify that from addresses can be listed and read
-	  Given I am a TMS user and not an admin
+    Given I am using a non-admin TMS client
 	  Then I should be able to list and read from addresses
 
 #email    	
@@ -113,6 +113,14 @@ Feature: XACT Full Regression
 	Scenario: TMS posting a new EMAIL message with an invalid FROM_EMAIL produces a 422 response, not authorized to send on this account response.
 		Given I post a new EMAIL message with an invalid FROM_EMAIL produces an error
 
+## email with template
+
+
+  @XACT-565
+  Scenario: TMS posting a new EMAIL message with a template and nothing else
+    Given I am using a non-admin TMS client
+    And an email template exists
+    Then I should be able to send an EMAIL message specifying just that template and a recipient
 
 #sms
 

@@ -13,7 +13,8 @@ class EmailMessagesController < MessagesController
                     :open_tracking_enabled,
                     :recipients,
                     :reply_to,
-                    :subject
+                    :subject,
+                    :_links
                   ],
                   format:  [:json, :url_encoded_form]
 

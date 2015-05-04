@@ -17,30 +17,30 @@ Mail.defaults do
                    address:    'imap.gmail.com',
                    port:       993,
                    user_name:  EmailAdmin.new.mail_accounts,
-                   password:  c EmailAdmin.new.password,
+                   password:  EmailAdmin.new.password,
                    enable_ssl: true
 end
-                                                               asdasd
+
 Given(/^I am a TMS admin$/) do
   EmailAdmin.new.admin
 end
 
 Then(/^I should be able to create, update, list, and delete templates$/) do
-  STDOUT.puts client.errors unless client.email_templates.get
-  template = client.email_templates.build(body:    EmailDefaults::MESSAGE,
-                                          link_tracking_parameters: {from: 'me'},
-                                          subject: "XACT-545-1 Email Test for link parameters #{Time.new}")
-  template.links[:from_address] =  client.from_addresses.get.collection.first.id
-  STDOUT.puts template.errors unless template.post
-  STDOUT.puts template.errors unless template.get
+  raise @client.errors.to_s unless @client.email_templates.get
+  template = @client.email_templates.build(body:    EmailDefaults::MESSAGE,
+                                           link_tracking_parameters: "from=me&one=two",
+                                           subject: "XACT-545-1 Email Test for link parameters #{Time.new}")
+  template.links[:from_address] =  @client.from_addresses.get.collection.first.id
+  raise template.errors.to_s unless template.post
+  raise template.errors.to_s unless template.get
   template.body="changed"
-  STDOUT.puts template.errors unless @template.put
-  STDOUT.puts template.errors unless template.delete
+  raise template.errors.to_s unless template.put
+  raise template.errors.to_s unless template.delete
 end
 
 Then(/^I should be able to list and read from addresses/) do
-  STDOUT.puts client.errors unless client.from_addresses.get.collection
-  STDOUT.puts client.errors unless client.from_addresses.get.collection.first.id
+  raise @client.errors.to_s unless @client.from_addresses.get.collection
+  raise @client.errors.to_s unless @client.from_addresses.get.collection.first.id
 end
 
 
@@ -91,6 +91,11 @@ Given(/^I am a TMS user and not an admin$/) do
   @request = HTTPI::Request.new
   @request.url = EmailAdmin.new.url
   @request.headers = {'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => "#{EmailAdmin.new.non_admin}"}
+end
+
+Given(/^I am using a non-admin TMS client$/) do
+  conf = configatron.accounts.email_endtoend
+  @client = tms_client(conf) 
 end
 
 Then(/^I should not be able to see the accounts endpoint$/) do
@@ -290,4 +295,18 @@ Given(/^I post a new EMAIL message with an invalid FROM_EMAIL produces an error$
   else
     raise 'error not found'.red
   end
+end
+
+Given(/^an email template exists$/) do
+  @template = @client.email_templates.build(body: EmailDefaults::MESSAGE,
+                                            link_tracking_parameters: "from=me&one=two",
+                                            subject: "XACT-565 Template")
+  raise @template.errors.to_s unless @template.post
+end
+
+Then(/^I should be able to send an EMAIL message specifying just that template and a recipient$/) do
+  message = @client.email_messages.build
+  message.links[:email_template] = @template.id
+  message.recipients.build(email: 'happy@golucky.com')
+  raise message.error.to_s unless message.post
 end
