@@ -108,6 +108,8 @@ GEM
       multi_json (~> 1.3)
     govdelivery-crypt (0.2.1)
       activesupport
+    govdelivery-dbtasks (0.1.0)
+      activerecord-oracle_enhanced-adapter (>= 1.4.1)
     govdelivery-links (0.1.2)
       activesupport
       addressable (~> 2.3.0)
@@ -428,6 +430,7 @@ DEPENDENCIES
   faraday
   faraday_middleware
   govdelivery-crypt
+  govdelivery-dbtasks
   govdelivery-links
   govdelivery-tms (~> 0.8.2)
   govdelivery-tms-internal (~> 0.0.2)
