@@ -146,14 +146,14 @@ describe EmailMessage do
 
       it 'should select proper columns for list' do
         result = user.email_messages.indexed.first
-        cols     = [:user_id, :created_at, :status, :subject, :id]
+        cols     = [:user_id, :created_at, :status, :subject, :id, :email_template_id]
         not_cols = (EmailMessage.columns.map(&:name).map(&:to_sym) - cols)
 
         cols.each do |c|
-          assert result.send(c)
+          expect(result.respond_to?(c)).to eq true
         end
         not_cols.each do |c|
-          expect {result.send(c)}.to raise_error
+          expect(result.respond_to?(c)).to eq false
         end
       end
 

@@ -27,7 +27,7 @@ class EmailMessage < ActiveRecord::Base
   validate :from_email_allowed?
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
-  scope :indexed, -> {select('id, user_id, created_at, status, subject')}
+  scope :indexed, -> {select('id, user_id, created_at, status, subject, email_template_id')}
 
   def on_sending(ack=nil)
     self.ack ||= ack
