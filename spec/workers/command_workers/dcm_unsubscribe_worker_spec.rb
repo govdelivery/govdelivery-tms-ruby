@@ -42,7 +42,7 @@ describe CommandWorkers::DcmUnsubscribeWorker do
 
   describe 'perform with one account' do
     before do
-      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
+      client.expects(:delete_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
       DCMClient::Subscriber.expects(:new).with(config).returns(client)
     end
     specify {subject.perform(options)}
@@ -50,10 +50,10 @@ describe CommandWorkers::DcmUnsubscribeWorker do
 
   describe 'perform with two accounts and one 404' do
     before do
-      client.expects(:delete_wireless_subscriber)
+      client.expects(:delete_subscriber)
         .with('1+2222222222', 'VANDELAY', true, 'SMS_STOP')
         .raises(DCMClient::Error::NotFound.new('foo', response_not_found))
-      client.expects(:delete_wireless_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
+      client.expects(:delete_subscriber).with('1+2222222222', 'ACME', true, 'SMS_STOP').returns(http_response)
 
       DCMClient::Subscriber.expects(:new).with(config).returns(client)
       account = command.account

@@ -22,7 +22,7 @@ module CommandWorkers
         # take the HTTP response with the highest response code
         command.params.dcm_account_codes.collect do |dcm_account_code|
           begin
-            self.http_response = client.delete_wireless_subscriber(number, dcm_account_code, true, 'SMS_STOP')
+            self.http_response = client.delete_subscriber(number, dcm_account_code, true, 'SMS_STOP')
           # we don't care if the DCM subscriber doesn't exist
           rescue DCMClient::Error::NotFound => e
             self.http_response = e.response
