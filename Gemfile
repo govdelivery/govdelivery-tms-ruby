@@ -13,6 +13,7 @@ gem 'enumify'
 gem 'faraday'
 gem 'faraday_middleware'
 gem 'govdelivery-crypt', require: 'govdelivery/crypt'
+gem 'govdelivery-dbtasks'
 gem 'govdelivery-links'
 gem 'jakety_jak', '~>1.1.0', require: nil
 gem 'kaminari'
