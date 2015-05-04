@@ -39,28 +39,20 @@ Feature: XACT Full Regression
     	And I send an email from an account that has link tracking params configured
     	Then those params should resolve within the body of the email I send
 
-	#@XACT-533-3
-    #Scenario: TMS admin creation of link tracking params
-    #	Given I am a TMS admin
-    #	Then I should be able to enter link tracking params at the account level
-
-	#@XACT-533-4 @XACT-545-2
-    #Scenario: TMS admin verify that templates are registered on messages-email endpoint
-    #	Given I am a TMS admin
-    #	Then I should be able to create and list templates for email messages
-    #	And I should be able to verify that all required fields are listed
-
 	@XACT-533-5 @QC-2239
     Scenario: TMS admin verify that link tracking params are only available internally
     	Given I am a TMS user and not an admin
     	Then I should not be able to see the accounts endpoint
 
-    #@XACT-545-1
-    #Scenario: TMS admin verify that templates can be read, updated, listed, and deleted
-    #	Given I am a TMS admin
-    #	Then I should be able to create, update, list, and delete templates
+    @XACT-545
+    Scenario: TMS admin verify that templates can be read, updated, listed, and deleted
+    	Given I am a TMS user and not an admin
+    	Then I should be able to create, update, list, and delete templates
 
-
+	@XACT-545
+	Scenario: TMS admin verify that from addresses can be listed and read
+	  Given I am a TMS user and not an admin
+	  Then I should be able to list and read from addresses
 
 #email    	
 
