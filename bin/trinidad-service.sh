@@ -24,17 +24,16 @@ JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPe
 
 # Source Application settings
 test -f /etc/sysconfig/trinidad.sh && source /etc/sysconfig/trinidad.sh
-test -f /etc/sysconfig/xact.sh && source /etc/sysconfig/xact.sh
 
 pid_dir=$(dirname $pid_file)
 restart_file="${pid_dir}/restart-trinidad.txt"
 
-if [[ -z "$APP_ENVIRONMENT" ]]; then
+if [[ -z "$environment" ]]; then
     echo "no environment set!"
     exit 5
 fi
 
-export RAILS_ENV=$APP_ENVIRONMENT
+export RAILS_ENV=$environment
 
 log_file="${app_path}/log/${app}.log"
 
