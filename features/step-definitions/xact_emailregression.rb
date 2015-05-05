@@ -320,3 +320,23 @@ Then(/^I should be able to send an EMAIL message specifying just that template a
     end
   end
 end
+
+Then(/^I should be able to send an EMAIL message, specify everything, and the message should use the values I specify$/) do
+  special = {
+    body: "I'm special [[closing]]",
+    subject: "I'm a special subject",
+    macros: {"closing" => "yo"},
+    open_tracking_enabled: true,
+    click_tracking_enabled: true
+  }
+  message = @client.email_messages.build(special)
+  message.links[:email_template] = @template.id
+  message.recipients.build(email: 'happy@golucky.com')
+  raise message.error.to_s unless message.post
+  raise message.errors.to_s unless message.get
+  [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+    if message.send(attr) != special[attr]
+      raise "Custom value for #{attr} not used in message: expected #{special[attr]}, found #{message.send(attr)}"
+    end
+  end
+end

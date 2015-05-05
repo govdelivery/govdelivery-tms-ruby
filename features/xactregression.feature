@@ -122,6 +122,13 @@ Feature: XACT Full Regression
     And an email template exists
     Then I should be able to send an EMAIL message specifying just that template and a recipient
 
+  @XACT-565
+  Scenario: TMS posting a new EMAIL message with a template and everything else
+    Given I am using a non-admin TMS client
+    And an email template exists
+    Then I should be able to send an EMAIL message, specify everything, and the message should use the values I specify
+
+
 #sms
 
         
