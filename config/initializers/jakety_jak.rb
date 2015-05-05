@@ -1,0 +1,1 @@
+java.lang.System.getProperties().setProperty("jakety-jak.zk-connect", Conf.analytics_zookeepers.join(','))
