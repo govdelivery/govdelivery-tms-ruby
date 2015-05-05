@@ -91,6 +91,8 @@ describe EmailMessage do
     context 'with unspecified attributes' do
       subject {empty_email}
       it "uses attributes from template" do
+        email_template.click_tracking_enabled = false
+        email_template.open_tracking_enabled = false
         subject.email_template = email_template
         subject.save!
         %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|

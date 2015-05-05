@@ -298,9 +298,13 @@ Given(/^I post a new EMAIL message with an invalid FROM_EMAIL produces an error$
 end
 
 Given(/^an email template exists$/) do
-  @template = @client.email_templates.build(body: EmailDefaults::MESSAGE,
-                                            link_tracking_parameters: "from=me&one=two",
-                                            subject: "XACT-565 Template")
+  @template = @client.email_templates.build(body: "Hi there [[name]]",
+                                            subject: "XACT-565 Template",
+                                            macros: {"name" => "person"},
+                                            open_tracking_enabled: false,
+                                            click_tracking_enabled: false,
+                                            link_tracking_parameters: "from=me&one=two")
+
   raise @template.errors.to_s unless @template.post
 end
 
@@ -309,4 +313,10 @@ Then(/^I should be able to send an EMAIL message specifying just that template a
   message.links[:email_template] = @template.id
   message.recipients.build(email: 'happy@golucky.com')
   raise message.error.to_s unless message.post
+  raise message.errors.to_s unless message.get
+  [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+    if message.send(attr) != @template.send(attr)
+      raise "Template value for #{attr} not used in message: expected #{@template.send(attr)}, found #{message.send(attr)}"
+    end
+  end
 end
