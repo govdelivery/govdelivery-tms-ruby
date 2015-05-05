@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150427202538) do
+ActiveRecord::Schema.define(version: 20150505152550) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                           null: false
@@ -77,8 +77,8 @@ ActiveRecord::Schema.define(version: 20150427202538) do
     t.datetime "updated_at"
     t.string   "ack"
     t.datetime "sent_at"
-    t.boolean  "open_tracking_enabled",              precision: 1,  scale: 0, default: true
-    t.boolean  "click_tracking_enabled",             precision: 1,  scale: 0, default: true
+    t.boolean  "open_tracking_enabled",              precision: 1,  scale: 0
+    t.boolean  "click_tracking_enabled",             precision: 1,  scale: 0
     t.text     "macros"
     t.string   "from_email"
     t.string   "reply_to"

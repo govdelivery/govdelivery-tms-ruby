@@ -79,6 +79,8 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def apply_defaults
+    # Using nil as intended - to indicate a variable that has not yet been set
+    # Doing use ||= here, cause false is a value we do not want to override
     if email_template
       [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil?}.each do |attr|
         self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values
