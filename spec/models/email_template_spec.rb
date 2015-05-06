@@ -43,4 +43,30 @@ describe EmailTemplate do
     expect(subject).not_to be_valid
     expect(subject.errors.messages).to include(from_address: ['must belong to same account as email template'])
   end
+
+  context 'building a template with nil *_tracking_enabled' do
+    subject {build(:email_template, account: account, user: user, from_address: from_address, open_tracking_enabled: nil, click_tracking_enabled: nil)}
+
+    it 'default for open_tracking_enabled and click_tracking_enabled should be true on save' do
+      subject.save!
+      expect(subject).to be_valid
+      expect(subject.open_tracking_enabled).to eq true
+      expect(subject.click_tracking_enabled).to eq true
+    end
+  
+    it 'open_tracking_enabled and click_tracking_enabled can and must be true or false on save' do
+      subject.open_tracking_enabled = true
+      subject.click_tracking_enabled = true
+      expect{subject.save!}.not_to raise_error
+      subject.open_tracking_enabled = false
+      subject.click_tracking_enabled = false
+      expect{subject.save!}.not_to raise_error
+
+      subject.open_tracking_enabled = nil
+      expect{subject.save!}.to raise_error
+      subject.open_tracking_enabled = true
+      subject.click_tracking_enabled = nil
+      expect{subject.save!}.to raise_error
+    end
+  end
 end

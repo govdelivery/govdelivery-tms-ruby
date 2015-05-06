@@ -17,7 +17,7 @@ class EmailTemplate < ActiveRecord::Base
   validates :account, presence: true
   validate :user_and_address_belong_to_account
   validate :valid_macros
-  validates :open_tracking_enabled, :open_tracking_enabled, inclusion: {in: [true, false]}
+  validates :open_tracking_enabled, :click_tracking_enabled, inclusion: {in: [true, false]}
 
   protected
 
@@ -33,6 +33,8 @@ class EmailTemplate < ActiveRecord::Base
   def set_defaults
     self.account      ||= user.account if user
     self.from_address ||= account.default_from_address if user
+    self.open_tracking_enabled = true if open_tracking_enabled.nil?
+    self.click_tracking_enabled = true if click_tracking_enabled.nil?
   end
 
 end
