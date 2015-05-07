@@ -8,8 +8,8 @@ class CreateEmailTemplates < ActiveRecord::Migration
       t.references :user
       t.references :account
       t.references :from_address
-      t.boolean :open_tracking_enabled, default: false, null: false
-      t.boolean :click_tracking_enabled, default: false, null: false
+      t.boolean :open_tracking_enabled, default: true, null: false
+      t.boolean :click_tracking_enabled, default: true, null: false
       t.timestamps
     end
   end

@@ -18,6 +18,10 @@ describe EmailTemplate do
 
   subject {create(:email_template, account: account, user: user, from_address: from_address)}
 
+  it 'should use default from address if not specified' do
+    create(:email_template, account: account, user: user, from_address: nil).from_address.should eq account.default_from_address
+  end
+
   it 'should validate macros' do
     expect(subject).to be_valid
     subject.macros = 'Not a Hash'
@@ -27,7 +31,7 @@ describe EmailTemplate do
 
   it 'should validate that user belongs to account' do
     expect(subject).to be_valid
-    other_user = other_account.users.create(email: 'test2@evotest.govdelivery.com', password: 'test_password')
+    other_user   = other_account.users.create(email: 'test2@evotest.govdelivery.com', password: 'test_password')
     subject.user = other_user
     expect(subject).not_to be_valid
     expect(subject.errors.messages).to include(user: ['must belong to same account as email template'])
@@ -38,5 +42,31 @@ describe EmailTemplate do
     subject.from_address = other_account.default_from_address
     expect(subject).not_to be_valid
     expect(subject.errors.messages).to include(from_address: ['must belong to same account as email template'])
+  end
+
+  context 'building a template with nil *_tracking_enabled' do
+    subject {build(:email_template, account: account, user: user, from_address: from_address, open_tracking_enabled: nil, click_tracking_enabled: nil)}
+
+    it 'default for open_tracking_enabled and click_tracking_enabled should be true on save' do
+      subject.save!
+      expect(subject).to be_valid
+      expect(subject.open_tracking_enabled).to eq true
+      expect(subject.click_tracking_enabled).to eq true
+    end
+  
+    it 'open_tracking_enabled and click_tracking_enabled can and must be true or false on save' do
+      subject.open_tracking_enabled = true
+      subject.click_tracking_enabled = true
+      expect{subject.save!}.not_to raise_error
+      subject.open_tracking_enabled = false
+      subject.click_tracking_enabled = false
+      expect{subject.save!}.not_to raise_error
+
+      subject.open_tracking_enabled = nil
+      expect{subject.save!}.to raise_error
+      subject.open_tracking_enabled = true
+      subject.click_tracking_enabled = nil
+      expect{subject.save!}.to raise_error
+    end
   end
 end

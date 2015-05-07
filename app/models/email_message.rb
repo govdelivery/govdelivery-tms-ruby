@@ -23,10 +23,11 @@ class EmailMessage < ActiveRecord::Base
   validates :from_email, presence: true
   validates :reply_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
   validates :errors_to, length: {maximum: 255}, format: Devise.email_regexp, allow_blank: true
+  validates :open_tracking_enabled, :click_tracking_enabled, inclusion: {in: [true, false]}
   validate :from_email_allowed?
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
-  scope :indexed, -> {select('id, user_id, created_at, status, subject')}
+  scope :indexed, -> {select('id, user_id, created_at, status, subject, email_template_id')}
 
   def on_sending(ack=nil)
     self.ack ||= ack
@@ -78,6 +79,8 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def apply_defaults
+    # Using nil as intended - to indicate a variable that has not yet been set
+    # Doing use ||= here, cause false is a value we do not want to override
     if email_template
       [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil?}.each do |attr|
         self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values

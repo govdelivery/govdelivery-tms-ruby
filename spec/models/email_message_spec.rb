@@ -1,5 +1,44 @@
 require 'rails_helper'
 
+RSpec.shared_examples 'an email message that can be templated' do
+  it "nullifies association if email_template is deleted" do
+    subject.email_template = email_template
+    subject.save!
+    email_template.destroy
+    subject.reload
+    expect(subject.email_template).to be_nil
+  end
+
+  it "prefers attributes on the message when set" do
+    subject.body = 'a new body with [[things]]'
+    subject.subject = 'a unique subject'
+    subject.macros = {"things" => 'stuff'}
+    subject.open_tracking_enabled = false
+    subject.click_tracking_enabled = false
+    email_template.click_tracking_enabled = !subject.click_tracking_enabled
+    email_template.open_tracking_enabled  = !subject.open_tracking_enabled
+    subject.email_template                = email_template
+    subject.save!
+    %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
+      expect(subject.send(field)).to_not eq(email_template.send(field))
+    end
+  end
+
+  context 'with unspecified attributes' do
+    subject {empty_email}
+    it "uses attributes from template" do
+      email_template.click_tracking_enabled = false
+      email_template.open_tracking_enabled = false
+      subject.email_template = email_template
+      subject.save!
+      %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
+        expect(subject.send(field)).to eq(email_template.send(field))
+      end
+    end
+  end
+end
+
+
 describe EmailMessage do
   let(:vendor) {create(:email_vendor)}
   let(:account) {create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3')}    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
@@ -62,45 +101,27 @@ describe EmailMessage do
   end
   subject {email}
 
+  it_should_validate_as_email :reply_to, :errors_to
+  it_behaves_like 'an email message that can be templated'
+
+  context "built via a user" do
+    subject {user.email_messages.build}
+
+    it "should have nil default values on build" do
+      [:subject, :body, :from_name, :from_email, :ack, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+        expect(subject.send(attr)).to be_nil
+      end
+    end
+
+    it_behaves_like 'an email message that can be templated'
+  end
+
   context "email_template association" do
     it {is_expected.to belong_to :email_template}
     it "can be blank" do
       expect(subject.email_template).to be_blank
     end
   end
-
-  context 'an email message based on a template' do
-    it "nullifies association if email_template is deleted" do
-      subject.email_template = email_template
-      subject.save!
-      email_template.destroy
-      subject.reload
-      expect(subject.email_template).to be_nil
-    end
-
-    it "prefers attributes on the message when set" do
-      email_template.click_tracking_enabled = !subject.click_tracking_enabled
-      email_template.open_tracking_enabled  = !subject.open_tracking_enabled
-      subject.email_template                = email_template
-      subject.save!
-      %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
-        expect(subject.send(field)).to_not eq(email_template.send(field))
-      end
-    end
-
-    context 'with unspecified attributes' do
-      subject {empty_email}
-      it "uses attributes from template" do
-        subject.email_template = email_template
-        subject.save!
-        %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
-          expect(subject.send(field)).to eq(email_template.send(field))
-        end
-      end
-    end
-  end
-
-  it_should_validate_as_email :reply_to, :errors_to
 
   context 'with a from_email that is not allowed' do
     before do
@@ -146,14 +167,14 @@ describe EmailMessage do
 
       it 'should select proper columns for list' do
         result = user.email_messages.indexed.first
-        cols     = [:user_id, :created_at, :status, :subject, :id]
+        cols     = [:user_id, :created_at, :status, :subject, :id, :email_template_id]
         not_cols = (EmailMessage.columns.map(&:name).map(&:to_sym) - cols)
 
         cols.each do |c|
-          assert result.send(c)
+          expect(result.respond_to?(c)).to eq true
         end
         not_cols.each do |c|
-          expect {result.send(c)}.to raise_error
+          expect(result.respond_to?(c)).to eq false
         end
       end
 

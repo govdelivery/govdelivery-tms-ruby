@@ -4,20 +4,20 @@
 require 'colored'
 require 'json'
 require 'awesome_print'
-require 'twilio-ruby'
 require 'httpi'
-require 'pry'
-require 'faraday'
 require 'base64'
 require 'multi_xml'
-require 'pry'
+
+module EmailDefaults
+  MESSAGE = '<p><a href="http://www.cnn.com">You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.</a>'
+end
 
 Mail.defaults do
   retriever_method :imap,
                    address:    'imap.gmail.com',
                    port:       993,
                    user_name:  EmailAdmin.new.mail_accounts,
-                   password:   EmailAdmin.new.password,
+                   password:  EmailAdmin.new.password,
                    enable_ssl: true
 end
 
@@ -25,11 +25,29 @@ Given(/^I am a TMS admin$/) do
   EmailAdmin.new.admin
 end
 
+Then(/^I should be able to create, update, list, and delete templates$/) do
+  raise @client.errors.to_s unless @client.email_templates.get
+  template = @client.email_templates.build(body:    EmailDefaults::MESSAGE,
+                                           link_tracking_parameters: "from=me&one=two",
+                                           subject: "XACT-545-1 Email Test for link parameters #{Time.new}")
+  template.links[:from_address] =  @client.from_addresses.get.collection.first.id
+  raise template.errors.to_s unless template.post
+  raise template.errors.to_s unless template.get
+  template.body="changed"
+  raise template.errors.to_s unless template.put
+  raise template.errors.to_s unless template.delete
+end
+
+Then(/^I should be able to list and read from addresses/) do
+  raise @client.errors.to_s unless @client.from_addresses.get.collection
+  raise @client.errors.to_s unless @client.from_addresses.get.collection.first.id
+end
+
+
 And(/^I send an email from an account that has link tracking params configured$/) do
-  EmailAdmin.new.admin
-  @message = client.email_messages.build(body: '<p><a href="http://www.cnn.com">You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.</a>',
-                                         subject: "XACT-533-2 Email Test for link parameters #{Time.new}",
-                                         from_email: "#{EmailAdmin.new.from_email}")
+  @message = client.email_messages.build(body:                     EmailDefaults::MESSAGE,
+                                         subject:                  "XACT-533-2 Email Test for link parameters #{Time.new}",
+                                         from_email:               "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: EmailAdmin.new.mail_accounts)
   STDOUT.puts @message.errors unless @message.post
 end
@@ -73,6 +91,11 @@ Given(/^I am a TMS user and not an admin$/) do
   @request = HTTPI::Request.new
   @request.url = EmailAdmin.new.url
   @request.headers = {'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => "#{EmailAdmin.new.non_admin}"}
+end
+
+Given(/^I am using a non-admin TMS client$/) do
+  conf = configatron.accounts.email_endtoend
+  @client = tms_client(conf) 
 end
 
 Then(/^I should not be able to see the accounts endpoint$/) do
@@ -271,5 +294,49 @@ Given(/^I post a new EMAIL message with an invalid FROM_EMAIL produces an error$
     puts 'error found'.green
   else
     raise 'error not found'.red
+  end
+end
+
+Given(/^an email template exists$/) do
+  @template = @client.email_templates.build(body: "Hi there [[name]]",
+                                            subject: "XACT-565 Template",
+                                            macros: {"name" => "person"},
+                                            open_tracking_enabled: false,
+                                            click_tracking_enabled: false,
+                                            link_tracking_parameters: "from=me&one=two")
+
+  raise @template.errors.to_s unless @template.post
+end
+
+Then(/^I should be able to send an EMAIL message specifying just that template and a recipient$/) do
+  message = @client.email_messages.build
+  message.links[:email_template] = @template.id
+  message.recipients.build(email: 'happy@golucky.com')
+  raise message.error.to_s unless message.post
+  raise message.errors.to_s unless message.get
+  [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+    if message.send(attr) != @template.send(attr)
+      raise "Template value for #{attr} not used in message: expected #{@template.send(attr)}, found #{message.send(attr)}"
+    end
+  end
+end
+
+Then(/^I should be able to send an EMAIL message, specify everything, and the message should use the values I specify$/) do
+  special = {
+    body: "I'm special [[closing]]",
+    subject: "I'm a special subject",
+    macros: {"closing" => "yo"},
+    open_tracking_enabled: true,
+    click_tracking_enabled: true
+  }
+  message = @client.email_messages.build(special)
+  message.links[:email_template] = @template.id
+  message.recipients.build(email: 'happy@golucky.com')
+  raise message.error.to_s unless message.post
+  raise message.errors.to_s unless message.get
+  [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+    if message.send(attr) != special[attr]
+      raise "Custom value for #{attr} not used in message: expected #{special[attr]}, found #{message.send(attr)}"
+    end
   end
 end
