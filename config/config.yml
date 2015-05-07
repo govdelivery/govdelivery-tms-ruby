@@ -24,6 +24,7 @@ shared_phone_numbers:
   - '468311'       # production
   # 89568 467873 566948 734876 667873 99511 - production short codes (as of 4/2015)
   # TXLOT INSURE KNOWIT seguro MNSURE WY511 - don't forward these, stop commands will handle unsubscribing
+secret_key_base: #nil
 
 # set these to run seed data
 #twilio_sid: 'fake'
