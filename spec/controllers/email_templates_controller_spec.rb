@@ -3,11 +3,13 @@ require 'rails_helper'
 describe EmailTemplatesController do
   let(:account) {create(:account)}
   let(:other_account) {create(:account)}
+  let(:user) {create :user, account: account, admin: false}
   let(:admin_user) {create :user, account: account, admin: true}
   let(:from_address) {account.default_from_address}
   let(:new_from_address) {create(:from_address, account: account)}
   let(:other_from_address) {create(:from_address, account: other_account)}
-  let(:email_templates) {create_list(:email_template, 3, account: account, user: admin_user, from_address: from_address)}
+  let(:email_templates) {create_list(:email_template, 3, account: account, user: user, from_address: from_address)}
+  let(:template) {email_templates.first}
   let(:valid_params) do
     {
       body: '<html><body>[HELLO]</body></html>',
@@ -21,7 +23,7 @@ describe EmailTemplatesController do
   let(:model) {EmailTemplate}
 
   before do
-    sign_in admin_user
+    sign_in user
   end
 
   it_should_have_a_pageable_index(:email_templates)
@@ -42,7 +44,6 @@ describe EmailTemplatesController do
   end
 
   it 'should update an email template' do
-    template = email_templates.first
     expect(template.open_tracking_enabled).to eq(false)
     patch :update, id: template.id, email_template: valid_params
     expect(response.response_code).to eq(200)
@@ -51,7 +52,6 @@ describe EmailTemplatesController do
   end
 
   it 'should not update an email template to an invalid state' do
-    template = email_templates.first
     expect(template.open_tracking_enabled).to eq(false)
     valid_params[:macros] = 'Invalid'
     patch :update, id: template.id, email_template: valid_params
@@ -61,7 +61,7 @@ describe EmailTemplatesController do
   end
 
   it 'should delete an email template' do
-    template = email_templates.first
+    email_templates   # We have to create email_templates before there are email_templates
     expect(account.email_templates.count).to eq(3)
     delete :destroy, id: template.id
     expect(response.response_code).to eq(204)
@@ -85,7 +85,6 @@ describe EmailTemplatesController do
     end
 
     it 'should be able to update a template to use a new from address' do
-      template = email_templates.first
       patch :update, id: template.id, email_template: valid_params.merge(_links: {from_address: new_from_address.id})
       expect(response.response_code).to eq(200)
       template.reload
@@ -93,7 +92,6 @@ describe EmailTemplatesController do
     end
 
     it "should not be able to update a template to use a from address that doesn't belong to the account" do
-      template = email_templates.first
       patch :update, id: template.id, email_template: valid_params.merge(_links: {from_address: other_from_address.id})
       expect(response.response_code).to eq(422)
       template.reload
