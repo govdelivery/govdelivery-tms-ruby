@@ -58,6 +58,7 @@ And(/^I send an SMS to create a subscription on TMS$/) do
   # encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(sample_subscriber_number)
   sleep(10)
+
 end
 
 Then(/^a subscription should be created$/) do
@@ -71,6 +72,8 @@ Then(/^a subscription should be created$/) do
   # some output that can be turned on/off if needed to verify things manually
   ap @response
   puts @response['subscriber']['phone']
+
+
 
   # verifying if subscriber is present
   begin

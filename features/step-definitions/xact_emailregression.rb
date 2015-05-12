@@ -69,7 +69,7 @@ Then(/^those params should resolve within the body of the email I send$/) do
     sleep(6)
     i += 1
 
-    raise 'The email didn\'t appear wthin 3 minutes'.red if i > 30
+    raise 'The email didn\'t appear within 3 minutes'.red if i > 30
   end
 
   lines = emails.html_part.body.decoded # extracting all of the HTML out of the email since the email is MultiPart

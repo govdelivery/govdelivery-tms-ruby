@@ -117,7 +117,7 @@ Then(/^I go to Gmail to check for message delivery$/) do
   end # end while
 
   if msg_found == false
-    raise "Message #{expected_subject} was not found in the inbox after #{wait_time} seconds".red
+    raise "Message #{expected_subject} was not found in the inbox after #{wait_time * num_iterations} seconds".red
   elsif link_redirect_works == false
     raise "Message #{expected_subject} was found but link #{link_in_email}didn't redirect".red
   end

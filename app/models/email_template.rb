@@ -36,5 +36,4 @@ class EmailTemplate < ActiveRecord::Base
     self.open_tracking_enabled = true if open_tracking_enabled.nil?
     self.click_tracking_enabled = true if click_tracking_enabled.nil?
   end
-
 end
