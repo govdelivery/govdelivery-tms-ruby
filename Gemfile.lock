@@ -189,7 +189,7 @@ GEM
       httpclient
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
-    newrelic_rpm (3.9.5.251)
+    newrelic_rpm (3.12.0.288)
     nokogiri (1.6.3.1-java)
     ntlm-http (0.1.1)
     orm_adapter (0.5.0)
@@ -221,7 +221,7 @@ GEM
       pry (>= 0.9.10)
     rabl (0.11.6)
       activesupport (>= 2.3.14)
-    rack (1.5.2)
+    rack (1.5.3)
     rack-protection (1.5.3)
       rack
     rack-ssl (1.4.1)
@@ -331,7 +331,7 @@ GEM
       redis-namespace (>= 1.3.1)
     sidekiq-failures (0.4.3)
       sidekiq (>= 2.16.0)
-    sidekiq-pro (2.0.2)
+    sidekiq-pro (2.0.1)
       sidekiq (>= 3.3.2)
     sidekiq-retries (0.3.0)
       sidekiq (~> 3.2, >= 3.2.4)
@@ -341,10 +341,10 @@ GEM
       actionmailer (>= 3.2.6, < 5)
       activerecord (>= 3.2.6, < 5)
       devise (~> 3.2.0)
-    sinatra (1.4.5)
+    sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
-      tilt (~> 1.3, >= 1.3.4)
+      tilt (>= 1.3, < 3)
     slim (2.1.0)
       temple (~> 0.6.9)
       tilt (>= 1.3.3, < 2.1)
@@ -475,7 +475,7 @@ DEPENDENCIES
   shoulda-matchers
   sidekiq
   sidekiq-failures
-  sidekiq-pro
+  sidekiq-pro (= 2.0.1)
   sidekiq-retries
   sidekiq-unique-jobs
   simple_token_authentication
