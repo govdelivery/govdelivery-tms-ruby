@@ -2,15 +2,16 @@
 # Get newrelic controller instrumentation working with rails-api
 # https://github.com/rails-api/rails-api/issues/34
 #
-require 'new_relic/agent/instrumentation/rails3/action_controller'
-require 'new_relic/agent/instrumentation/rails3/errors'
 
 class ApplicationController < ActionController::API
-  include NewRelic::Agent::Instrumentation::ControllerInstrumentation
-  include NewRelic::Agent::Instrumentation::Rails3::ActionController
-  include NewRelic::Agent::Instrumentation::Rails3::Errors
   include ActionController::MimeResponds
   include ActionController::ImplicitRender
+
+  require "new_relic/agent/instrumentation/rails4/action_controller.rb"
+  require "new_relic/agent/instrumentation/rails4/errors"
+
+  include NewRelic::Agent::Instrumentation::ControllerInstrumentation
+
   include SimpleTokenAuthentication::ActsAsTokenAuthenticationHandler
   include Devise::Controllers::SignInOut if Rails.env.test?
 
