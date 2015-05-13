@@ -331,7 +331,7 @@ GEM
       redis-namespace (>= 1.3.1)
     sidekiq-failures (0.4.3)
       sidekiq (>= 2.16.0)
-    sidekiq-pro (2.0.1)
+    sidekiq-pro (2.0.3)
       sidekiq (>= 3.3.2)
     sidekiq-retries (0.3.0)
       sidekiq (~> 3.2, >= 3.2.4)
@@ -475,7 +475,7 @@ DEPENDENCIES
   shoulda-matchers
   sidekiq
   sidekiq-failures
-  sidekiq-pro (= 2.0.1)
+  sidekiq-pro
   sidekiq-retries
   sidekiq-unique-jobs
   simple_token_authentication
