@@ -60,7 +60,7 @@ describe VoiceMessage do
     context 'being marked ready' do
       before do
         message.expects(:process_blacklist!)
-        expect(message.ready!(nil, [{phone: '4054343424'}])).to be true
+        expect(message.ready!([{phone: '4054343424'}])).to be true
       end
 
       context 'being marked as sending' do
