@@ -13,7 +13,7 @@ module Message
       state :completed
       state :canceled
 
-      event :ready do
+      event :mark_ready do
         transitions from: :new, to: :queued, guard: :create_recipients, after: [:process_blacklist!, :prepare_recipients, :transform_body]
       end
 
@@ -132,6 +132,11 @@ module Message
 
   def to_s
     "#{self.class.name} (id #{id}"
+  end
+
+  def ready!(recipients={})
+    raise ActiveRecord::RecordInvalid.new(self) unless mark_ready!(nil, recipients)
+    true
   end
 
   protected

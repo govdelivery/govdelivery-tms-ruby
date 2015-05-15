@@ -28,8 +28,8 @@ class CreateRecipientsWorker
         args['account_id'] = message.account_id
       end
       message.worker.perform_async(args)
-    rescue AASM::InvalidTransition
-      logger.warn("Failed to queue or complete #{message}") unless message.complete!
+    rescue AASM::InvalidTransition => e
+      raise Sidekiq::Retries::Fail.new(e) unless message.complete!
     end
   ensure
     Rails.cache.delete(self.class.job_key(message.id)) if message

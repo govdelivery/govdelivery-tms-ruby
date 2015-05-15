@@ -38,7 +38,6 @@ RSpec.shared_examples 'an email message that can be templated' do
   end
 end
 
-
 describe EmailMessage do
   let(:vendor) {create(:email_vendor)}
   let(:account) {create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3')}    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
@@ -141,6 +140,27 @@ describe EmailMessage do
       email.reload
       expect(email.open_tracking_enabled).to be true
       expect(email.click_tracking_enabled).to be true
+    end
+  end
+
+  context '#ready!' do
+    before do
+      email.save!
+      email.create_recipients([email: 'tyler@dudes.com'])
+      expect(email.status).to eq('new')
+    end
+    context 'when ready! fails' do
+      it 'should raise an ActiveRecord error' do
+        email.open_tracking_enabled = nil
+        expect {email.ready!}.to raise_error(ActiveRecord::RecordInvalid, /Open tracking enabled is not included in the list/)
+        expect(email.status).to eq('new')
+      end
+    end
+    context 'when ready! succeeds' do
+      it 'should change the message state' do
+        expect {email.ready!}.not_to raise_error
+        expect(email.status).to eq('queued')
+      end
     end
   end
 

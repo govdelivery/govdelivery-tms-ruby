@@ -22,4 +22,14 @@ describe CreateRecipientsWorker do
 
     worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass' => 'VoiceMessage')
   end
+
+  it 'should fail the job if ready and complete transitions are invalid' do
+    message = mock('message')
+    message.stubs(:id).returns(1)
+    message.expects(:ready!).with(nil, {}).raises(AASM::InvalidTransition)
+    message.expects(:complete!).returns(false)
+    EmailMessage.expects(:find).with(1).returns(message)
+
+    expect {worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass' => 'EmailMessage')}.to raise_error(Sidekiq::Retries::Fail)
+  end
 end
