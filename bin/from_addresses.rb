@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'optparse'
+require 'csv'
 
 class FromAddressManager
   def list(from_addresses)
@@ -16,22 +17,24 @@ class FromAddressManager
     options = parse_options(argv)
     require File.expand_path('../../config/environment', __FILE__)
 
-    account = if options[:account_id]
+    @account = if options[:account_id]
                 Account.find(options[:account_id])
               else
                 raise 'ERROR: No account id specified!'
               end
 
     case
+    when options[:input]
+      bulk_create(options[:input], options[:dup_replies], options[:dup_errors])
     when options[:list]
-      list(account.from_addresses.order('created_at desc'))
+      list(@account.from_addresses.order('created_at desc'))
     when options[:delete]
-      account.from_addresses.destroy_all
+      @account.from_addresses.destroy_all
     when options[:from_address]
       begin
-        account.from_addresses.create!(options[:from_address])
+        @account.from_addresses.create!(options[:from_address])
         out 'From address created.'
-        list(account.reload.from_addresses)
+        list(@account.reload.from_addresses)
       rescue ActiveRecord::RecordInvalid => e
         out "An error occurred: #{e.record.errors.full_messages}"
       end
@@ -86,12 +89,38 @@ Options:
         @options[:from_address] ||= {}
         @options[:from_address][:is_default] = true
       end
+      opts.on('-i', '--input CSV', 'Specifies an input csv to create addresses, has the format: from_address, reply_to, errors_to, is_default') do |p|
+        @options[:input] = p
+      end
+      opts.on('-r', '--dup-replies', 'Used in conjunction with the input flag, makes reply_to addresses the same as the from_address specified in the csv if none is specified in the csv') do |_p|
+        @options[:dup_replies] = true
+      end
+      opts.on('-q', '--dup-errors', 'Used in conjunction with the input flag, makes errors_to addresses the same as the from_address specified in the csv if none is specified in the csv') do |_p|
+        @options[:dup_errors] = true
+      end
     end.parse!(argv)
     @options
   end
 
   def out(str)
     puts(str) unless Rails.env == 'test'
+  end
+
+  def bulk_create(input, dup_replies = false, dup_errors = false)
+    from_addresses = CSV.read(input, { headers: true, converters: :integer, header_converters: :symbol, force_quotes: true })
+    from_addresses.each do |from_address|
+      fields = [:from_address, :reply_to, :errors_to, :is_default]
+      record_info = Hash[*from_address.select{|k,v| fields.include? k}.flatten]
+      record_info[:is_default] = (record_info[:is_default] == 1) ? true : false
+      record_info[:reply_to] ||= record_info[:from_address] if dup_replies
+      record_info[:errors_to] ||= record_info[:from_address] if dup_errors
+      begin
+        @account.from_addresses.create!(record_info)
+        puts "Created record for #{record_info[:from_address]}."
+      rescue ActiveRecord::RecordInvalid => e
+        puts "Record creation for #{record_info[:from_address]} failed due to: #{e.message}"
+      end
+    end
   end
 end
 
