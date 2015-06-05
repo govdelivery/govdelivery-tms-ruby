@@ -153,6 +153,97 @@ describe EmailRecipient do
         subject.sent!('ack', nil)
         expect(EmailRecipient.sent).to include(subject)
       end
+
+      it 'should publish failed transitions' do
+        expected = {
+          channel: 'email_channel',
+          message: has_entries(v: '1',
+                               recipient_id: subject.id,
+                               message_id: subject.message.id,
+                               uri: 'failed')
+        }
+        Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+        subject.failed!
+      end
+
+      it 'should publish canceled transitions' do
+        expected = {
+          channel: 'email_channel',
+          message: has_entries(v: '1',
+                               recipient_id: subject.id,
+                               message_id: subject.message.id,
+                               uri: 'canceled')
+        }
+        Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+        subject.canceled!('ack')
+      end
+
+      it 'should publish sent transitions' do
+        expected = {
+          channel: 'email_channel',
+          message: has_entries(v: '1',
+                               recipient_id: subject.id,
+                               message_id: subject.message.id,
+                               uri: 'sent')
+        }
+        Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+        subject.sent!('ack', nil)
+      end
+
+      context 'after receiving the message' do
+        before do
+          subject.sent!('ack', nil)
+        end
+
+        it 'publishes click events' do
+          expected = {
+            channel: 'email_channel',
+            message: has_entries(v: '1',
+                                 recipient_id: subject.id,
+                                 message_id: subject.message.id,
+                                 uri: 'clicked',
+                                 url: 'http://www.google.com')
+          }
+          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          subject.clicked!('http://www.google.com', Time.now)
+        end
+
+        it 'publishes arfs' do
+          expected = {
+            channel: 'email_channel',
+            message: has_entries(v: '1',
+                                 recipient_id: subject.id,
+                                 message_id: subject.message.id,
+                                 uri: 'arf')
+          }
+          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          subject.arf!(nil, nil, 'ok')
+        end
+
+        it "publishes open events" do
+          expected = {
+            channel: 'email_channel',
+            message: has_entries(v: '1',
+                                 recipient_id: subject.id,
+                                 message_id: subject.message.id,
+                                 uri: 'opened')
+          }
+          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          subject.opened!('127.0.0.1', Time.now)
+        end
+
+        it "publishes bounce events" do
+          expected = {
+            channel: 'email_channel',
+            message: has_entries(v: '1',
+                                 recipient_id: subject.id,
+                                 message_id: subject.message.id,
+                                 uri: 'bounced')
+          }
+          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          subject.hard_bounce!('ack', Time.now, 'bounce')
+        end
+      end
     end
   end
 
