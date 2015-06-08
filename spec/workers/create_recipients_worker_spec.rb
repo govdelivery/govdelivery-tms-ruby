@@ -7,7 +7,7 @@ describe CreateRecipientsWorker do
   it 'should enqueue a message worker job if there are recipients' do
     message = mock('message', worker: send_worker)
     message.stubs(:id).returns(1)
-    message.expects(:ready!).with(nil, recipient_params)
+    message.expects(:ready!).with(recipient_params)
     SmsMessage.expects(:find).with(1).returns(message)
 
     worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => recipient_params, 'klass' => 'SmsMessage')
@@ -16,17 +16,17 @@ describe CreateRecipientsWorker do
   it 'should complete if there are no recipients' do
     message = mock('message')
     message.stubs(:id).returns(1)
-    message.expects(:ready!).with(nil, {}).raises(AASM::InvalidTransition)
+    message.expects(:ready!).with({}).raises(AASM::InvalidTransition)
     message.expects(:complete!).returns(true)
     VoiceMessage.expects(:find).with(1).returns(message)
 
-    worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass' => 'VoiceMessage')
+    worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => {}, 'klass' => 'VoiceMessage')
   end
 
   it 'should fail the job if ready and complete transitions are invalid' do
     message = mock('message')
     message.stubs(:id).returns(1)
-    message.expects(:ready!).with(nil, {}).raises(AASM::InvalidTransition)
+    message.expects(:ready!).with({}).raises(AASM::InvalidTransition)
     message.expects(:complete!).returns(false)
     EmailMessage.expects(:find).with(1).returns(message)
 

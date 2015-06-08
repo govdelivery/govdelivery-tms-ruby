@@ -21,7 +21,7 @@ class CreateRecipientsWorker
     recipient_params = options['recipients']
 
     begin
-      message.ready!(nil, recipient_params)
+      message.ready!(recipient_params)
       args = {message_id: message.id}.merge!(options['send_options'])
       if message.respond_to?(:subject)
         args['subject']    = message.subject
