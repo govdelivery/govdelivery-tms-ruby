@@ -46,7 +46,7 @@ describe 'messages/show.rabl' do
     assign(:content_attributes, [:from_name, :from_email, :errors_to, :reply_to, :subject, :body, :open_tracking_enabled, :click_tracking_enabled, :macros])
     render
     expect(rendered).to be_json_for(email_message)
-      .with_attributes(:from_name, :from_email, :subject, :body, :status, :open_tracking_enabled, :click_tracking_enabled, :macros, :reply_to, :errors_to)
+      .with_attributes(:id, :from_name, :from_email, :subject, :body, :status, :open_tracking_enabled, :click_tracking_enabled, :macros, :reply_to, :errors_to)
       .with_timestamps(:created_at)
       .with_links('self' => email_path(email_message),
                   'recipients' => email_recipients_path(email_message),
