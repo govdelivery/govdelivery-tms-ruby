@@ -47,13 +47,13 @@ class EmailRecipient < ActiveRecord::Base
 
   def arf!(_, _, error_message)
     update_attribute(:error_message, error_message).tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "arf", v: '1', message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "arf", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
     end
   end
 
   def hard_bounce!(*args)
     bounce!(:failed, *args).tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "bounced", v: '1', message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "bounced", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
     end
   end
 
@@ -69,7 +69,7 @@ class EmailRecipient < ActiveRecord::Base
       erc.email_message = message
       erc.email = email
       erc.save!
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "clicked", v: '1', message_id: message.id, recipient_id: id, url: url})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "clicked", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id, url: url})
     end
   end
 
@@ -81,25 +81,25 @@ class EmailRecipient < ActiveRecord::Base
       ero.email_message = message
       ero.email = email
       ero.save!
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'opened', v: '1', message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'opened', v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
     end
   end
 
   def sent!(ack, date_sent=nil, _=nil)
     super.tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'sent', v: '1', message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'sent', v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
     end
   end
 
   def failed!(ack=nil, completed_at=nil, error_message=nil)
     super.tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'failed', v: '1', message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'failed', v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
     end
   end
 
   def canceled!(ack, *_)
     super.tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "canceled", v: '1', message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "canceled", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
     end
   end
 

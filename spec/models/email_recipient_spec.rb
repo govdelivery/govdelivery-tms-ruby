@@ -160,6 +160,7 @@ describe EmailRecipient do
           message: has_entries(v: '1',
                                recipient_id: subject.id,
                                message_id: subject.message.id,
+                               account_sid: subject.message.account.sid,
                                uri: 'failed')
         }
         Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
@@ -172,6 +173,7 @@ describe EmailRecipient do
           message: has_entries(v: '1',
                                recipient_id: subject.id,
                                message_id: subject.message.id,
+                               account_sid: subject.message.account.sid,
                                uri: 'canceled')
         }
         Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
@@ -184,6 +186,7 @@ describe EmailRecipient do
           message: has_entries(v: '1',
                                recipient_id: subject.id,
                                message_id: subject.message.id,
+                               account_sid: subject.message.account.sid,
                                uri: 'sent')
         }
         Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
@@ -201,6 +204,7 @@ describe EmailRecipient do
             message: has_entries(v: '1',
                                  recipient_id: subject.id,
                                  message_id: subject.message.id,
+                                 account_sid: subject.message.account.sid,
                                  uri: 'clicked',
                                  url: 'http://www.google.com')
           }
@@ -214,6 +218,7 @@ describe EmailRecipient do
             message: has_entries(v: '1',
                                  recipient_id: subject.id,
                                  message_id: subject.message.id,
+                                 account_sid: subject.message.account.sid,
                                  uri: 'arf')
           }
           Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
@@ -226,6 +231,7 @@ describe EmailRecipient do
             message: has_entries(v: '1',
                                  recipient_id: subject.id,
                                  message_id: subject.message.id,
+                                 account_sid: subject.message.account.sid,
                                  uri: 'opened')
           }
           Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
@@ -238,6 +244,7 @@ describe EmailRecipient do
             message: has_entries(v: '1',
                                  recipient_id: subject.id,
                                  message_id: subject.message.id,
+                                 account_sid: subject.message.account.sid,
                                  uri: 'bounced')
           }
           Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
