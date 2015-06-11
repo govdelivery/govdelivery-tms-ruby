@@ -81,9 +81,6 @@ USAGE
       opts.on('-S', '--start_text Vendor Start Text') do |p|
         @options[:vendor_start_text] = p.to_s
       end
-      opts.on('-a', '--shared', 'Indicate if this SMS vendor is shared or exclusive.  If you pass this argument, the SMS vendor will be shared.') do |_p|
-        @options[:shared] = true
-      end
       opts.on('-c', '--cog-id IPAWS::Vendor COG ID') do |p|
         @options[:vendor_cog_id] = p.to_s
       end
@@ -101,6 +98,7 @@ USAGE
   end
 
   def create_sms_vendor(_options)
+
     v = SmsVendor.new
     v.name = @options[:vendor_name]
     v.username = @options[:vendor_username]
@@ -110,7 +108,6 @@ USAGE
     v.help_text = @options[:vendor_help_text]
     v.stop_text = @options[:vendor_stop_text]
     v.start_text = @options[:vendor_start_text]
-    v.shared = !!@options[:shared]
 
     v.save
 
@@ -172,7 +169,6 @@ USAGE
       puts "\tid: " + v.id.to_s + "\n"
       puts "\tname: " + v.name + "\n"
       puts "\tfrom_phone: " + v.from_phone.to_s + "\n"
-      puts "\tshared: " + v.shared.to_s + "\n"
       puts "\n"
     end
 

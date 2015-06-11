@@ -13,7 +13,7 @@ describe 'messages/show.rabl' do
     assign(:content_attributes, [:body])
     render
     expect(rendered).to be_json_for(sms_message)
-      .with_attributes(:body, :status)
+      .with_attributes(:id, :body, :status)
       .with_timestamps(:created_at)
       .with_links('self' => sms_path(sms_message),
                   'recipients' => sms_recipients_path(sms_message),
@@ -27,7 +27,7 @@ describe 'messages/show.rabl' do
     assign(:content_attributes, [:play_url, :from_number])
     render
     expect(rendered).to be_json_for(voice_message)
-      .with_attributes(:play_url, :from_number, :status)
+      .with_attributes(:id, :play_url, :from_number, :status)
       .with_timestamps(:created_at)
       .with_links('self' => voice_path(voice_message),
                   'recipients' => voice_recipients_path(voice_message),
