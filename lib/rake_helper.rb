@@ -149,19 +149,17 @@ def create_test_account(test_name, account_vendors_config)
     lambda do |lb|
       if lb.from_addresses.find_by(from_email: account_email_addresses_config[:from_email]).blank?
         puts "\tCreating #{lb.name} From Addresses"
-        lb.from_addresses.build(account_email_addresses_config)
+        from_address = lb.from_addresses.build(account_email_addresses_config)
         puts "\tCreated"
       end
 
       if lb.sms_prefixes.find_by(prefix: sms_prefix_str).blank?
         sms_prefix = lb.sms_prefixes.build(prefix: sms_prefix_str, sms_vendor: sms_shared_vendor)
-        sms_prefix.save!
         puts "SMS Prefix created for #{account_config[:name]}: #{sms_prefix.prefix}"
       end
 
       if lb.from_numbers.blank?
-        from_number = lb.from_numbers.build(from_number: account_vendors_config['from_number'])
-        from_number.save!
+        from_number = lb.from_numbers.build(phone_number: account_vendors_config[:from_number], is_default: true)
         puts "Added #{from_number.from_number} phone number to account."
       end
     end

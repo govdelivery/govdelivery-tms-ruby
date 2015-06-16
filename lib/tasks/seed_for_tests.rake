@@ -120,8 +120,8 @@ namespace :db do
                                         worker: 'LoopbackSmsWorker',
                                         username: 'shared_loopback_sms_username',
                                         password: 'dont care',
-                                        from: '+15552287439',   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
-                                        shared: true)
+                                        from: '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+                                      )
 
     create_or_verify_by_name(VoiceVendor, name: shared_loopback_vendors_config[:voice_vendor_name],
                                           worker: 'LoopbackVoiceWorker',
@@ -139,10 +139,8 @@ namespace :db do
                                                                       worker: 'TwilioMessageWorker',
                                                                       username: twilio_test_credentials[:sid],
                                                                       password: twilio_test_credentials[:token],
-                                                                      from: '+15005550006',   # The ONE number to send a text from that Twilio Test consideres valid: http://www.twilio.com/docs/api/rest/test-credentials
-                                                                      shared: true
+                                                                      from: '+15005550006'   # The ONE number to send a text from that Twilio Test consideres valid: http://www.twilio.com/docs/api/rest/test-credentials
                                                   )
-    sms_twil_valid_test.shared = true
     sms_twil_valid_test.save!
   end # :create_shared_twilio_valid_test_vendor
 
@@ -153,10 +151,8 @@ namespace :db do
                                                                                worker: 'TwilioMessageWorker',
                                                                                username: twilio_test_credentials[:sid],
                                                                                password: twilio_test_credentials[:token],
-                                                                               from: '+15005550001',   # The ONE number to send a text from that Twilio Test consideres invalid: http://www.twilio.com/docs/api/rest/test-credentials
-                                                                               shared: true
+                                                                               from: '+15005550001'   # The ONE number to send a text from that Twilio Test consideres invalid: http://www.twilio.com/docs/api/rest/test-credentials
                                                            )
-    sms_twil_invalid_number_test.shared = true
     sms_twil_invalid_number_test.save!
   end # :create_shared_twilio_invalid_number_test_vendor
 
@@ -166,10 +162,8 @@ namespace :db do
                                                                 worker: 'TwilioMessageWorker',
                                                                 username: twilio_live_credentials[:sid],
                                                                 password: twilio_live_credentials[:token],
-                                                                from: twilio_live_numbers[Rails.env],   # Each environment has it's own live number for testing
-                                                                shared: true
+                                                                from: twilio_live_numbers[Rails.env]   # Each environment has it's own live number for testing
                                             )
-    sms_live_test.shared = true
     sms_live_test.save!
 
     create_or_verify_by_name(VoiceVendor,         name: shared_live_phone_vendors_config[:voice_vendor_name],
