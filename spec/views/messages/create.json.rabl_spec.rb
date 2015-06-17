@@ -6,5 +6,6 @@ describe 'messages/create.rabl' do
     assign(:message, sms_message)
     render
     expect(rendered).to include('errors')
+    expect(rendered).to include('id')
   end
 end
