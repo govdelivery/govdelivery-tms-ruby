@@ -17,6 +17,7 @@ describe CommandWorkers::ForwardWorker do
   let(:options) do
     {
       command_id:         command.id,
+      to:                 '111', 
       from:               '333',
       sms_body:           'sms body',
       sms_tokens:         %w(sms body tokens),
