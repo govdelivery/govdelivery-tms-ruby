@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Geckoboard::UscmshimEventsReporting do
+describe Geckoboard::EventsReporting do
   let(:account) {create(:account_with_sms)}
   let(:times) do
     end_time = Time.now.beginning_of_hour
@@ -9,7 +9,7 @@ describe Geckoboard::UscmshimEventsReporting do
     time_range.step(1.hour).map { |t| Time.at(t).in_time_zone('Eastern Time (US & Canada)').strftime('%H')}
   end
 
-  subject {Geckoboard::UscmshimEventsReporting.new}
+  subject {Geckoboard::EventsReporting.new}
 
   before do
     messages = create_list(:email_message, 3, account: account)
@@ -28,7 +28,7 @@ describe Geckoboard::UscmshimEventsReporting do
         'colour' => 'ff9900'
       }
     }.to_json)
-    subject.perform('clicks', account.id, 'name')
+    subject.perform(account.id, 'name', 'clicks')
   end
 
   it 'writes aggregate open data for the past 24 hours in json format to disk' do
@@ -40,6 +40,6 @@ describe Geckoboard::UscmshimEventsReporting do
         'colour' => 'ff9900'
       }
     }.to_json)
-    subject.perform('opens', account.id, 'name')
+    subject.perform(account.id, 'name', 'opens')
   end
 end

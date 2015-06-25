@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe Geckoboard::Uscmshim30mSends do
+describe Geckoboard::ThirtyMinuteSends do
   let(:account) {create(:account_with_sms)}
 
-  subject {Geckoboard::Uscmshim30mSends.new}
+  subject {Geckoboard::ThirtyMinuteSends.new}
   before do
     messages = create_list(:email_message, 3, account: account)
     messages.each do |message|

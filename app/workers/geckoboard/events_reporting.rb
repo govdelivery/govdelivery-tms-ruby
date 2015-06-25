@@ -1,12 +1,14 @@
+require 'base'
+
 module Geckoboard
-  class UscmshimEventsReporting
-    include UscmshimHelpers
+  class EventsReporting
+    include GeckoboardHelpers
     include Workers::Base
 
     sidekiq_options retry: false
 
     # 'clicks', 10060, ''"CLICKED_AT"''
-    def perform(event_type, account_id, basename)
+    def perform(account_id, basename, event_type)
       scope, column = case event_type
                       when 'clicks'
                         [EmailRecipientClick, 'CLICKED_AT']
