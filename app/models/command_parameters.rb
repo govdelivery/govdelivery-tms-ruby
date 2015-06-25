@@ -92,6 +92,12 @@ class CommandParameters
     @from_param_name ||= 'from'
   end
 
+  ##
+  # The inbound sms phone number sent during a forward command
+  def to_param_name
+    'to'
+  end
+
   private
 
   def validate_string_fields

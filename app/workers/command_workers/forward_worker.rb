@@ -64,6 +64,7 @@ module CommandWorkers
                                    command_params.url,
                                    command_params.username,
                                    command_params.password,
+                                   command_params.to_param_name       => options.to,
                                    command_params.from_param_name     => options.from,
                                    command_params.sms_body_param_name => sms_body)
       if response.status == 0
