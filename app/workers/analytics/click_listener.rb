@@ -11,7 +11,7 @@ module Analytics
 
     def on_message(message, _partition, _offset)
       logger.info("#{self.class} received #{message}")
-      logger.info("#{client.partition_status}")
+      #logger.info("#{client.partition_status}")
     end
 
     def logger
