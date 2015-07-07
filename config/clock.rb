@@ -45,15 +45,6 @@ module Clockwork
     every(1.day, 'GeckboardReporting', at: top_of_hour) {Geckoboard::PeriodicReporting.perform_async('Reporting', 'reporting', 'CREATED_AT') }
     every(1.day, 'GeckboardClicksReporting', at: top_of_hour) {Geckoboard::PeriodicReporting.perform_async('EventsReporting', 'clicks_reporting', 'clicks') }
     every(1.day, 'GeckboardOpensReporting', at: top_of_hour) {Geckoboard::PeriodicReporting.perform_async('EventsReporting', 'opens_reporting', 'opens') }
-
-    # Eventually deprecate these
-    every(1.day, 'Uscmshim12hSubjectSends', at: top_of_hour) {Geckoboard::TwelveHourSubjectSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_12h_subject_sends')}
-    every(1.day, 'Uscmshim24hSends', at: top_of_hour) {Geckoboard::OneDaySends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_24h_sends')}
-    every(5.minutes, 'Uscmshim30mSends') {Geckoboard::ThirtyMinuteSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_30m_sends')}
-    every(5.minutes, 'Uscmshim30mSubjectSends') {Geckoboard::ThirtyMinuteSubjectSends.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_30m_subject_sends')}
-    every(1.day, 'UscmshimReporting', at: top_of_hour) {Geckoboard::Reporting.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_reporting', 'CREATED_AT')}
-    every(1.day, 'UscmshimClicksReporting', at: top_of_hour) {Geckoboard::EventsReporting.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_clicks_reporting', 'clicks')}
-    every(1.day, 'UscmshimOpensReporting', at: top_of_hour) {Geckoboard::EventsReporting.perform_async(Rails.configuration.custom_report_account_id, 'uscmshim_opens_reporting', 'opens')}
   rescue => e
     Rails.logger.warn("Not scheduling custom reporting jobs: #{e}")
   end
