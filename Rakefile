@@ -3,7 +3,6 @@
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
 require File.expand_path('../config/application', __FILE__)
-require 'rubocop/rake_task'
 
 def redefine_task(*args, &block)
   task_name = Hash === args.first ? args.first.keys[0] : args.first
@@ -17,4 +16,8 @@ def redefine_task(*args, &block)
 end
 
 Xact::Application.load_tasks
-RuboCop::RakeTask.new
+
+if %w(development test).include? Rails.env
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+end
