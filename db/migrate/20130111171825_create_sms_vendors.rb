@@ -4,7 +4,7 @@ class CreateSmsVendors < ActiveRecord::Migration
     remove_column :vendors, :vtype
     remove_column :vendors, :voice
     rename_column :vendors, :from, :from_phone
-    rename_table :vendors, :sms_vendors
+    execute('alter table vendors rename to sms_vendors')
     drop_table :account_vendors
   end
 end
