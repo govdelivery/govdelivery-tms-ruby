@@ -1,5 +1,7 @@
+require 'base'
+
 module Geckoboard
-  module UscmshimHelpers
+  module GeckoboardHelpers
     def zeroes(timestamps)
       # start with 0 for every hour
       timestamps.reduce({}) do |memo, i|

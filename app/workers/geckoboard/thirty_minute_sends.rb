@@ -1,8 +1,8 @@
 require 'base'
 
 module Geckoboard
-  class Uscmshim30mSends
-    include UscmshimHelpers
+  class ThirtyMinuteSends
+    include GeckoboardHelpers
     include Workers::Base
     sidekiq_options retry:  false,
                     unique: true

@@ -1,14 +1,15 @@
 require 'json'
+require 'base'
+
 module Geckoboard
-  require 'base'
-  class UscmshimReporting
-    include UscmshimHelpers
+  class Reporting
+    include GeckoboardHelpers
     include Workers::Base
     sidekiq_options retry: false,
                     unique: true
 
     # 10060, '"CREATED_AT"'
-    def perform(account_id, column, basename)
+    def perform(account_id, basename, column)
       messages = EmailMessage.where(account_id: account_id)
 
       time_range, timestamp_range = time_ranges(48, :hour)
