@@ -34,8 +34,8 @@ def site
   sites = [
     :dc3,
   ]
-  site = ENV.has_key?('SITE') ? ENV['SITE'].to_sym : ''
-  raise "Unsupported Site: #{site}" if !sites.include?(site)
+  site = ENV.has_key?('SITE') ? ENV['SITE'].to_sym : nil
+  raise "Unsupported Site: #{site}" if (ENV['SITE'] && !sites.include?(site))
   site
 end
 
@@ -49,7 +49,11 @@ def xact_url
     :prod => "https://tms.govdelivery.com"
   }
 
-  url = urls[(environment.to_s + '_' + site.to_s).to_sym]
+  if(lsite = site)
+    lsite = ('_' + site.to_s).to_sym
+  end
+
+  url = urls[(environment.to_s + lsite.to_s).to_sym]
   puts "url: #{url}"
   raise "No XACT URL defined for environment #{environment}" if !url
   url

@@ -7,13 +7,22 @@ require 'json'
 require 'colored'
 
 class XACTHelper
-  def send_email(username, password, subject, body, recipient, path)
+  def send_email(username, password, subject, body, recipient, path, api_key=nil)
     @request = HTTPI::Request.new
     @request.url = "#{path}"
-    @request.headers['Content-Type'] = 'application/json'
-    @request.auth.basic(username, password)
-    @request.body = '{"subject":"'"#{subject}"'","from_name":"TMStester@evotest.govdelivery.com", "body":"'"#{body}"'", "recipients":[{"email":"'"#{recipient}"'"}]}'
+    @request.headers["Content-Type"] = "application/json"
+
+    # if an API key was provided, use it, otherwise fall back
+    # to basic auth for backwards compatibility with old tests
+    if(api_key)
+      @request.headers["X-AUTH-TOKEN"] = api_key
+    else
+      @request.auth.basic(username, password)
+    end
+
+    @request.body ='{"subject":"'"#{subject}"'","from_name":"TMStester@evotest.govdelivery.com", "body":"'"#{body}"'", "recipients":[{"email":"'"#{recipient}"'"}]}'
     begin
+      #ap @request
       @data = HTTPI.post(@request)
       # ap @data.code
       @data.body = JSON.parse(@data.raw_body)

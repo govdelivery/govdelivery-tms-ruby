@@ -48,7 +48,8 @@ When(/^I POST a new EMAIL message to TMS$/) do
     expected_subject,
     email_body,
     conf.gmail.imap.user_name,
-    path)
+    path,
+    conf.xact.user.token)
 end
 
 Then(/^I go to Gmail to check for message delivery$/) do
