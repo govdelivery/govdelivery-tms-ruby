@@ -24,15 +24,7 @@ def expected_link_prefix
 end
 
 def path
-  if ENV['XACT_ENV'] == 'qc'
-    'https://qc-tms.govdelivery.com/messages/email'
-  elsif ENV['XACT_ENV'] == 'integration'
-    'https://int-tms.govdelivery.com/messages/email'
-  elsif ENV['XACT_ENV'] == 'stage'
-    'https://stage-tms.govdelivery.com/messages/email'
-  elsif ENV['XACT_ENV'] == 'prod'
-    'https://tms.govdelivery.com/messages/email'
-  end
+  return "#{configatron.xact.url}/messages/email"
 end
 
 conf = configatron.accounts.email_endtoend

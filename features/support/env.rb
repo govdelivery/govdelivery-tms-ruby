@@ -30,17 +30,28 @@ def environment
   env
 end
 
+def site
+  sites = [
+    :dc3,
+  ]
+  site = ENV.has_key?('SITE') ? ENV['SITE'].to_sym : ''
+  raise "Unsupported Site: #{site}" if !sites.include?(site)
+  site
+end
+
 def xact_url
   urls = {
-    development: 'http://localhost:3000',
-    qc: 'https://qc-tms.govdelivery.com',
-    integration: 'https://int-tms.govdelivery.com',
-    stage: 'https://stage-tms.govdelivery.com',
-    prod: 'https://tms.govdelivery.com'
+    :development => "http://localhost:3000",
+    :qc => "https://qc-tms.govdelivery.com",
+    :qc_dc3 => "https://qc-tms-dc3.govdelivery.com",
+    :integration => "https://int-tms.govdelivery.com",
+    :stage => "https://stage-tms.govdelivery.com",
+    :prod => "https://tms.govdelivery.com"
   }
 
-  url = urls[environment]
-  raise "No XACT URL defined for environment #{environment}" unless url
+  url = urls[(environment.to_s + '_' + site.to_s).to_sym]
+  puts "url: #{url}"
+  raise "No XACT URL defined for environment #{environment}" if !url
   url
 end
 
