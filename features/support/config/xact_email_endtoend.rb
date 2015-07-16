@@ -17,31 +17,40 @@ email_endtoend.gmail.imap.password            = 'govdel01!'
 email_endtoend.gmail.imap.enable_ssl          = true
 
 case environment
-when :development
-  email_endtoend.xact.account.id            = ENV['XACT_EMAILENDTOEND_ACCOUNT_ID']
-  email_endtoend.xact.user.token            = ENV['XACT_EMAILENDTOEND_USER_TOKEN']
-  email_endtoend.xact.user.email_address    = 'development-email_end_to_end-test@govdelivery.com'
+  when :development
+    email_endtoend.xact.account.id            = ENV['XACT_EMAILENDTOEND_ACCOUNT_ID']
+    email_endtoend.xact.user.token            = ENV['XACT_EMAILENDTOEND_USER_TOKEN']
+    email_endtoend.xact.user.email_address    = 'development-email_end_to_end-test@govdelivery.com'
 
-when :qc
-  email_endtoend.xact.account.id            = '10541'
-  email_endtoend.xact.user.token            = 'LLovBHFaaNY2buT3PxxbCPszaANkywDh'
-  email_endtoend.xact.user.email_address    = 'qc-email_end_to_end-test@govdelivery.com'
-  email_endtoend.gmail.imap.user_name       = 'canari11dd@gmail.com'
+  when :qc
+    case site
+      when :dc3 
+        email_endtoend.xact.account.id            = '12345'
+        email_endtoend.xact.user.token            = 'token'
+        email_endtoend.xact.user.email_address    = 'qc-dc3-email_end_to_end-test@govdelivery.com'
+        email_endtoend.gmail.imap.user_name       = 'govdsmokeasqctest@gmail.com'
+        email_endtoend.gmail.imap.password        = 'iVtpWJgAQhMVNyWI'
+      else
+        email_endtoend.xact.account.id            = '10541'
+        email_endtoend.xact.user.token            = 'LLovBHFaaNY2buT3PxxbCPszaANkywDh'
+        email_endtoend.xact.user.email_address    = 'qc-email_end_to_end-test@govdelivery.com'
+        email_endtoend.gmail.imap.user_name       = 'canari11dd@gmail.com'
+      end
 
-when :integration
-  email_endtoend.xact.account.id            = '10243'
-  email_endtoend.xact.user.token            = 'NqSCMTYEewtqNNbMNG7pbs6hZPYy3RyM'
-  email_endtoend.xact.user.email_address    = 'integration-email_end_to_end-test@govdelivery.com'
-  email_endtoend.gmail.imap.user_name       = 'canari9dd@gmail.com'
+  when :integration
+    email_endtoend.xact.account.id            = '10243'
+    email_endtoend.xact.user.token            = 'NqSCMTYEewtqNNbMNG7pbs6hZPYy3RyM'
+    email_endtoend.xact.user.email_address    = 'integration-email_end_to_end-test@govdelivery.com'
+    email_endtoend.gmail.imap.user_name       = 'canari9dd@gmail.com'
 
-when :stage
-  email_endtoend.xact.account.id            = '10940'
-  email_endtoend.xact.user.token            = 'aNYMWXsgqeppQyqGFKPqWLenEFBqAWZ5'
-  email_endtoend.xact.user.email_address    = 'stage-email_end_to_end-test@govdelivery.com'
-  email_endtoend.gmail.imap.user_name       = 'canari7dd@gmail.com'
+  when :stage
+    email_endtoend.xact.account.id            = '10940'
+    email_endtoend.xact.user.token            = 'aNYMWXsgqeppQyqGFKPqWLenEFBqAWZ5'
+    email_endtoend.xact.user.email_address    = 'stage-email_end_to_end-test@govdelivery.com'
+    email_endtoend.gmail.imap.user_name       = 'canari7dd@gmail.com'
 
-when :prod
-  email_endtoend.xact.user.email_address    = 'CUKEPROD@govdelivery.com'
-  email_endtoend.xact.user.password         = 'GovDel01'
-  email_endtoend.gmail.imap.user_name       = 'canari8dd@gmail.com'
+  when :prod
+    email_endtoend.xact.user.email_address    = 'CUKEPROD@govdelivery.com'
+    email_endtoend.xact.user.password         = 'GovDel01'
+    email_endtoend.gmail.imap.user_name       = 'canari8dd@gmail.com'
 end
