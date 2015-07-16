@@ -1,3 +1,10 @@
+GIT
+  remote: git@github.com:rsim/oracle-enhanced.git
+  revision: ab52b82a75bf00f547b709d2c89cd3d8dae9b43d
+  branch: release15
+  specs:
+    activerecord-oracle_enhanced-adapter (1.5.6)
+
 GEM
   remote: http://prod-rubygems1-ep.tops.gdi/
   remote: https://ed5779be:de10e893@gems.contribsys.com/
@@ -24,7 +31,6 @@ GEM
       activemodel (= 4.1.11)
       activesupport (= 4.1.11)
       arel (~> 5.0.0)
-    activerecord-oracle_enhanced-adapter (1.5.6)
     activesupport (4.1.11)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
@@ -409,7 +415,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
-  activerecord-oracle_enhanced-adapter
+  activerecord-oracle_enhanced-adapter!
   addressable
   alphabetize
   attr_encrypted

@@ -3,7 +3,7 @@ source 'https://ed5779be:de10e893@gems.contribsys.com/'
 source 'https://rubygems.org'
 
 gem 'aasm'
-gem 'activerecord-oracle_enhanced-adapter'
+gem 'activerecord-oracle_enhanced-adapter', git: 'git@github.com:rsim/oracle-enhanced.git', branch: 'release15'
 gem 'addressable'
 gem 'clockwork'
 gem 'config_spartan', '~>1.0.0'
