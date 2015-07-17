@@ -50,7 +50,9 @@ case environment
     email_endtoend.gmail.imap.user_name       = 'canari7dd@gmail.com'
 
   when :prod
+    email_endtoend.xact.account.id            = '10220'
     email_endtoend.xact.user.email_address    = 'CUKEPROD@govdelivery.com'
     email_endtoend.xact.user.password         = 'GovDel01'
     email_endtoend.gmail.imap.user_name       = 'canari8dd@gmail.com'
+    email_endtoend.xact.user.token            = '7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW'
 end
