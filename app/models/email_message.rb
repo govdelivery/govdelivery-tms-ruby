@@ -15,7 +15,8 @@ class EmailMessage < ActiveRecord::Base
                   :reply_to,
                   :subject
 
-  before_validation :set_from_email, on: :create
+  before_validation :apply_from_email, on: :create
+  before_validation :apply_template, on: :create
   before_validation :apply_defaults, on: :create
 
   validates :body, presence: true, on: :create
@@ -27,7 +28,7 @@ class EmailMessage < ActiveRecord::Base
   validate :from_email_allowed?
 
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
-  scope :indexed, -> {select('id, user_id, created_at, status, subject, email_template_id')}
+  scope :indexed, -> { select('id, user_id, created_at, status, subject, email_template_id') }
 
   def on_sending(ack=nil)
     self.ack ||= ack
@@ -53,11 +54,11 @@ class EmailMessage < ActiveRecord::Base
   end
 
   def reply_to
-    self[:reply_to] || account.reply_to || from_email
+    self[:reply_to] || from_email
   end
 
   def errors_to
-    self[:errors_to] || account.errors_to || from_email
+    self[:errors_to] || from_email
   end
 
   def odm_record_designator
@@ -66,7 +67,7 @@ class EmailMessage < ActiveRecord::Base
     end
   end
 
-  protected
+  private
 
   def from_email_allowed?
     unless account.from_email_allowed?(from_email)
@@ -74,20 +75,34 @@ class EmailMessage < ActiveRecord::Base
     end
   end
 
-  def set_from_email
-    self.from_email = account.from_email if from_email.nil? && account
+  def apply_from_email
+    return unless self.from_email
+    apply_from_address(account.from_addresses.find_by_from_email(from_email))
+  end
+
+  def apply_from_address(from_address)
+    return unless from_address
+    [:from_email, :errors_to, :reply_to].each do |attr|
+      # if attribute is already set, presumably the client wanted something specific so don't reset it
+      self[attr] ||= from_address.send(attr)
+    end
+  end
+
+  def apply_template
+    return unless email_template
+    # Using nil as intended - to indicate a variable that has not yet been set
+    # Don't use ||= here; false is a value we do not want to override
+    [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].
+      select { |attr| self[attr].nil? }.each do |attr|
+      self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values
+    end
+    apply_from_address(email_template.from_address)
   end
 
   def apply_defaults
-    # Using nil as intended - to indicate a variable that has not yet been set
-    # Doing use ||= here, cause false is a value we do not want to override
-    if email_template
-      [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].select { |attr| self[attr].nil?}.each do |attr|
-        self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values
-      end
-    end
-    self.open_tracking_enabled = true if open_tracking_enabled.nil?
+    self.open_tracking_enabled  = true if open_tracking_enabled.nil?
     self.click_tracking_enabled = true if click_tracking_enabled.nil?
+    apply_from_address(account.default_from_address)
   end
 
   def recipients_with(type)
@@ -102,4 +117,5 @@ class EmailMessage < ActiveRecord::Base
     return unless tracking_params = [email_template.try(:link_tracking_parameters_hash), account.link_tracking_parameters_hash].detect(&:present?)
     self.body = GovDelivery::Links::Transformer.new(tracking_params).replace_all_hrefs(body)
   end
+
 end

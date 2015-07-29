@@ -10,11 +10,11 @@ RSpec.shared_examples 'an email message that can be templated' do
   end
 
   it "prefers attributes on the message when set" do
-    subject.body = 'a new body with [[things]]'
-    subject.subject = 'a unique subject'
-    subject.macros = {"things" => 'stuff'}
-    subject.open_tracking_enabled = false
-    subject.click_tracking_enabled = false
+    subject.body                          = 'a new body with [[things]]'
+    subject.subject                       = 'a unique subject'
+    subject.macros                        = {"things" => 'stuff'}
+    subject.open_tracking_enabled         = false
+    subject.click_tracking_enabled        = false
     email_template.click_tracking_enabled = !subject.click_tracking_enabled
     email_template.open_tracking_enabled  = !subject.open_tracking_enabled
     subject.email_template                = email_template
@@ -25,11 +25,11 @@ RSpec.shared_examples 'an email message that can be templated' do
   end
 
   context 'with unspecified attributes' do
-    subject {empty_email}
+    subject { empty_email }
     it "uses attributes from template" do
       email_template.click_tracking_enabled = false
-      email_template.open_tracking_enabled = false
-      subject.email_template = email_template
+      email_template.open_tracking_enabled  = false
+      subject.email_template                = email_template
       subject.save!
       %w{body subject macros click_tracking_enabled open_tracking_enabled}.each do |field|
         expect(subject.send(field)).to eq(email_template.send(field))
@@ -39,25 +39,29 @@ RSpec.shared_examples 'an email message that can be templated' do
 end
 
 describe EmailMessage do
-  let(:vendor) {create(:email_vendor)}
-  let(:account) {create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3')}    # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
-  let(:from_address) {account.default_from_address}
-  let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
-  let(:email_template) {create(:email_template, account: account, user: user, from_address: from_address)}
-  let(:email_template_sans_link_params) {create(:email_template, account: account, user: user, from_address: from_address, link_tracking_parameters: nil)}
-  let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>'}
+  let(:vendor) { create(:email_vendor) }
+  let(:account) { create(:account, email_vendor: vendor, name: 'name', link_tracking_parameters: 'pi=3') } # http://www.quickmeme.com/img/b3/b3fe35940097bdc40a6d9f26ad06318741a0df1b982881524423046eb43a70e7.jpg
+  let(:from_address) { account.default_from_address }
+  let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
+  let(:email_template) { create(:email_template, account: account, user: user, from_address: from_address) }
+  let(:email_template_sans_link_params) { create(:email_template, account: account, user: user, from_address: from_address, link_tracking_parameters: nil) }
+  let(:body_with_links) { 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>' }
+  let(:email_params) {
+    {body:                   body_with_links,
+     subject:                'specs before tests',
+     open_tracking_enabled:  false,
+     click_tracking_enabled: true
+    }
+  }
   let(:email) do
     user.email_messages.build(
-      body: body_with_links,
-      subject: 'specs before tests',
-      from_email: account.from_email,
-      open_tracking_enabled: false,
-      click_tracking_enabled: true,
-      macros: {
-        'macro1' => 'foo',
-        'macro2' => 'bar',
-        'first' => 'bazeliefooga'
-      }
+      email_params.merge(
+        {from_email: account.from_email,
+         macros:     {
+           'macro1' => 'foo',
+           'macro2' => 'bar',
+           'first'  => 'bazeliefooga'
+         }})
     )
   end
   let(:empty_email) do
@@ -69,42 +73,42 @@ describe EmailMessage do
           open_tracking_enabled:  nil,
           click_tracking_enabled: nil,
           macros:                 nil
-         )
+    )
   end
   let(:macroless_email) do
     build(:email_message,
-          user: user,
-          account: account,
-          body: 'longggg body',
-          subject: 'specs before tests',
-          from_email: account.from_email,
-          open_tracking_enabled: true,
+          user:                   user,
+          account:                account,
+          body:                   'longggg body',
+          subject:                'specs before tests',
+          from_email:             account.from_email,
+          open_tracking_enabled:  true,
           click_tracking_enabled: true,
-          macros: {}
-         )
+          macros:                 {}
+    )
   end
   let(:templated_email) do
     build(:email_message,
-          user: user,
-          account: account,
-          body: body_with_links,
+          user:           user,
+          account:        account,
+          body:           body_with_links,
           email_template: email_template)
   end
   let(:templated_email_sans_link_params) do
     build(:email_message,
-          user: user,
-          account: account,
-          body: 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
-          body: body_with_links,
+          user:           user,
+          account:        account,
+          body:           'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
+          body:           body_with_links,
           email_template: email_template_sans_link_params)
   end
-  subject {email}
+  subject { email }
 
   it_should_validate_as_email :reply_to, :errors_to
   it_behaves_like 'an email message that can be templated'
 
   context "built via a user" do
-    subject {user.email_messages.build}
+    subject { user.email_messages.build }
 
     it "should have nil default values on build" do
       [:subject, :body, :from_name, :from_email, :ack, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
@@ -116,25 +120,15 @@ describe EmailMessage do
   end
 
   context "email_template association" do
-    it {is_expected.to belong_to :email_template}
+    it { is_expected.to belong_to :email_template }
     it "can be blank" do
       expect(subject.email_template).to be_blank
     end
   end
 
-  context 'with a from_email that is not allowed' do
-    before do
-      Account.any_instance.stubs(:from_email_allowed?).returns(false)
-    end
-    it 'should not be valid' do
-      expect(email).to be_invalid
-      expect(email.errors.get(:from_email)).not_to be_empty
-    end
-  end
-
   context 'with nil tracking flags' do
     it 'should interpret them as true' do
-      email.open_tracking_enabled = nil
+      email.open_tracking_enabled  = nil
       email.click_tracking_enabled = nil
       email.save!
       email.reload
@@ -152,20 +146,20 @@ describe EmailMessage do
     context 'when ready! fails' do
       it 'should raise an ActiveRecord error' do
         email.open_tracking_enabled = nil
-        expect {email.ready!}.to raise_error(ActiveRecord::RecordInvalid, /Open tracking enabled is not included in the list/)
+        expect { email.ready! }.to raise_error(ActiveRecord::RecordInvalid, /Open tracking enabled is not included in the list/)
         expect(email.status).to eq('new')
       end
     end
     context 'when ready! succeeds' do
       it 'should change the message state' do
-        expect {email.ready!}.not_to raise_error
+        expect { email.ready! }.not_to raise_error
         expect(email.status).to eq('queued')
       end
     end
   end
 
   context 'with all attributes' do
-    it {is_expected.to be_valid}
+    it { is_expected.to be_valid }
     it 'should set the account' do
       expect(account).not_to be_nil
     end
@@ -186,7 +180,7 @@ describe EmailMessage do
       end
 
       it 'should select proper columns for list' do
-        result = user.email_messages.indexed.first
+        result   = user.email_messages.indexed.first
         cols     = [:user_id, :created_at, :status, :subject, :id, :email_template_id]
         not_cols = (EmailMessage.columns.map(&:name).map(&:to_sym) - cols)
 
@@ -247,7 +241,7 @@ describe EmailMessage do
         end
 
         it 'should not be able to skip queued' do
-          expect {email.sending!(nil, 'dummy_id')}.to raise_error(AASM::InvalidTransition)
+          expect { email.sending!(nil, 'dummy_id') }.to raise_error(AASM::InvalidTransition)
         end
 
         context 'and completed! without a message' do
@@ -274,7 +268,7 @@ describe EmailMessage do
             recip = email.recipients.reload.first
             recip.send(:"#{type}!", 'http://dudes.com/tyler', Time.now)
           end
-          it {expect(email.send(:"recipients_who_#{type}").count).to eq(1)}
+          it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
         end
       end
 
@@ -288,7 +282,7 @@ describe EmailMessage do
             recip = email.recipients.reload.first
             recip.send(:"#{type}!", 'email_ack', nil, nil)
           end
-          it {expect(email.send(:"recipients_who_#{type}").count).to eq(1)}
+          it { expect(email.send(:"recipients_who_#{type}").count).to eq(1) }
         end
       end
     end
@@ -303,29 +297,51 @@ describe EmailMessage do
     end
   end
 
-  [:errors_to, :reply_to].each do |field|
-    before do
-      email.account = account
+  context 'FromAddress' do
+    let(:template_from_address) do
+      account.from_addresses.create(from_email: 'template@sink.govdelivery.com',
+                                    reply_to:   'template-reply-to@sink.govdelivery.com',
+                                    errors_to:  'template-bounces@sink.govdelivery.com')
     end
-    context "#{field} default" do
-      it 'should be account default when nil' do
-        email.send("#{field}=", nil)
-        email.account.expects(field).returns('return')
-        expect(email.send(field)).to eq('return')
-      end
-      it 'should be local from_email when nil and account default is nil' do
-        email.send("#{field}=", nil)
-        email.from_email = 'from_email'
-        email.account.expects(field).returns(nil)
-        expect(email.send(field)).to eq('from_email')
-      end
+    let(:email_template_non_default_from_address) { create(:email_template, account: account, user: user, from_address: template_from_address) }
+    let(:other_from_address) do
+      account.from_addresses.create(from_email: 'other@sink.govdelivery.com',
+                                    reply_to:   'other-reply-to@sink.govdelivery.com',
+                                    errors_to:  'other-bounces@sink.govdelivery.com')
     end
-    context "#{field}" do
-      it 'should use local value' do
-        email.send("#{field}=", 'local')
-        email.account.expects(field).never
-        expect(email.send(field)).to eq('local')
-      end
+
+    it 'should be the default when not specified' do
+      account.default_from_address.update_attributes(
+        from_email: 'default@sink.govdelivery.com',
+        reply_to:   'default-reply-to@sink.govdelivery.com',
+        errors_to:  'default-bounces@sink.govdelivery.com'
+      )
+      email_message = user.email_messages.build(email_params)
+      expect(email_message.valid?).to be true
+      expect(email_message.from_email).to eq account.default_from_address.from_email
+      expect(email_message.errors_to).to eq account.default_from_address.errors_to
+      expect(email_message.reply_to).to eq account.default_from_address.reply_to
+    end
+    it 'should use from_email when optional FromAddress values are blank' do
+      email_message = user.email_messages.build(email_params)
+      expect(email_message.valid?).to be true
+      expect(email_message.from_email).to eq from_address.from_email
+      expect(email_message.errors_to).to eq from_address.from_email
+      expect(email_message.reply_to).to eq from_address.from_email
+    end
+    it 'should use template' do
+      email_message = user.email_messages.build(email_params.merge(email_template: email_template_non_default_from_address))
+      expect(email_message.valid?).to be true
+      expect(email_message.from_email).to eq template_from_address.from_email
+      expect(email_message.errors_to).to eq template_from_address.errors_to
+      expect(email_message.reply_to).to eq template_from_address.reply_to
+    end
+    it 'should override template' do
+      email_message = user.email_messages.build(email_params.merge(email_template: email_template_non_default_from_address, from_email: other_from_address.from_email))
+      expect(email_message.valid?).to be true
+      expect(email_message.from_email).to eq other_from_address.from_email
+      expect(email_message.errors_to).to eq other_from_address.errors_to
+      expect(email_message.reply_to).to eq other_from_address.reply_to
     end
   end
 end
