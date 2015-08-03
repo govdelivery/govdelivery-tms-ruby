@@ -31,10 +31,15 @@ case environment
         email_endtoend.gmail.imap.user_name       = 'govdsmokeasqctest@gmail.com'
         email_endtoend.gmail.imap.password        = 'iVtpWJgAQhMVNyWI'
       else
-        email_endtoend.xact.account.id            = '10541'
-        email_endtoend.xact.user.token            = 'LLovBHFaaNY2buT3PxxbCPszaANkywDh'
-        email_endtoend.xact.user.email_address    = 'qc-email_end_to_end-test@govdelivery.com'
-        email_endtoend.gmail.imap.user_name       = 'canari11dd@gmail.com'
+        email_endtoend.xact.account.id                = '10541'
+        email_endtoend.xact.user.token                = 'LLovBHFaaNY2buT3PxxbCPszaANkywDh'
+        email_endtoend.xact.user.email_address        = 'qc-email_end_to_end-test@govdelivery.com'
+        email_endtoend.xact.user.from_address_two     = 'qc-email_end_to_end-test2@govdelivery.com'
+        email_endtoend.xact.user.reply_to_address     = 'qcemail_end_to_end-reply@govdelivery.com'
+        email_endtoend.xact.user.reply_to_address_two = 'qcemail_end_to_end-reply2@govdelivery.com'
+        email_endtoend.xact.user.bounce_address       = 'qc-email_end_to_end-errors@govdelivery.com'
+        email_endtoend.xact.user.bounce_address_two   = 'qc-email_end_to_end-errors2@govdelivery.com'
+        email_endtoend.gmail.imap.user_name           = 'canari11dd@gmail.com'
       end
 
   when :integration
