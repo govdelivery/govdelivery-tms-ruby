@@ -90,6 +90,7 @@ group :development, :test do
   gem 'rubocop-checkstyle_formatter', require: false
   gem 'pry'
   gem 'pry-rails'
+  gem 'pry-remote'
 end
 
 group :test do

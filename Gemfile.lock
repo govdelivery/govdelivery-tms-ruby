@@ -227,6 +227,9 @@ GEM
       spoon (~> 0.0)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
+    pry-remote (0.1.8)
+      pry (~> 0.9)
+      slop (~> 3.0)
     rabl (0.11.6)
       activesupport (>= 2.3.14)
     rack (1.5.5)
@@ -460,6 +463,7 @@ DEPENDENCIES
   protected_attributes
   pry
   pry-rails
+  pry-remote
   rabl
   rack-ssl
   rails (~> 4.1.0)
@@ -496,4 +500,4 @@ DEPENDENCIES
   yaml_db
 
 BUNDLED WITH
-   1.10.4
+   1.10.6
