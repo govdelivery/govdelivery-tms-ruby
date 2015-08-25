@@ -25,7 +25,7 @@ class LoopbackMessageWorker
             recipient.canceled!(ack)
           when self.class.magic_addresses[:failed]
             logger.info('Magic Failed Recipient: Going to Failed State.')
-            recipient.failed!(ack)
+            recipient.failed!(ack, nil, 'magical failure')
           when self.class.magic_addresses[:bounced]
             logger.info('Magic Bounced Recipient: Sending a bounce')
             recipient.sending!(ack)

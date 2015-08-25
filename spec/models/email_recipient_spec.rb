@@ -157,14 +157,15 @@ describe EmailRecipient do
       it 'should publish failed transitions' do
         expected = {
           channel: 'email_channel',
-          message: has_entries(v: '1',
-                               recipient_id: subject.id,
-                               message_id: subject.message.id,
-                               account_sid: subject.message.account.sid,
-                               uri: 'failed')
+          message: has_entries(v:             '1',
+                               recipient_id:  subject.id,
+                               message_id:    subject.message.id,
+                               account_sid:   subject.message.account.sid,
+                               uri:           'failed',
+                               error_message: 'equine error')
         }
         Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
-        subject.failed!
+        subject.failed!(nil, nil, 'equine error')
       end
 
       it 'should publish canceled transitions' do
