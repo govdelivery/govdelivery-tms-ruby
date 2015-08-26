@@ -93,7 +93,15 @@ class EmailRecipient < ActiveRecord::Base
 
   def failed!(ack=nil, completed_at=nil, error_message=nil)
     super.tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'failed', v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(
+        channel: 'email_channel',
+        message: {
+          uri:           'failed',
+          v:             '1',
+          account_sid:   message.account.sid,
+          message_id:    message.id,
+          recipient_id:  id,
+          error_message: error_message})
     end
   end
 
