@@ -47,13 +47,17 @@ class EmailRecipient < ActiveRecord::Base
 
   def arf!(_, _, error_message)
     update_attribute(:error_message, error_message).tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "arf", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(
+        channel: 'email_channel',
+        message: {uri: "arf", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id, error_message: error_message})
     end
   end
 
-  def hard_bounce!(*args)
-    bounce!(:failed, *args).tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "bounced", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
+  def hard_bounce!(ack, completed_at, error_message)
+    bounce!(:failed, ack, completed_at, error_message).tap do
+      Analytics::PublisherWorker.perform_async(
+        channel: 'email_channel',
+        message: {uri: "bounced", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id, error_message: error_message})
     end
   end
 

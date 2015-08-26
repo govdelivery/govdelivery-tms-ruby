@@ -3,7 +3,7 @@ require 'rails_helper'
 describe EmailRecipient do
   let(:macros) {{'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value'}}
   let(:vendor) {create(:email_vendor)}
-  let(:account) {create(:account, email_vendor: vendor, name: 'account')}
+  let(:account) {create(:account, email_vendor: vendor, name: 'account', sid: 'foo')}
   let(:email_message) {create(:email_message, account: account)}
   let(:other_email) do
     em = create(:email_message, account: account)
@@ -108,6 +108,9 @@ describe EmailRecipient do
 
         context 'and bounces' do
           it 'should update error message and status' do
+            Analytics::PublisherWorker.expects(:perform_async).with(
+              channel: 'email_channel',
+              message: {uri: "bounced", v: '1', account_sid: subject.message.account.sid, message_id: subject.message.id, recipient_id: subject.id, error_message: 'boing!'})
             subject.hard_bounce!(nil, nil, 'boing!')
             expect(subject.error_message).to eq 'boing!'
             expect(subject.failed?).to be true
@@ -116,6 +119,9 @@ describe EmailRecipient do
 
         context 'and ARFs' do
           it 'should update error message but not status' do
+            Analytics::PublisherWorker.expects(:perform_async).with(
+              channel: 'email_channel',
+              message: {uri: "arf", v: '1', account_sid: subject.message.account.sid, message_id: subject.message.id, recipient_id: subject.id, error_message: 'woof!'})
             subject.arf!(nil, nil, 'woof!')
             expect(subject.error_message).to eq 'woof!'
             expect(subject.sent?).to be true
