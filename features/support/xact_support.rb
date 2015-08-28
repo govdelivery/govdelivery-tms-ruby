@@ -41,8 +41,8 @@ class LinkTester
     a = Mechanize.new do |agent|
       agent.user_agent_alias = 'Mac Safari'
     end
-    ca_path = File.expand_path 'lib/Essential.ca-bundle'
-    a.agent.http.ca_file = ca_path # end of mechanize browser emulator
+    #ca_path = File.expand_path 'lib/Essential.ca-bundle'
+    #a.agent.http.ca_file = ca_path # end of mechanize browser emulator
 
     a.get(link_url) do |page| # retrieve link_url from agent
       page.forms.each do |f|
