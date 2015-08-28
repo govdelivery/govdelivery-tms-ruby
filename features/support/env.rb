@@ -5,6 +5,10 @@ require 'configatron'
 require 'multi_xml'
 require 'govdelivery-tms-internal'
 
+
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
+
 Capybara.default_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
   options = {

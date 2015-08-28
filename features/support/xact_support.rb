@@ -6,8 +6,6 @@ require 'httpi'
 require 'json'
 require 'colored'
 
-OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-
 class XACTHelper
   def send_email(username, password, subject, body, recipient, path, from_email, api_key=nil)
 
