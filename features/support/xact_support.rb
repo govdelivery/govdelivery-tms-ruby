@@ -6,8 +6,11 @@ require 'httpi'
 require 'json'
 require 'colored'
 
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
 class XACTHelper
   def send_email(username, password, subject, body, recipient, path, from_email, api_key=nil)
+
     @request = HTTPI::Request.new
     @request.url = "#{path}"
     @request.headers["Content-Type"] = "application/json"
@@ -41,7 +44,7 @@ class LinkTester
     a = Mechanize.new do |agent|
       agent.user_agent_alias = 'Mac Safari'
     end
-    #ca_path = File.expand_path 'lib/Essential.ca-bundle'
+    #ca_path = File.expand_path 'lib/Essential.ca-bundle'  -----  commented out 8/28/2015 due to jruby and cert upgrades
     #a.agent.http.ca_file = ca_path # end of mechanize browser emulator
 
     a.get(link_url) do |page| # retrieve link_url from agent
