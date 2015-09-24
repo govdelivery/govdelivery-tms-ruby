@@ -156,10 +156,10 @@ Given(/^I rapidly send a keyword via SMS$/) do
     @message = client_2.sms_messages.build(body: prefix_and_body)
     @message.recipients.build(phone: phone_number_to)
     STDOUT.puts @message.errors unless @message.post
-    sleep(0.5)
+    sleep(1)
   end
 
-  3.times {rapid} # execute "rapid" 3 times
+  5.times {rapid} # execute "rapid" 3 times
   twiliomation # call to twilio call list
   sleep(2)
   @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
