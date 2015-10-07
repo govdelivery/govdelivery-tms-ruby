@@ -159,14 +159,14 @@ Given(/^I rapidly send a keyword via SMS$/) do
     sleep(1)
   end
 
-  5.times {rapid} # execute "rapid" 3 times
+  2.times {rapid} # execute "rapid" 2 times
   twiliomation # call to twilio call list
   sleep(2)
   @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
                                      body: 'This is a text response from a remote website.',
                                      direction: 'incoming',
                                      from: phone_number_to
-                                    ).take(5).each do |call|
+                                    ).take(2).each do |call|
     puts call.body
   end
 
