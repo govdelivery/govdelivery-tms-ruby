@@ -104,6 +104,17 @@ module Recipient
     update_attribute(:ack, ack)
   end
 
+  def retry!
+    if sending?
+      logger.info("retrying send for #{self.class.name} #{id} attempt #{retries}")
+      args = {
+               message_id:   message.id,
+               recipient_id: id,
+             }
+      message.worker.perform_in(message.retry_delay.seconds, args)
+    end
+  end
+
   protected
 
   def retries_exhausted?
