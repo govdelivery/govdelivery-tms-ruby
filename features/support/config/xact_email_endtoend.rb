@@ -70,7 +70,7 @@ case environment
     email_endtoend.xact.user.password         = 'GovDel01'
     email_endtoend.xact.user.email_address        = 'production-email_end_to_end-test@govdelivery.com'
     email_endtoend.xact.user.from_address_two     = 'production-email_end_to_end-test2@govdelivery.com'
-    email_endtoend.xact.user.reply_to_address     = 'productionemail_end_to_end-reply@govdelivery.com'
+    email_endtoend.xact.user.reply_to_address     = 'CUKEPROD@govdelivery.com'
     email_endtoend.xact.user.reply_to_address_two = 'productionemail_end_to_end-reply2@govdelivery.com'
     email_endtoend.xact.user.bounce_address       = 'production-email_end_to_end-errors@govdelivery.com'
     email_endtoend.xact.user.bounce_address_two   = 'production-email_end_to_end-errors2@govdelivery.com'
