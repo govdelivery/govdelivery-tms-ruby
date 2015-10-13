@@ -39,7 +39,7 @@ case environment
         email_endtoend.xact.user.reply_to_address_two = 'qcemail_end_to_end-reply2@govdelivery.com'
         email_endtoend.xact.user.bounce_address       = 'qc-email_end_to_end-errors@govdelivery.com'
         email_endtoend.xact.user.bounce_address_two   = 'qc-email_end_to_end-errors2@govdelivery.com'
-        email_endtoend.gmail.imap.user_name           = 'canari11dd@gmail.com'
+        email_endtoend.gmail.imap.user_name           = 'canari4dd+1@gmail.com'
       end
 
   when :integration
@@ -51,7 +51,7 @@ case environment
     email_endtoend.xact.user.reply_to_address_two = 'integrationemail_end_to_end-reply2@govdelivery.com'
     email_endtoend.xact.user.bounce_address       = 'integration-email_end_to_end-errors@govdelivery.com'
     email_endtoend.xact.user.bounce_address_two   = 'integration-email_end_to_end-errors2@govdelivery.com'
-    email_endtoend.gmail.imap.user_name           = 'canari9dd@gmail.com'
+    email_endtoend.gmail.imap.user_name           = 'canari4dd+2@gmail.com'
 
   when :stage
     email_endtoend.xact.account.id            = '10940'
@@ -62,7 +62,7 @@ case environment
     email_endtoend.xact.user.reply_to_address_two = 'stageemail_end_to_end-reply2@govdelivery.com'
     email_endtoend.xact.user.bounce_address       = 'stage-email_end_to_end-errors@govdelivery.com'
     email_endtoend.xact.user.bounce_address_two   = 'stage-email_end_to_end-errors2@govdelivery.com'
-    email_endtoend.gmail.imap.user_name       = 'canari7dd@gmail.com'
+    email_endtoend.gmail.imap.user_name       = 'canari4dd+3@gmail.com'
 
   when :prod
     email_endtoend.xact.account.id            = '10220'
@@ -70,10 +70,10 @@ case environment
     email_endtoend.xact.user.password         = 'GovDel01'
     email_endtoend.xact.user.email_address        = 'production-email_end_to_end-test@govdelivery.com'
     email_endtoend.xact.user.from_address_two     = 'production-email_end_to_end-test2@govdelivery.com'
-    email_endtoend.xact.user.reply_to_address     = 'CUKEPROD@govdelivery.com'
+    email_endtoend.xact.user.reply_to_address     = 'productionemail_end_to_end-reply@govdelivery.com'
     email_endtoend.xact.user.reply_to_address_two = 'productionemail_end_to_end-reply2@govdelivery.com'
-    email_endtoend.xact.user.bounce_address       = 'production-email_end_to_end-errors@govdelivery.com'
+    email_endtoend.xact.user.bounce_address       = 'production-email_end_to_end-errors@govdelivery.com'  
     email_endtoend.xact.user.bounce_address_two   = 'production-email_end_to_end-errors2@govdelivery.com'
-    email_endtoend.gmail.imap.user_name       = 'canari8dd@gmail.com'
+    email_endtoend.gmail.imap.user_name       = 'canari4dd+4@gmail.com'
     email_endtoend.xact.user.token            = '7sRewyxNYCyCYXqdHnMFXp8PSvmpLqRW'
 end
