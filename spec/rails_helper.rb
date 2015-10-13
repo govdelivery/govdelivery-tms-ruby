@@ -83,7 +83,7 @@ def exception_check(worker, expected_message, params=nil)
     java_exception_raised = false
   rescue StandardError => rex
     ruby_exception_raised = true
-    expect(rex.message).to includes(expected_message)
+    expect(rex.message).to include(expected_message)
   end
 
   expect(java_exception_raised).to be_falsey
