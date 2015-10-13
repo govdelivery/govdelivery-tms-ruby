@@ -9,8 +9,6 @@ require 'awesome_print'
 require 'mail'
 require 'httpi'
 
-OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-
 # helper methods
 module Helpy
   def initialize_variables
