@@ -45,7 +45,7 @@ describe EmailMessage do
   let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
   let(:email_template) { create(:email_template, account: account, user: user, from_address: from_address) }
   let(:email_template_sans_link_params) { create(:email_template, account: account, user: user, from_address: from_address, link_tracking_parameters: nil) }
-  let(:body_with_links) { 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/s\'tore/">links</a>' }
+  let(:body_with_links) { 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>' }
   let(:email_params) {
     {body:                   body_with_links,
      subject:                'specs before tests',
@@ -204,14 +204,14 @@ describe EmailMessage do
           expect(email.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
           expect(email.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
           expect(email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
-          expect(email.body).to include '<a href="https://donkeys.com/s\'tore/?pi=3">links</a>'
+          expect(email.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
 
         it 'should use template tracking parameters if a template is used' do
           expect(templated_email.ready!).to be true
           templated_email.reload
           expect(templated_email.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
-          expect(templated_email.body).to_not include '<a href="https://donkeys.com/s\'tore/">links</a>'
+          expect(templated_email.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
           templated_email.body.scan(/https?:\/\/[\S]+\?([\S]*?)">/) do |query_params|
             query_params_array = query_params[0].split('&')
             expect(query_params_array).to include 'tracking=param'
@@ -224,11 +224,12 @@ describe EmailMessage do
           templated_email_sans_link_params.reload
           expect(templated_email_sans_link_params.body).to_not include '<a href="http://stuff.com/index.html">some</a>'
           expect(templated_email_sans_link_params.body).to include '<a href="http://stuff.com/index.html?pi=3">some</a>'
-          expect(templated_email_sans_link_params.body).to_not include '<a href="https://donkeys.com/s\'tore/">links</a>'
-          expect(templated_email_sans_link_params.body).to include '<a href="https://donkeys.com/s\'tore/?pi=3">links</a>'
+          expect(templated_email_sans_link_params.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
+          expect(templated_email_sans_link_params.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
 
         context '#insert_link_tracking_parameters' do
+          let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/s\'tore/">links</a>'}
           it 'should use simple link parsing in govdelivery-links when asked' do
             Conf.stubs(:use_simple_link_detection).returns(true)
             email.send :insert_link_tracking_parameters
@@ -238,20 +239,6 @@ describe EmailMessage do
 
           it 'should use enhanced link parsing in govdelivery-links when asked' do
             Conf.stubs(:use_simple_link_detection).returns(false)
-            email.send :insert_link_tracking_parameters
-            expect(email.body).to_not include 'longggg body with <a href="http://stuff.com/index.html?pi=3">some</a> great <a href="https://donkey?pi=3\'s.com/store/">links</a>'
-            expect(email.body).to include '<a href="https://donkeys.com/s\'tore/?pi=3">links</a>'
-          end
-
-          it 'should use enhanced link parsing in govdelivery-links when non-boolean value for flag' do
-            Conf.stubs(:use_simple_link_detection).returns('aack!')
-            email.send :insert_link_tracking_parameters
-            expect(email.body).to_not include 'longggg body with <a href="http://stuff.com/index.html?pi=3">some</a> great <a href="https://donkey?pi=3\'s.com/store/">links</a>'
-            expect(email.body).to include '<a href="https://donkeys.com/s\'tore/?pi=3">links</a>'
-          end
-
-          it 'should use enhanced link parsing in govdelivery-links when nil value for flag' do
-            Conf.stubs(:use_simple_link_detection).returns(nil)
             email.send :insert_link_tracking_parameters
             expect(email.body).to_not include 'longggg body with <a href="http://stuff.com/index.html?pi=3">some</a> great <a href="https://donkey?pi=3\'s.com/store/">links</a>'
             expect(email.body).to include '<a href="https://donkeys.com/s\'tore/?pi=3">links</a>'

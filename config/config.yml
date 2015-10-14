@@ -33,4 +33,4 @@ secret_key_base: #nil
 #twilio_test_sid: 'fake'
 #twilio_test_token: 'fake'
 
-use_simple_link_detection: false
+use_simple_link_detection: true
