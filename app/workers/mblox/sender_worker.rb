@@ -66,13 +66,16 @@ module Mblox
     end
 
     def get_recipient_vendor_message
-      @recipient_vendor_message || = begin
+      @recipient_vendor_message ||= begin
+        temp_message = nil
+        temp_recipient = nil
+        temp_vendor = nil
         ActiveRecord::Base.connection_pool.with_connection do
-          message = SmsMessage.includes(:sms_vendor).find(@options[:message_id])
-          recipient = message.recipients.find(@options[:recipient_id])
-          vendor = message.vendor
+          temp_message = SmsMessage.includes(:sms_vendor).find(@options[:message_id])
+          temp_recipient = temp_message.recipients.find(@options[:recipient_id])
+          temp_vendor = temp_message.vendor
         end
-        [recipient, vendor, message]
+        [temp_recipient, temp_vendor, temp_message]
       end
     end
   end

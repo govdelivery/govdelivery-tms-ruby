@@ -73,6 +73,11 @@ describe EmailRecipient do
         expect(subject.ack).to eq 'ack'
         expect(subject.error_message).to eq 'this message is terrible'
       end
+
+      it 'should not retry!' do
+        subject.message.expects(:worker).never
+        subject.retry!
+      end
     end
 
     context 'that is sending' do
@@ -82,6 +87,13 @@ describe EmailRecipient do
 
       it 'should set sent_at' do
         expect(subject.sent_at).not_to be_nil
+      end
+
+      it 'should retry!' do
+        worker = mock("worker")
+        subject.message.expects(:worker).returns(worker)
+        worker.expects(:perform_in).with(10.seconds, {message_id: subject.message.id, recipient_id: subject.id})
+        subject.retry!
       end
 
       context 'and is sent' do

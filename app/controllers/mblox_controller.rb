@@ -20,9 +20,9 @@ class MbloxController < ApplicationController
     when "Queued", "Dispatched"
       nil # noop
     when "Aborted"
-      [402, 405, 407].include?(secondary_status) ? recipient.retry! : :canceled!
+      ["402", "405", "407"].include?(secondary_status) ? recipient.retry! : :canceled!
     when "Expired"
-      recipient.retry! && nil
+      recipient.retry!
     when "Delivered"
       :sent!
     when "Failed", "Rejected"
