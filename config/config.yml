@@ -25,6 +25,8 @@ shared_phone_numbers:
   # 89568 467873 566948 734876 667873 99511 - production short codes (as of 4/2015)
   # TXLOT INSURE KNOWIT seguro MNSURE WY511 - don't forward these, stop commands will handle unsubscribing
 secret_key_base: #nil
+mblox_api_key: 09047bedd24a450b9a037e34b59029df
+mblox_service_account: govdeliverytest
 
 # set these to run seed data
 #twilio_sid: 'fake'
