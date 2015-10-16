@@ -166,7 +166,7 @@ GEM
       activerecord-oracle_enhanced-adapter (> 1.4.3, < 1.6.0)
       activesupport (> 3.2.20, < 4.2.0)
       ruby-plsql
-    govdelivery-links (0.1.5)
+    govdelivery-links (0.1.6)
       activesupport
       addressable (~> 2.3.0)
       rack
