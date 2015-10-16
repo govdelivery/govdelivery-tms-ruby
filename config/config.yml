@@ -34,5 +34,3 @@ mblox_service_account: govdeliverytest
 #twilio_number: 'fake'
 #twilio_test_sid: 'fake'
 #twilio_test_token: 'fake'
-
-use_simple_link_detection: true

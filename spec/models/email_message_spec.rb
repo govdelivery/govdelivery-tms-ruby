@@ -230,12 +230,6 @@ describe EmailMessage do
 
         context '#insert_link_tracking_parameters' do
           let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/s\'tore/">links</a>'}
-          it 'should use simple link parsing in govdelivery-links when asked' do
-            Conf.stubs(:use_simple_link_detection).returns(true)
-            email.send :insert_link_tracking_parameters
-            expect(email.body).to_not include '<a href="https://donkeys.com/s\'tore/?pi=3">links</a>'
-            expect(email.body).to include 'longggg body with <a href="http://stuff.com/index.html?pi=3">some</a> great <a href="https://donkeys.com/s?pi=3\'tore/">links</a>'
-          end
 
           it 'should use enhanced link parsing in govdelivery-links when asked' do
             Conf.stubs(:use_simple_link_detection).returns(false)

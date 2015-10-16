@@ -115,7 +115,7 @@ class EmailMessage < ActiveRecord::Base
 
   def insert_link_tracking_parameters
     return unless tracking_params = [email_template.try(:link_tracking_parameters_hash), account.link_tracking_parameters_hash].detect(&:present?)
-    self.body = GovDelivery::Links::Transformer.new(tracking_params, use_simple_link_detection: Conf.use_simple_link_detection).replace_all_hrefs(body)
+    self.body = GovDelivery::Links::Transformer.new(tracking_params).replace_all_hrefs(body)
   end
 
 end
