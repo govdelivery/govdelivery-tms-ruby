@@ -474,15 +474,15 @@ DEPENDENCIES
   attr_encrypted
   awesome_print
   brakeman-min
-  brick!
+  brick
   capybara
   celluloid
   clockwork
   colored
-  config_spartan (~> 1.0.0)!
+  config_spartan (~> 1.0.0)
   configatron
   cucumber
-  dcm_client!
+  dcm_client
   devise
   enumify
   factory_girl_rails
@@ -490,15 +490,15 @@ DEPENDENCIES
   fakeweb
   faraday
   faraday_middleware
-  govdelivery-crypt!
-  govdelivery-dbtasks!
-  govdelivery-links!
-  govdelivery-tms (~> 0.8.2)!
-  govdelivery-tms-internal (~> 0.0.2)!
+  govdelivery-crypt
+  govdelivery-dbtasks
+  govdelivery-links
+  govdelivery-tms (~> 0.8.2)
+  govdelivery-tms-internal (~> 0.0.2)
   guard-rspec
   highline
   httpi (= 2.1.0)
-  jakety_jak (~> 1.1.0)!
+  jakety_jak (~> 1.1.0)
   json
   json_spec
   kaminari
@@ -537,7 +537,7 @@ DEPENDENCIES
   shoulda-matchers
   sidekiq
   sidekiq-failures
-  sidekiq-pro!
+  sidekiq-pro
   sidekiq-retries
   sidekiq-unique-jobs
   simple_token_authentication
