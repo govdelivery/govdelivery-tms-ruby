@@ -1,23 +1,28 @@
-source 'http://prod-rubygems1-ep.tops.gdi'
-source 'https://ed5779be:de10e893@gems.contribsys.com/'
 source 'https://rubygems.org'
+
+source 'https://ed5779be:de10e893@gems.contribsys.com/' do
+  gem 'sidekiq-pro'
+end
+
+source 'http://prod-rubygems1-ep.tops.gdi' do
+  gem 'config_spartan', '~>1.0.0'
+  gem 'dcm_client'
+  gem 'govdelivery-crypt', require: 'govdelivery/crypt'
+  gem 'govdelivery-dbtasks'
+  gem 'govdelivery-links'
+  gem 'jakety_jak', '~>1.1.0', require: nil
+  gem 'brick'
+end
 
 gem 'aasm'
 gem 'activerecord-oracle_enhanced-adapter', git: 'git@github.com:rsim/oracle-enhanced.git', branch: 'release15'
 gem 'addressable'
-gem 'brick', source: 'http://prod-rubygems1-ep.tops.gdi'
 gem 'celluloid'
 gem 'clockwork'
-gem 'config_spartan', '~>1.0.0'
-gem 'dcm_client'
 gem 'devise'
 gem 'enumify'
 gem 'faraday'
 gem 'faraday_middleware'
-gem 'govdelivery-crypt', require: 'govdelivery/crypt'
-gem 'govdelivery-dbtasks'
-gem 'govdelivery-links'
-gem 'jakety_jak', '~>1.1.0', require: nil
 gem 'kaminari'
 gem 'log4r'
 gem 'newrelic_rpm'
@@ -37,7 +42,6 @@ gem 'rjack-slf4j'
 gem 'send_nsca'
 gem 'sidekiq'
 gem 'sidekiq-failures'
-gem 'sidekiq-pro'
 gem 'sidekiq-retries'
 gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication'
@@ -96,11 +100,13 @@ group :development, :test do
 end
 
 group :test do
+  source 'http://prod-rubygems1-ep.tops.gdi' do
+    gem 'govdelivery-tms', '~>0.8.2'
+    gem 'govdelivery-tms-internal', '~>0.0.2'
+  end
   gem 'configatron'
   gem 'fakeredis', require: 'fakeredis/rspec'
   gem 'fakeweb'
-  gem 'govdelivery-tms', '~>0.8.2'
-  gem 'govdelivery-tms-internal', '~>0.0.2'
   gem 'mocha', require: false
   gem 'shoulda-matchers'
 end
