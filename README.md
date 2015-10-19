@@ -37,7 +37,7 @@ test account, but exists for the sole purpose of monitoring the
 platform.
 
     # Create the account
-    ./bin/accounts.rb -n "GovDelivery Monitoring Account" --email_vendor=10000 --sms_vendor=10001 --voice_vendor=10001 --sms_prefix='MONITOR'
+        ./bin/accounts.rb -n "GovDelivery Monitoring Account" --email_vendor=10000 --sms_vendor=10001 --voice_vendor=10001 --sms_prefix='MONITOR'
 
     # Create user and token
 	./bin/users.rb -a ACCOUNTID -e 'nagios@govdelivery.com' -s 0 -p 'SOMEpasSWORD'
