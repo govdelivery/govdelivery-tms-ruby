@@ -151,50 +151,6 @@ def twiliomation
   @client = Twilio::REST::Client.new account_sid, auth_token
 end
 
-Given(/^I rapidly send a keyword via SMS$/) do
-  def rapid
-    @message = client_2.sms_messages.build(body: prefix_and_body)
-    @message.recipients.build(phone: phone_number_to)
-    STDOUT.puts @message.errors unless @message.post
-    sleep(1)
-  end
-
-  2.times {rapid} # execute "rapid" 2 times
-  twiliomation # call to twilio call list
-  sleep(2)
-  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
-                                     body: 'This is a text response from a remote website.',
-                                     direction: 'incoming',
-                                     from: phone_number_to
-                                    ).take(2).each do |call|
-    puts call.body
-  end
-
-  @b = @a[0].uri # find uri of "reply" message,
-
-  sleep(2)
-  @request = HTTPI::Request.new # call to twilio callsid json
-  @request.headers['Content-Type'] = 'application/json'
-  @request.auth.basic('AC189315456a80a4d1d4f82f4a732ad77e', '88e3775ad71e487c7c90b848a55a5c88')
-  @request.url = 'https://api.twilio.com' + @b
-  @response = HTTPI.get(@request)
-  puts @response.raw_body
-
-  sleep(2)
-  i = 0
-  until JSON.parse(@response.raw_body)['body'] == 'This is a text file from a remote website.' # loop until call status = completed
-    STDOUT.puts JSON.parse(@response.raw_body)['status'].yellow
-    @response = HTTPI.get(@request)
-    STDOUT.puts 'waiting for status for 6 seconds'.blue
-    sleep(6)
-    i += 1
-    if i > 10
-      raise 'waited 60 seconds for message to be delivered, but it was not found.'.red
-    end
-  end
-  puts 'Message found'.green
-end
-
 Given(/^I send an SMS with an invalid word or command$/) do
   sleep(20)
   @message = client_2.sms_messages.build(body: 'ABCDEF jabberwocky')
