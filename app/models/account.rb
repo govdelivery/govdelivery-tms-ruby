@@ -31,6 +31,7 @@ class Account < ActiveRecord::Base
   has_many :webhooks, dependent: :delete_all
 
   has_many :email_templates, dependent: :destroy
+  has_many :sms_templates, dependent: :destroy
   has_many :from_addresses, inverse_of: :account, dependent: :destroy
   has_one :default_from_address, -> {where(is_default: true)}, class_name: FromAddress
 

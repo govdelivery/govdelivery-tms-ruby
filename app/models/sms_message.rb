@@ -1,11 +1,13 @@
 class SmsMessage < ActiveRecord::Base
   include Message
-
-  validates :body, presence: {on: :create}, length: {maximum: 160, on: :create}
-  attr_accessible :body
   belongs_to :sms_vendor
+  belongs_to :sms_template
+
+  attr_accessible :body, :sms_template
 
   before_create :set_sms_vendor
+  before_validation :apply_template, on: :create
+  validates :body, presence: {on: :create}, length: {maximum: 160, on: :create}
 
   def blacklisted_recipients
     recipients.blacklisted(sms_vendor_id, account_id)
@@ -34,5 +36,17 @@ class SmsMessage < ActiveRecord::Base
 
   def set_sms_vendor
     self.sms_vendor_id = account.sms_vendor_id
+  end
+
+  private
+
+  def apply_template
+    return unless sms_template
+    # Using nil as intended - to indicate a variable that has not yet been set
+    # Don't use ||= here; false is a value we do not want to override
+    [:body].
+      select { |attr| self[attr].nil? }.each do |attr|
+      self[attr] = sms_template[attr] # can't use ||=, it'll overwrite false values
+    end
   end
 end

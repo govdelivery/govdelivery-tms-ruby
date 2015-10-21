@@ -3,7 +3,6 @@ class KeywordCommandsController < ApplicationController
 
   before_action :find_user, :find_keyword
   before_action :find_command, only: [:show, :update, :destroy]
-  before_action :set_page, only: :index
 
   def index
     @commands = @keyword.commands.page(@page)

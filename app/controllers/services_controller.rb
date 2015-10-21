@@ -12,6 +12,7 @@ class ServicesController < ApplicationController
       @services[:command_types] = command_types_path
       @services[:inbound_sms_messages] = inbound_sms_index_path
       @services[:sms_messages] = sms_index_path
+      @services[:sms_templates] = templates_sms_index_path
     end
 
     if @account.email_vendor
