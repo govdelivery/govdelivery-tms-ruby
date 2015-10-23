@@ -523,6 +523,3 @@ DEPENDENCIES
   validate_url
   yakety_yak
   yaml_db
-
-BUNDLED WITH
-   1.10.6

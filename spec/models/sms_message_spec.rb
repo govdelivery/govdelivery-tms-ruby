@@ -7,6 +7,7 @@ describe SmsMessage do
   let(:shared_account) {create(:account_with_sms, prefix: 'hi', sms_vendor: shared_vendor)}
   let(:other_shared_account) {create(:account_with_sms, prefix: 'hi-too', sms_vendor: shared_vendor)}
   let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  let(:sms_template) {create(:sms_template, body: 'This is the template body')}
 
   context 'when short body is empty' do
     let(:message) {account.sms_messages.build(body: nil)}
@@ -225,5 +226,29 @@ describe SmsMessage do
       expect(counts[state]).to eq 0
     end
     expect(counts['total']).to eq 0
+  end
+
+  context 'sms_template association' do
+    it {is_expected.to belong_to :sms_template}
+
+    it "can be blank" do
+      expect(subject.sms_template).to be_blank
+    end
+
+    context 'with a message and template' do
+      let(:sms_message) {user.sms_messages.build(body: 'sms_message body')}
+      let(:sms_template) {create(:sms_template, account: account, user: user, body: 'template body')}
+      it 'should use template and apply template body if message body is nil' do
+        sms_message.body = nil
+        sms_message.sms_template = sms_template
+        expect(sms_message.valid?).to be true
+        expect(sms_message.body).to eql 'template body'
+      end
+      it 'should not use template body if message body is not nil' do
+        sms_message.sms_template = sms_template
+        expect(sms_message.valid?).to be true
+        expect(sms_message.body).to eql 'sms_message body'
+      end
+    end
   end
 end

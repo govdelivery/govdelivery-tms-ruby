@@ -4,7 +4,6 @@ class IncomingVoiceMessagesController < ApplicationController
   before_action :find_user
   before_action :find_from_number, only: [:create]
   before_action :find_voice_message, only: [:show]
-  before_action :set_page, only: :index
   feature :voice
 
   def index

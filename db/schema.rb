@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150506200932) do
+ActiveRecord::Schema.define(version: 20151020202901) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                                           null: false
@@ -215,12 +215,15 @@ ActiveRecord::Schema.define(version: 20150506200932) do
     t.string   "body"
     t.datetime "created_at"
     t.datetime "completed_at"
-    t.integer  "user_id",       precision: 38, scale: 0
-    t.integer  "account_id",    precision: 38, scale: 0,                 null: false
-    t.string   "status",                                 default: "new", null: false
+    t.integer  "user_id",         precision: 38, scale: 0
+    t.integer  "account_id",      precision: 38, scale: 0,                 null: false
+    t.string   "status",                                   default: "new", null: false
     t.datetime "sent_at"
-    t.integer  "sms_vendor_id", precision: 38, scale: 0,                 null: false
+    t.integer  "sms_vendor_id",   precision: 38, scale: 0,                 null: false
+    t.integer  "sms_template_id", precision: 38, scale: 0
   end
+
+  add_index "sms_messages", ["sms_template_id"], name: "i_sms_messages_sms_template_id", tablespace: "tsms_indx01"
 
   create_table "sms_prefixes", force: true do |t|
     t.string   "prefix",                                 null: false
@@ -244,6 +247,14 @@ ActiveRecord::Schema.define(version: 20150506200932) do
   end
 
   add_index "sms_recipients", ["message_id", "id"], name: "i_sms_recipients_message_id_id", tablespace: "tsms_indx01"
+
+  create_table "sms_templates", force: true do |t|
+    t.text     "body",                                null: false
+    t.integer  "user_id",    precision: 38, scale: 0
+    t.integer  "account_id", precision: 38, scale: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "sms_vendors", force: true do |t|
     t.string   "name",                                                                                                                                                     null: false
