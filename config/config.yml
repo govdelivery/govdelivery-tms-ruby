@@ -13,6 +13,9 @@
 analytics_enabled: false
 analytics_kafkas: []
 analytics_zookeepers: []
+analytics:
+  publisher_options:
+    request.required.acks: '1'
 redis_sentinel_uris: [] # optional for environments with
 nsca_password: ""       # for nagios alerting
 shared_phone_numbers:
