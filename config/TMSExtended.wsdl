@@ -1,200 +1,202 @@
-<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="TMSExtended" targetNamespace="http://tms.govdelivery.com/TMSExtended" xmlns:ns1="http://odm.govdelivery.com/TMSv2" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://tms.govdelivery.com/TMSExtended" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:ns1="http://odm.govdelivery.com/TMSv2" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://tms.govdelivery.com/TMSExtended" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="TMSExtended" targetNamespace="http://tms.govdelivery.com/TMSExtended">
   <wsdl:types>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://tms.govdelivery.com/TMSExtended" xmlns:tns="http://tms.govdelivery.com/TMSExtended" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-<xs:element name="click" nillable="true" type="xs:anyType"/>
-<xs:element name="credentials" type="tns:credentials"/>
-<xs:element name="delivery" type="tns:deliveryEventType"/>
-<xs:element name="open" nillable="true" type="xs:anyType"/>
-<xs:complexType name="credentials">
-<xs:sequence>
-<xs:element default="ODM" minOccurs="0" name="realm" type="xs:string"/>
-<xs:element name="username" type="xs:string"/>
-<xs:element name="password" type="xs:string"/>
-</xs:sequence>
-</xs:complexType>
-<xs:complexType abstract="true" name="authenticatedRequest">
-<xs:sequence/>
-</xs:complexType>
-<xs:complexType name="activityRequest">
-<xs:complexContent>
-<xs:extension base="tns:authenticatedRequest">
-<xs:sequence>
-<xs:element default="1000" name="maxResults" type="xs:int"/>
-<xs:element default="--" minOccurs="0" name="sequence" type="xs:string"/>
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-<xs:complexType abstract="true" name="eventReport">
-<xs:sequence/>
-<xs:attribute name="nextSequence" type="xs:string"/>
-</xs:complexType>
-<xs:complexType name="deliveryActivity">
-<xs:complexContent>
-<xs:extension base="tns:eventReport">
-<xs:sequence>
-<xs:element maxOccurs="unbounded" minOccurs="0" name="delivery" type="tns:deliveryEventType"/>
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-<xs:complexType name="deliveryEventType">
-<xs:simpleContent>
-<xs:extension base="xs:string">
-<xs:attribute name="campaignID" type="xs:string"/>
-<xs:attribute name="messageID" type="xs:string" use="required"/>
-<xs:attribute name="recipientID" type="xs:string"/>
-<xs:attribute name="address" type="xs:string" use="required"/>
-<xs:attribute name="delivered" type="xs:boolean" use="required"/>
-<xs:attribute name="at" type="xs:dateTime" use="required"/>
-</xs:extension>
-</xs:simpleContent>
-</xs:complexType>
-<xs:complexType name="message">
-<xs:sequence>
-<xs:element name="body" type="xs:string"/>
-<xs:element minOccurs="0" name="campaignId" type="xs:string"/>
-<xs:element default="email" name="emailColumn" type="xs:string"/>
-<xs:element name="fromName" type="xs:string"/>
-<xs:element minOccurs="0" name="linkEncoder" type="tns:linkEncoder"/>
-<xs:element minOccurs="0" name="plainTextBody" type="xs:string"/>
-<xs:element minOccurs="0" name="recipientIdColumn" type="xs:string"/>
-<xs:element default="email" name="recordDesignator" type="xs:string"/>
-<xs:element name="subject" type="xs:string"/>
-<xs:element minOccurs="0" name="suppressedValidations" type="tns:sendMessageValidations"/>
-<xs:element maxOccurs="unbounded" name="to" type="xs:string"/>
-<xs:element default="true" name="trackClicks" type="xs:boolean"/>
-<xs:element default="true" name="trackOpens" type="xs:boolean"/>
-</xs:sequence>
-</xs:complexType>
-<xs:complexType name="sendMessageValidations">
-<xs:sequence>
-<xs:element default="true" name="emailLength" type="xs:boolean"/>
-<xs:element default="true" name="emailMissing" type="xs:boolean"/>
-<xs:element default="true" name="emailSyntax" type="xs:boolean"/>
-<xs:element default="true" name="recipientIDLength" type="xs:boolean"/>
-</xs:sequence>
-</xs:complexType>
-<xs:complexType name="extendedMessage">
-<xs:complexContent>
-<xs:extension base="tns:message">
-<xs:sequence>
-<xs:element maxOccurs="unbounded" minOccurs="0" name="attachment" type="tns:attachment"/>
-<xs:element name="errorsToEmail" type="xs:string"/>
-<xs:element name="fromEmail" type="xs:string"/>
-<xs:element maxOccurs="unbounded" minOccurs="0" name="headers" type="tns:header"/>
-<xs:element minOccurs="0" name="replyToEmail" type="xs:string"/>
-<xs:element minOccurs="0" name="virtualSender" type="xs:string"/>
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-<xs:complexType name="attachment">
-<xs:sequence>
-<xs:element minOccurs="0" name="content" ns1:expectedContentTypes="application/octet-stream" type="xs:base64Binary" xmlns:ns1="http://www.w3.org/2005/05/xmlmime"/>
-</xs:sequence>
-<xs:attribute name="mimeType" type="xs:string" use="required"/>
-<xs:attribute name="name" type="xs:string" use="required"/>
-</xs:complexType>
-<xs:complexType name="header">
-<xs:sequence/>
-<xs:attribute name="name" type="xs:string" use="required"/>
-<xs:attribute name="value" type="xs:string" use="required"/>
-</xs:complexType>
-<xs:complexType name="extendedClickActivity">
-<xs:complexContent>
-<xs:extension base="tns:eventReport">
-<xs:sequence>
-<xs:element maxOccurs="unbounded" minOccurs="0" name="click" type="tns:extendedClickEventType"/>
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-<xs:complexType name="extendedClickEventType">
-<xs:complexContent>
-<xs:extension base="tns:clickEventType">
-<xs:sequence/>
-<xs:attribute name="eventIP" type="xs:string"/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-<xs:complexType name="clickEventType">
-<xs:sequence/>
-<xs:attribute name="campaignID" type="xs:string"/>
-<xs:attribute name="messageID" type="xs:string" use="required"/>
-<xs:attribute name="recipientID" type="xs:string"/>
-<xs:attribute name="address" type="xs:string" use="required"/>
-<xs:attribute name="url" type="xs:string" use="required"/>
-<xs:attribute name="at" type="xs:dateTime" use="required"/>
-</xs:complexType>
-<xs:complexType name="extendedOpenActivity">
-<xs:complexContent>
-<xs:extension base="tns:eventReport">
-<xs:sequence>
-<xs:element maxOccurs="unbounded" minOccurs="0" name="open" type="tns:extendedOpenEventType"/>
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-<xs:complexType name="extendedOpenEventType">
-<xs:complexContent>
-<xs:extension base="tns:openEventType">
-<xs:sequence/>
-<xs:attribute name="eventIP" type="xs:string"/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-<xs:complexType name="openEventType">
-<xs:sequence/>
-<xs:attribute name="campaignID" type="xs:string"/>
-<xs:attribute name="messageID" type="xs:string" use="required"/>
-<xs:attribute name="recipientID" type="xs:string"/>
-<xs:attribute name="address" type="xs:string" use="required"/>
-<xs:attribute name="at" type="xs:dateTime" use="required"/>
-</xs:complexType>
-<xs:simpleType name="linkEncoder">
-<xs:restriction base="xs:string">
-<xs:enumeration value="UNDEFINED"/>
-<xs:enumeration value="ONE"/>
-<xs:enumeration value="TWO"/>
-</xs:restriction>
-</xs:simpleType>
-<xs:simpleType name="activityType">
-<xs:restriction base="xs:string">
-<xs:enumeration value="DELIVERY"/>
-<xs:enumeration value="CLICK"/>
-<xs:enumeration value="OPEN"/>
-</xs:restriction>
-</xs:simpleType>
-<xs:element name="deliveryActivitySince" nillable="true" type="tns:activityRequest"/>
-<xs:element name="deliveries" nillable="true" type="tns:deliveryActivity"/>
-<xs:element name="newPassword" nillable="true" type="xs:string"/>
-<xs:element name="success" nillable="true" type="xs:boolean"/>
-<xs:element name="message" nillable="true" type="tns:extendedMessage"/>
-<xs:element name="messageID" nillable="true" type="xs:string"/>
-<xs:element name="activityType" nillable="true" type="tns:activityType"/>
-<xs:element name="lastSequence" nillable="true" type="xs:string"/>
-<xs:element name="clickActivitySince" nillable="true" type="tns:activityRequest"/>
-<xs:element name="clicks" nillable="true" type="tns:extendedClickActivity"/>
-<xs:element name="openActivitySince" nillable="true" type="tns:activityRequest"/>
-<xs:element name="opens" nillable="true" type="tns:extendedOpenActivity"/>
-</xs:schema>
-<xsd:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://odm.govdelivery.com/TMSv2" xmlns:tns="http://odm.govdelivery.com/TMSv2" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<xsd:element name="TMSFault" type="tns:TMSFault"/>
-<xsd:complexType name="TMSFault">
-<xsd:sequence>
-<xsd:element name="code" nillable="true" type="xsd:string"/>
-<xsd:element name="category" nillable="true" type="xsd:string"/>
-<xsd:element name="detail" nillable="true" type="xsd:string"/>
-<xsd:element name="codeValue" nillable="true" type="xsd:int"/>
-</xsd:sequence>
-</xsd:complexType>
-</xsd:schema>
+    <xs:schema xmlns:tns="http://tms.govdelivery.com/TMSExtended" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://tms.govdelivery.com/TMSExtended">
+      <xs:element name="click" nillable="true" type="xs:anyType"/>
+      <xs:element name="credentials" type="tns:credentials"/>
+      <xs:element name="delivery" type="tns:deliveryEventType"/>
+      <xs:element name="open" nillable="true" type="xs:anyType"/>
+      <xs:complexType name="credentials">
+        <xs:sequence>
+          <xs:element default="ODM" minOccurs="0" name="realm" type="xs:string"/>
+          <xs:element name="username" type="xs:string"/>
+          <xs:element name="password" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="authenticatedRequest">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="activityRequest">
+        <xs:complexContent>
+          <xs:extension base="tns:authenticatedRequest">
+            <xs:sequence>
+              <xs:element default="1000" name="maxResults" type="xs:int"/>
+              <xs:element default="--" minOccurs="0" name="sequence" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="eventReport">
+        <xs:sequence/>
+        <xs:attribute name="nextSequence" type="xs:string"/>
+      </xs:complexType>
+      <xs:complexType name="deliveryActivity">
+        <xs:complexContent>
+          <xs:extension base="tns:eventReport">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="delivery" type="tns:deliveryEventType"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="deliveryEventType">
+        <xs:simpleContent>
+          <xs:extension base="xs:string">
+            <xs:attribute name="campaignID" type="xs:string"/>
+            <xs:attribute name="messageID" type="xs:string" use="required"/>
+            <xs:attribute name="recipientID" type="xs:string"/>
+            <xs:attribute name="address" type="xs:string" use="required"/>
+            <xs:attribute name="delivered" type="xs:boolean" use="required"/>
+            <xs:attribute name="at" type="xs:dateTime" use="required"/>
+          </xs:extension>
+        </xs:simpleContent>
+      </xs:complexType>
+      <xs:complexType name="message">
+        <xs:sequence>
+          <xs:element name="body" type="xs:string"/>
+          <xs:element minOccurs="0" name="campaignId" type="xs:string"/>
+          <xs:element default="email" name="emailColumn" type="xs:string"/>
+          <xs:element name="fromName" type="xs:string"/>
+          <xs:element minOccurs="0" name="linkEncoder" type="tns:linkEncoder"/>
+          <xs:element minOccurs="0" name="plainTextBody" type="xs:string"/>
+          <xs:element minOccurs="0" name="recipientIdColumn" type="xs:string"/>
+          <xs:element default="email" name="recordDesignator" type="xs:string"/>
+          <xs:element name="subject" type="xs:string"/>
+          <xs:element minOccurs="0" name="suppressedValidations" type="tns:sendMessageValidations"/>
+          <xs:element maxOccurs="unbounded" name="to" type="xs:string"/>
+          <xs:element default="true" name="trackClicks" type="xs:boolean"/>
+          <xs:element default="true" name="trackOpens" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="sendMessageValidations">
+        <xs:sequence>
+          <xs:element default="true" name="emailLength" type="xs:boolean"/>
+          <xs:element default="true" name="emailMissing" type="xs:boolean"/>
+          <xs:element default="true" name="emailSyntax" type="xs:boolean"/>
+          <xs:element default="true" name="recipientIDLength" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="extendedMessage">
+        <xs:complexContent>
+          <xs:extension base="tns:message">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="attachment" type="tns:attachment"/>
+              <xs:element name="errorsToEmail" type="xs:string"/>
+              <xs:element name="fromEmail" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="headers" type="tns:header"/>
+              <xs:element minOccurs="0" name="messageID" type="xs:string"/>
+              <xs:element minOccurs="0" name="replyToEmail" type="xs:string"/>
+              <xs:element minOccurs="0" name="virtualSender" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="attachment">
+        <xs:sequence>
+          <xs:element xmlns:ns1="http://www.w3.org/2005/05/xmlmime" minOccurs="0" name="content" ns1:expectedContentTypes="application/octet-stream" type="xs:base64Binary"/>
+        </xs:sequence>
+        <xs:attribute name="mimeType" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="header">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="extendedClickActivity">
+        <xs:complexContent>
+          <xs:extension base="tns:eventReport">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="click" type="tns:extendedClickEventType"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="extendedClickEventType">
+        <xs:complexContent>
+          <xs:extension base="tns:clickEventType">
+            <xs:sequence/>
+            <xs:attribute name="eventIP" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="clickEventType">
+        <xs:sequence/>
+        <xs:attribute name="campaignID" type="xs:string"/>
+        <xs:attribute name="messageID" type="xs:string" use="required"/>
+        <xs:attribute name="recipientID" type="xs:string"/>
+        <xs:attribute name="address" type="xs:string" use="required"/>
+        <xs:attribute name="url" type="xs:string" use="required"/>
+        <xs:attribute name="at" type="xs:dateTime" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="extendedOpenActivity">
+        <xs:complexContent>
+          <xs:extension base="tns:eventReport">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="open" type="tns:extendedOpenEventType"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="extendedOpenEventType">
+        <xs:complexContent>
+          <xs:extension base="tns:openEventType">
+            <xs:sequence/>
+            <xs:attribute name="eventIP" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="openEventType">
+        <xs:sequence/>
+        <xs:attribute name="campaignID" type="xs:string"/>
+        <xs:attribute name="messageID" type="xs:string" use="required"/>
+        <xs:attribute name="recipientID" type="xs:string"/>
+        <xs:attribute name="address" type="xs:string" use="required"/>
+        <xs:attribute name="at" type="xs:dateTime" use="required"/>
+      </xs:complexType>
+      <xs:simpleType name="linkEncoder">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ONE"/>
+          <xs:enumeration value="TWO"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="activityType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="DELIVERY"/>
+          <xs:enumeration value="CLICK"/>
+          <xs:enumeration value="OPEN"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="deliveryActivitySince" nillable="true" type="tns:activityRequest"/>
+      <xs:element name="deliveries" nillable="true" type="tns:deliveryActivity"/>
+      <xs:element name="newPassword" nillable="true" type="xs:string"/>
+      <xs:element name="success" nillable="true" type="xs:boolean"/>
+      <xs:element name="message" nillable="true" type="tns:extendedMessage"/>
+      <xs:element name="messageID" nillable="true" type="xs:string"/>
+      <xs:element name="activityType" nillable="true" type="tns:activityType"/>
+      <xs:element name="lastSequence" nillable="true" type="xs:string"/>
+      <xs:element name="clickActivitySince" nillable="true" type="tns:activityRequest"/>
+      <xs:element name="clicks" nillable="true" type="tns:extendedClickActivity"/>
+      <xs:element name="openActivitySince" nillable="true" type="tns:activityRequest"/>
+      <xs:element name="opens" nillable="true" type="tns:extendedOpenActivity"/>
+      <xs:element name="extendedMessageExists" nillable="true" type="xs:boolean"/>
+    </xs:schema>
+    <xsd:schema xmlns:tns="http://odm.govdelivery.com/TMSv2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://odm.govdelivery.com/TMSv2">
+      <xsd:element name="TMSFault" type="tns:TMSFault"/>
+      <xsd:complexType name="TMSFault">
+        <xsd:sequence>
+          <xsd:element name="code" nillable="true" type="xsd:string"/>
+          <xsd:element name="detail" nillable="true" type="xsd:string"/>
+          <xsd:element name="codeValue" nillable="true" type="xsd:int"/>
+          <xsd:element name="category" nillable="true" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="lastActivitySequence">
+  <wsdl:message name="clickActivitySince">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
-    <wsdl:part element="tns:activityType" name="activityType">
+    <wsdl:part element="tns:clickActivitySince" name="clickActivitySince">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="openActivitySince">
@@ -203,20 +205,28 @@
     <wsdl:part element="tns:openActivitySince" name="openActivitySince">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="clickActivitySince">
+  <wsdl:message name="extendedMessageExistsResponse">
+    <wsdl:part element="tns:extendedMessageExists" name="extendedMessageExists">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openActivitySinceResponse">
+    <wsdl:part element="tns:opens" name="opens">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="lastActivitySequence">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
-    <wsdl:part element="tns:clickActivitySince" name="clickActivitySince">
+    <wsdl:part element="tns:activityType" name="activityType">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deliveryActivitySinceResponse">
+    <wsdl:part element="tns:deliveries" name="deliveries">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="changePassword">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
     <wsdl:part element="tns:newPassword" name="newPassword">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="deliveryActivitySinceResponse">
-    <wsdl:part element="tns:deliveries" name="deliveries">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="lastActivitySequenceResponse">
@@ -227,8 +237,10 @@
     <wsdl:part element="tns:success" name="success">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="openActivitySinceResponse">
-    <wsdl:part element="tns:opens" name="opens">
+  <wsdl:message name="extendedMessageExists">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:messageID" name="messageID">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="TMSFault">
@@ -241,18 +253,18 @@
     <wsdl:part element="tns:message" name="message">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="clickActivitySinceResponse">
-    <wsdl:part element="tns:clicks" name="clicks">
+  <wsdl:message name="deliveryActivitySince">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:deliveryActivitySince" name="deliveryActivitySince">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="sendMessageResponse">
     <wsdl:part element="tns:messageID" name="messageID">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="deliveryActivitySince">
-    <wsdl:part element="tns:credentials" name="credentials">
-    </wsdl:part>
-    <wsdl:part element="tns:deliveryActivitySince" name="deliveryActivitySince">
+  <wsdl:message name="clickActivitySinceResponse">
+    <wsdl:part element="tns:clicks" name="clicks">
     </wsdl:part>
   </wsdl:message>
   <wsdl:portType name="TMSExtended">
@@ -300,6 +312,14 @@
       <wsdl:input message="tns:openActivitySince" name="openActivitySince">
     </wsdl:input>
       <wsdl:output message="tns:openActivitySinceResponse" name="openActivitySinceResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:TMSFault" name="TMSFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="extendedMessageExists">
+      <wsdl:input message="tns:extendedMessageExists" name="extendedMessageExists">
+    </wsdl:input>
+      <wsdl:output message="tns:extendedMessageExistsResponse" name="extendedMessageExistsResponse">
     </wsdl:output>
       <wsdl:fault message="tns:TMSFault" name="TMSFault">
     </wsdl:fault>
@@ -391,10 +411,24 @@
         <soap:fault name="TMSFault" use="literal"/>
       </wsdl:fault>
     </wsdl:operation>
+    <wsdl:operation name="extendedMessageExists">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="extendedMessageExists">
+        <soap:header message="tns:extendedMessageExists" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="messageID" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="extendedMessageExistsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="TMSFault">
+        <soap:fault name="TMSFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="TMSExtended">
     <wsdl:port binding="tns:TMSExtendedSoapBinding" name="TMSExtendedPort">
-      <soap:address location="https://stg-tms.govdelivery.com:65081/service/TMSExtended"/>
+      <soap:address location="http://localhost:65080/service/TMSExtended/"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
