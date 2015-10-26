@@ -84,6 +84,7 @@
               <xs:element name="errorsToEmail" type="xs:string"/>
               <xs:element name="fromEmail" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="headers" type="tns:header"/>
+              <xs:element minOccurs="0" name="messageID" type="xs:string"/>
               <xs:element minOccurs="0" name="replyToEmail" type="xs:string"/>
               <xs:element minOccurs="0" name="virtualSender" type="xs:string"/>
             </xs:sequence>
@@ -155,7 +156,6 @@
       </xs:complexType>
       <xs:simpleType name="linkEncoder">
         <xs:restriction base="xs:string">
-          <xs:enumeration value="UNDEFINED"/>
           <xs:enumeration value="ONE"/>
           <xs:enumeration value="TWO"/>
         </xs:restriction>
@@ -179,23 +179,24 @@
       <xs:element name="clicks" nillable="true" type="tns:extendedClickActivity"/>
       <xs:element name="openActivitySince" nillable="true" type="tns:activityRequest"/>
       <xs:element name="opens" nillable="true" type="tns:extendedOpenActivity"/>
+      <xs:element name="extendedMessageExists" nillable="true" type="xs:boolean"/>
     </xs:schema>
     <xsd:schema xmlns:tns="http://odm.govdelivery.com/TMSv2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://odm.govdelivery.com/TMSv2">
       <xsd:element name="TMSFault" type="tns:TMSFault"/>
       <xsd:complexType name="TMSFault">
         <xsd:sequence>
           <xsd:element name="code" nillable="true" type="xsd:string"/>
-          <xsd:element name="category" nillable="true" type="xsd:string"/>
           <xsd:element name="detail" nillable="true" type="xsd:string"/>
           <xsd:element name="codeValue" nillable="true" type="xsd:int"/>
+          <xsd:element name="category" nillable="true" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="lastActivitySequence">
+  <wsdl:message name="clickActivitySince">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
-    <wsdl:part element="tns:activityType" name="activityType">
+    <wsdl:part element="tns:clickActivitySince" name="clickActivitySince">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="openActivitySince">
@@ -204,20 +205,28 @@
     <wsdl:part element="tns:openActivitySince" name="openActivitySince">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="clickActivitySince">
+  <wsdl:message name="extendedMessageExistsResponse">
+    <wsdl:part element="tns:extendedMessageExists" name="extendedMessageExists">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openActivitySinceResponse">
+    <wsdl:part element="tns:opens" name="opens">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="lastActivitySequence">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
-    <wsdl:part element="tns:clickActivitySince" name="clickActivitySince">
+    <wsdl:part element="tns:activityType" name="activityType">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deliveryActivitySinceResponse">
+    <wsdl:part element="tns:deliveries" name="deliveries">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="changePassword">
     <wsdl:part element="tns:credentials" name="credentials">
     </wsdl:part>
     <wsdl:part element="tns:newPassword" name="newPassword">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="deliveryActivitySinceResponse">
-    <wsdl:part element="tns:deliveries" name="deliveries">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="lastActivitySequenceResponse">
@@ -228,8 +237,10 @@
     <wsdl:part element="tns:success" name="success">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="openActivitySinceResponse">
-    <wsdl:part element="tns:opens" name="opens">
+  <wsdl:message name="extendedMessageExists">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:messageID" name="messageID">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="TMSFault">
@@ -242,18 +253,18 @@
     <wsdl:part element="tns:message" name="message">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="clickActivitySinceResponse">
-    <wsdl:part element="tns:clicks" name="clicks">
+  <wsdl:message name="deliveryActivitySince">
+    <wsdl:part element="tns:credentials" name="credentials">
+    </wsdl:part>
+    <wsdl:part element="tns:deliveryActivitySince" name="deliveryActivitySince">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="sendMessageResponse">
     <wsdl:part element="tns:messageID" name="messageID">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="deliveryActivitySince">
-    <wsdl:part element="tns:credentials" name="credentials">
-    </wsdl:part>
-    <wsdl:part element="tns:deliveryActivitySince" name="deliveryActivitySince">
+  <wsdl:message name="clickActivitySinceResponse">
+    <wsdl:part element="tns:clicks" name="clicks">
     </wsdl:part>
   </wsdl:message>
   <wsdl:portType name="TMSExtended">
@@ -301,6 +312,14 @@
       <wsdl:input message="tns:openActivitySince" name="openActivitySince">
     </wsdl:input>
       <wsdl:output message="tns:openActivitySinceResponse" name="openActivitySinceResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:TMSFault" name="TMSFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="extendedMessageExists">
+      <wsdl:input message="tns:extendedMessageExists" name="extendedMessageExists">
+    </wsdl:input>
+      <wsdl:output message="tns:extendedMessageExistsResponse" name="extendedMessageExistsResponse">
     </wsdl:output>
       <wsdl:fault message="tns:TMSFault" name="TMSFault">
     </wsdl:fault>
@@ -392,10 +411,24 @@
         <soap:fault name="TMSFault" use="literal"/>
       </wsdl:fault>
     </wsdl:operation>
+    <wsdl:operation name="extendedMessageExists">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="extendedMessageExists">
+        <soap:header message="tns:extendedMessageExists" part="credentials" use="literal">
+        </soap:header>
+        <soap:body parts="messageID" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="extendedMessageExistsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="TMSFault">
+        <soap:fault name="TMSFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="TMSExtended">
     <wsdl:port binding="tns:TMSExtendedSoapBinding" name="TMSExtendedPort">
-      <soap:address location="https://stg-tms.govdelivery.com:65081/service/TMSExtended"/>
+      <soap:address location="http://localhost:65080/service/TMSExtended/"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

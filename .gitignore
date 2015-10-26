@@ -32,3 +32,4 @@ public/custom_reports/**/*
 .ruby-gemset
 .idea/
 config/vagrant_user_config.yml
+.ruby-gemset
