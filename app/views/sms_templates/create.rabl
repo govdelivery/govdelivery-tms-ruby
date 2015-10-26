@@ -1,2 +1,2 @@
-object @sms_template
+object @template
 extends "sms_templates/show"
