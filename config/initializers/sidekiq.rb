@@ -51,6 +51,7 @@ end
 
 require 'sidekiq/dynamic_queue/setup'
 require 'sidekiq/rate_limited_queue/setup'
+require 'sidekiq/retry_aware_worker/setup'
 
 Sidekiq.configure_client do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:client])
