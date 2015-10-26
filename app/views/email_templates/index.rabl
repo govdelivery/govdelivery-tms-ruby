@@ -1,2 +1,2 @@
-collection @email_templates
+collection @templates
 extends 'email_templates/show'

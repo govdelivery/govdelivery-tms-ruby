@@ -1,4 +1,4 @@
-object @email_template
+object @template
 attributes :id, :body, :subject, :link_tracking_parameters,
            :macros, :open_tracking_enabled, :click_tracking_enabled, :created_at
 

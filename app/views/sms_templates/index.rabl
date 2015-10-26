@@ -1,2 +1,2 @@
-collection @sms_templates
+collection @templates
 extends 'sms_templates/show'

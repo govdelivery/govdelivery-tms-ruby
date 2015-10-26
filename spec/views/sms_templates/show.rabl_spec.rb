@@ -1,25 +1,22 @@
 require 'rails_helper'
 
-describe 'email_templates/show.rabl' do
+describe 'sms_templates/show.rabl' do
   let(:account) {create(:account)}
   let(:user) {create :user, account: account, admin: false}
   let(:admin_user) {create :user, account: account, admin: true}
-  let(:from_address) {account.default_from_address}
-  let(:email_template) {create(:email_template, account: account, user: user, from_address: from_address)}
+  let(:sms_template) {create(:sms_template, account: account, user: user, body: 'I am an SMS template body')}
 
   before do
-    assign(:template, email_template)
+    assign(:template, sms_template)
     assign(:current_user, user)
   end
 
   it 'should work when valid' do
     render
-    expect(rendered).to be_json_for(email_template)
-      .with_attributes(:id, :body, :subject, :link_tracking_parameters,
-                       :macros, :open_tracking_enabled, :click_tracking_enabled)
+    expect(rendered).to be_json_for(sms_template)
+      .with_attributes(:id, :body)
       .with_timestamps(:created_at)
-      .with_links('self' => templates_email_path(email_template),
-                  'from_address' => from_address_path(from_address))
+      .with_links('self' => templates_sms_path(sms_template))
   end
 
   context "account link" do

@@ -1,4 +1,4 @@
-object @sms_template
+object @template
 attributes :id, :body, :created_at
 
 node(:_links) do |e|
