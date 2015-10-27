@@ -20,7 +20,7 @@ PhoneNumber = Struct.new(:number) do
   def e164_or_short
     return nil if number.blank?
     number.gsub!(/[^\d\+]/, '')
-    if number.length == 6 # it's a short code
+    if number.length == 6 || number.length == 5 # it's a short code
       number
     else
       e164
