@@ -47,7 +47,6 @@ gem 'strip_attributes'
 gem 'twilio-ruby'
 gem 'valid_email'
 gem 'validate_url'
-gem 'yakety_yak'
 
 gem 'attr_encrypted'
 

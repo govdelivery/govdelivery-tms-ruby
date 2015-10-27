@@ -1,6 +1,6 @@
 local_repo 'vendor/jars'
 jar 'com.thoughtworks.xstream:xstream:1.4.7'
-jar 'org.slf4j:slf4j-simple:1.7.7'
+jar 'org.slf4j:slf4j-log4j12:1.7.10'
 jar 'org.apache.ws.security:wss4j:1.6.10'
 local 'lib/ipaws.jar'
 local 'lib/tms_extended.jar'
