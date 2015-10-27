@@ -11,7 +11,7 @@ class MbloxController < ApplicationController
   private
 
   def recipient
-    @recipient ||= SmsRecipient.where(ack: params['batch_id'], formatted_phone: params['recipient']).first || raise(ActiveRecord::RecordNotFound)
+    @recipient ||= SmsRecipient.where(ack: params['batch_id'], formatted_phone: PhoneNumber.new(params['recipient']).e164).first || raise(ActiveRecord::RecordNotFound)
   end
 
   def transition
