@@ -22,6 +22,7 @@ module Odm
         vendor  = message.vendor
         macros  = message.macros
         account = message.account
+        message.recipients.find_each { |recipient| msg.to << recipient.to_odm(macros)}
       end
       
       creds = credentials(vendor)
@@ -36,12 +37,6 @@ module Odm
 
       # This is not a retry and/or the message doesn't exist in ODM yet
       else
-
-        # This could take a while, which is why we didn't do it before possibly skipping
-        # the message.
-        ActiveRecord::Base.connection_pool.with_connection do
-          message.recipients.find_each { |recipient| msg.to << recipient.to_odm(macros)}
-        end
 
         # There should be no database access in the next section
         logger.debug("Building extended message...")
