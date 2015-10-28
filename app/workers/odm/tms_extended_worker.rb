@@ -16,8 +16,6 @@ module Odm
 
       begin
         yield
-      rescue Java::ComGovdeliveryTmsTmsextended::TMSFault => fault
-        raise "ODM Error: #{fault.message}"
       rescue Java.java.lang::Throwable => throwable
         raise WrappedThrowable.new(throwable)
       end
