@@ -3,6 +3,7 @@ require 'httpi'
 require 'json'
 require 'awesome_print'
 require 'twilio-ruby'
+require 'pry'
 
 BT = {}
 BT.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
@@ -67,4 +68,45 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
   # else
   #   fail
   # end
+end
+
+
+#MBLOX start=====================
+#MBLOX ==========================
+#MBLOX ==========================
+
+
+Given(/^I POST a new SMS message to MBLOX$/) do
+  client = tms_client(configatron.accounts.sms_endtoend)
+  message = client.sms_messages.build(body: "#{BT[1]}")
+  message.recipients.build(phone: configatron.test_support.twilio.phone.number)
+  puts configatron.test_support.twilio.phone.number
+  message.post
+  message.recipients.collection.detect(&:errors)
+  @message = message
+  
+end
+
+Given(/^I wait for a response from TMS$/) do
+  sleep 10
+  @response = @message.get
+  @response = @message.get
+  i=0
+  until @response.response.body["recipient_counts"].present?
+    i+=1
+    sleep 5
+    STDOUT.puts 'waiting for recipient counts to arrive'.yellow
+    if i>5
+    end  
+  end  
+  puts @response.response.body["recipient_counts"]
+  @a = @response.response.body["recipient_counts"]
+end
+
+Then(/^I should receive either a canceled message or a success$/) do
+  i=0
+  until @a["canceled"] == 1
+    sleep 5
+    i+=1
+  end  
 end
