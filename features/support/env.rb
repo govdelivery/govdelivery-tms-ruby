@@ -27,7 +27,8 @@ def environment
     :qc,
     :integration,
     :stage,
-    :prod
+    :prod,
+    :mblox
   ]
   env = ENV.key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
   raise "Unsupported XACT Environment: #{env}" unless environments.include?(env)
@@ -50,7 +51,8 @@ def xact_url
     :qc_dc3 => "https://qc-tms-dc3.govdelivery.com",
     :integration => "https://int-tms.govdelivery.com",
     :stage => "https://stage-tms.govdelivery.com",
-    :prod => "https://tms.govdelivery.com"
+    :prod => "https://tms.govdelivery.com",
+    :mblox => "https://qc-tms.govdelivery.com"
   }
 
   if(lsite = site)

@@ -30,4 +30,9 @@ when :stage
   sms_endtoend.xact.account.id            = '10942'
   sms_endtoend.xact.user.token            = 'zyyyNEf4tTUWqqeYPzQMqkaden8CLnpy'
   sms_endtoend.xact.user.email_address    = 'stage-sms_end_to_end-test@govdelivery.com'
+
+when :mblox
+  sms_endtoend.xact.account.id            = '10740'
+  sms_endtoend.xact.user.token            = 'Us5n21TWaEPmGnPKKpXSzhpfJcmGoqNB'
+  sms_endtoend.xact.user.email_address    = 'mblox_testing@evotest.govdelivery.com'
 end
