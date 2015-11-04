@@ -40,7 +40,7 @@ when :mbloxstage
   sms_endtoend.xact.account.id            = '11520'
   sms_endtoend.xact.user.token            = 'ofwhSbrMMgseDkhzAVbzUU9bCHf2PMyf'
   sms_endtoend.xact.user.email_address    = 'mblox_testing_stage@evotest.govdelivery.com'
-when :mbloxprod
+when :mbloxproduction
   #sms_endtoend.xact.account.id            = '10740'
   #sms_endtoend.xact.user.token            = 'Us5n21TWaEPmGnPKKpXSzhpfJcmGoqNB'
   sms_endtoend.xact.user.email_address    = 'mblox_testing_production@evotest.govdelivery.com'
