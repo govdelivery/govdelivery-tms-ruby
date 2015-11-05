@@ -104,9 +104,18 @@ Given(/^I wait for a response from TMS$/) do
 end
 
 Then(/^I should receive either a canceled message or a success$/) do
-  i=0
-  until @a["canceled"] == 1
-    sleep 5
-    i+=1
-  end  
+  case 
+  when ENV['XACT_ENV'] == :mbloxqc,:mbloxintegration,:mbloxstage
+    i=0
+    until @a["canceled"] == 1
+      sleep 5
+      i+=1
+    end  
+  when ENV['XACT_ENV'] == :mbloxproduction
+    i=0
+    until @a["sent"] == 1
+      sleep 5
+      i+=1
+    end 
+  end 
 end
