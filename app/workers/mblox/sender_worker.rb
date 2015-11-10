@@ -41,8 +41,12 @@ module Mblox
     def send_batch!
       begin
         logger.debug {"Sending message to #{recipient.phone}"}
-        batch = Brick::Batch.create({from: vendor.from, to: [recipient.phone], callback_url: url_helpers.mblox_url, delivery_report: "per_recipient", body: message.body})
-        logger.info {"Response from MBlox: #{batch.inspect}"}
+        client = Brick.new(token: vendor.password, service_account_id: vendor.username)
+        body = message.body
+        body = "[#{Rails.env}] #{body.truncate(160-(Rails.env.length+3), omission: "")}" unless Rails.env.production?
+        response = client.create_batch({from: vendor.from, to: [recipient.phone], callback_url: url_helpers.mblox_url, delivery_report: "per_recipient", body: body})
+        # batch = Brick::Batch.create({from: vendor.from, to: [recipient.phone], callback_url: url_helpers.mblox_url, delivery_report: "per_recipient", body: message.body})
+        logger.info {"Response from MBlox: #{response.inspect}"}
       rescue Brick::Errors::ClientError => e
         raise Sidekiq::Retries::Retry.new(e) if RETRY_CODES.include?(e.response[:status])
         logger.warn {"Non-retryable error from MBlox (#{e.class.name}): #{e.response[:status]} - #{e.try(:message) || 'no message'}"}
@@ -50,7 +54,7 @@ module Mblox
       rescue StandardError => e
         raise Sidekiq::Retries::Retry.new(e)
       end
-      batch
+      response
     end
 
     def recipient
