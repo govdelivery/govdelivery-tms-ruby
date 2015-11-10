@@ -11,22 +11,26 @@ describe Mblox::SenderWorker do
   let(:user) {account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
   let(:message) {user.sms_messages.create(body: 'A' * 160)}
   let(:recipient) {message.recipients.create(phone: "8181112222")}
+  let(:client) {mock('brick_client')}
 
   context 'a send that raises a retryable exception' do
     it 'should retry when there\'s a client error' do
-      Brick::Batch.expects(:create).raises(retryable_error)
+      Brick.expects(:new).returns(client)
+      client.expects(:create_batch).raises(retryable_error)
       expect { subject.perform(recipient_id: recipient.id, message_id: message.id) }.to raise_error(Sidekiq::Retries::Retry)
     end
 
     it 'should retry when there\'s a random error' do
-      Brick::Batch.expects(:create).raises(StandardError.new)
+      Brick.expects(:new).returns(client)
+      client.expects(:create_batch).raises(StandardError.new)
       expect { subject.perform(recipient_id: recipient.id, message_id: message.id) }.to raise_error(Sidekiq::Retries::Retry)
     end
   end
 
   context 'a send that raises a nonretryable exception' do
     it 'should not retry when there\'s a client error' do
-      Brick::Batch.expects(:create).raises(nonretryable_error)
+      Brick.expects(:new).returns(client)
+      client.expects(:create_batch).raises(nonretryable_error)
       SmsRecipient.any_instance.expects(:failed!)
       expect { subject.perform(recipient_id: recipient.id, message_id: message.id) }.not_to raise_error
     end
@@ -34,7 +38,8 @@ describe Mblox::SenderWorker do
 
   context 'a successful send' do
     it 'should mark the recipient as sending' do
-      Brick::Batch.expects(:create).returns(OpenStruct.new({id: "1"}))
+      Brick.expects(:new).returns(client)
+      client.expects(:create_batch).with(has_entry(:body, "[test] #{'A'*153}")).returns(OpenStruct.new({id: "1"}))
       subject.perform(recipient_id: recipient.id, message_id: message.id)
       recipient.reload
       expect(recipient.status).to eq("sending")
