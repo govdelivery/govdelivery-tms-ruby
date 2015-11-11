@@ -89,33 +89,43 @@ end
 
 Given(/^I wait for a response from TMS$/) do
   sleep 10
-  @response = @message.get
-  @response = @message.get
-  i=0
-  until @response.response.body["recipient_counts"].present?
-    i+=1
-    sleep 5
-    STDOUT.puts 'waiting for recipient counts to arrive'.yellow
-    if i>5
+    @response = @message.get
+    i=0
+    until @response.response.body["recipient_counts"].present?
+      i+=1
+      sleep 5
+      STDOUT.puts 'waiting for recipient counts to arrive'.yellow
+      if i>5
+      end  
     end  
-  end  
-  puts @response.response.body["recipient_counts"]
-  @a = @response.response.body["recipient_counts"]
+
+    def retryable
+      @response = @message.get
+      @a = @response.response.body["recipient_counts"]
+    end  
 end
 
 Then(/^I should receive either a canceled message or a success$/) do
   case 
   when ENV['XACT_ENV'] == :mbloxqc,:mbloxintegration,:mbloxstage
     i=0
-    until @a["canceled"] == 1
+    until retryable["canceled"] == 1
+      STDOUT.puts 'retrieving status'.yellow
       sleep 5
       i+=1
+      if i>10
+        fail 'Canceled status not found'.red
+      end  
     end  
   when ENV['XACT_ENV'] == :mbloxproduction
     i=0
-    until @a["sent"] == 1
+    until retryable["sent"] == 1
+      STDOUT.puts 'retrieving status'.yellow
       sleep 5
       i+=1
+      if i>10
+        fail 'Sent status not found'.red
+      end
     end 
   end 
 end
