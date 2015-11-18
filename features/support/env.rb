@@ -97,7 +97,7 @@ twilio_live_phone_sids = {
 }
 
 configatron.xact.url                                  = xact_url
-
+configatron.test_support.mblox.phone.number           = '+16122546317'
 configatron.test_support.twilio.phone.number          = '+15183004174'
 configatron.test_support.twilio.phone.sid             = 'PN53d0531f78bf8061549b953c6619b753'
 configatron.test_support.twilio.account.sid           = 'AC189315456a80a4d1d4f82f4a732ad77e'

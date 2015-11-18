@@ -79,8 +79,8 @@ end
 Given(/^I POST a new SMS message to MBLOX$/) do
   client = tms_client(configatron.accounts.sms_endtoend)
   message = client.sms_messages.build(body: "#{BT[1]}")
-  message.recipients.build(phone: configatron.test_support.twilio.phone.number)
-  puts configatron.test_support.twilio.phone.number
+  message.recipients.build(phone: configatron.test_support.mblox.phone.number)
+  puts configatron.test_support.mblox.phone.number
   message.post
   message.recipients.collection.detect(&:errors)
   @message = message
@@ -109,7 +109,7 @@ Then(/^I should receive either a canceled message or a success$/) do
   case 
   when ENV['XACT_ENV'] == :mbloxqc,:mbloxintegration,:mbloxstage
     i=0
-    until retryable["canceled"] == 1
+    until retryable["canceled"] ==1 || retryable["failed"]  == 1
       STDOUT.puts 'retrieving status'.yellow
       sleep 5
       i+=1
