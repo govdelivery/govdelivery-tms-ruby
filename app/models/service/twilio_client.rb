@@ -34,7 +34,7 @@ module Service
     class Sms < Base
       def initialize(username, password)
         super
-        @delivery = client.account.sms.messages
+        @delivery = client.account.messages
       end
     end
     class Voice < Base
