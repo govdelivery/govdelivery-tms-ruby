@@ -7,14 +7,14 @@ require 'rubygems'
 require 'colored'
 require 'awesome_print'
 require 'mail'
-require 'httpi'
+require 'govdelivery-tms'
 
 # helper methods
 module Helpy
   def initialize_variables
     Capybara.default_wait_time = 600
 
-    @expected_subject = {}.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
+    @expected_subject = 'xact_email_end_to_end - ' + Time.new.to_s + '::' + rand(100_000).to_s
     @link_redirect_works = false
     @link_in_email = ''
     @expected_link = 'http://govdelivery.com'
@@ -35,26 +35,39 @@ module Helpy
     end
   end
 
-  def path
-    "#{@conf_xact.url}/messages/email"
+  def api_root
+    @conf_xact.url
   end
 
-  def post_message(from_email=nil)
+  def messages_path
+    '/messages/email'
+  end
+
+  def path
+    api_root+messages_path
+  end
+
+  def post_message(opts={})
     next if dev_not_live?
-    email_body = "This is a test for end to end email delivery. <a href=\\\"#{@expected_link}\\\">With a link</a>"
-    XACTHelper.new.send_email(
-      @conf_xact.user.email_address,
-      @conf_xact.user.password,
-      @expected_subject,
-      email_body,
-      @conf_gmail.imap.user_name,
-      path,
-      from_email,
-      @conf_xact.user.token)
+    opts[:body] ||= %Q|This is a test for end to end email delivery. <a href="#{@expected_link}">With a link</a>|
+    email_message = GovDelivery::TMS::Client.
+      new(@conf_xact.user.token, api_root: api_root).
+      email_messages.build(
+      from_email: opts[:from_email],
+      macros:     opts[:macros],
+      body:       opts[:body],
+      subject:    @expected_subject
+    )
+    email_message.recipients.build(email: @conf_gmail.imap.user_name)
+    email_message.post
+    response = email_message.response
+    ap response.status
+    ap response.headers
+    ap response.body
   end
 
   def get_emails
-    message_list = Hash.new {}
+    message_list = {}
     STDOUT.puts "Logging into Gmail IMAP looking for subject: #{@expected_subject}"
     # configatron blows up in Mail if we try to resolve components of it
     gmail_config = @conf_gmail.imap.to_h
@@ -85,9 +98,7 @@ module Helpy
 
   # get the value of a field on the mail message
   def get_field_value(email, field_name)
-    email.header.fields.each do |field|
-      return field.value if field.name == field_name
-    end
+    email.header.fields.detect { |field| field.name == field_name }.value
   end
 
   def test_link(link)
@@ -114,52 +125,43 @@ module Helpy
   def validate_message
     next if dev_not_live?
 
-    msg_found = false
-    @wait_time = 5
-    num_iterations = 120 # wait ten minutes if you retry every 5 seconds
+    begin
+      msg_found      = false
+      @wait_time     = 5
+      120.times do |iter| # wait ten minutes if you retry every 5 seconds
+        STDOUT.puts "Have waited #{@wait_time * iter} seconds".blue
+        STDOUT.puts "Waiting for #{@wait_time} more seconds"
+        sleep(@wait_time)
 
-    num_iterations.times do |iter|
-      STDOUT.puts "Have waited #{@wait_time * iter} seconds".blue
-      STDOUT.puts "Waiting for #{@wait_time} more seconds"
-      sleep(@wait_time)
+        message_list = get_emails
 
-      message_list = get_emails
+        if message_list[@expected_subject]
+          msg_found = true
+          STDOUT.puts "Message #{@expected_subject} found after #{@wait_time * iter} seconds".green
 
-      if message_list[@expected_subject]
-        msg_found = true
-        STDOUT.puts "Message #{@expected_subject} found after #{@wait_time * iter} seconds".green
-        doc = Nokogiri::HTML(message_list[@expected_subject])
-
-        # validate link(s)
-        if doc
-          doc.css('a').each do |link|
-            test_link link
+          # validate link(s)
+          if doc = Nokogiri::HTML(message_list[@expected_subject])
+            doc.css('a').each do |link|
+              test_link link
+            end
           end
+
+          break
+          # validate from address information
+          raise "Expected Reply-To of #{@expected_reply_to} but got #{@reply_to}" unless @reply_to == @expected_reply_to
+          raise "Expected Errors-To of #{@expected_errors_to} but got #{@rerrors_to}" unless @errors_to == @expected_errors_to
         end
+      end # end while
 
-        # validate from address information
-        raise "Expected Reply-To of #{@expected_reply_to} but got #{@reply_to}" unless @reply_to == @expected_reply_to
-        raise "Expected Errors-To of #{@expected_errors_to} but got #{@rerrors_to}" unless @errors_to == @expected_errors_to
+      # validate message was found
+      raise "Message #{@expected_subject} was not found in the inbox after #{@wait_time * (iter+1)} seconds".red unless msg_found
 
-        break
-      end
-    end # end while
-
-    # validate message was found
-    raise "Message #{@expected_subject} was not found in the inbox after #{@wait_time * num_iterations} seconds".red unless msg_found
-
-    clean_inbox
+    ensure
+      clean_inbox
+    end
   end
 end
 World(Helpy)
-
-# steps
-When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
-  initialize_variables
-  @expected_reply_to = @conf_xact.user.reply_to_address_two
-  @expected_errors_to = @conf_xact.user.bounce_address_two
-  post_message @conf_xact.user.from_address_two
-end
 
 When(/^I POST a new EMAIL message to TMS$/) do
   initialize_variables
@@ -167,6 +169,19 @@ When(/^I POST a new EMAIL message to TMS$/) do
   @expected_errors_to = @conf_xact.user.bounce_address
 
   post_message
+end
+
+# steps
+When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
+  initialize_variables
+  @expected_reply_to = @conf_xact.user.reply_to_address_two
+  @expected_errors_to = @conf_xact.user.bounce_address_two
+  post_message from_email: @conf_xact.user.from_address_two
+end
+
+When(/^I POST a new EMAIL message to TMS with long macro replacements$/) do
+  initialize_variables
+  post_message body: "[[MAC1]]\n\n[[MAC2]]", macros: {'MAC1' => 'a'*800, 'MAC1' => 'b'*150, }
 end
 
 Then(/^I go to Gmail to check for message delivery$/) do
