@@ -107,6 +107,10 @@ describe EmailMessage do
   it_should_validate_as_email :reply_to, :errors_to
   it_behaves_like 'an email message that can be templated'
 
+  before do
+    Analytics::PublisherWorker.stubs(:perform_async)
+  end
+
   context "built via a user" do
     subject { user.email_messages.build }
 
