@@ -15,6 +15,7 @@ class EmailMessage < ActiveRecord::Base
                   :reply_to,
                   :subject
 
+  before_validation :remove_macro_nils, on: :create
   before_validation :apply_from_email, on: :create
   before_validation :apply_template, on: :create
   before_validation :apply_defaults, on: :create
@@ -75,6 +76,11 @@ class EmailMessage < ActiveRecord::Base
     end
   end
 
+  def remove_macro_nils
+    return if self.macros.nil?
+    self.macros.delete_if { |k, v| v.nil? }
+  end
+
   def apply_from_email
     return unless self.from_email
     apply_from_address(account.from_addresses.find_by_from_email(from_email))
@@ -98,8 +104,8 @@ class EmailMessage < ActiveRecord::Base
     end
     if self.macros.nil?
       self.macros = email_template.macros
-    else
-      self.macros.reverse_merge!(email_template.macros) unless email_template.macros.nil?
+    elsif email_template.macros
+      self.macros.reverse_merge!(email_template.macros)
     end
     apply_from_address(email_template.from_address)
   end

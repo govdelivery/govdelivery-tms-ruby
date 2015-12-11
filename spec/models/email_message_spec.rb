@@ -283,6 +283,22 @@ describe EmailMessage do
           })
         end
 
+        it 'should not use nil email message macros if they are specified' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros: {
+                'macro1' => nil
+              }})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: {'macro1' => 'foo'})
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'foo'
+          })
+        end
+
         context '#insert_link_tracking_parameters' do
           let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/s\'tore/">links</a>'}
 
