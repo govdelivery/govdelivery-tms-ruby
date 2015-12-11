@@ -232,6 +232,73 @@ describe EmailMessage do
           expect(templated_email_sans_link_params.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
 
+        it 'should merge email template macros if they are specified' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros:     {
+                 'macro1' => 'foo',
+                 'macro2' => 'bar',
+                 'first'  => 'bazeliefooga'
+               }})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: {'macro1' => 'baz', 'macro3' => 'baz'})
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'foo',
+            'macro2' => 'bar',
+            'macro3' => 'baz',
+            'first'  => 'bazeliefooga'
+          })
+        end
+
+        it 'should set email template macros if they are specified' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros: nil})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: {'macro1' => 'baz'})
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'baz'
+          })
+        end
+
+        it 'should use message macros if they are specified and the email template macros are nil' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros: {
+                'macro1' => 'bar'
+              }})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: nil)
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'bar'
+          })
+        end
+
+        it 'should not use nil email message macros if they are specified' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros: {
+                'macro1' => nil
+              }})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: {'macro1' => 'foo'})
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'foo'
+          })
+        end
+
         context '#insert_link_tracking_parameters' do
           let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/s\'tore/">links</a>'}
 
