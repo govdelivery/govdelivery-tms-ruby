@@ -92,9 +92,14 @@ class EmailMessage < ActiveRecord::Base
     return unless email_template
     # Using nil as intended - to indicate a variable that has not yet been set
     # Don't use ||= here; false is a value we do not want to override
-    [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].
+    [:body, :subject, :open_tracking_enabled, :click_tracking_enabled].
       select { |attr| self[attr].nil? }.each do |attr|
       self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values
+    end
+    if self.macros.nil?
+      self.macros = email_template.macros
+    else
+      self.macros.reverse_merge!(email_template.macros) unless email_template.macros.nil?
     end
     apply_from_address(email_template.from_address)
   end
