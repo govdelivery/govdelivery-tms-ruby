@@ -334,9 +334,12 @@ Then(/^I should be able to send an EMAIL message, specify everything, and the me
   message.recipients.build(email: 'happy@golucky.com')
   raise message.error.to_s unless message.post
   raise message.errors.to_s unless message.get
-  [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+  [:body, :subject, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
     if message.send(attr) != special[attr]
       raise "Custom value for #{attr} not used in message: expected #{special[attr]}, found #{message.send(attr)}"
     end
+  end
+  message[:macros].each do |k, v|
+    raise "Macro replacement #{k} not present in #{message[:macros]}" unless message[:macros][k] == special[:macros][k]
   end
 end
