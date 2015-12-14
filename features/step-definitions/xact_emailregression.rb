@@ -339,7 +339,7 @@ Then(/^I should be able to send an EMAIL message, specify everything, and the me
       raise "Custom value for #{attr} not used in message: expected #{special[attr]}, found #{message.send(attr)}"
     end
   end
-  message[:macros].each do |k, v|
-    raise "Macro replacement #{k} not present in #{message[:macros]}" unless message[:macros][k] == special[:macros][k]
+  special[:macros].each do |k, v|
+    raise "Macro replacement #{k} not present in #{message.macros}" unless message.macros[k] == special[:macros][k]
   end
 end
