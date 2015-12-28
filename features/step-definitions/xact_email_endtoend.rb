@@ -25,9 +25,9 @@ module Helpy
 
   def expected_link_prefix
     if ENV['XACT_ENV'] == 'qc'
-      'http://test-links.govdelivery.com:80'
+      'http://qc-links.govdelivery.com:80'
     elsif ENV['XACT_ENV'] == 'integration'
-      'http://test-links.govdelivery.com:80'
+      'http://int-links.govdelivery.com:80'
     elsif ENV['XACT_ENV'] == 'stage'
       'http://stage-links.govdelivery.com:80/track'
     elsif ENV['XACT_ENV'] == 'prod'
