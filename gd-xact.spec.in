@@ -19,12 +19,12 @@ Source0:        %{_name}-%{version}.tar.gz
 
 BuildRequires:  git
 BuildRequires:  oracle-instantclient11.2-devel
-BuildRequires:  jruby = 1.7.19
+BuildRequires:  jruby
 BuildRequires:  jrubygem-bundler = 1.7.2
 
 Requires:       gd-xact-code%{version}
 Requires:       gd-xact-fake-libclntsh
-Requires:       jruby = 1.7.19
+Requires:       jruby = 1.7.15
 Requires:       jrubygem-bundler = 1.7.2
 
 %description

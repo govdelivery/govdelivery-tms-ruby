@@ -52,8 +52,8 @@ configure:
 	ln -s "/opt/$(app_name)/shared/public/custom_reports"    "public/custom_reports"
 	ln -s "/opt/$(app_name)/local/tmp"                       "tmp"
 
-	ln -s "/opt/$(app_name)/shared/config/database.yml"      "config"
-	ln -s "/opt/$(app_name)/local/config/newrelic.yml"       "config"
+	ln -s "/etc/sysconfig/xact-database.yml"                 "config/database.yml"
+	ln -s "config/newrelic.yml.deploy"                       "config/newrelic.yml"
 
 bundle:
 	echo "Executing Bundle Install"

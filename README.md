@@ -14,6 +14,30 @@ Deploying
     ./deploy.sh  (defaults to master and qc)
     ./deploy.sh -e int-ep --vc-tag 1.4.0
 
+Packaging
+=========
+
+Ideally, you'll never think about this, but here's the basic flow:
+
+  * You commit, push, and merge to master
+  * => A package for QC is built containg the current repo state. 
+       Versioned by the # of commits since the last tagged version
+       e.x. gd-xact-1.22.0.55
+  
+  * You tag a build for proper release
+  * => A package for INT is built containing the repo state as tagged
+       It is automatically versioned by your tag.
+       e.x. gd-xact-1.23.0
+
+Some of this is WIP.
+
+A deploy process for the aforementioned packages is documented elsewhere.
+TODO: Link to said docs.
+
+As for the gd-prefix, it turns out we're not the first to name a product 
+'Evolution'. In order to not clash with the mail client, (or anything else) 
+a prefix is added to all of our internal packages.
+
 IPAWS Setup
 ===============
 
@@ -197,3 +221,11 @@ Generating a TMS Extended jar
 rake odm:jar
 ```
 will generate lib/tms_extended.jar from config/TMSExtended.wsdl
+
+Building a package
+==================
+XACT now has package build information stored in the project for use with the
+Koji RPM build system. The Makefile, gd-xact.spec, and gd-xact.spec.in files all
+work together to direct the packaging process.
+
+More to come.
