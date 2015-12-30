@@ -5,8 +5,6 @@ require 'awesome_print'
 require 'twilio-ruby'
 require 'pry'
 
-BT = {}
-BT.store(1, Time.new.to_s + '::' + rand(100_000).to_s)
 
 Given(/^I have a user who can receive SMS messages$/) do
   @sms_receiver_uri = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
@@ -22,14 +20,38 @@ Given(/^I have a user who can receive SMS messages$/) do
   )
 end
 
+Given(/^I have an SMS template$/) do
+  next if dev_not_live?
+
+  client = tms_client(configatron.accounts.sms_endtoend)
+  @expected_message = message_body_identifier
+  @sms_template = client.sms_templates.build(body: @expected_message)
+  @sms_template.post!
+  @sms_template
+end
+
+
 Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
   client = tms_client(configatron.accounts.sms_endtoend)
-  message = client.sms_messages.build(body: "#{BT[1]}")
+  @expected_message = message_body_identifier
+  message = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
   puts configatron.test_support.twilio.phone.number
-  message.post
+  message.post!
+  @message = message
+end
+
+Given(/^I POST a new SMS templated message using to TMS$/) do
+  next if dev_not_live?
+
+  client = tms_client(configatron.accounts.sms_endtoend)
+  message = client.sms_messages.build
+  message.recipients.build(phone: configatron.test_support.twilio.phone.number)
+  message.links[:sms_template] = @sms_template.id
+  puts configatron.test_support.twilio.phone.number
+  message.post!
   message.recipients.collection.detect(&:errors)
   @message = message
 end
@@ -40,15 +62,11 @@ end
 
 Then(/^I should be able to identify my unique message is among all SMS messages$/) do
   next if dev_not_live?
-
-  passed = false
   payloads = []
-  condition = "#{BT[1]}"
-
   check_condition = proc do
     payloads = @capi.get(@sms_receiver_uri)
     passed = payloads['payloads'].any? do|payload_info|
-      payload_info['body'] == condition
+      payload_info['body'] == @expected_message
     end
     passed
   end
@@ -78,11 +96,11 @@ end
 
 Given(/^I POST a new SMS message to MBLOX$/) do
   client = tms_client(configatron.accounts.sms_endtoend)
-  message = client.sms_messages.build(body: "#{BT[1]}")
+  @expected_message = message_body_identifier
+  message = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.mblox.phone.number)
   puts configatron.test_support.mblox.phone.number
-  message.post
-  message.recipients.collection.detect(&:errors)
+  message.post!
   @message = message
   
 end
