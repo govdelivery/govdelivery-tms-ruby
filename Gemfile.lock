@@ -368,7 +368,7 @@ GEM
     rubyntlm (0.3.4)
     send_nsca (0.5.0)
     sexp_processor (4.5.0)
-    shoulda-matchers (2.7.0)
+    shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
     sidekiq (3.5.3)
       celluloid (~> 0.17.2)
@@ -510,7 +510,7 @@ DEPENDENCIES
   rubocop-checkstyle_formatter
   ruby-oci8
   send_nsca
-  shoulda-matchers
+  shoulda-matchers (< 3)
   sidekiq
   sidekiq-failures
   sidekiq-pro

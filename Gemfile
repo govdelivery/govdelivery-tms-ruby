@@ -102,5 +102,5 @@ group :test do
   gem 'fakeredis', require: 'fakeredis/rspec'
   gem 'fakeweb'
   gem 'mocha', require: false
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '<3'
 end
