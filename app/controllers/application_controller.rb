@@ -4,7 +4,6 @@
 #
 
 class ApplicationController < ActionController::API
-  include ActionController::MimeResponds
   include ActionController::ImplicitRender
 
   require "new_relic/agent/instrumentation/rails4/action_controller.rb"
