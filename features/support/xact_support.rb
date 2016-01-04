@@ -46,9 +46,7 @@ class LinkTester
     #a.agent.http.ca_file = ca_path # end of mechanize browser emulator
 
     a.get(link_url) do |page| # retrieve link_url from agent
-      page.forms.each do |f|
-        return ((f['url'].eql? expected) && (link_url.start_with? expected_prefix))
-      end
+      return ((page.uri.to_s.eql? expected) && (link_url.start_with? expected_prefix))
     end
   end
 end
