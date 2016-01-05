@@ -17,7 +17,7 @@ module Helpy
     @expected_subject = 'xact_email_end_to_end - ' + Time.new.to_s + '::' + rand(100_000).to_s
     @link_redirect_works = false
     @link_in_email = ''
-    @expected_link = 'https://www.govdelivery.com/'
+    @expected_link = 'http://govdelivery.com'
     @wait_time = 5
     @conf_xact = configatron.accounts.email_endtoend.xact
     @conf_gmail = configatron.accounts.email_endtoend.gmail
@@ -25,9 +25,9 @@ module Helpy
 
   def expected_link_prefix
     if ENV['XACT_ENV'] == 'qc'
-      'http://qc-links.govdelivery.com:80'
+      'http://test-links.govdelivery.com:80'
     elsif ENV['XACT_ENV'] == 'integration'
-      'http://int-links.govdelivery.com:80'
+      'http://test-links.govdelivery.com:80'
     elsif ENV['XACT_ENV'] == 'stage'
       'http://stage-links.govdelivery.com:80/track'
     elsif ENV['XACT_ENV'] == 'prod'
@@ -77,7 +77,6 @@ module Helpy
       end
 
       emails = Mail.find(what: :last, count: 1000, order: :dsc)
-      STDOUT.puts "Found #{emails.size} messages"
 
       emails.each do |mail|
         mail.parts.map do |p|
@@ -103,12 +102,12 @@ module Helpy
   end
 
   def test_link(link)
-    @link_in_email = link['href']
     if LinkTester.new.test_link(link['href'], @expected_link, expected_link_prefix)
       @link_redirect_works = true
+      @link_in_email = link['href']
       STDOUT.puts "Link #{link['href']} redirects to #{@expected_link}".green
     else
-      raise "Message #{@expected_subject} was found but link #{@link_in_email} didn't redirect to #{@expected_link} and/or start with #{expected_link_prefix}".red unless @link_redirect_works
+      raise "Message #{@expected_subject} was found but link #{@link_in_email}didn't redirect".red unless @link_redirect_works
     end
   end
 
@@ -143,8 +142,6 @@ module Helpy
           # validate link(s)
           if doc = Nokogiri::HTML(message_list[@expected_subject])
             doc.css('a').each do |link|
-              puts '*******************************'
-              puts link
               test_link link
             end
           end

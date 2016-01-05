@@ -197,10 +197,3 @@ Generating a TMS Extended jar
 rake odm:jar
 ```
 will generate lib/tms_extended.jar from config/TMSExtended.wsdl
-
-
-Cucumber Tests
-==============
-
-    XACT_ENV=qc bundle exec cucumber --verbose features/xact_endtoend.feature
-
