@@ -12,9 +12,9 @@ Name:           gd-%{_name}
 Version:        %{_version}
 Release:        1%{?dist}
 Summary:        Xact
-Group:          _group
+Group:          %{_group}
 License:        GovDelivery
-URL:            http://dev-scm.office.gdi/_group/_name.git
+URL:            http://dev-scm.office.gdi/%{_group}/%{_name}.git
 Source0:        %{_name}-%{version}.tar.gz
 
 BuildRequires:  git
