@@ -24,7 +24,7 @@ BuildRequires:  jrubygem-bundler = 1.7.2
 
 Requires:       gd-xact-code%{version}
 Requires:       gd-xact-fake-libclntsh
-Requires:       jruby = 1.7.15
+Requires:       jruby
 Requires:       jrubygem-bundler = 1.7.2
 
 %description
@@ -35,7 +35,6 @@ Commit Time: %{_commit_time}
 
 %package fake-libclntsh
 Summary:     Fake libclntsh package to provide libclntsh.so.11.1
-Group:       _group
 Requires:    oracle-instantclient11.2-basic
 Provides:    libclntsh.so.11.1
 
@@ -45,7 +44,6 @@ because oracle-instantclient11.2-basic does not do it.
 
 %package code%{version}
 Summary:     Xact code base
-Group:       _group
 AutoReqProv: no
  
 %description code%{version}
