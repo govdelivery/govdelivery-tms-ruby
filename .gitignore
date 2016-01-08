@@ -33,3 +33,5 @@ public/custom_reports/**/*
 .idea/
 config/vagrant_user_config.yml
 .ruby-gemset
+tags
+.*.swp
