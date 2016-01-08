@@ -25,9 +25,9 @@ module Helpy
 
   def expected_link_prefix
     if ENV['XACT_ENV'] == 'qc'
-      'http://test-links.govdelivery.com:80'
+      'http://qc-links.govdelivery.com:80'
     elsif ENV['XACT_ENV'] == 'integration'
-      'http://test-links.govdelivery.com:80'
+      'http://int-links.govdelivery.com:80'
     elsif ENV['XACT_ENV'] == 'stage'
       'http://stage-links.govdelivery.com:80/track'
     elsif ENV['XACT_ENV'] == 'prod'
@@ -77,6 +77,7 @@ module Helpy
       end
 
       emails = Mail.find(what: :last, count: 1000, order: :dsc)
+      STDOUT.puts "Found #{emails.size} emails"
 
       emails.each do |mail|
         mail.parts.map do |p|
@@ -102,12 +103,12 @@ module Helpy
   end
 
   def test_link(link)
+    @link_in_email = link['href']
     if LinkTester.new.test_link(link['href'], @expected_link, expected_link_prefix)
       @link_redirect_works = true
-      @link_in_email = link['href']
       STDOUT.puts "Link #{link['href']} redirects to #{@expected_link}".green
     else
-      raise "Message #{@expected_subject} was found but link #{@link_in_email}didn't redirect".red unless @link_redirect_works
+      raise "Message #{@expected_subject} was found but link #{@link_in_email} didn't redirect to #{@expected_link}".red unless @link_redirect_works 
     end
   end
 
