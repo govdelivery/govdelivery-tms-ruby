@@ -6,9 +6,7 @@ class TwilioDialPlanController < ApplicationController
 
   def show
     @message = @recipient.message unless @recipient.nil?
-    respond_to do |format|
-      format.xml {render xml: twiml_response(@message).text}
-    end
+    render xml: twiml_response(@message).text
   end
 
   def find_recipient

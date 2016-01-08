@@ -53,6 +53,6 @@ RSpec.describe WebhooksController, type: :controller do
     webhook = account.webhooks.create!(event_type: 'failed', url: 'http://failwhale.com/fail')
     delete :destroy, id: webhook.to_param
     expect(response.status).to eq(204)
-    expect {Webhook.find(webhook)}.to raise_error(ActiveRecord::RecordNotFound)
+    expect {Webhook.find(webhook.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

@@ -7,6 +7,14 @@ Feature: XACT SMS end to end tests.
         And I wait for a response from twilio
         Then I should be able to identify my unique message is among all SMS messages
 
+    @XACT-640
+    Scenario: End to End sms template test for all environments.
+      Given I have a user who can receive SMS messages
+      And I have an SMS template
+      And I POST a new SMS message to TMS
+      And I wait for a response from twilio
+      Then I should be able to identify my unique message is among all SMS messages
+
 
     @mblox
 	Scenario: End to End sms test for mblox for all environments.

@@ -214,6 +214,10 @@ def tms_client(conf)
   GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
 end
 
+def message_body_identifier
+  [Time.new, '::', rand(100_000)].map(&:to_s).join
+end
+
 #
 # Returns true if testing development without a token for a live account
 #

@@ -40,7 +40,7 @@ class Account < ActiveRecord::Base
 
   after_create :create_base_keywords!
 
-  serialize :dcm_account_codes, Set
+  serialize :dcm_account_codes
   delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, to: :default_from_address
   delegate :from_number, to: :default_from_number
 
@@ -159,10 +159,8 @@ class Account < ActiveRecord::Base
   end
 
   def normalize_dcm_account_codes
-    if dcm_account_codes
-      self.dcm_account_codes = dcm_account_codes.to_set unless dcm_account_codes.is_a?(Set)
-      dcm_account_codes.collect!(&:upcase).collect!(&:strip)
-    end
+    self.dcm_account_codes = (dcm_account_codes || []).to_set unless dcm_account_codes.is_a?(Set)
+    dcm_account_codes.collect!(&:upcase).collect!(&:strip)
   end
 
   ##
