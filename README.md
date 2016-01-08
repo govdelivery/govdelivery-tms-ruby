@@ -38,6 +38,14 @@ As for the gd-prefix, it turns out we're not the first to name a product
 'Evolution'. In order to not clash with the mail client, (or anything else) 
 a prefix is added to all of our internal packages.
 
+If you need to inspect or modify the packaging process, it is controlled by
+
+* `Makefile`
+* `gd-xact.spec.in`
+
+`gd-xact.spec` is required for koji, and is filled out by the `Makefile` using
+the spec.in file as a template.
+
 IPAWS Setup
 ===============
 
@@ -221,11 +229,3 @@ Generating a TMS Extended jar
 rake odm:jar
 ```
 will generate lib/tms_extended.jar from config/TMSExtended.wsdl
-
-Building a package
-==================
-XACT now has package build information stored in the project for use with the
-Koji RPM build system. The Makefile, gd-xact.spec, and gd-xact.spec.in files all
-work together to direct the packaging process.
-
-More to come.
