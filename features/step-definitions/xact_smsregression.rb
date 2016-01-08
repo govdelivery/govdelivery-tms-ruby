@@ -172,7 +172,6 @@ Given(/^I send an SMS with an invalid word or command$/) do
   @request.auth.basic('AC189315456a80a4d1d4f82f4a732ad77e', '88e3775ad71e487c7c90b848a55a5c88')
   @request.url = 'https://api.twilio.com' + @b
   @response = HTTPI.get(@request)
-  # binding.pry
   puts @response.raw_body
 
   sleep(2)

@@ -122,7 +122,6 @@ end
 
 # Then(/^I should be able to verify that an error is received$/) do
 #   @message.recipients.build(:phone => phone_number)
-#     # binding.pry
 #   STDOUT.puts @message.errors unless @message.post
 
 #   if @message.response.status == 500
