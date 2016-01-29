@@ -193,7 +193,7 @@ Feature: XACT Full Regression
 	@QC-2237
 	Scenario: List and verify incoming voice messages
 		Given I created a new voice message
-		Then I should be able to verify the incoming message was received
+		Then I should see a list of messages with appropriate attributes
 
 	@QC-2237
 	Scenario: Verify message detail
