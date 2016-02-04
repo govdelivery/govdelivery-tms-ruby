@@ -225,7 +225,7 @@ GEM
       httpclient
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
-    newrelic_rpm (3.12.0.288)
+    newrelic_rpm (3.14.2.312)
     nokogiri (1.6.7.2-java)
     ntlm-http (0.1.1)
     orm_adapter (0.5.0)
