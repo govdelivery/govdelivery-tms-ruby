@@ -67,7 +67,7 @@ inbound_sms.attributes                                      # {:from=>"+15005550
 ### Sending an Email Message
 
 ```ruby
-message = client.email_messages.build(:body=>'<p><a href="http://example.com">Visit here</a>',
+message = client.email_messages.build(:body=>'<p><a href="http://example.com">Visit here</a></p>',
                                       :subject => 'Hey',
                                       :from_email => 'foo@example.com')
 message.recipients.build(:email=>'example1@example.com')
