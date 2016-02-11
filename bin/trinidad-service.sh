@@ -125,6 +125,8 @@ start () {
         echo "${app_name} failed to start"
     fi;
 
+    f5-node-enable
+
     return ${RETVAL}
 }
 
@@ -157,6 +159,9 @@ stop () {
             ;;
     esac;
 
+    f5-node-disable
+    tcp-conn-wait
+
     i=10
     RETVAL=0
     while [[ i -gt 0 && $RETVAL -ne 1 ]]; do
@@ -186,6 +191,44 @@ reload () {
     touch ${restart_file}
 }
 
+tcp-conn-wait () { ## Wait for connections to App to end
+    [[ -z "${APP_PORT}" ]] && return 0
+    i=30
+    printf "\nWaiting $i rounds for connections to $MULE_APP to end: "
+    LB_NIC=$(route -n | grep ^0.0.0.0 | awk '{ print $8 }') || die 9 "Couldn't determine Load Balanacer NIC"
+    IP=$(/sbin/ip addr show dev ${LB_NIC} | grep "inet " | sed -e 's/[^0-9]* \([0-9.]*\)\/.*/\1/g') || die 3 "Couldn't get IP for Load Balancer Pools"
+    while netstat -nt | egrep -q "${IP}:${APP_PORT} .*ESTABLISHED" && test $i -gt 0; do
+        sleep 1
+        printf -- "$i "
+        let i=$i-1
+    done
+    echo "done";
+}
+
+f5-node-status () {
+    [[ "${CONTROL_F5}" != "true" ]] && return 0
+    [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
+    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT}
+}
+f5-node-enable () {
+    [[ "${CONTROL_F5}" != "true" ]] && return 0
+    [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
+    /usr/bin/logger -p user.notice -t "${INITNAME}" "f5-node-enable called"
+    echo "Enabling Node in F5 LTM"
+    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT} -S enabled
+}
+f5-node-disable () {
+    [[ "${CONTROL_F5}" != "true" ]] && return 0
+    [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
+    /usr/bin/logger -p user.notice -t "${INITNAME}" "f5-node-disable called"
+    echo "Disabling Node in F5 LTM"
+    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT} -S disabled
+}
+f5-pool-status () {
+    [[ "${CONTROL_F5}" != "true" ]] && return 0
+    [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
+    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT} -f
+}
 
 case "$1" in
   start)
@@ -200,16 +243,33 @@ case "$1" in
         status
         RETVAL=$?
         ;;
+  f5-node-status)
+        f5-node-status
+        ;;
+  f5-node-enable)
+        f5-node-enable
+        ;;
+  f5-node-disable)
+        f5-node-disable
+        ;;
+  f5-pool-status)
+        f5-pool-status
+        ;;
+  tcp-conn-wait)
+        tcp-conn-wait
+        ;;
   restart)
         restart
         RETVAL=$?
         ;;
   reload)
-         reload
+        reload
         RETVAL=$?
           ;;
   *)
-        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        echo $"Core Usage:          $0 {start|stop|restart|reload|status}"
+        echo $"F5 Management Usage: $0 f5-node-{status|enable|disable}"
+        echo $"Additional Options:  $0 {f5-pool-status|tcp-conn-wait}"
         exit 1
 esac
 
