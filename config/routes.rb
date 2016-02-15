@@ -43,10 +43,10 @@ Xact::Application.routes.draw do
   end
 
   scope :templates, path: 'templates', as: 'templates' do
-    resources :email, except: [:new, :edit], controller: :email_templates do
+    resources :email, except: [:new, :edit], controller: :email_templates, param: :uuid do
       pageable
     end
-    resources :sms, except: [:new, :edit], controller: :sms_templates do
+    resources :sms, except: [:new, :edit], controller: :sms_templates, param: :uuid do
       pageable
     end
   end

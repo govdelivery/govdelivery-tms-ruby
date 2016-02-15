@@ -1,5 +1,5 @@
 object @template
-attributes :id, :body, :created_at
+attributes :id, :uuid, :body, :created_at
 
 node(:_links) do |e|
   Hash.new.tap do |h|

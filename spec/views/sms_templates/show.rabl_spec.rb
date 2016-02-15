@@ -4,7 +4,7 @@ describe 'sms_templates/show.rabl' do
   let(:account) {create(:account)}
   let(:user) {create :user, account: account, admin: false}
   let(:admin_user) {create :user, account: account, admin: true}
-  let(:sms_template) {create(:sms_template, account: account, user: user, body: 'I am an SMS template body')}
+  let(:sms_template) {create(:sms_template, account: account, user: user, uuid:"sms_template", body: 'I am an SMS template body')}
 
   before do
     assign(:template, sms_template)
@@ -14,7 +14,7 @@ describe 'sms_templates/show.rabl' do
   it 'should work when valid' do
     render
     expect(rendered).to be_json_for(sms_template)
-      .with_attributes(:id, :body)
+      .with_attributes(:id, :uuid, :body)
       .with_timestamps(:created_at)
       .with_links('self' => templates_sms_path(sms_template))
   end

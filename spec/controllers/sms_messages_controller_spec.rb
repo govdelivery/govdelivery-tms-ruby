@@ -35,10 +35,31 @@ describe SmsMessagesController do
     it_should_show_with_attributes(:body)
 
     it "should apply the template to the message" do
-      post :create, message: {recipients: recipients, body: nil, _links: {sms_template: sms_template.id}}
+      post :create, message: {recipients: recipients, body: nil, _links: {sms_template: sms_template.uuid}}
       expect(response.response_code).to eq(201)
       expect(assigns(:message).sms_template).to eq(sms_template)
       expect(assigns(:message).body).to eq(sms_template.body)
+    end
+
+    it "should apply a template by id if no uuid is set" do
+      post :create, message: {recipients: recipients, body: nil, _links: {sms_template: sms_template.id.to_s}}
+      expect(response.response_code).to eq(201)
+      expect(assigns(:message).sms_template).to eq(sms_template)
+      expect(assigns(:message).body).to eq(sms_template.body)
+    end
+
+    it "should apply a template by uuid if uuid is set" do
+      new_template = create(:sms_template, body: 'sms template body', user: user, account: account, uuid: "sweet-template")
+      post :create, message: {recipients: recipients, body: nil, _links: {sms_template: new_template.uuid}}
+      expect(response.response_code).to eq(201)
+      expect(assigns(:message).sms_template).to eq(new_template)
+      expect(assigns(:message).body).to eq(new_template.body)
+    end
+
+    it "should not apply a template by id if uuid is set" do
+      new_template = create(:sms_template, body: 'sms template body', user: user, account: account, uuid: "sweet-template")
+      post :create, message: {recipients: recipients, body: nil, _links: {sms_template: new_template.id.to_s}}
+      expect(response.response_code).to eq(422)
     end
   end
 end
