@@ -7,7 +7,7 @@ describe SmsTemplatesController do
     end
 
     it 'routes to #show' do
-      expect(get: '/templates/sms/1').to route_to('sms_templates#show', id: '1')
+      expect(get: '/templates/sms/1').to route_to('sms_templates#show', uuid: '1')
     end
 
     it 'routes to #create' do
@@ -15,11 +15,11 @@ describe SmsTemplatesController do
     end
 
     it 'routes to #update' do
-      expect(put: '/templates/sms/1').to route_to('sms_templates#update', id: '1')
+      expect(put: '/templates/sms/1').to route_to('sms_templates#update', uuid: '1')
     end
 
     it 'routes to #destroy' do
-      expect(delete: '/templates/sms/1').to route_to('sms_templates#destroy', id: '1')
+      expect(delete: '/templates/sms/1').to route_to('sms_templates#destroy', uuid: '1')
     end
   end
 end

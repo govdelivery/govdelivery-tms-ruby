@@ -5,10 +5,10 @@ class SmsMessagesController < MessagesController
   wrap_parameters :message, include: [:body, :recipients, :_links], format: [:json, :url_encoded_form]
 
   def create
-    transform_links_payload!(params[:message])
-    if params[:message] && template_id = params[:message].delete(:sms_template_id)
-      params[:message][:sms_template] = current_user.sms_templates.find_by_id(template_id)
+    if params[:message][:_links].is_a?(Hash) && template_uuid = params[:message][:_links].delete(:sms_template)
+      params[:message][:sms_template] = current_user.sms_templates.find_by(uuid: template_uuid)
     end
+    transform_links_payload!(params[:message])
     super
   end
 

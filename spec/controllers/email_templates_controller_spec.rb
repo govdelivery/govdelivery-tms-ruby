@@ -28,9 +28,19 @@ describe EmailTemplatesController do
 
   it_should_have_a_pageable_index(:email_templates)
 
+  it 'should find a template that does exist' do
+    get :show, uuid: template.uuid
+    expect(response.response_code).to eq(200)
+  end
+
+  it 'should not find a template that does not exist' do
+    get :show, uuid: "no_template_here"
+    expect(response.response_code).to eq(404)
+  end
+
   it 'should create an email template' do
     expect(account.email_templates.count).to eq(0)
-    post :create, email_template: valid_params
+    post :create, email_template: valid_params.merge(uuid: "fancy-email-template")
     expect(response.response_code).to eq(201)
     expect(account.email_templates.count).to eq(1)
   end
@@ -45,16 +55,32 @@ describe EmailTemplatesController do
 
   it 'should update an email template' do
     expect(template.open_tracking_enabled).to eq(false)
-    patch :update, id: template.id, email_template: valid_params
+    patch :update, uuid: template.uuid, email_template: valid_params
     expect(response.response_code).to eq(200)
     template.reload
     expect(template.open_tracking_enabled).to eq(true)
   end
 
+  it 'should not update an email template id' do
+    original_template_id = template.id
+    patch :update, uuid: template.uuid, email_template: valid_params.merge({id: 8820123})
+    expect(response.response_code).to eq(200)
+    template.reload
+    expect(template.id).to eq(original_template_id)
+  end
+
+  it 'should not update an email template uuid' do
+    original_template_uuid = template.uuid
+    patch :update, uuid: template.uuid, email_template: valid_params.merge({uuid: "new-template-name"})
+    expect(response.response_code).to eq(422)
+    template.reload
+    expect(template.uuid).to eq(original_template_uuid)
+  end
+
   it 'should not update an email template to an invalid state' do
     expect(template.open_tracking_enabled).to eq(false)
     valid_params[:macros] = 'Invalid'
-    patch :update, id: template.id, email_template: valid_params
+    patch :update, uuid: template.uuid, email_template: valid_params
     expect(response.response_code).to eq(422)
     template.reload
     expect(template.open_tracking_enabled).to eq(false)
@@ -63,7 +89,7 @@ describe EmailTemplatesController do
   it 'should delete an email template' do
     email_templates   # We have to create email_templates before there are email_templates
     expect(account.email_templates.count).to eq(3)
-    delete :destroy, id: template.id
+    delete :destroy, uuid: template.uuid
     expect(response.response_code).to eq(204)
     expect(account.email_templates.count).to eq(2)
   end
@@ -71,7 +97,7 @@ describe EmailTemplatesController do
   context 'payloads with from_address links' do
     it 'should be able to create a template with that from address' do
       expect(account.email_templates.count).to eq(0)
-      post :create, email_template: valid_params.merge(_links: {from_address: new_from_address.id})
+      post :create, email_template: valid_params.merge(_links: {from_address: new_from_address.id}).merge(uuid: "new-email-template")
       expect(response.response_code).to eq(201)
       expect(account.email_templates.count).to eq(1)
       expect(account.email_templates.first.from_address.id).to eq(new_from_address.id)
@@ -85,14 +111,14 @@ describe EmailTemplatesController do
     end
 
     it 'should be able to update a template to use a new from address' do
-      patch :update, id: template.id, email_template: valid_params.merge(_links: {from_address: new_from_address.id})
+      patch :update, uuid: template.uuid, email_template: valid_params.merge(_links: {from_address: new_from_address.id})
       expect(response.response_code).to eq(200)
       template.reload
       expect(template.from_address.id).to eq(new_from_address.id)
     end
 
     it "should not be able to update a template to use a from address that doesn't belong to the account" do
-      patch :update, id: template.id, email_template: valid_params.merge(_links: {from_address: other_from_address.id})
+      patch :update, uuid: template.uuid, email_template: valid_params.merge(_links: {from_address: other_from_address.id})
       expect(response.response_code).to eq(422)
       template.reload
       expect(template.from_address.id).not_to eq(other_from_address.id)
