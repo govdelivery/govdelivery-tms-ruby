@@ -29,6 +29,6 @@ class TemplatesController < ApplicationController
   private
 
   def find_template
-    account_templates.find_by(uuid: params[:uuid])
+    account_templates.find_by(uuid: params[:uuid]) || raise(ActiveRecord::RecordNotFound)
   end
 end

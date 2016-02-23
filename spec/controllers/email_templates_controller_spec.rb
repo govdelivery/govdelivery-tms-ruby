@@ -28,6 +28,16 @@ describe EmailTemplatesController do
 
   it_should_have_a_pageable_index(:email_templates)
 
+  it 'should find a template that does exist' do
+    get :show, uuid: template.uuid
+    expect(response.response_code).to eq(200)
+  end
+
+  it 'should not find a template that does not exist' do
+    get :show, uuid: "no_template_here"
+    expect(response.response_code).to eq(404)
+  end
+
   it 'should create an email template' do
     expect(account.email_templates.count).to eq(0)
     post :create, email_template: valid_params.merge(uuid: "fancy-email-template")

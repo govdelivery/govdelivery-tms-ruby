@@ -18,6 +18,16 @@ describe SmsTemplatesController do
 
   it_should_have_a_pageable_index(:sms_templates)
 
+  it 'should find a template that does exist' do
+    get :show, uuid: template.uuid
+    expect(response.response_code).to eq(200)
+  end
+
+  it 'should not find a template that does not exist' do
+    get :show, uuid: "no_template_here"
+    expect(response.response_code).to eq(404)
+  end
+
   it 'should create an sms template' do
     expect(account.sms_templates.count).to eq(0)
     post :create, sms_template: {body: "New", uuid: "fancy-new"}
