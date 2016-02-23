@@ -35,7 +35,6 @@ describe SmsTemplatesController do
 
   it 'should update an sms template' do
     expect(template.body).not_to eq(valid_params[:body])
-    expect(template.uuid).not_to eq(valid_params[:uuid])
     patch :update, uuid: template.uuid, sms_template: valid_params
     expect(response.response_code).to eq(200)
     template.reload
@@ -47,6 +46,22 @@ describe SmsTemplatesController do
     expect(response.response_code).to eq(422)
     template.reload
     expect(template.body).not_to be_nil
+  end
+
+  it 'should not update an sms template id' do
+    original_id = template.id
+    patch :update, uuid: template.uuid, sms_template: valid_params.merge({id: 1000000})
+    expect(response.response_code).to eq(200)
+    template.reload
+    expect(template.id).to eql(original_id)
+  end
+
+  it 'should not update an sms template uuid' do
+    original_uuid = template.uuid
+    patch :update, uuid: template.uuid, sms_template: valid_params.merge({uuid: "new-uid"})
+    expect(response.response_code).to eq(422)
+    template.reload
+    expect(template.uuid).to eql(original_uuid)
   end
 
   it 'should delete an sms template' do

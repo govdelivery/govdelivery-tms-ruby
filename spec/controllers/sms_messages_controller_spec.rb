@@ -57,7 +57,7 @@ describe SmsMessagesController do
     end
 
     it "should not apply a template by id if uuid is set" do
-      new_template = create(:sms_template, body: 'sms template body', user: user, account: account, uuid: "sweet-template")
+      new_template = create(:sms_template, body: 'sms template body', user: user, account: account, uuid: "other-sweet-template")
       post :create, message: {recipients: recipients, body: nil, _links: {sms_template: new_template.id.to_s}}
       expect(response.response_code).to eq(422)
     end

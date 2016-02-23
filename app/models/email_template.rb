@@ -23,6 +23,8 @@ class EmailTemplate < ActiveRecord::Base
             format: { with: /\A[a-zA-Z0-9_-]*\z/, message: "only letters, numbers, -, and _ are allowed" },
             uniqueness: {scope: :account, case_sensitive: false}
 
+  validate :id_and_uuid_cannot_change, on: :update
+
   after_create :set_uuid
 
   protected
@@ -34,6 +36,12 @@ class EmailTemplate < ActiveRecord::Base
   def set_uuid
     self.uuid ||= self.id
     self.save!
+  end
+
+  def id_and_uuid_cannot_change
+    if changed.include?("uuid")
+      errors.add(:uuid, 'cannot be updated') unless new_record? || changed_attributes["uuid"].nil?
+    end
   end
 
   def user_and_address_belong_to_account

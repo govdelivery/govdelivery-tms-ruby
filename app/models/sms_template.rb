@@ -3,7 +3,7 @@ class SmsTemplate < ActiveRecord::Base
   belongs_to :user
   has_many :sms_messages
 
-  attr_accessible :body
+  attr_accessible :body, :uuid
 
   before_validation :set_defaults, on: :create
 
@@ -16,6 +16,7 @@ class SmsTemplate < ActiveRecord::Base
             uniqueness: {scope: :account, case_sensitive: false}
 
   validate :user_belongs_to_account
+  validate :id_and_uuid_cannot_change
 
   after_create :set_uuid
 
@@ -27,7 +28,13 @@ class SmsTemplate < ActiveRecord::Base
 
   def set_uuid
     self.uuid ||= self.id
-    self.save!
+    save!
+  end
+
+  def id_and_uuid_cannot_change
+    if changed.include?("uuid")
+      errors.add(:uuid, 'cannot be updated') unless new_record? || changed_attributes["uuid"].nil?
+    end
   end
 
   def user_belongs_to_account

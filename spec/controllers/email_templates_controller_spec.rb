@@ -51,6 +51,22 @@ describe EmailTemplatesController do
     expect(template.open_tracking_enabled).to eq(true)
   end
 
+  it 'should not update an email template id' do
+    original_template_id = template.id
+    patch :update, uuid: template.uuid, email_template: valid_params.merge({id: 8820123})
+    expect(response.response_code).to eq(200)
+    template.reload
+    expect(template.id).to eq(original_template_id)
+  end
+
+  it 'should not update an email template uuid' do
+    original_template_uuid = template.uuid
+    patch :update, uuid: template.uuid, email_template: valid_params.merge({uuid: "new-template-name"})
+    expect(response.response_code).to eq(422)
+    template.reload
+    expect(template.uuid).to eq(original_template_uuid)
+  end
+
   it 'should not update an email template to an invalid state' do
     expect(template.open_tracking_enabled).to eq(false)
     valid_params[:macros] = 'Invalid'
