@@ -94,10 +94,22 @@ message.post
 ### Creating an Email Template
 
 ```ruby
-template = client.email_templates.build(subject: 'A templated subject',
+template = client.email_templates.build(uuid: 'a-new-template',
+                                        subject: 'A templated subject',
                                         body: 'Hi [[name]], this body is from a template.',
                                         macros: {"name"=>"person"})
 template.post
+```
+
+### Updating an Email Template
+
+*Note: `uuid` cannot be updated.*
+
+```ruby
+template = client.email_templates.build(:href => 'template/email/a-new-template')
+template.get
+template.body = 'Hi [[name]], this body is from a new template.'
+template.put
 ```
 
 ### Sending an Email using a Template
@@ -106,12 +118,44 @@ Assuming you created `template` above:
 
 ```ruby
 message = client.email_messages.build
-message.links[:email_template] = template.id
+message.links[:email_template] = template.uuid
 message.recipients.build(:email=>'jim@example.com', :macros=>{"name"=>"Jim"})
 message.recipients.build(:email=>'amy@example.com', :macros=>{"name"=>"Amy"})
 message.recipients.build(:email=>'bill@example.com')
 message.post
 ```
+
+### Creating an SMS Template
+
+```ruby
+template = client.sms_templates.build(uuid: 'a_new-template',
+                                      body: 'Hi, [[name]] this is a tempalte.')
+template.post
+```
+
+### Updating an SMS Template
+
+*Note: `uuid` cannot be updated.*
+
+```ruby
+template = client.sms_templates.build(href: 'template/sms/a_new-template')
+template.get
+template.body = 'Hi, [[name]] this is a new tempalte.'
+template.put
+```
+
+### Sending an SMS Message using a Template
+
+Assuming you've created `template` above:
+
+```ruby
+message = client.email_messages.build
+message.links[:sms_template] = template.uuid
+message.recipients.build(:phone=>'5551112222')
+message.recipients.build(:phone=>'5551112223')
+message.post
+```
+
 
 Webhooks
 -------
