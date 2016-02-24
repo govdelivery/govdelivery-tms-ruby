@@ -86,7 +86,7 @@ describe GovDelivery::TMS::EmailMessage do
                    'reply_to'   => 'replyto@evotest.govdelivery.com',
                    'recipients' => [{ email: 'billy@evotest.govdelivery.com' }],
                    'created_at' => 'time',
-                   '_links'     => { 'self' => '/messages/email/1', 'email_template' => '/templates/email/1' }
+                   '_links'     => { 'self' => '/messages/email/new-template', 'email_template' => '/templates/email/new-template' }
                   }
       expect(@message.client).to receive('get').with(@message.href).and_return(double('response', status: 200, body: response))
       @message.get

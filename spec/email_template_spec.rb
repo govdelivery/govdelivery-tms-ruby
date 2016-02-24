@@ -13,6 +13,7 @@ describe GovDelivery::TMS::EmailTemplate do
       response = [
         {
           'id'                         => '1',
+          'uuid'                       => 'new-template',
           'body'                       => 'Template 1',
           'subject'                    => 'This is the template 1 subject',
           'link_tracking_parameters'   => 'test=ok&hello=world',
@@ -20,7 +21,7 @@ describe GovDelivery::TMS::EmailTemplate do
           'open_tracking_enabled'      => true,
           'click_tracking_enabled'     => true,
           'created_at'                 => 'sometime',
-          '_links'                     => { 'self' => '/templates/email/1', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
+          '_links'                     => { 'self' => '/templates/email/new-template', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
         }
       ]
 
@@ -35,7 +36,8 @@ describe GovDelivery::TMS::EmailTemplate do
       double('client')
     end
     before do
-      @template = GovDelivery::TMS::EmailTemplate.new(client, '/templates/email',         body:                       'Template 1',
+      @template = GovDelivery::TMS::EmailTemplate.new(client, '/templates/email',         uuid:                       'new-template',
+                                                                                          body:                       'Template 1',
                                                                                           subject:                    'This is the template 1 subject',
                                                                                           link_tracking_parameters:   'test=ok&hello=world',
                                                                                           macros:                     { 'MACRO1' => '1' },
@@ -70,6 +72,7 @@ describe GovDelivery::TMS::EmailTemplate do
     it 'should post successfully' do
       response = {
         'id'                         => '1',
+        'uuid'                       => 'new-template',
         'body'                       => 'Template 1',
         'subject'                    => 'This is the template 1 subject',
         'link_tracking_parameters'   => 'test=ok&hello=world',
@@ -77,7 +80,7 @@ describe GovDelivery::TMS::EmailTemplate do
         'open_tracking_enabled'      => true,
         'click_tracking_enabled'     => true,
         'created_at'                 => 'sometime',
-        '_links'                     => { 'self' => '/templates/email/1', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
+        '_links'                     => { 'self' => '/templates/email/new-template', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
       }
       expect(@template.client).to receive('post').with(@template).and_return(double('response', status: 201, body: response))
       @template.post
