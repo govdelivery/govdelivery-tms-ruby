@@ -20,6 +20,10 @@ class SmsTemplate < ActiveRecord::Base
 
   after_create :set_uuid
 
+  def to_param
+    uuid
+  end
+
   protected
 
   def set_defaults
@@ -27,13 +31,15 @@ class SmsTemplate < ActiveRecord::Base
   end
 
   def set_uuid
-    self.uuid ||= self.id
+    if uuid.nil? || uuid.empty?
+      self.uuid = id
+    end
     save!
   end
 
   def id_and_uuid_cannot_change
     if changed.include?("uuid")
-      errors.add(:uuid, 'cannot be updated') unless new_record? || changed_attributes["uuid"].nil?
+      errors.add(:uuid, 'cannot be updated') unless new_record? || changed_attributes["uuid"].nil? || changed_attributes["uuid"].empty?
     end
   end
 
