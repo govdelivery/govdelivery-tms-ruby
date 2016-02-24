@@ -16,7 +16,7 @@ describe 'sms_templates/show.rabl' do
     expect(rendered).to be_json_for(sms_template)
       .with_attributes(:id, :uuid, :body)
       .with_timestamps(:created_at)
-      .with_links('self' => templates_sms_path(sms_template))
+      .with_links('self' => '/templates/sms/sms_template')
   end
 
   context "account link" do

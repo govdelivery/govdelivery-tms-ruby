@@ -60,6 +60,11 @@ describe SmsTemplate do
       expect(subject).not_to be_valid
       expect(subject.errors.messages).to include(uuid: ["is too long (maximum is 128 characters)","cannot be updated"])
     end
+    it 'uuid set to empty string should default to id' do
+      new_template = create(:sms_template, account: account, user: user, uuid: '', body: 'x' * 100)
+      expect(new_template).to be_valid
+      expect(new_template.uuid).to eql(new_template.id.to_s)
+    end
     it 'should validate uuids allow appropriate characters' do
       template = create(:sms_template, account: account, user: user, body: 'x' * 100, uuid: 'ajzAJZ0-1_2')
       expect(template).to be_valid

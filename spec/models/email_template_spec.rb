@@ -57,9 +57,14 @@ describe EmailTemplate do
       expect(subject).not_to be_valid
       expect(subject.errors.messages).to include(uuid: ["is too long (maximum is 128 characters)","cannot be updated"])
     end
-    it 'should validate uuids allow appropriate characters' do
+    it 'empty string defaults to uuid' do
       template = create(:email_template, account: account, user: user, from_address: from_address, uuid: 'ajzAJZ0-1_2')
       expect(template).to be_valid
+    end
+    it 'should validate uuids allow appropriate characters' do
+      template = create(:email_template, account: account, user: user, from_address: from_address, uuid: '')
+      expect(template).to be_valid
+      expect(template.uuid).to eql(template.id.to_s)
     end
     it 'should validate uuids cannot have non-allowed characters' do
       subject.uuid = 'x!;' * 10
