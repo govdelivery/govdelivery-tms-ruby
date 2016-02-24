@@ -85,6 +85,7 @@ describe GovDelivery::TMS::EmailTemplate do
       expect(@template.client).to receive('post').with(@template).and_return(double('response', status: 201, body: response))
       @template.post
       expect(@template.id).to eq('1')
+      expect(@template.uuid).to eq('new-template')
       expect(@template.body).to eq('Template 1')
       expect(@template.subject).to eq('This is the template 1 subject')
       expect(@template.link_tracking_parameters).to eq('test=ok&hello=world')
