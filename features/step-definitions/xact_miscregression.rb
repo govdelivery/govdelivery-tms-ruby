@@ -20,8 +20,8 @@ T.store(1, rand(0...10_000)) # storing the hash value so we can retrieve it late
 
 # @QC-2453
 Given(/^I create a new keyword with a text response$/) do
-  @keyword = client.keywords.build(name: '160CHARS', response_text: '160CHARS')
-  STDOUT.puts @keyword.errors unless @keyword.post
+  @keyword = client.keywords.build(name: "160CHARS#{Time.now.to_i.to_s}", response_text: '160CHARS')
+  raise @keyword.errors.to_s unless @keyword.post
 end
 
 Then(/^I should be able to create and delete the keyword$/) do

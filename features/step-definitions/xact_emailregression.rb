@@ -24,12 +24,12 @@ end
 Given(/^I am a TMS admin$/) do
   EmailAdmin.new.admin
 end
-
 Then(/^I should be able to create, update, list, and delete templates$/) do
   raise @client.errors.to_s unless @client.email_templates.get
   template = @client.email_templates.build(body:    EmailDefaults::MESSAGE,
                                            link_tracking_parameters: "from=me&one=two",
-                                           subject: "XACT-545-1 Email Test for link parameters #{Time.new}")
+                                           subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
+                                            uuid:"new-template-#{Time.now.to_i.to_s}" )
   template.links[:from_address] =  @client.from_addresses.get.collection.first.id
   raise template.errors.to_s unless template.post
   raise template.errors.to_s unless template.get
@@ -303,14 +303,15 @@ Given(/^an email template exists$/) do
                                             macros: {"name" => "person"},
                                             open_tracking_enabled: false,
                                             click_tracking_enabled: false,
-                                            link_tracking_parameters: "from=me&one=two")
+                                            link_tracking_parameters: "from=me&one=two",
+                                            uuid:"new-template-#{Time.now.to_i.to_s}")
 
   raise @template.errors.to_s unless @template.post
 end
 
 Then(/^I should be able to send an EMAIL message specifying just that template and a recipient$/) do
   message = @client.email_messages.build
-  message.links[:email_template] = @template.id
+  message.links[:email_template]=@template.uuid
   message.recipients.build(email: 'happy@golucky.com')
   raise message.error.to_s unless message.post
   raise message.errors.to_s unless message.get
@@ -330,7 +331,7 @@ Then(/^I should be able to send an EMAIL message, specify everything, and the me
     click_tracking_enabled: true
   }
   message = @client.email_messages.build(special)
-  message.links[:email_template] = @template.id
+  message.links[:email_template] = @template.uuid
   message.recipients.build(email: 'happy@golucky.com')
   raise message.error.to_s unless message.post
   raise message.errors.to_s unless message.get
