@@ -25,7 +25,7 @@ Given(/^I have an SMS template$/) do
 
   client = tms_client(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
-  @sms_template = client.sms_templates.build(body: @expected_message)
+  @sms_template = client.sms_templates.build(body: @expected_message, uuid:"new-sms-template-#{Time.now.to_i.to_s}")
   @sms_template.post!
   @sms_template
 end
@@ -49,7 +49,7 @@ Given(/^I POST a new SMS templated message using to TMS$/) do
   client = tms_client(configatron.accounts.sms_endtoend)
   message = client.sms_messages.build
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
-  message.links[:sms_template] = @sms_template.id
+  message.links[:sms_template] = @sms_template.uuid
   puts configatron.test_support.twilio.phone.number
   message.post!
   message.recipients.collection.detect(&:errors)
