@@ -25,9 +25,9 @@ Given(/^I have an SMS template$/) do
 
   client = tms_client(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
-  @sms_template = client.sms_templates.build(body: @expected_message, uuid:"new-sms-template-#{Time.now.to_i.to_s}")
-  @sms_template.post!
-  @sms_template
+  @template = client.sms_templates.build(body: @expected_message, uuid:"new-sms-template-#{Time.now.to_i.to_s}")
+  @template.post!
+  @template
 end
 
 

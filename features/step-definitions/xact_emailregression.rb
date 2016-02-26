@@ -310,7 +310,7 @@ end
 
 Then(/^I should be able to send an EMAIL message specifying just that template and a recipient$/) do
   message = @client.email_messages.build
-  message.links[:email_template]=@template.uuid
+  message.links[:email_template] = @template.uuid
   message.recipients.build(email: 'happy@golucky.com')
   raise message.error.to_s unless message.post
   raise message.errors.to_s unless message.get
@@ -344,17 +344,17 @@ Then(/^I should be able to send an EMAIL message, specify everything, and the me
   end
 end
 
-  Then(/^I should not be able to update the email template with "(.*)" uuid$/) do |update_uuid|
-    @template.uuid = update_uuid
-    raise "Template updated successfully when it should not have" if @template.put
-  end
+Then(/^I should not be able to update the email template with "(.*)" uuid$/) do |update_uuid|
+  @template.uuid = update_uuid
+  raise "Template updated successfully when it should not have" if @template.put
+end
 
-  Given(/^I create a new email template with "(.*)" uuid$/) do |uuid_get|
-    @template = @client.email_templates.build(
-      body: EmailDefaults::MESSAGE,
-      link_tracking_parameters: "from=me&one=two",
-      subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
-      uuid: uuid_get
-    )
-    raise @template.errors.to_s unless @template.post
-  end
+Given(/^I create a new email template with "(.*)" uuid$/) do |uuid_get|
+  @template = @client.email_templates.build(
+    body: EmailDefaults::MESSAGE,
+    link_tracking_parameters: "from=me&one=two",
+    subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
+    uuid: uuid_get
+  )
+  raise @template.errors.to_s unless @template.post
+end

@@ -228,6 +228,6 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
 end
 
 Then(/^I should not be able to update the sms template with "(.*)"" uuid$/) do |updated_uuid|
-  @sms_template.uuid = update_uuid
-  raise "Template updated successfully when it should not have" if @sms_template.put
+  @template.uuid = update_uuid
+  raise "Template updated successfully when it should not have" if @template.put
 end
