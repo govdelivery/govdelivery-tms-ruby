@@ -150,4 +150,5 @@ end
 
 Given(/^I create a new sms template with "(.*)" uuid$/) do |uuid|
   @template = client.sms_templates.build(body: message_body_identifier, uuid: uuid)
+  @template.post!
 end
