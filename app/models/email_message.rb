@@ -73,7 +73,7 @@ class EmailMessage < ActiveRecord::Base
   def from_email_allowed?
     # if the user is an admin then we assume the from_address has been vetted by a person or an internal application
     # this way we avoid having to sync data from evo
-    unless user.admin || account.from_email_allowed?(from_email)
+    unless user.admin? || account.from_email_allowed?(from_email)
       errors.add(:from_email, 'is not authorized to send on this account')
     end
   end

@@ -426,6 +426,13 @@ describe EmailMessage do
       expect(email_message.reply_to).to eq other_from_address.reply_to
     end
 
+    it 'should require an existing from_address if user is not an admin' do
+      email.user.admin = false
+      email.from_email = 'no@exist.me'
+      expect(email).to_not be_valid
+      expect(email.errors.messages[:from_email]).to be_present
+    end
+
     it 'should not require an existing from_address if user is admin' do
       email.user.admin = true
       email.from_email = 'no@exist.me'
