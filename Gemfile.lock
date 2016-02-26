@@ -152,7 +152,7 @@ GEM
       activesupport
       addressable (~> 2.3.0)
       rack
-    govdelivery-tms (0.8.13)
+    govdelivery-tms (0.8.14)
       activesupport
       faraday
       faraday_middleware
@@ -525,3 +525,6 @@ DEPENDENCIES
   valid_email
   validate_url
   yaml_db
+
+BUNDLED WITH
+   1.11.2

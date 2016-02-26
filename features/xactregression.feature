@@ -199,3 +199,37 @@ Feature: XACT Full Regression
 	Scenario: Verify message detail
 		Given I created a new voice message
 		Then I should be able to verify details of the message
+
+
+	@QC-UUID-EMAIL
+	Scenario: Verifying whether UPDATE works for uuid email templates
+		Given I am using a non-admin TMS client
+		And an email template exists
+		Then I should not be able to update the email template with "new_uuid" uuid
+
+    @QC-UUID-SMS
+		Scenario: Verifying whether UPDATE works for uuid sms templates
+		    Given I am using a non-admin TMS client
+			And I have an SMS template
+			Then I should not be able to update the sms template with "new_uuid" uuid
+
+	@QC-UUID-EMAIL_BLANK_STRING
+		Scenario: Verifying whether a new email template with "" uuid will return a uuid as id
+		    Given I am using a non-admin TMS client
+		    And I create a new template with "" uuid
+		    And I should be able to get a uuid which is same as id for email template
+
+	@QC-UUID-SMS_BLANK_STRING
+	Scenario: Verifying whether a new sms template with "" uuid will return a uuid as id
+		Given I am using a non-admin TMS client
+		And I create a new sms template with "" uuid
+		And I should be able to get a uuid which is same as id for sms template
+
+
+
+
+
+
+
+
+

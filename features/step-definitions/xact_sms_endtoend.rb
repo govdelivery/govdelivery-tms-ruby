@@ -147,3 +147,16 @@ Then(/^I should receive either a canceled message or a success$/) do
     end 
   end 
 end
+
+And (/^I create a new sms template with "(.*)" uuid$/)do|quotes|
+  @expected_message = message_body_identifier
+  @sms_temp = client.sms_templates.build(body: @expected_message, uuid:quotes)
+end
+
+And (/^I should be able to get a uuid which is same as id for sms template$/)do
+  @sms_temp.post!
+  puts "The uuid obtained is same as id: #{@sms_temp.uuid}"
+  puts "The id obtained is #{@sms_temp.id}"
+  raise 'Both id and uuid are not the same' unless @sms_temp.id.to_s.eql?@sms_temp.uuid.to_s
+  @sms_temp.delete
+end

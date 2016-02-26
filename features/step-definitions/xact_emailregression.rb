@@ -344,3 +344,27 @@ Then(/^I should be able to send an EMAIL message, specify everything, and the me
     raise "Macro replacement #{k} not present in #{message.macros}" unless message.macros[k] == special[:macros][k]
   end
 end
+
+  Then(/^I should not be able to update the email template with "(.*)" uuid$/) do |update_uuid|
+    @template.get!
+    @template.uuid = update_uuid
+    raise "Template updated successfully when it should not have" if @template.put
+    new_template = @template.get!
+    raise "Both uuids are not matching" unless new_template.uuid.eql?@template.uuid
+  end
+
+  And (/^I create a new template with "(.*)" uuid$/)do |uuid_get|
+    @temp = @client.email_templates.build(body:    EmailDefaults::MESSAGE,
+                                             link_tracking_parameters: "from=me&one=two",
+                                             subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
+                                             uuid: uuid_get )
+  end
+
+  And (/^I should be able to get a uuid which is same as id for email template$/)do
+    raise @temp.errors.to_s unless @temp.post
+    raise @temp.errors.to_s unless @temp.get
+    puts "The id obtained is: #{@temp.id}"
+    puts "The uuid obtained is id: #{@temp.uuid}"
+    raise 'Both id and uuid are not the same' unless @temp.id.to_s.eql?@temp.uuid.to_s
+    raise @temp.errors.to_s unless @temp.delete
+  end

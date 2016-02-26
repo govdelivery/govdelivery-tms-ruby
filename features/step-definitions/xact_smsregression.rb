@@ -226,3 +226,11 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
   end
   puts 'Help message found'.green
 end
+
+Then(/^I should not be able to update the sms template with (.*) uuid$/) do |update_uuid|
+  @sms_template.get!
+  @sms_template.uuid = update_uuid
+  raise "Template updated successfully when it should not have" if @sms_template.put
+  updated_template = @sms_template.get!
+  raise "Both uuids are not matching" unless @sms_template.uuid.eql?updated_template.uuid
+end
