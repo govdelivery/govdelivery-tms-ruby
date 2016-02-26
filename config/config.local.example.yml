@@ -1,0 +1,13 @@
+odm_uri: 'fake'
+odm_username: 'fake'
+odm_password: 'fake'
+fema_uri: 'fake'
+dcm_uri: 'fake'
+dcm_username:
+dcm_password:
+redis_uri: 'localhost'
+twilio_sid: 'fake'
+twilio_token: 'fake'
+twilio_number: 'fake'
+twilio_test_sid: 'fake'
+twilio_test_token: 'fake'
