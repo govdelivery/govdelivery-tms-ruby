@@ -28,7 +28,7 @@ Given(/^I create a subscription keyword and command$/) do
   sleep(2)
 end
 
-And(/^I send an SMS to create a subscription on TMS$/) do
+Given(/^I send an SMS to create a subscription on TMS$/) do
   next if dev_not_live?
 
   # create connection to XACT
@@ -176,7 +176,7 @@ Then(/^I should receive a STOP response$/) do
   end
 end
 
-And(/^my subscription should be removed$/) do
+Then(/^my subscription should be removed$/) do
   next if dev_not_live?
 
   # encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
@@ -209,7 +209,7 @@ Given(/^A keyword with static content is configured for an TMS account$/) do
   @conf = configatron.accounts.sms_2way_static
   client = tms_client(@conf)
   @keyword = client.keywords.build(name: random_string, response_text: random_string)
-  @keyword.post
+  @keyword.post!
 end
 
 Given(/^I send that keyword as an SMS to TMS$/) do

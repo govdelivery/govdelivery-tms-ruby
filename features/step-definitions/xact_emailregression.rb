@@ -43,13 +43,12 @@ Then(/^I should be able to list and read from addresses/) do
   raise @client.errors.to_s unless @client.from_addresses.get.collection.first.id
 end
 
-
-And(/^I send an email from an account that has link tracking params configured$/) do
+Given(/^I send an email from an account that has link tracking params configured$/) do
   @message = client.email_messages.build(body:                     EmailDefaults::MESSAGE,
                                          subject:                  "XACT-533-2 Email Test for link parameters #{Time.new}",
                                          from_email:               "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: EmailAdmin.new.mail_accounts)
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
 end
 
 Then(/^those params should resolve within the body of the email I send$/) do
@@ -95,7 +94,7 @@ end
 
 Given(/^I am using a non-admin TMS client$/) do
   conf = configatron.accounts.email_endtoend
-  @client = tms_client(conf) 
+  @client = tms_client(conf)
 end
 
 Then(/^I should not be able to see the accounts endpoint$/) do
@@ -118,7 +117,7 @@ Given(/^I verify the ability to disable open and click tracking in my EMAIL send
                                          open_tracking_enabled: false)
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
   @message.recipients.build(email: 'regressiontest2@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   email = @message.get
 
   if email.response.body['click_tracking_enabled'] == false
@@ -142,7 +141,7 @@ Given(/^I post a new EMAIL with message and recipient MACROS$/) do
                                          from_email: "#{EmailAdmin.new.from_email}",
                                          macros: {'city' => 'Saint Paul'})
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   email = @message.get
 
   if email.response.body['macros'] = '{"city"=>"Saint Paul"}'
@@ -158,7 +157,7 @@ Given(/^I post a new EMAIL message with an empty BODY produces an error$/) do
                                          subject: 'Regression Test email send',
                                          from_email: "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   if @message.errors['body'] == ["can't be blank"]
     puts 'error found'.green
   else
@@ -171,7 +170,7 @@ Given(/^I post a new EMAIL message with an empty SUBJECT produces an error$/) do
                                          subject: '',
                                          from_email: "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   if @message.errors['subject'] == ["can't be blank"]
     puts 'error found'.green
   else
@@ -185,14 +184,14 @@ Given(/^I post a new EMAIL message to multiple RECIPIENTS$/) do
                                          from_email: "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
   @message.recipients.build(email: 'regressiontest2@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
 end
 
 Given(/^I post a new EMAIL message with no RECIPIENTS produces an error$/) do
   @message = client.email_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform. GovDelivery performs routine feature testing to ensure a high quality of service. This test message is intended for internal GovDelivery users, but may include some external recipients. There is no action required on your part.  If you have questions or concerns, please file ticket at support.govdelivery.com, or give us call at 1-800-439-1420.',
                                          subject: 'Regression Test email send',
                                          from_email: "#{EmailAdmin.new.from_email}")
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   if @message.errors['recipients'] == ['must contain at least one valid recipient']
     puts 'error found'.green
   else
@@ -206,7 +205,7 @@ Given(/^I post a new EMAIL message and retrieve the list recipient counts\/state
                                          from_email: "#{EmailAdmin.new.from_email}",
                                          macros: {'city' => 'Saint Paul'})
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   email = @message.get
 
   # ap email.response.body
@@ -232,7 +231,7 @@ Given(/^I post a new EMAIL message with HTML within the message body$/) do
                                          from_email: "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
   @message.recipients.build(email: 'govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
 end
 
 Given(/^I post a new EMAIL message with inline CSS in the message$/) do
@@ -241,7 +240,7 @@ Given(/^I post a new EMAIL message with inline CSS in the message$/) do
                                          from_email: "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
   @message.recipients.build(email: 'govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
 end
 
 Given(/^I post a new EMAIL message with a VALID and INVALID RECIPIENT produces an email$/) do
@@ -250,7 +249,7 @@ Given(/^I post a new EMAIL message with a VALID and INVALID RECIPIENT produces a
                                          from_email: "#{EmailAdmin.new.from_email}")
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
   @message.recipients.build(email: 'govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
 end
 
 Given(/^I post a new EMAIL message with an empty FROM_EMAIL produces an error$/) do
@@ -258,7 +257,7 @@ Given(/^I post a new EMAIL message with an empty FROM_EMAIL produces an error$/)
                                          subject: 'Regression Test email send',
                                          from_email: '')
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   if @message.errors['from_email'] == ["can't be blank", 'is not authorized to send on this account']
     puts 'error found'.green
   else
@@ -272,7 +271,7 @@ Given(/^I post a new EMAIL message with an empty REPLY_TO produces an email$/) d
                                          from_email: "#{EmailAdmin.new.from_email}",
                                          reply_to: '')
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
 end
 
 Given(/^I post a new EMAIL message with an empty ERRORS_TO produces an email$/) do
@@ -281,7 +280,7 @@ Given(/^I post a new EMAIL message with an empty ERRORS_TO produces an email$/) 
                                          from_email: "#{EmailAdmin.new.from_email}",
                                          errors_to: '')
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
 end
 
 Given(/^I post a new EMAIL message with an invalid FROM_EMAIL produces an error$/) do
@@ -289,7 +288,7 @@ Given(/^I post a new EMAIL message with an invalid FROM_EMAIL produces an error$
                                          subject: 'Regression Test email send',
                                          from_email: 'XXXXye3h2d9b2gnh9hx929@evotest.govdelivery.com')
   @message.recipients.build(email: 'regressiontest1@sink.govdelivery.com')
-  STDOUT.puts @message.errors unless @message.post
+  raise @message.errors.join(", ") unless @message.post
   if @message.errors['from_email'] == ['is not authorized to send on this account']
     puts 'error found'.green
   else
@@ -353,18 +352,12 @@ end
     raise "Both uuids are not matching" unless new_template.uuid.eql?@template.uuid
   end
 
-  And (/^I create a new template with "(.*)" uuid$/)do |uuid_get|
-    @temp = @client.email_templates.build(body:    EmailDefaults::MESSAGE,
-                                             link_tracking_parameters: "from=me&one=two",
-                                             subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
-                                             uuid: uuid_get )
-  end
-
-  And (/^I should be able to get a uuid which is same as id for email template$/)do
-    raise @temp.errors.to_s unless @temp.post
-    raise @temp.errors.to_s unless @temp.get
-    puts "The id obtained is: #{@temp.id}"
-    puts "The uuid obtained is id: #{@temp.uuid}"
-    raise 'Both id and uuid are not the same' unless @temp.id.to_s.eql?@temp.uuid.to_s
-    raise @temp.errors.to_s unless @temp.delete
+  Given(/^I create a new email template with "(.*)" uuid$/) do |uuid_get|
+    @template = @client.email_templates.build(
+      body: EmailDefaults::MESSAGE,
+      link_tracking_parameters: "from=me&one=two",
+      subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
+      uuid: uuid_get
+    )
+    raise @template.errors.to_s unless @template.post
   end
