@@ -59,7 +59,7 @@ module Helpy
       subject:    @expected_subject
     )
     email_message.recipients.build(email: @conf_gmail.imap.user_name)
-    email_message.post
+    email_message.post!
     response = email_message.response
     ap response.status
     ap response.headers
@@ -108,7 +108,7 @@ module Helpy
       @link_redirect_works = true
       STDOUT.puts "Link #{link['href']} redirects to #{@expected_link}".green
     else
-      raise "Message #{@expected_subject} was found but link #{@link_in_email} didn't redirect to #{@expected_link}".red unless @link_redirect_works 
+      raise "Message #{@expected_subject} was found but link #{@link_in_email} didn't redirect to #{@expected_link}".red unless @link_redirect_works
     end
   end
 

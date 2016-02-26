@@ -25,9 +25,9 @@ Given(/^I have an SMS template$/) do
 
   client = tms_client(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
-  @sms_template = client.sms_templates.build(body: @expected_message, uuid:"new-sms-template-#{Time.now.to_i.to_s}")
-  @sms_template.post!
-  @sms_template
+  @template = client.sms_templates.build(body: @expected_message, uuid:"new-sms-template-#{Time.now.to_i.to_s}")
+  @template.post!
+  @template
 end
 
 
@@ -56,7 +56,7 @@ Given(/^I POST a new SMS templated message using to TMS$/) do
   @message = message
 end
 
-And(/^I wait for a response from twilio$/) do
+When(/^I wait for a response from twilio$/) do
   next if dev_not_live?
 end
 
@@ -102,7 +102,7 @@ Given(/^I POST a new SMS message to MBLOX$/) do
   puts configatron.test_support.mblox.phone.number
   message.post!
   @message = message
-  
+
 end
 
 Given(/^I wait for a response from TMS$/) do
@@ -114,17 +114,17 @@ Given(/^I wait for a response from TMS$/) do
       sleep 5
       STDOUT.puts 'waiting for recipient counts to arrive'.yellow
       if i>5
-      end  
-    end  
+      end
+    end
 
     def retryable
       @response = @message.get
       @a = @response.response.body["recipient_counts"]
-    end  
+    end
 end
 
 Then(/^I should receive either a canceled message or a success$/) do
-  case 
+  case
   when ENV['XACT_ENV'] == :mbloxqc,:mbloxintegration,:mbloxstage
     i=0
     until retryable["canceled"] ==1 || retryable["failed"]  == 1
@@ -133,8 +133,8 @@ Then(/^I should receive either a canceled message or a success$/) do
       i+=1
       if i>10
         fail 'Canceled status not found'.red
-      end  
-    end  
+      end
+    end
   when ENV['XACT_ENV'] == :mbloxproduction
     i=0
     until retryable["sent"] == 1
@@ -144,6 +144,11 @@ Then(/^I should receive either a canceled message or a success$/) do
       if i>10
         fail 'Sent status not found'.red
       end
-    end 
-  end 
+    end
+  end
+end
+
+Given(/^I create a new sms template with "(.*)" uuid$/) do |uuid|
+  @template = client.sms_templates.build(body: message_body_identifier, uuid: uuid)
+  @template.post!
 end

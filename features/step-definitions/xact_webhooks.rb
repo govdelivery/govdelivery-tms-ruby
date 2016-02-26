@@ -27,7 +27,7 @@ SUBJECT.store(1, Time.new) # storing the hash value so we can retrieve it later 
 Given(/^all message types$/) do
 end
 
-And(/^all event types$/) do
+Given(/^all event types$/) do
   @event_callback_uris = Hash[event_types.map { |event_type| [event_type, nil]}]
 end
 
@@ -37,11 +37,11 @@ Then(/^a callback url exists for each event type$/) do
   end
 end
 
-And(/^a callback url is registered for each event type$/) do
+Given(/^a callback url is registered for each event type$/) do
   client = tms_client(configatron.accounts.webhooks)
   @event_callback_uris.each do |key, value|
     webhook = client.webhooks.build(url: @capi.callbacks_domain + value, event_type: key)
-    webhook.post
+    webhook.post!
     puts "Webhook registered for #{key}: #{value}"
     @webhooks << webhook
   end
