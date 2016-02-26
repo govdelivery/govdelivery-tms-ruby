@@ -115,3 +115,8 @@ Then(/^I should be expect the uuid and the id to be the same for the (.*) templa
   raise 'Both id and uuid are not the same' unless @template.id.to_s.eql?(@template.uuid.to_s)
   raise @template.errors.to_s unless @template.delete
 end
+
+Then(/^I should not be able to update the (.*) template with "(.*)" uuid$/) do |update_uuid|
+  @template.uuid = update_uuid
+  raise "Template updated successfully when it should not have" if @template.put
+end

@@ -344,11 +344,6 @@ Then(/^I should be able to send an EMAIL message, specify everything, and the me
   end
 end
 
-Then(/^I should not be able to update the email template with "(.*)" uuid$/) do |update_uuid|
-  @template.uuid = update_uuid
-  raise "Template updated successfully when it should not have" if @template.put
-end
-
 Given(/^I create a new email template with "(.*)" uuid$/) do |uuid_get|
   @template = @client.email_templates.build(
     body: EmailDefaults::MESSAGE,
