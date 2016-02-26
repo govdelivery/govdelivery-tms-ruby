@@ -26,7 +26,7 @@ describe EmailMessagesController do
       m
     end
   end
-  let(:templated_messages) {create_list(:email_message, 3, email_template: email_template)}
+  let(:templated_messages) {create_list(:email_message, 3, email_template: email_template, user: user)}
   let(:recipients) {[{email: "arbys@everythingsucks.com"}]}
 
   let(:model) {EmailMessage}
@@ -96,6 +96,13 @@ describe EmailMessagesController do
       new_template = create(:email_template, account: account, user: user, from_address: from_address, uuid: "new-template")
       post :create, message: {recipients: recipients, body: nil, _links: {email_template: new_template.id.to_s}}
       expect(response.response_code).to eq(422)
+    end
+
+    it "should not require an existing from_address if the user is an admin" do
+      user.admin = true
+      user.save!
+      post :create, message: {from_email: 'no@exist.me', recipients: recipients, body: nil, _links: {email_template: email_template.uuid}}
+      expect(response.response_code).to eq(201)
     end
   end
 end

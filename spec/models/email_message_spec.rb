@@ -425,5 +425,34 @@ describe EmailMessage do
       expect(email_message.errors_to).to eq other_from_address.errors_to
       expect(email_message.reply_to).to eq other_from_address.reply_to
     end
+
+    it 'should require an existing from_address if user is not an admin' do
+      email.user.admin = false
+      email.from_email = 'no@exist.me'
+      expect(email).to_not be_valid
+      expect(email.errors.messages[:from_email]).to be_present
+    end
+
+    it 'should not require an existing from_address if user is admin' do
+      email.user.admin = true
+      email.from_email = 'no@exist.me'
+      expect(email).to be_valid
+    end
+    it 'should set the from_email when the user is admin' do
+      user.admin = true
+      user.save!
+      new_email = user.email_messages.build email_params.merge(from_email: 'no@exist.me' )
+      expect(new_email).to be_valid
+      new_email.save!
+      expect(new_email.reload.from_email).to eq( 'no@exist.me' )
+    end
+    it 'should set the from_email from default when the user is admin' do
+      user.admin = true
+      user.save!
+      new_email = user.email_messages.build email_params
+      expect(new_email).to be_valid
+      new_email.save!
+      expect(new_email.reload.from_email).to eq( user.account.default_from_address.from_email )
+    end
   end
 end
