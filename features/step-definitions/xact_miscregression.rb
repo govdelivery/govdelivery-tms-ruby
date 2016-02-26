@@ -24,19 +24,14 @@ Given(/^I create a new keyword with a text response$/) do
   raise @keyword.errors.to_s unless @keyword.post
 end
 
-Then(/^I should be able to create and delete the keyword$/) do
+Then(/^I should be able to delete the keyword$/) do
   @keyword.delete
 end
 
 # @QC-2496
 Given(/^I attempt to create a keyword with a response text over 160 characters$/) do
-  @keyword = client.keywords.build(name: '162CHARS', response_text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient...')
-  @keyword.post
-  if @keyword.errors['response_text'] == ['is too long (maximum is 160 characters)']
-    puts 'error found'.green
-  else
-    raise 'error not found'.red
-  end
+  @object = client.keywords.build(name: '162CHARS', response_text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient...')
+  @object.post
 end
 
 # @QC-2492
@@ -93,23 +88,15 @@ end
 Given(/^I create a keyword and command with an invalid account code$/) do
   @keyword = client.keywords.build(name: "#{S[1]}")
   @keyword.post!
-  @command = @keyword.commands.build(
+  @object = @keyword.commands.build(
     name: "#{S[1]}",
     params: {dcm_account_code: 'CUKEAUTO_NOPE', dcm_topic_codes: ['CUKEAUTO_BROKEN']},
     command_type: :dcm_subscribe)
-  raise @command.errors.inspect unless @command.post
+  @object.post #verification in next step
 end
 
-Then(/^I should receive an error$/) do
-  if @command.errors['params'] == ['has invalid dcm_subscribe parameters: Dcm account code is not a valid code']
-    puts 'error found'.green
-  else
-    raise 'error not found'.red
-  end
-  @keyword.delete
-end
 
-Then(/^I should be expect the uuid and the id to be the same for the (.*) template$/) do |type|
+Then(/^I should expect the uuid and the id to be the same for the (.*) template$/) do |type|
   puts "#{type.capitalize} template id: #{@template.id}"
   puts "#{type.capitalize} template uuid: #{@template.uuid}"
   raise 'Both id and uuid are not the same' unless @template.id.to_s.eql?(@template.uuid.to_s)
@@ -119,4 +106,12 @@ end
 Then(/^I should not be able to update the (.*) template with "(.*)" uuid$/) do |type, update_uuid|
   @template.uuid = update_uuid
   raise "Template updated successfully when it should not have" if @template.put
+end
+
+Then(/^I should receive the error "(.*)" in the "(.*)" payload$/) do |message, attribute|
+  if @object.errors[attribute].join(", ").include? message
+    puts "Found error: #{message}".green
+  else
+    raise "Did not find error: #{message}".red
+  end
 end

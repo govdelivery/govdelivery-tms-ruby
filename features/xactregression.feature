@@ -5,11 +5,12 @@ Feature: XACT Full Regression
   @QC-2453 @QC-2440
   Scenario: TMS configure a text response for an SMS keyword under 160 characters.
     Given I create a new keyword with a text response
-    Then I should be able to create and delete the keyword
+    Then I should be able to delete the keyword
 
   @QC-2496 @QC-2440
   Scenario: TMS configure a text response for an SMS keyword over 160 characters.
     Given I attempt to create a keyword with a response text over 160 characters
+    Then I should receive the error "is too long (maximum is 160 characters)" in the "response_text" payload
 
   @QC-2492 @QC-2440
   Scenario: TMS creating and deleting Forward commands for a Keyword.
@@ -23,10 +24,10 @@ Feature: XACT Full Regression
     Given I create a new unsubscribe keyword and command
     Then I should be able to delete the unsubscribe keyword
 
-  @QC-2452 @QC-2440
+  @QC-2452 @QC-2440 @keyword
   Scenario: TMS creating and deleting Subscribe commands for a Keyword when the account is invalid.
     Given I create a keyword and command with an invalid account code
-    Then I should receive an error
+    Then I should receive the error "Dcm account code is not a valid code" in the "params" payload
 
 #admin template and link tracking params tests
 
@@ -63,11 +64,13 @@ Feature: XACT Full Regression
 
   @QC-2292 @QC-2239
   Scenario: TMS posting a new EMAIL message with an empty BODY produces a 422 error
-    Given I post a new EMAIL message with an empty BODY produces an error
+    Given I post a new EMAIL message with an empty BODY
+    Then I should receive the error "can't be blank" in the "body" payload
 
   @QC-2294 @QC-2239
   Scenario: TMS posting a new EMAIL message with an empty SUBJECT produces a 422 error
-    Given I post a new EMAIL message with an empty SUBJECT produces an error
+    Given I post a new EMAIL message with an empty SUBJECT
+    Then I should receive the error "can't be blank" in the "subject" payload
 
   @QC-2295 @QC-2239
   Scenario: TMS posting a new EMAIL message to multiple RECIPIENTS
@@ -75,7 +78,8 @@ Feature: XACT Full Regression
 
   @QC-2296 @QC-2239
   Scenario: TMS posting a new EMAIL message with no RECIPIENTS produces a 422 created response
-    Given I post a new EMAIL message with no RECIPIENTS produces an error
+    Given I post a new EMAIL message with no RECIPIENTS
+    Then I should receive the error "must contain at least one valid recipient" in the "recipients" payload
 
   @QC-2365 @QC-2239
   Scenario: TMS posting a new EMAIL message and retrieve the list recipient counts/states
@@ -95,7 +99,8 @@ Feature: XACT Full Regression
 
   @QC-3227 @QC-2239
   Scenario: TMS posting a new EMAIL message with an empty FROM_EMAIL produces a 422 response
-    Given I post a new EMAIL message with an empty FROM_EMAIL produces an error
+    Given I post a new EMAIL message with an empty FROM_EMAIL
+    Then I should receive the error "can't be blank" in the "from_email" payload
 
   @QC-3233 @QC-2239
   Scenario: TMS posting a new EMAIL message with an empty REPLY_TO produces a 201 created response, defaults to the account level FROM_ADDRESS.
@@ -107,7 +112,8 @@ Feature: XACT Full Regression
 
   @QC-3237 @QC-2239
   Scenario: TMS posting a new EMAIL message with an invalid FROM_EMAIL produces a 422 response, not authorized to send on this account response.
-    Given I post a new EMAIL message with an invalid FROM_EMAIL produces an error
+    Given I post a new EMAIL message with an invalid FROM_EMAIL
+    Then I should receive the error "is not authorized to send on this account" in the "from_email" payload
 
 ## email with template
 
@@ -127,43 +133,45 @@ Feature: XACT Full Regression
 
   @QC-2234 @QC-1976
   Scenario: TMS posting a new SMS message with over 160 characters in the message body to a PHONE NUMBER produces a 422 Unprocessable response.
-    Given I post a new SMS message with too many characters
+    When I post a new SMS message with too many characters
+    Then I should receive the error "is too long (maximum is 160 characters)" in the "body" payload
 
   @QC-2235 @QC-1976
   Scenario: TMS posting a new SMS message with under 160 characters in the message body to a PHONE NUMBER produces a 201 Created response.
-    Given I post a new SMS message with the correct number of characters
+    When I post a new SMS message with the correct number of characters
 
   @QC-2236 @QC-1976
   Scenario: TMS posting a new SMS message with under 160 characters in the message body to a FORMATTED PHONE NUMBER produces a 201 Created response.
-    Given I post a new SMS message with the correct number of characters to a formatted phone number
+    When I post a new SMS message with the correct number of characters to a formatted phone number
 
   @QC-2240 @QC-1976
   Scenario: TMS retrieve a message detail on a sent SMS
-    Given I post a new SMS message and retrieve the message details
+    When I post a new SMS message and retrieve the message details
 
   @QC-2241 @QC-1976
   Scenario: TMS retrieve a recipient detail on a sent SMS
-    Given I post a new SMS message and retrieve the recipient details
+    When I post a new SMS message and retrieve the recipient details
 
   @QC-2422 @QC-1976
   Scenario: TMS posting a new SMS message to MULTIPLE RECIPIENTS
-    Given I post a new SMS message to multiple recipients
+    When I post a new SMS message to multiple recipients
 
   @QC-2476 @QC-1976
   Scenario: TMS posting a new SMS message with a body under 160 characters and NO PHONE NUMBER should produce an error.
-    Given I post a new SMS message to an empty recipient
+    When I post a new SMS message to an empty recipient
+    Then I should receive the error "must contain at least one valid recipient" in the "recipients" payload
 
   @QC-2477 @QC-1976
   Scenario: TMS posting a new SMS message to MULTIPLE RECIPIENTS, 2 which are INVALID, produces 2 FAILED recipients.
-    Given I post a new SMS message to invalid recipients I should not receive failed recipients
+    When I post a new SMS message to invalid recipients I should not receive failed recipients
 
   @QC-2478 @QC-1976
   Scenario: TMS posting a new SMS message with DUPLICATE phone numbers.
-    Given I post a new SMS message with duplicate recipients
+    When I post a new SMS message with duplicate recipients
 
   @QC-3011 @QC-1976
   Scenario: TMS posting a new SMS message which contains special characters.
-    Given I post a new SMS message which contains special characters
+    When I post a new SMS message which contains special characters
 
   @QC-2237
   Scenario: TMS create a single voice message to multiple recipients
@@ -196,10 +204,10 @@ Feature: XACT Full Regression
   Scenario: Verifying whether a new email template with "" uuid will return a uuid as id
     Given I am using a non-admin TMS client
     When I create a new email template with "" uuid
-    Then I should be expect the uuid and the id to be the same for the email template
+    Then I should expect the uuid and the id to be the same for the email template
 
   @QC-UUID-SMS_BLANK_STRING
   Scenario: Verifying whether a new sms template with "" uuid will return a uuid as id
     Given I am using a non-admin TMS client
     When I create a new sms template with "" uuid
-    Then I should be expect the uuid and the id to be the same for the sms template
+    Then I should expect the uuid and the id to be the same for the sms template
