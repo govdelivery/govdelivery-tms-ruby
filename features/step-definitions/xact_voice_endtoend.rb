@@ -78,7 +78,7 @@ end
 Given(/^I am testing xact voice messaging end to end$/) do
   @message = client.voice_messages.build(play_url: voice_message[random]) # combine methods where 'random' selects the hash key at random
   @message.recipients.build(phone: phone_number) # change phone
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
 end
 
 Then(/^I should be able to create a voice message and send to recipients$/) do

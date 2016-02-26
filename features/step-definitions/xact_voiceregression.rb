@@ -78,7 +78,7 @@ end
 
 Then(/^I should be able to verify details of the message$/) do
   @message.recipients.build(phone: phone_number)
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
   sleep(10)
 
   @message.get

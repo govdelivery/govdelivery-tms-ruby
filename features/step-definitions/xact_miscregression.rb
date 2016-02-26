@@ -97,7 +97,7 @@ Given(/^I create a keyword and command with an invalid account code$/) do
     name: "#{S[1]}",
     params: {dcm_account_code: 'CUKEAUTO_NOPE', dcm_topic_codes: ['CUKEAUTO_BROKEN']},
     command_type: :dcm_subscribe)
-  raise @command.errors.join(", ") unless @command.post
+  raise @command.errors.inspect unless @command.post
 end
 
 Then(/^I should receive an error$/) do

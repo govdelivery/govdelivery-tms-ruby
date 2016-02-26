@@ -16,7 +16,7 @@ require 'pry'
 Given(/^I post a new SMS message with too many characters$/) do
   @message = client.sms_messages.build(body: 'PtFGdBXk65tYERi9yKuOAxPInGJQPrNeaIdNJ7YlLeEAxglMeoxaufoKTxJZUOEOkXo5jO84cFIyeUGHdywK2mOnUy2JM6Q9vdd2Plpce8mZFvWdtUQJgVQSDTOUwFUkLkHOLIXqGHE24CBJlTZmxOE2HuyVqYRof')
   @message.recipients.build(phone: '5551112222')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
   if @message.errors['body'] == ['is too long (maximum is 160 characters)']
     puts 'error found'.green
   else
@@ -27,19 +27,19 @@ end
 Given(/^I post a new SMS message with the correct number of characters$/) do
   @message = client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @message.recipients.build(phone: '5551112222')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
 end
 
 Given(/^I post a new SMS message with the correct number of characters to a formatted phone number$/) do
   @message = client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @message.recipients.build(phone: '(555) 111-2222')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
 end
 
 Given(/^I post a new SMS message and retrieve the message details$/) do
   @message = client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @message.recipients.build(phone: '5551112222')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
 
   sms = @message.get
   if sms.response.body['_links']['self'].include?('messages/sms')
@@ -52,7 +52,7 @@ end
 Given(/^I post a new SMS message and retrieve the recipient details$/) do
   @message = client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @message.recipients.build(phone: '5551112222')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
   sms = @message.get
 
   if sms.response.body['_links'].include?('recipients')
@@ -66,13 +66,13 @@ Given(/^I post a new SMS message to multiple recipients$/) do
   @message = client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @message.recipients.build(phone: '5551112222')
   @message.recipients.build(phone: '5551112223')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
 end
 
 Given(/^I post a new SMS message to an empty recipient$/) do
   @message = client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @message.recipients.build(phone: '')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
   if @message.errors['recipients'] == ['must contain at least one valid recipient']
     puts 'error found'.green
   else
@@ -83,7 +83,7 @@ end
 Given(/^I post a new SMS message to invalid recipients I should not receive failed recipients$/) do
   @message = client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @message.recipients.build(phone: '55A')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
 end
 
 Given(/^I post a new SMS message with duplicate recipients$/) do
@@ -93,13 +93,13 @@ Given(/^I post a new SMS message with duplicate recipients$/) do
   @message.recipients.build(phone: '5551112222')
   @message.recipients.build(phone: '5551112222')
   @message.recipients.build(phone: '5551112222')
-  raise @message.errors.join(", ") unless @message.post!
+  raise @message.errors.inspect unless @message.post!
 end
 
 Given(/^I post a new SMS message which contains special characters$/) do
   @message = client.sms_messages.build(body: 'You í á é ñ ó ú ü ¿ ¡ received this message as a result of feature testing special characters within the GovDelivery platform.')
   @message.recipients.build(phone: '5551112222')
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
 end
 
 def client_2
@@ -155,7 +155,7 @@ Given(/^I send an SMS with an invalid word or command$/) do
   sleep(20)
   @message = client_2.sms_messages.build(body: 'ABCDEF jabberwocky')
   @message.recipients.build(phone: phone_number_to)
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
   # ap @message.response
 
   twiliomation # call to twilio call list
@@ -193,7 +193,7 @@ Given(/^I send an SMS to a shared account with an invalid prefix$/) do
   sleep(20)
   @message = client_2.sms_messages.build(body: 'ABCDEF help')
   @message.recipients.build(phone: phone_number_to)
-  raise @message.errors.join(", ") unless @message.post
+  raise @message.errors.inspect unless @message.post
   # ap @message.response
 
   twiliomation # call to twilio call list
