@@ -1,34 +1,5 @@
 require 'colored'
 
-Before() do |_scenario|
-  @capi = CallbacksAPIClient.new(callbacks_api_root)
-  @webhooks = []
-end
-
-Before('@Dev-Safety') do |_scenario|
-  STDOUT.puts "\tSkipping on Dev with Non-Live Account".red if dev_not_live?
-end
-
-# Set our Twilio test account to have no callbacks when we are done
-After('@Twilio') do |_scenario|
-  twil = Twilio::REST::Client.new(
-    configatron.test_support.twilio.account.sid,
-    configatron.test_support.twilio.account.token
-  )
-  twil.account.incoming_phone_numbers.get(configatron.test_support.twilio.phone.sid).update(
-    voice_url: '',
-    sms_url: ''
-  )
-end
-
-# Destroy created endpoints on the Test Support App if we don't need to keep them
-After('@Test-Support-App') do |scenario|
-  unless scenario.failed?
-    STDOUT.puts 'Deleting Callback URIs'
-    @capi.destroy_all_callback_uris
-  end
-end
-
 def backoff_check(condition, desc)
   slept_time = 0
   min = 0

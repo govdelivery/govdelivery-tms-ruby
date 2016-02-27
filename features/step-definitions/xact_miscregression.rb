@@ -107,11 +107,3 @@ Then(/^I should not be able to update the (.*) template with "(.*)" uuid$/) do |
   @template.uuid = update_uuid
   raise "Template updated successfully when it should not have" if @template.put
 end
-
-Then(/^I should receive the error "(.*)" in the "(.*)" payload$/) do |message, attribute|
-  if @object.errors[attribute].join(", ").include? message
-    puts "Found error: #{message}".green
-  else
-    raise "Did not find error: #{message}".red
-  end
-end

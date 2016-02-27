@@ -1,9 +1,9 @@
+@webhooks @Test-Support-App
 Feature: XACT Webhooks functionality
 In order to be informed on the progress of a message sent to a recipient
 As a client developer
 I want to be notified whenever the state of a recipient changes
 
-@webhooks @Test-Support-App
 Scenario: Invoke the webhook of every recipient event type on email messages
   Given all message types
   And all event types
