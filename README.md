@@ -9,7 +9,6 @@ Prerequisites
 2. instantclient-sqlplus ( download from oracle )
 3. `export TNS_ADMIN=/Library/Oracle/instantclient` (or wherever)
 4. oracledev project vagrant vm
-5. ...
 
 Creating a tag
 ==============
