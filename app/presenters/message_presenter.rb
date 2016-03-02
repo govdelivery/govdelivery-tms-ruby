@@ -35,7 +35,7 @@ class MessagePresenter < SimpleDelegator
   private
 
   def self_link
-    context.send(:"#{message_type}_path", id: @message.id)
+    context.send(:"#{message_type}_path", @message)
   end
 
   # polymorphic_path doesn't work here
