@@ -5,6 +5,7 @@ vagrant_defaults: &vagrant_defaults
   checkout_timeout: 15
   pool: 10
   migration_username: gd_code_deploy
+  migration_password: abcd1234
   structure_dump: db_stored_code
   structure_drop: db_stored_code
 

@@ -2,6 +2,14 @@ XACT
 ====
 A Ruby on Rails application that sends SMS, email, and voice messages and reports on delivery statistics. Part of the GovDelivery TMS suite.
 
+Prerequisites
+=============
+
+1. install ant (e.g.: brew install ant)
+2. instantclient-sqlplus ( download from oracle )
+3. `export TNS_ADMIN=/Library/Oracle/instantclient` (or wherever)
+4. oracledev project vagrant vm
+
 Creating a tag
 ==============
 
@@ -20,10 +28,10 @@ Packaging
 Ideally, you'll never think about this, but here's the basic flow:
 
   * You commit, push, and merge to master
-  * => A package for QC is built containg the current repo state. 
+  * => A package for QC is built containg the current repo state.
        Versioned by the # of commits since the last tagged version
        e.x. gd-xact-1.22.0.55
-  
+
   * You tag a build for proper release
   * => A package for INT is built containing the repo state as tagged
        It is automatically versioned by your tag.
@@ -34,8 +42,8 @@ Some of this is WIP.
 A deploy process for the aforementioned packages is documented elsewhere.
 TODO: Link to said docs.
 
-As for the gd-prefix, it turns out we're not the first to name a product 
-'Evolution'. In order to not clash with the mail client, (or anything else) 
+As for the gd-prefix, it turns out we're not the first to name a product
+'Evolution'. In order to not clash with the mail client, (or anything else)
 a prefix is added to all of our internal packages.
 
 If you need to inspect or modify the packaging process, it is controlled by
@@ -72,10 +80,10 @@ platform.
         ./bin/accounts.rb -n "GovDelivery Monitoring Account" --email_vendor=10000 --sms_vendor=10001 --voice_vendor=10001 --sms_prefix='MONITOR'
 
     # Create user and token
-	./bin/users.rb -a ACCOUNTID -e 'nagios@govdelivery.com' -s 0 -p 'SOMEpasSWORD'
+    ./bin/users.rb -a ACCOUNTID -e 'nagios@govdelivery.com' -s 0 -p 'SOMEpasSWORD'
 
     # List token
-	./bin/tokens.rb -u USERID --list
+    ./bin/tokens.rb -u USERID --list
 
 
 ipaws notes:
