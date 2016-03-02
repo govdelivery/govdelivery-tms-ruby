@@ -35,3 +35,4 @@ config/vagrant_user_config.yml
 .ruby-gemset
 tags
 .*.swp
+cuke_sniffer_result.html

@@ -1,6 +1,5 @@
-Feature: XACT API PROD, STAGE, INT Email end to end tests.
-
-  Background:
+@end-to-end
+Feature: XACT API PROD STAGE INT Email end to end tests.
 
   @QC-2239 @Dev-Safety
   Scenario: End to End email test for all environments.

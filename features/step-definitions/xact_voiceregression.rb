@@ -40,25 +40,8 @@ Given(/^I created a new voice message$/) do
   @message = client.voice_messages.build(play_url: 'http://xact-webhook-callbacks.herokuapp.com/voice/fifth.mp3')
 end
 
-Then(/^I should be able to verify that multiple recipients have received the message$/) do
-  @message.recipients.build(phone: phone_number)
-  @message.recipients.build(phone: phone_number_2) # change phone
-  puts @message.errors unless @message.post
-  if @message.response.status == 201
-    puts '201 Created'.green
-  else
-    raise 'Message was not created'.red
-  end
-end
-
-Then(/^I should be able to verify the statuses using good numbers$/) do
-  @message.recipients.build(phone: phone_number)
-  puts @message.errors unless @message.post
-  if @message.response.status == 201
-    puts '201 Created'.green
-  else
-    raise 'Message was not created'.red
-  end
+When(/^I add phone number '(.*)' to the message$/) do |phone|
+  @message.recipients.build(phone: phone)
 end
 
 Then(/^I should see a list of messages with appropriate attributes$/) do
@@ -72,13 +55,7 @@ Then(/^I should see a list of messages with appropriate attributes$/) do
   end
 end
 
-Then(/^I should be able to verify the retries and expiration time$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
 Then(/^I should be able to verify details of the message$/) do
-  @message.recipients.build(phone: phone_number)
-  raise @message.errors.inspect unless @message.post
   sleep(10)
 
   @message.get
