@@ -173,11 +173,26 @@ When(/^I POST a new EMAIL message to TMS$/) do
 end
 
 # steps
+Given(/I am an admin/) do
+  initialize_variables
+  unless ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN']
+    raise "ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'] is not set"
+  end
+  @conf_xact.user.token = ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN']
+end
+
 When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
   initialize_variables
   @expected_reply_to = @conf_xact.user.reply_to_address_two
   @expected_errors_to = @conf_xact.user.bounce_address_two
   post_message from_email: @conf_xact.user.from_address_two
+end
+
+When(/^I POST a new EMAIL message to TMS using a random from address$/) do
+  initialize_variables
+  @expected_reply_to = @conf_xact.user.reply_to_address_two
+  @expected_errors_to = @conf_xact.user.bounce_address_two
+  post_message from_email: "no@exist.com"
 end
 
 When(/^I POST a new EMAIL message to TMS with long macro replacements$/) do
