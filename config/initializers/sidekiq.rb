@@ -60,4 +60,3 @@ end
 SidekiqUniqueJobs.config.unique_args_enabled = true
 SidekiqUniqueJobs.config.unique_storage_method = :old
 
-Sidekiq::Web.app_url = '/'

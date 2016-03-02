@@ -143,7 +143,7 @@ GEM
       activesupport (>= 4.1.0)
     govdelivery-crypt (0.2.1)
       activesupport
-    govdelivery-dbtasks (0.3.3)
+    govdelivery-dbtasks (0.3.10)
       activerecord (> 3.2.0, < 5)
       activerecord-oracle_enhanced-adapter
       activesupport (> 3.2.20, < 5)
@@ -179,7 +179,7 @@ GEM
     i18n (0.7.0)
     i18n_data (0.6.2)
     jakety_jak (1.1.4)
-    jruby-rack (1.1.16)
+    jruby-rack (1.1.20)
     json (1.8.3-java)
     json_spec (1.1.2)
       multi_json (~> 1.0)
@@ -300,13 +300,13 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
-    redis (3.2.1)
-    redis-actionpack (4.0.0)
+    redis (3.2.2)
+    redis-actionpack (4.0.1)
       actionpack (~> 4)
       redis-rack (~> 1.5.0)
       redis-store (~> 1.1.0)
-    redis-activesupport (4.1.0)
-      activesupport (~> 4)
+    redis-activesupport (4.1.5)
+      activesupport (>= 3, < 5)
       redis-store (~> 1.1.0)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
@@ -317,7 +317,7 @@ GEM
       redis-actionpack (~> 4)
       redis-activesupport (~> 4)
       redis-store (~> 1.1.0)
-    redis-store (1.1.4)
+    redis-store (1.1.7)
       redis (>= 2.2)
     request_exception_handler (0.5.0)
       actionpack (>= 2.1)
@@ -376,8 +376,6 @@ GEM
       json (~> 1.0)
       redis (~> 3.2, >= 3.2.1)
       redis-namespace (~> 1.5, >= 1.5.2)
-    sidekiq-failures (0.4.5)
-      sidekiq (>= 2.16.0)
     sidekiq-pro (2.1.2)
       sidekiq (~> 3, >= 3.4.2)
     sidekiq-retries (0.3.0)
@@ -499,7 +497,7 @@ DEPENDENCIES
   redis
   redis-activesupport
   redis-rails
-  redis-store (= 1.1.4)
+  redis-store
   request_exception_handler
   responders
   rjack-slf4j
@@ -512,7 +510,6 @@ DEPENDENCIES
   send_nsca
   shoulda-matchers (< 3)
   sidekiq
-  sidekiq-failures
   sidekiq-pro
   sidekiq-retries
   sidekiq-unique-jobs

@@ -1,5 +1,6 @@
 Xact::Application.routes.draw do
   require 'sidekiq/pro/web'
+  Sidekiq::Web.app_url = '/'
 
   constraint = ->(request) {request.env['warden'].authenticate? && request.env['warden'].user.admin?}
   constraints constraint do
