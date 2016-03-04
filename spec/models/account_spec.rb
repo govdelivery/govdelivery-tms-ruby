@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe Account do
-  let(:email_vendor) {create(:email_vendor)}
-  let(:sms_vendor) {create(:sms_vendor)}
-  let(:voice_vendor) {create(:voice_vendor)}
+  let(:email_vendor) { create(:email_vendor) }
+  let(:sms_vendor) { create(:sms_vendor) }
+  let(:voice_vendor) { create(:voice_vendor) }
 
-  it {is_expected.to belong_to(:ipaws_vendor)}
+  it { is_expected.to belong_to(:ipaws_vendor) }
 
   context 'from_email_allowed?' do
     subject do
@@ -36,7 +36,7 @@ describe Account do
     end
 
     context 'with an existing account with a prefix' do
-      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
+      let(:other_account) { create(:account, sms_vendor: sms_vendor) }
       before do
         other_account.sms_prefixes.create!(prefix: 'ELSE')
         subject.sms_vendor.reload
@@ -48,7 +48,7 @@ describe Account do
     end
 
     context 'with an existing account without a prefix' do
-      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
+      let(:other_account) { create(:account, sms_vendor: sms_vendor) }
       before do
         other_account
         subject.sms_vendor.reload
@@ -60,38 +60,38 @@ describe Account do
       end
     end
 
-    it {is_expected.to be_valid}
+    it { is_expected.to be_valid }
 
     context 'when name is empty' do
-      before {subject.name = nil}
-      it {is_expected.not_to be_valid}
+      before { subject.name = nil }
+      it { is_expected.not_to be_valid }
     end
 
     context 'when name too long' do
-      before {subject.name = 'W' * 257}
-      it {is_expected.not_to be_valid}
+      before { subject.name = 'W' * 257 }
+      it { is_expected.not_to be_valid }
     end
 
     context 'when link_encoder is nil' do
-      before {subject.link_encoder = nil}
-      it {is_expected.to be_valid}
+      before { subject.link_encoder = nil }
+      it { is_expected.to be_valid }
     end
 
     # HYRULE
     context 'when link_encoder is ONE' do
-      before {subject.link_encoder = 'ONE'}
-      it {is_expected.to be_valid}
+      before { subject.link_encoder = 'ONE' }
+      it { is_expected.to be_valid }
     end
 
     # STRONGMAIL
     context 'when link_encoder is TWO' do
-      before {subject.link_encoder = 'TWO'}
-      it {is_expected.to be_valid}
+      before { subject.link_encoder = 'TWO' }
+      it { is_expected.to be_valid }
     end
 
     context 'when link_encoder is invalid' do
-      before {subject.link_encoder = 'blah'}
-      it {is_expected.not_to be_valid}
+      before { subject.link_encoder = 'blah' }
+      it { is_expected.not_to be_valid }
     end
 
     context 'creating a command' do
@@ -106,7 +106,7 @@ describe Account do
         account = create(:account_with_sms, dcm_account_codes: ['ACCOUNT_CODE'])
         expect(account.stop_keyword).not_to be_nil
         command_params = mock
-        params = CommandParameters.new(dcm_account_codes: ['ACCOUNT_CODE'])
+        params         = CommandParameters.new(dcm_account_codes: ['ACCOUNT_CODE'])
         account.stop_keyword.create_command!(params: params, command_type: :dcm_unsubscribe)
         Keyword.any_instance.expects(:execute_commands).never
         Command.any_instance.expects(:call).with(command_params)
@@ -117,14 +117,14 @@ describe Account do
     context 'calling stop!' do
       context 'with no existing stop requests' do
         it 'should create a stop request and call commands' do
-          account = create(:account_with_sms, dcm_account_codes: ['ACCOUNT_CODE'])
+          account        = create(:account_with_sms, dcm_account_codes: ['ACCOUNT_CODE'])
           command_params = stub(:account_id= => true, from: 'BOBBY')
-          account.stop_keyword.create_command!(params: CommandParameters.new(dcm_account_codes: ['ACCOUNT_CODE']),
+          account.stop_keyword.create_command!(params:       CommandParameters.new(dcm_account_codes: ['ACCOUNT_CODE']),
                                                command_type: :dcm_unsubscribe)
           Command.any_instance.expects(:call).with(command_params)
           expect do
             account.stop!(command_params)
-          end.to change {account.stop_requests.count}.by 1
+          end.to change { account.stop_requests.count }.by 1
         end
       end
       context 'with existing stop request for this phone' do
@@ -217,14 +217,14 @@ describe Account do
       @account_id = @account.id
       @account.destroy
     end
-    it 'is rad' do
+    it 'does not leave anything around that references that account' do
       direct_tables = ActiveRecord::Base.connection.tables.map do |m|
         begin
           m.classify.constantize
         rescue NameError
           nil
         end
-      end.compact.select { |m| m.column_names.include?('account_id')}
+      end.compact.select { |m| m.column_names.include?('account_id') }
 
       direct_tables.each do |klass|
         expect(klass.where(account_id: @account_id).count).to eq 0
