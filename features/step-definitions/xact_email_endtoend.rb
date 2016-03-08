@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
+require 'awesome_print'
 require 'capybara'
 require 'capybara/cucumber'
-require 'rubygems'
 require 'colored'
-require 'awesome_print'
-require 'mail'
 require 'govdelivery-tms'
+require 'mail'
+require 'mechanize'
+require 'rubygems'
 
 # helper methods
 module Helpy
@@ -16,22 +17,26 @@ module Helpy
 
     @expected_subject = 'xact_email_end_to_end - ' + Time.new.to_s + '::' + rand(100_000).to_s
     @link_redirect_works = false
-    @link_in_email = ''
     @expected_link = 'http://govdelivery.com'
-    @wait_time = 5
     @conf_xact = configatron.accounts.email_endtoend.xact
     @conf_gmail = configatron.accounts.email_endtoend.gmail
+
+    imap_config = @conf_gmail.imap.to_h
+    Mail.defaults do
+      retriever_method :imap, imap_config
+    end
   end
 
   def expected_link_prefix
-    if ENV['XACT_ENV'] == 'qc'
-      'http://qc-links.govdelivery.com:80'
-    elsif ENV['XACT_ENV'] == 'integration'
-      'http://int-links.govdelivery.com:80'
-    elsif ENV['XACT_ENV'] == 'stage'
-      'http://stage-links.govdelivery.com:80/track'
-    elsif ENV['XACT_ENV'] == 'prod'
-      'https://odlinks.govdelivery.com'
+    case ENV['XACT_ENV']
+      when 'qc'
+        'http://qc-links.govdelivery.com:80'
+      when 'integration'
+        'http://int-links.govdelivery.com:80'
+      when 'stage'
+        'http://stage-links.govdelivery.com:80/track'
+      when 'prod'
+        'https://odlinks.govdelivery.com'
     end
   end
 
@@ -66,50 +71,22 @@ module Helpy
     ap response.body
   end
 
-  def get_emails
-    message_list = {}
-    STDOUT.puts "Logging into Gmail IMAP looking for subject: #{@expected_subject}"
-    # configatron blows up in Mail if we try to resolve components of it
-    gmail_config = @conf_gmail.imap.to_h
-    begin
-      Mail.defaults do
-        retriever_method :imap, gmail_config
-      end
+  def get_emails(expected_subject)
+    STDOUT.puts "Logging into Gmail IMAP looking for subject \"#{@expected_subject}\""
+    emails = Mail.find(what: :last, count: 1000, order: :dsc)
+    STDOUT.puts "Found #{emails.size} emails"
 
-      emails = Mail.find(what: :last, count: 1000, order: :dsc)
-      STDOUT.puts "Found #{emails.size} emails"
-
-      emails.each do |mail|
-        mail.parts.map do |p|
-          if p.content_type.include? 'text/html'
-            message_list[mail.subject] = p.body.decoded
-            @reply_to = get_field_value mail, 'Reply-To'
-            @errors_to = get_field_value mail, 'Errors-To'
-          end
-        end
-      end
-
-    rescue => e
-      STDOUT.puts "Error interacting with Gmail IMAP (will retry in #{@wait_time} seconds): #{e.message}"
-      STDOUT.puts e.backtrace
-    end
-
-    message_list
-  end
-
-  # get the value of a field on the mail message
-  def get_field_value(email, field_name)
-    email.header.fields.detect { |field| field.name == field_name }.value
-  end
-
-  def test_link(link)
-    @link_in_email = link['href']
-    if LinkTester.new.test_link(link['href'], @expected_link, expected_link_prefix)
-      @link_redirect_works = true
-      STDOUT.puts "Link #{link['href']} redirects to #{@expected_link}".green
+    if (mail = emails.detect { |mail| mail.subject == expected_subject })
+      [mail.html_part.body.decoded,
+       mail.header.fields.detect { |field| field.name == 'Reply-To' }.value,
+       mail.header.fields.detect { |field| field.name == 'Errors-To' }.value]
     else
-      raise "Message #{@expected_subject} was found but link #{@link_in_email} didn't redirect to #{@expected_link}".red unless @link_redirect_works
+      nil
     end
+
+  rescue => e
+    STDOUT.puts "Error interacting with Gmail IMAP: #{e.message}"
+    STDOUT.puts e.backtrace
   end
 
   def clean_inbox
@@ -125,42 +102,37 @@ module Helpy
   # Polls mail server for messages and validates message if found
   def validate_message
     next if dev_not_live?
+    condition = proc do
+      # get message
+      body, reply_to, errors_to = get_emails(@expected_subject)
+      next if body.nil?
 
-    begin
-      msg_found      = false
-      @wait_time     = 5
-      120.times do |iter| # wait ten minutes if you retry every 5 seconds
-        STDOUT.puts "Have waited #{@wait_time * iter} seconds".blue
-        STDOUT.puts "Waiting for #{@wait_time} more seconds"
-        sleep(@wait_time)
+      # validate from address information
+      raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if reply_to != @expected_reply_to
+      raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if errors_to != @expected_errors_to
 
-        message_list = get_emails
+      # validate link is present
+      if (href = Nokogiri::HTML(body).css('a').map { |link| link['href'] }.detect { |href| test_link(href, @expected_link, expected_link_prefix) })
+        puts "Link #{href} redirects to #{@expected_link}".green
+        return true
+      else
+        raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
+      end
+    end
+    backoff_check(condition, "find message #{@expected_subject}")
+  ensure
+    clean_inbox
+  end
 
-        if message_list[@expected_subject]
-          msg_found = true
-          STDOUT.puts "Message #{@expected_subject} found after #{@wait_time * iter} seconds".green
-
-          # validate link(s)
-          if doc = Nokogiri::HTML(message_list[@expected_subject])
-            doc.css('a').each do |link|
-              test_link link
-            end
-          end
-
-          break
-          # validate from address information
-          raise "Expected Reply-To of #{@expected_reply_to} but got #{@reply_to}" unless @reply_to == @expected_reply_to
-          raise "Expected Errors-To of #{@expected_errors_to} but got #{@rerrors_to}" unless @errors_to == @expected_errors_to
-        end
-      end # end while
-
-      # validate message was found
-      raise "Message #{@expected_subject} was not found in the inbox after #{@wait_time * (iter+1)} seconds".red unless msg_found
-
-    ensure
-      clean_inbox
+  def test_link(link_url, expected, expected_prefix)
+    Mechanize.new do |agent|
+      agent.user_agent_alias = 'Mac Safari'
+      agent.redirect_ok          = false
+    end.get(link_url) do |page| # retrieve link_url from agent
+      page.forms.any? { |f| ((f['url'].eql? expected) && (link_url.start_with? expected_prefix)) }
     end
   end
+
 end
 World(Helpy)
 
@@ -175,10 +147,9 @@ end
 # steps
 Given(/I am an admin/) do
   initialize_variables
-  unless ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN']
+  unless (@conf_xact.user.token = ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'])
     raise "ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'] is not set"
   end
-  @conf_xact.user.token = ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN']
 end
 
 When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
