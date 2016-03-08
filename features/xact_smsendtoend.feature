@@ -19,5 +19,4 @@ Feature: XACT SMS end to end tests.
   @mblox
   Scenario: End to End sms test for mblox for all environments.
     When I POST a new SMS message to MBLOX
-    And I wait for a response from TMS
     Then I should receive either a canceled message or a success
