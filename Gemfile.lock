@@ -466,7 +466,7 @@ DEPENDENCIES
   govdelivery-crypt
   govdelivery-dbtasks (~> 0.3.2)
   govdelivery-links
-  govdelivery-tms (~> 0.8.2)
+  govdelivery-tms (~> 0.8.14)
   govdelivery-tms-internal (~> 0.0.2)
   guard-rspec
   highline
