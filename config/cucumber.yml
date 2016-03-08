@@ -1,2 +1,2 @@
 ---
-default: --tags ~@pending ~@wip
+default: --tag ~@pending --tag ~@wip
