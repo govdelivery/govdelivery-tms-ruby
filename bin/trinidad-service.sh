@@ -204,30 +204,36 @@ tcp-conn-wait () { ## Wait for connections to App to end
     done
     echo "done";
 }
+export CRUBY_PATH=/usr/bin
+export RELEASE_SCRIPT_PATH=/var/repo/scripts/release
 
 f5-node-status () {
     [[ "${CONTROL_F5}" != "true" ]] && return 0
     [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
-    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT}
+    local PATH=$CRUBY_PATH:$PATH
+    $RELEASE_SCRIPT_PATH/f5-ltm-my-status.sh -p ${APP_PORT}
 }
 f5-node-enable () {
     [[ "${CONTROL_F5}" != "true" ]] && return 0
     [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
     /usr/bin/logger -p user.notice -t "${INITNAME}" "f5-node-enable called"
     echo "Enabling Node in F5 LTM"
-    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT} -S enabled
+    local PATH=$CRUBY_PATH:$PATH
+    $RELEASE_SCRIPT_PATH/f5-ltm-my-status.sh -p ${APP_PORT} -S enabled
 }
 f5-node-disable () {
     [[ "${CONTROL_F5}" != "true" ]] && return 0
     [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
     /usr/bin/logger -p user.notice -t "${INITNAME}" "f5-node-disable called"
     echo "Disabling Node in F5 LTM"
-    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT} -S disabled
+    local PATH=$CRUBY_PATH:$PATH
+    $RELEASE_SCRIPT_PATH/f5-ltm-my-status.sh -p ${APP_PORT} -S disabled
 }
 f5-pool-status () {
     [[ "${CONTROL_F5}" != "true" ]] && return 0
     [[ -z "${APP_PORT}" ]] && { echo "CONTROL_F5 Set, but APP_PORT Missing!"; exit 2; };
-    /var/repo/scripts/release/f5-ltm-my-status.sh -p ${APP_PORT} -f
+    local PATH=$CRUBY_PATH:$PATH
+    $RELEASE_SCRIPT_PATH/f5-ltm-my-status.sh -p ${APP_PORT} -f
 }
 
 case "$1" in
