@@ -1,4 +1,4 @@
-@end-to-end
+@end-to-end @email
 Feature: XACT API PROD STAGE INT Email end to end tests.
 
   @QC-2239 @Dev-Safety

@@ -72,9 +72,10 @@ module Helpy
   end
 
   def get_emails(expected_subject)
-    STDOUT.puts "Logging into Gmail IMAP looking for subject \"#{@expected_subject}\""
+    STDOUT.puts "Checking Gmail IMAP for subject \"#{@expected_subject}\""
     emails = Mail.find(what: :last, count: 1000, order: :dsc)
     STDOUT.puts "Found #{emails.size} emails"
+    STDOUT.puts "subjects:\n\t#{emails.map(&:subject).join("\n\t")}" if emails.any?
 
     if (mail = emails.detect { |mail| mail.subject == expected_subject })
       [mail.html_part.body.decoded,
@@ -85,7 +86,7 @@ module Helpy
     end
 
   rescue => e
-    STDOUT.puts "Error interacting with Gmail IMAP: #{e.message}"
+    STDOUT.puts "Error interacting wit h Gmail IMAP: #{e.message}"
     STDOUT.puts e.backtrace
   end
 
@@ -115,9 +116,9 @@ module Helpy
       if (href = Nokogiri::HTML(body).css('a').map { |link| link['href'] }.detect { |href| test_link(href, @expected_link, expected_link_prefix) })
         puts "Link #{href} redirects to #{@expected_link}".green
         return true
-      else
-        raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
       end
+
+      raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
     end
     backoff_check(condition, "find message #{@expected_subject}")
   ensure

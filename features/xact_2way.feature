@@ -1,13 +1,13 @@
-@keyword
+@fakesms @keyword
 Feature: XACT SMS Two-Way tests.
 
-  @2waysubscribe @Dev-Safety
+  @2waysubscribe
   Scenario: XACT Two-Way SMS to Subscribe
     Given I create a subscription keyword and command
     When I send an SMS to create a subscription on TMS
     Then a subscription should be created
 
-  @2waystop @Dev-Safety
+  @2waystop
   Scenario: XACT Two-Way SMS to Stop
     Given I am subscribed to receive TMS messages
     And I create a stop keyword and command
