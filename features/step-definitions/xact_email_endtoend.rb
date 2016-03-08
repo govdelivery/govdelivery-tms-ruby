@@ -161,9 +161,9 @@ end
 
 When(/^I POST a new EMAIL message to TMS using a random from address$/) do
   initialize_variables
-  @expected_reply_to = @conf_xact.user.reply_to_address_two
-  @expected_errors_to = @conf_xact.user.bounce_address_two
-  post_message from_email: "no@exist.com"
+  @expected_reply_to = "product-noexist@evotest.govdelivery.com"
+  @expected_errors_to = "product-noexist@evotest.govdelivery.com"
+  post_message from_email: "product-noexist@evotest.govdelivery.com"
 end
 
 When(/^I POST a new EMAIL message to TMS with long macro replacements$/) do
