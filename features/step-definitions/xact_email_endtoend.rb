@@ -86,7 +86,7 @@ module Helpy
     end
 
   rescue => e
-    STDOUT.puts "Error interacting wit h Gmail IMAP: #{e.message}"
+    STDOUT.puts "Error interacting with Gmail IMAP: #{e.message}"
     STDOUT.puts e.backtrace
   end
 
@@ -109,11 +109,14 @@ module Helpy
       next if body.nil?
 
       # validate from address information
-      raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if reply_to != @expected_reply_to
-      raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if errors_to != @expected_errors_to
+      raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && reply_to != @expected_reply_to
+      raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if @expected_errors_to && errors_to != @expected_errors_to
 
       # validate link is present
-      if (href = Nokogiri::HTML(body).css('a').map { |link| link['href'] }.detect { |href| test_link(href, @expected_link, expected_link_prefix) })
+      if @expected_link &&
+        (href = Nokogiri::HTML(body).css('a').
+          map { |link| link['href'] }.
+          detect { |href| test_link(href, @expected_link, expected_link_prefix) })
         puts "Link #{href} redirects to #{@expected_link}".green
         return true
       end
@@ -138,7 +141,6 @@ end
 World(Helpy)
 
 When(/^I POST a new EMAIL message to TMS$/) do
-  initialize_variables
   @expected_reply_to = @conf_xact.user.reply_to_address
   @expected_errors_to = @conf_xact.user.bounce_address
 
@@ -146,7 +148,11 @@ When(/^I POST a new EMAIL message to TMS$/) do
 end
 
 # steps
-Given(/I am an admin/) do
+Given(/A non-admin user/) do
+  initialize_variables
+end
+
+Given(/An admin user/) do
   initialize_variables
   unless (@conf_xact.user.token = ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'])
     raise "ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'] is not set"
@@ -154,22 +160,19 @@ Given(/I am an admin/) do
 end
 
 When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
-  initialize_variables
   @expected_reply_to = @conf_xact.user.reply_to_address_two
   @expected_errors_to = @conf_xact.user.bounce_address_two
   post_message from_email: @conf_xact.user.from_address_two
 end
 
 When(/^I POST a new EMAIL message to TMS using a random from address$/) do
-  initialize_variables
   @expected_reply_to = "product-noexist@evotest.govdelivery.com"
   @expected_errors_to = "product-noexist@evotest.govdelivery.com"
   post_message from_email: "product-noexist@evotest.govdelivery.com"
 end
 
 When(/^I POST a new EMAIL message to TMS with long macro replacements$/) do
-  initialize_variables
-  post_message body: "[[MAC1]]\n\n[[MAC2]]", macros: {'MAC1' => 'a'*800, 'MAC1' => 'b'*150, }
+  post_message body: %Q|[[MAC1]]\n\n[[MAC2]]\n\n<a href="#{@expected_link}">With a link</a>|, macros: {'MAC1' => 'a'*800, 'MAC1' => 'b'*150}
 end
 
 Then(/^I go to Gmail to check for message delivery$/) do
