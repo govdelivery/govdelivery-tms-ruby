@@ -198,20 +198,8 @@ def status_for_address(magic_addresses, address)
   status
 end
 
-def callbacks_api_root
-  'http://xact-webhook-callbacks.herokuapp.com/api/v3/'
-end
-
-def callbacks_api_sms_root
-  'http://xact-webhook-callbacks.herokuapp.com/api/v3/sms/'
-end
-
 def twilio_xact_test_number_2
   '+17014842689'
-end
-
-def tms_client(conf)
-  GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
 end
 
 def message_body_identifier
@@ -236,26 +224,6 @@ def dcm_base64_url
     'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
   elsif ENV['XACT_ENV'] == 'prod'
     'https://api.govdelivery.com/api/account/CUKEAUTO_PROD/subscribers/'
-  end
-end
-
-def user
-  if ENV['XACT_ENV'] == 'qc'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukeqc_sa@evotest.govdelivery.com', 'govdel01!')
-  elsif ENV['XACT_ENV'] == 'integration'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukeint_sa@evotest.govdelivery.com', 'govdel01!')
-  elsif ENV['XACT_ENV'] == 'stage'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukestage_sa@evotest.govdelivery.com', 'govdel01!')
-  elsif ENV['XACT_ENV'] == 'prod'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukeprod_sa@evotest.govdelivery.com', 'govdel01!')
   end
 end
 

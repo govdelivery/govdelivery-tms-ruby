@@ -4,40 +4,11 @@
 require 'colored'
 require 'json'
 require 'awesome_print'
-require 'twilio-ruby'
 require 'httpi'
-require 'pry'
-require 'faraday'
 require 'base64'
-require 'multi_xml'
-require 'pry'
-
-#================2237 VOICE tests===============>
-#================2237 VOICE tests===============>
-#================2237 VOICE tests===============>
-#================2237 VOICE tests===============>
-
-def phone_number
-  '+16123145807'
-end
-
-def phone_number_2
-  '+16124679346'
-end
-
-def random
-  rand(1...10)
-end
-
-def twiliomation
-  # Get your Account Sid and Auth Token from twilio.com/user/account
-  account_sid = 'AC189315456a80a4d1d4f82f4a732ad77e'
-  auth_token = '88e3775ad71e487c7c90b848a55a5c88'
-  @client = Twilio::REST::Client.new account_sid, auth_token
-end
 
 Given(/^I created a new voice message$/) do
-  @message = client.voice_messages.build(play_url: 'http://xact-webhook-callbacks.herokuapp.com/voice/fifth.mp3')
+  @message = TmsClientManager.voice_client.voice_messages.build(play_url: 'http://xact-webhook-callbacks.herokuapp.com/voice/fifth.mp3')
 end
 
 When(/^I add phone number '(.*)' to the message$/) do |phone|
@@ -45,7 +16,7 @@ When(/^I add phone number '(.*)' to the message$/) do |phone|
 end
 
 Then(/^I should see a list of messages with appropriate attributes$/) do
-  messages = client.voice_messages.get.collection
+  messages = TmsClientManager.voice_client.voice_messages.get.collection
   sleep(2)
 
   messages.each do |message|

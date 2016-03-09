@@ -3,7 +3,6 @@ require 'uri'
 
 class CallbacksAPIClient
   attr_accessor :callback_uris
-  attr_accessor :callbacks_root
   attr_accessor :callbacks_domain
 
   def callback_types
@@ -11,9 +10,9 @@ class CallbacksAPIClient
      :sms]
   end
 
-  def initialize(callback_root)
-    @callbacks_root = callback_root
-    uri = URI.parse(@callbacks_root)
+
+  def initialize
+    uri = URI.parse('http://xact-webhook-callbacks.herokuapp.com/api/v3/')
     @callbacks_domain = "#{uri.scheme}://#{uri.host}"
     @callback_uris = []
   end

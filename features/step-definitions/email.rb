@@ -3,9 +3,9 @@
 #########################################
 
 Given(/^I create an email( with no recipients)?$/) do |recipients|
-  @message = client.email_messages.build(body: 'Test',
-                                         subject: 'Regression Test email send',
-                                         from_email: "#{EmailAdmin.new.from_email}")
+  @message = TmsClientManager.voice_client.email_messages.build(body:       'Test',
+                                                                subject:    'Regression Test email send',
+                                                                from_email: TmsClientManager.from_email)
   if recipients != " with no recipients"
     @message.recipients.build(email: 'regressiontest2@sink.govdelivery.com')
   end

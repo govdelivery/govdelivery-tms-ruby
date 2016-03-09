@@ -3,17 +3,13 @@ require 'httpi'
 require 'json'
 require 'awesome_print'
 require 'twilio-ruby'
-require 'pry'
-
 
 Given(/^I have a user who can receive SMS messages$/) do
   @sms_receiver_uri      = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
   @sms_receiver_full_uri = @capi.callbacks_domain + @sms_receiver_uri
 
-  twil = Twilio::REST::Client.new(
-    configatron.test_support.twilio.account.sid,
-    configatron.test_support.twilio.account.token
-  )
+  twil = TwilioClientManager.default_client
+
   twil.account.incoming_phone_numbers.get(configatron.test_support.twilio.phone.sid).update(
     voice_url: @sms_receiver_full_uri,
     sms_url:   @sms_receiver_full_uri
@@ -23,7 +19,7 @@ end
 Given(/^I have an SMS template$/) do
   next if dev_not_live?
 
-  client            = tms_client(configatron.accounts.sms_endtoend)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
   @template         = client.sms_templates.build(body: @expected_message, uuid: "new-sms-template-#{Time.now.to_i.to_s}")
   @template.post!
@@ -34,7 +30,7 @@ end
 Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
-  client            = tms_client(configatron.accounts.sms_endtoend)
+  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
@@ -46,7 +42,7 @@ end
 Given(/^I POST a new blank SMS message to TMS$/) do
   next if dev_not_live?
 
-  client            = tms_client(configatron.accounts.sms_endtoend)
+  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
@@ -95,7 +91,7 @@ end
 
 
 Given(/^I POST a new SMS message to MBLOX$/) do
-  client            = tms_client(configatron.accounts.sms_endtoend)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.mblox.phone.number)
@@ -127,6 +123,6 @@ Then(/^I should receive either a canceled message or a success$/) do
 end
 
 Given(/^I create a new sms template with "(.*)" uuid$/) do |uuid|
-  @template = client.sms_templates.build(body: message_body_identifier, uuid: uuid)
+  @template = TmsClientManager.voice_client.sms_templates.build(body: message_body_identifier, uuid: uuid)
   @template.post!
 end

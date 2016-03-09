@@ -14,7 +14,7 @@ Given(/^I create a subscription keyword and command$/) do
   next if dev_not_live?
 
   @conf = configatron.accounts.sms_2way_subscribe
-  client = tms_client(@conf)
+  client = TmsClientManager.from_configatron(@conf)
   @keyword = client.keywords.build(name: "subscribe::#{random_string}", response_text: 'subscribe')
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
@@ -126,7 +126,7 @@ end
 Given(/^I create a stop keyword and command$/) do
   next if dev_not_live?
 
-  client = tms_client(@conf)
+  client = TmsClientManager.from_configatron(@conf)
   @keyword = client.keywords.build(name: "stop::#{random_string}", response_text: 'stop')
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
@@ -207,7 +207,7 @@ end
 
 Given(/^A keyword with static content is configured for an TMS account$/) do
   @conf = configatron.accounts.sms_2way_static
-  client = tms_client(@conf)
+  client = TmsClientManager.from_configatron(@conf)
   @keyword = client.keywords.build(name: random_string, response_text: random_string)
   @keyword.post!
 end
@@ -274,7 +274,7 @@ end
 
 Given(/^I have an XACT account for (.+)$/) do |agency|
   @conf = configatron.accounts["sms_2way_#{agency.downcase}"]
-  @client = tms_client(@conf)
+  client = TmsClientManager.from_configatron(@conf)
 end
 
 Given(/^I register the keyword (.+)$/) do |agency|
