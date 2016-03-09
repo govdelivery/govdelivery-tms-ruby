@@ -14,7 +14,7 @@ end
 
 Before() do |_scenario|
   begin
-    @capi = CallbacksAPIClient.new(callbacks_api_root)
+    @capi = CallbacksAPIClient.new
     @webhooks = []
   rescue => e
     STDERR.puts "Could not unregister reset @capi or @webhooks: #{e.message}"
@@ -28,10 +28,7 @@ end
 # Set our Twilio test account to have no callbacks when we are done
 After('@Twilio') do |_scenario|
   begin
-    twil = Twilio::REST::Client.new(
-      configatron.test_support.twilio.account.sid,
-      configatron.test_support.twilio.account.token
-    )
+    twil = TwilioClientManager.default_client
     twil.account.incoming_phone_numbers.get(configatron.test_support.twilio.phone.sid).update(
       voice_url: '',
       sms_url: ''
