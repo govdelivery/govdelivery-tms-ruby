@@ -8,6 +8,7 @@ if Gem::Version.new(JRUBY_VERSION) < Gem::Version.new('1.7.21')
       def localtime(utc_offset = nil)
         utc.respond_to?(:getlocal) ? utc.getlocal : utc.to_time.getlocal
       end
+      alias_method :getlocal, :localtime
     end
   end
 else
