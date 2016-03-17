@@ -26,6 +26,10 @@ shared_phone_numbers:
   # TXLOT INSURE KNOWIT seguro MNSURE WY511 - don't forward these, stop commands will handle unsubscribing
 secret_key_base: #nil
 
+#fallback for new relic conf name
+new_relic:
+  app_name: 'XACT'
+
 # set these to run seed data
 #twilio_sid: 'fake'
 #twilio_token: 'fake'

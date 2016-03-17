@@ -214,7 +214,7 @@ test:
 stage:
   <<: *default_settings
   monitor_mode: true
-  app_name: XACT (stage)
+  app_name: <%= Conf.new_relic.app_name %>
 
 # Turn on the agent in production for 24x7 monitoring. NewRelic
 # testing shows an average performance impact of < 5 ms per
