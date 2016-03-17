@@ -3,7 +3,6 @@ class KeywordsController < ApplicationController
   wrap_parameters :keyword, include: [:name, :response_text], format: [:json, :url_encoded_form]
   before_action :find_user
   before_action :find_keyword, only: [:show, :update]
-  before_action :set_page, only: :index
   feature :sms
 
   def index

@@ -15,6 +15,7 @@ class EmailMessage < ActiveRecord::Base
                   :reply_to,
                   :subject
 
+  before_validation :remove_macro_nils, on: :create
   before_validation :apply_from_email, on: :create
   before_validation :apply_template, on: :create
   before_validation :apply_defaults, on: :create
@@ -70,9 +71,16 @@ class EmailMessage < ActiveRecord::Base
   private
 
   def from_email_allowed?
-    unless account.from_email_allowed?(from_email)
+    # if the user is an admin then we assume the from_address has been vetted by a person or an internal application
+    # this way we avoid having to sync data from evo
+    unless user.try(:admin?) || account.from_email_allowed?(from_email)
       errors.add(:from_email, 'is not authorized to send on this account')
     end
+  end
+
+  def remove_macro_nils
+    return if self.macros.nil?
+    self.macros.delete_if { |k, v| v.nil? }
   end
 
   def apply_from_email
@@ -92,9 +100,14 @@ class EmailMessage < ActiveRecord::Base
     return unless email_template
     # Using nil as intended - to indicate a variable that has not yet been set
     # Don't use ||= here; false is a value we do not want to override
-    [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].
+    [:body, :subject, :open_tracking_enabled, :click_tracking_enabled].
       select { |attr| self[attr].nil? }.each do |attr|
       self[attr] = email_template[attr] # can't use ||=, it'll overwrite false values
+    end
+    if self.macros.nil?
+      self.macros = email_template.macros
+    elsif email_template.macros
+      self.macros.reverse_merge!(email_template.macros)
     end
     apply_from_address(email_template.from_address)
   end

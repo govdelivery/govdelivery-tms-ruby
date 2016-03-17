@@ -100,8 +100,23 @@ module Recipient
     cancel!(:canceled, ack, nil, nil)
   end
 
+  def inconclusive!(ack, *_)
+    mark_inconclusive!(:inconclusive, ack)
+  end
+
   def ack!(ack=nil, *_)
     update_attribute(:ack, ack)
+  end
+
+  def retry!
+    if sending?
+      logger.info("retrying send for #{self.class.name} #{id}")
+      args = {
+               message_id:   message.id,
+               recipient_id: id,
+             }
+      message.worker.perform_in(10.seconds, args)
+    end
   end
 
   protected

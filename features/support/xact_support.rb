@@ -1,6 +1,5 @@
 # xact support stuff
 
-require 'mechanize'
 require 'net/imap'
 require 'httpi'
 require 'json'
@@ -34,22 +33,6 @@ class XACTHelper
       raise(('Cannot POST email to XACT: ' + e.message).red)
     end
     @data
-  end
-end
-
-class LinkTester
-  def test_link(link_url, expected, expected_prefix)
-    a = Mechanize.new do |agent|
-      agent.user_agent_alias = 'Mac Safari'
-    end
-    #ca_path = File.expand_path 'lib/Essential.ca-bundle'  -----  commented out 8/28/2015 due to jruby and cert upgrades
-    #a.agent.http.ca_file = ca_path # end of mechanize browser emulator
-
-    a.get(link_url) do |page| # retrieve link_url from agent
-      page.forms.each do |f|
-        return ((f['url'].eql? expected) && (link_url.start_with? expected_prefix))
-      end
-    end
   end
 end
 

@@ -3,26 +3,29 @@ module Analytics
   class PublisherWorker
     include Workers::Base
     sidekiq_options retry: 0
-    sidekiq_retry_in {10}
+    sidekiq_retry_in { 15 }
 
-    CONNECTION_POOL = ConnectionPool.new(size: 5, timeout: 5) do
-      YaketyYak::Publisher.new('xact')
-    end
+    PUBLISHER = JaketyJak::Publisher.new(
+      Rails.configuration.analytics[:kafkas].join(','),
+      "#{Socket.gethostname}-#{Process.pid}",
+      Conf.analytics.publisher_options.to_hash) unless Rails.env.test?
 
     def perform(opts)
       return unless Rails.configuration.analytics[:enabled]
       validate_opts(opts.symbolize_keys!)
       channel = opts[:channel]
-      message = opts[:message].merge(src: 'xact')
-      CONNECTION_POOL.with do |connection|
-        logger.info("#{self.class}: Publishing #{channel} #{message}")
-        connection.publish(channel, message)
-      end
+      message = opts[:message].merge('src' => 'xact')
+      logger.info("#{self.class}: Publishing #{channel} #{message}")
+      publisher.publish(channel, message)
     rescue Timeout::Error => e
       raise Sidekiq::Retries::Retry.new(e)
     end
 
     private
+
+    def publisher
+      PUBLISHER
+    end
 
     def validate_opts(opts)
       unless opts[:channel] && opts[:message]

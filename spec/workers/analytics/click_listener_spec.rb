@@ -2,17 +2,6 @@ require 'rails_helper'
 describe Analytics::ClickListener do
   subject {Analytics::ClickListener.new}
 
-  before do
-    YaketyYak.configure do |c|
-      c.kafkas     = ['kafka1']
-      c.zookeepers = ['zk1']
-    end
-  end
-
-  after do
-    YaketyYak.configuration = {}
-  end
-
   it 'should have topic' do
     expect(subject.topic).to eq('click_channel')
   end

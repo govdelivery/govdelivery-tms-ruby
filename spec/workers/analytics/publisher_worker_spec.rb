@@ -1,21 +1,23 @@
 require 'rails_helper'
+require 'jakety_jak'
 describe Analytics::PublisherWorker do
   it 'should not perform when analytics is disabled' do
-    Rails.configuration.analytics.expects(:[]).with(:enabled).returns(false)
-    YaketyYak::Publisher.expects(:new).never
+    Rails.configuration.stubs(:analytics).returns(enabled: false)
     Analytics::PublisherWorker.new.perform({})
   end
 
   describe 'when analytics is enabled' do
     before do
-      Rails.configuration.analytics.stubs(:[]).with(:enabled).returns(true)
+      Rails.configuration.stubs(:analytics).returns(enabled: true, kafkas: ['localhost:9092'])
     end
 
     subject {Analytics::PublisherWorker.new}
 
     context 'and connection pool times out' do
       before do
-        YaketyYak::Publisher.any_instance.stubs(:publish).raises(Timeout::Error, 'foo')
+        publisher = stub
+        publisher.stubs(:publish).raises(Timeout::Error, 'foo')
+        subject.stubs(:publisher).returns(publisher)
       end
       it 'should retry' do
         expect {subject.perform(channel: 'foo', message: {foo: 1})}.to raise_error(Sidekiq::Retries::Retry)
@@ -30,9 +32,11 @@ describe Analytics::PublisherWorker do
     end
 
     it 'should add src and publish' do
-      message  = {foo: 3}
-      expected = {foo: 3, src: 'xact'}
-      YaketyYak::Publisher.any_instance.expects(:publish).with('donkey', expected)
+      message   = {foo: 3}
+      expected  = {foo: 3, 'src' => 'xact'}
+      publisher = stub
+      publisher.expects(:publish).with('donkey', expected)
+      subject.expects(:publisher).returns(publisher)
       subject.perform(channel: 'donkey', message: message)
     end
   end

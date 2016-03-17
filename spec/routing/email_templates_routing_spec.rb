@@ -7,7 +7,7 @@ describe EmailTemplatesController do
     end
 
     it 'routes to #show' do
-      expect(get: '/templates/email/1').to route_to('email_templates#show', id: '1')
+      expect(get: '/templates/email/1').to route_to('email_templates#show', uuid: '1')
     end
 
     it 'routes to #create' do
@@ -15,11 +15,11 @@ describe EmailTemplatesController do
     end
 
     it 'routes to #update' do
-      expect(put: '/templates/email/1').to route_to('email_templates#update', id: '1')
+      expect(put: '/templates/email/1').to route_to('email_templates#update', uuid: '1')
     end
 
     it 'routes to #destroy' do
-      expect(delete: '/templates/email/1').to route_to('email_templates#destroy', id: '1')
+      expect(delete: '/templates/email/1').to route_to('email_templates#destroy', uuid: '1')
     end
   end
 end

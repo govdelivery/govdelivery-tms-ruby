@@ -1,5 +1,5 @@
-object @email_template
-attributes :id, :body, :subject, :link_tracking_parameters,
+object @template
+attributes :id, :uuid, :body, :subject, :link_tracking_parameters,
            :macros, :open_tracking_enabled, :click_tracking_enabled, :created_at
 
 node(:_links) do |e|

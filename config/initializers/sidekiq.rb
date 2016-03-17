@@ -9,7 +9,7 @@ Sidekiq::Client.reliable_push!
 # We have workers that enqueue other jobs; need the client stuff everywhere
 require './config/clock.rb'
 require './lib/clockwork/sidekiq_clockwork_scheduler.rb'
-require './config/initializers/yakety_yak'
+require './config/initializers/jakety_jak'
 
 default = Xact::Application.config.sidekiq[:default]
 
@@ -51,6 +51,7 @@ end
 
 require 'sidekiq/dynamic_queue/setup'
 require 'sidekiq/rate_limited_queue/setup'
+require 'sidekiq/retry_aware_worker/setup'
 
 Sidekiq.configure_client do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:client])
@@ -59,4 +60,3 @@ end
 SidekiqUniqueJobs.config.unique_args_enabled = true
 SidekiqUniqueJobs.config.unique_storage_method = :old
 
-Sidekiq::Web.app_url = '/'

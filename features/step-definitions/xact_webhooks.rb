@@ -2,9 +2,6 @@ require 'uri'
 require 'net/http'
 require 'pp'
 
-SUBJECT = {} # generating a hash value
-SUBJECT.store(1, Time.new) # storing the hash value so we can retrieve it later on
-
 ###
 # Some data structures used here
 #
@@ -27,7 +24,7 @@ SUBJECT.store(1, Time.new) # storing the hash value so we can retrieve it later 
 Given(/^all message types$/) do
 end
 
-And(/^all event types$/) do
+Given(/^all event types$/) do
   @event_callback_uris = Hash[event_types.map { |event_type| [event_type, nil]}]
 end
 
@@ -37,20 +34,20 @@ Then(/^a callback url exists for each event type$/) do
   end
 end
 
-And(/^a callback url is registered for each event type$/) do
-  client = tms_client(configatron.accounts.webhooks)
+Given(/^a callback url is registered for each event type$/) do
+  client = TmsClientManager.from_configatron(configatron.accounts.webhooks)
   @event_callback_uris.each do |key, value|
     webhook = client.webhooks.build(url: @capi.callbacks_domain + value, event_type: key)
-    webhook.post
+    webhook.post!
     puts "Webhook registered for #{key}: #{value}"
     @webhooks << webhook
   end
 end
 
 When(/^I send a message of each type to the magic address of each event state$/) do
-  client = tms_client(configatron.accounts.webhooks)
+  client = TmsClientManager.from_configatron(configatron.accounts.webhooks)
   @messages = {}
-  @messages[:email] = client.email_messages.build(body: 'Webhooks Testing', subject: "#{SUBJECT[1]}")
+  @messages[:email] = client.email_messages.build(body: 'Webhooks Testing', subject: "webhook test #{ENV['XACT_ENV']} - #{Time.now}")
   puts 'Sending to the following Email Addresses'
   magic_emails.each do |event_type, magic_email|
     @messages[:email].recipients.build(email: magic_email)
@@ -143,7 +140,7 @@ Then(/^the callback registered for each event state should receive a POST referr
       begin
         backoff_check(check_condition, 'have all the payloads expected')
       rescue
-        webhooks = tms_client(configatron.accounts.webhooks).webhooks
+        webhooks = TmsClientManager.from_configatron(configatron.accounts.webhooks)
         webhooks.get
         registered_hooks = webhooks.collection.map(&:attributes)
         msg = "'#{expected_status}' callback endpoint does not have a payload referring to '#{condition}'\n"

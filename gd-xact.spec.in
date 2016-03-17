@@ -1,0 +1,80 @@
+%define _version @version@
+%define _revision @revision@
+%define _commit_time @commit_time@
+%define _group @group@
+%define _noarch_libdir /usr/lib
+%define _name @name@
+
+# Evolution has a package namespace conflict that leads to a convention of 
+# prefixing with gd being a good idea. This practice will likely have other 
+# connascent but useful properties.
+Name:           gd-%{_name}
+Version:        %{_version}
+Release:        1%{?dist}
+Summary:        Xact
+Group:          %{_group}
+License:        GovDelivery
+URL:            http://dev-scm.office.gdi/%{_group}/%{_name}.git
+Source0:        %{_name}-%{version}.tar.gz
+
+BuildRequires:  git
+BuildRequires:  oracle-instantclient11.2-devel
+BuildRequires:  jruby
+BuildRequires:  jrubygem-bundler = 1.7.2
+
+Requires:       gd-xact-code%{version}
+Requires:       gd-xact-fake-libclntsh
+Requires:       jruby
+Requires:       jrubygem-bundler = 1.7.2
+
+%description
+GovDelivery Xact Package
+Revision: %{_revision}
+Commit Time: %{_commit_time}
+
+
+%package fake-libclntsh
+Summary:     Fake libclntsh package to provide libclntsh.so.11.1
+Requires:    oracle-instantclient11.2-basic
+Provides:    libclntsh.so.11.1
+
+%description fake-libclntsh
+Xact fake package for providing libclntsh.so.11.1 for rpm dependencies 
+because oracle-instantclient11.2-basic does not do it.
+
+%package code%{version}
+Summary:     Xact code base
+AutoReqProv: no
+ 
+%description code%{version}
+Xact code base.
+
+%prep
+%setup -c
+
+%build
+
+%install
+install -d -p %{buildroot}/opt/%{_name}/releases/
+cp -r %{_builddir}/*           %{buildroot}/opt/%{_name}/releases/%{version}-%{release}
+
+%files
+# This needs to be empty to build the Xact meta-package
+
+%files fake-libclntsh
+# This needs to be empty to build the Xact fake-libclntsh package
+
+%files code%{version}
+%defattr(664, evodeploy, evodeploy, 775)
+/opt/%{_name}/releases/%{version}-%{release}
+/opt/%{_name}/releases/%{version}-%{release}/*
+
+%attr(-, -, appuser)  /opt/%{_name}/releases/%{version}-%{release}/db/schema.rb
+%attr(0775, -, -)     /opt/%{_name}/releases/%{version}-%{release}/deploy.sh
+%attr(0775, -, -)     /opt/%{_name}/releases/%{version}-%{release}/bin/*
+%attr(0775, -, -)     /opt/%{_name}/releases/%{version}-%{release}/script/*
+%attr(0775, -, -)     /opt/%{_name}/releases/%{version}-%{release}/bundle/jruby/1.9/bin/*
+
+%changelog
+* Wed Dec 22 2015 jason saxon <jason.saxon@GovDelivery.com> 
+- Initial package build

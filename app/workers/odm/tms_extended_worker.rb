@@ -16,10 +16,17 @@ module Odm
 
       begin
         yield
-      rescue Java::ComGovdeliveryTmsTmsextended::TMSFault => fault
-        raise "ODM Error: #{fault.message}"
       rescue Java.java.lang::Throwable => throwable
-        raise "#{throwable.get_message}"
+        raise WrappedThrowable.new(throwable)
+      end
+    end
+
+    class WrappedThrowable < StandardError
+      def initialize(throwable)
+        super(throwable.to_string)
+        trace = [*caller, 'Wrapped exception:', *throwable.backtrace.map{|s| "  #{s}"}]
+
+        self.set_backtrace(trace)
       end
     end
 

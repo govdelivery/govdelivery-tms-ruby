@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   has_many :voice_messages, -> {order('voice_messages.created_at DESC')}
   has_many :account_voice_messages, through: :account, source: VoiceMessage.table_name
   has_many :email_templates
+  has_many :sms_templates
 
   scope :for_token, ->(token) {joins(:authentication_tokens).where('authentication_tokens.token' => token)}
 

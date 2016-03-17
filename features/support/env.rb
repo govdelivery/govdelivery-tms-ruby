@@ -27,7 +27,11 @@ def environment
     :qc,
     :integration,
     :stage,
-    :prod
+    :prod,
+    :mbloxqc,
+    :mbloxintegration,
+    :mbloxstage,
+    :mbloxproduction
   ]
   env = ENV.key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
   raise "Unsupported XACT Environment: #{env}" unless environments.include?(env)
@@ -50,7 +54,11 @@ def xact_url
     :qc_dc3 => "https://qc-tms-dc3.govdelivery.com",
     :integration => "https://int-tms.govdelivery.com",
     :stage => "https://stage-tms.govdelivery.com",
-    :prod => "https://tms.govdelivery.com"
+    :prod => "https://tms.govdelivery.com",
+    :mbloxqc => "https://qc-tms.govdelivery.com",
+    :mbloxintegration => "https://int-tms.govdelivery.com",
+    :mbloxstage => "https://stage-tms.govdelivery.com",
+    :mbloxproduction => "https://tms.govdelivery.com"
   }
 
   if(lsite = site)
@@ -89,7 +97,7 @@ twilio_live_phone_sids = {
 }
 
 configatron.xact.url                                  = xact_url
-
+configatron.test_support.mblox.phone.number           = '+16122546317'
 configatron.test_support.twilio.phone.number          = '+15183004174'
 configatron.test_support.twilio.phone.sid             = 'PN53d0531f78bf8061549b953c6619b753'
 configatron.test_support.twilio.account.sid           = 'AC189315456a80a4d1d4f82f4a732ad77e'
@@ -190,20 +198,12 @@ def status_for_address(magic_addresses, address)
   status
 end
 
-def callbacks_api_root
-  'http://xact-webhook-callbacks.herokuapp.com/api/v3/'
-end
-
-def callbacks_api_sms_root
-  'http://xact-webhook-callbacks.herokuapp.com/api/v3/sms/'
-end
-
 def twilio_xact_test_number_2
   '+17014842689'
 end
 
-def tms_client(conf)
-  GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
+def message_body_identifier
+  [Time.new, '::', rand(100_000)].map(&:to_s).join
 end
 
 #
@@ -224,26 +224,6 @@ def dcm_base64_url
     'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
   elsif ENV['XACT_ENV'] == 'prod'
     'https://api.govdelivery.com/api/account/CUKEAUTO_PROD/subscribers/'
-  end
-end
-
-def user
-  if ENV['XACT_ENV'] == 'qc'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukeqc_sa@evotest.govdelivery.com', 'govdel01!')
-  elsif ENV['XACT_ENV'] == 'integration'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukeint_sa@evotest.govdelivery.com', 'govdel01!')
-  elsif ENV['XACT_ENV'] == 'stage'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukestage_sa@evotest.govdelivery.com', 'govdel01!')
-  elsif ENV['XACT_ENV'] == 'prod'
-    @request = HTTPI::Request.new
-    @request.headers['Content-Type'] = 'application/xml'
-    @request.auth.basic('autocukeprod_sa@evotest.govdelivery.com', 'govdel01!')
   end
 end
 

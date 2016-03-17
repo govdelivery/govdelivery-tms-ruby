@@ -58,7 +58,7 @@ if defined?(JRUBY_VERSION)
       it 'should catch TMSFault and throw Ruby Exception' do
         service.expects(:delivery_events).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new('hello TMSFault', nil))
 
-        exception_check(worker, 'ODM Error: hello TMSFault')
+        exception_check(worker, 'hello TMSFault')
       end
     end
   end

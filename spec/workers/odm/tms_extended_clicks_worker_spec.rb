@@ -47,7 +47,7 @@ if defined?(JRUBY_VERSION)
       it 'should catch TMSFault and throw Ruby Exception' do
         Service::Odm::EventService.expects(:click_events).with(@vendor).raises(Java::ComGovdeliveryTmsTmsextended::TMSFault.new('hello TMSFault', nil))
 
-        exception_check(subject, 'ODM Error: hello TMSFault')
+        exception_check(subject, 'hello TMSFault')
       end
     end
   end

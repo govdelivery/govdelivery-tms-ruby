@@ -31,6 +31,7 @@ class Account < ActiveRecord::Base
   has_many :webhooks, dependent: :delete_all
 
   has_many :email_templates, dependent: :destroy
+  has_many :sms_templates, dependent: :destroy
   has_many :from_addresses, inverse_of: :account, dependent: :destroy
   has_one :default_from_address, -> {where(is_default: true)}, class_name: FromAddress
 
@@ -39,7 +40,7 @@ class Account < ActiveRecord::Base
 
   after_create :create_base_keywords!
 
-  serialize :dcm_account_codes, Set
+  serialize :dcm_account_codes
   delegate :from_email, :reply_to_email, :bounce_email, :reply_to, :errors_to, to: :default_from_address
   delegate :from_number, to: :default_from_number
 
@@ -158,10 +159,8 @@ class Account < ActiveRecord::Base
   end
 
   def normalize_dcm_account_codes
-    if dcm_account_codes
-      self.dcm_account_codes = dcm_account_codes.to_set unless dcm_account_codes.is_a?(Set)
-      dcm_account_codes.collect!(&:upcase).collect!(&:strip)
-    end
+    self.dcm_account_codes = (dcm_account_codes || []).to_set unless dcm_account_codes.is_a?(Set)
+    dcm_account_codes.collect!(&:upcase).collect!(&:strip)
   end
 
   ##

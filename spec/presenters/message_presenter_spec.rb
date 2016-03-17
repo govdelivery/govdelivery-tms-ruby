@@ -29,6 +29,7 @@ describe MessagePresenter do
     context 'with template' do
       it 'should include an email_template link' do
         @email_template = build_stubbed(:email_template)
+        @email_template.stubs(:uuid).returns('uuid1234')
         @message = build_stubbed(:email_message, email_template: @email_template)
         pres = MessagePresenter.new @message, view
         expect(pres._links[:self]).to eql(email_path(@message))

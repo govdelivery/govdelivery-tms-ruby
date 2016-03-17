@@ -21,11 +21,13 @@ class CreateRecipientsWorker
     recipient_params = options['recipients']
 
     begin
-      message.ready!(recipient_params)
       args = {message_id: message.id}.merge!(options['send_options'])
-      if message.respond_to?(:subject)
-        args['subject']    = message.subject
-        args['account_id'] = message.account_id
+      ActiveRecord::Base.transaction do
+        message.ready!(recipient_params)
+        if message.respond_to?(:subject)
+          args['subject']    = message.subject
+          args['account_id'] = message.account_id
+        end
       end
       message.worker.perform_async(args)
     rescue AASM::InvalidTransition => e

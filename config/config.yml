@@ -13,6 +13,9 @@
 analytics_enabled: false
 analytics_kafkas: []
 analytics_zookeepers: []
+analytics:
+  publisher_options:
+    request.required.acks: '1'
 redis_sentinel_uris: [] # optional for environments with
 nsca_password: ""       # for nagios alerting
 shared_phone_numbers:
@@ -25,6 +28,8 @@ shared_phone_numbers:
   # 89568 467873 566948 734876 667873 99511 - production short codes (as of 4/2015)
   # TXLOT INSURE KNOWIT seguro MNSURE WY511 - don't forward these, stop commands will handle unsubscribing
 secret_key_base: #nil
+mblox_api_key: 09047bedd24a450b9a037e34b59029df
+mblox_service_account: govdeliverytest
 
 #fallback for new relic conf name
 new_relic:
@@ -36,4 +41,3 @@ new_relic:
 #twilio_number: 'fake'
 #twilio_test_sid: 'fake'
 #twilio_test_token: 'fake'
-

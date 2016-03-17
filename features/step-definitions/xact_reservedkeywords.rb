@@ -1,20 +1,13 @@
 require 'colored'
 require 'json'
 require 'awesome_print'
-require 'twilio-ruby'
-require 'httpi'
-require 'pry'
-require 'faraday'
-require 'base64'
-require 'multi_xml'
 
 Given(/^I attempt to create a reserved keyword (.*)$/) do |keyword|
   next if dev_not_live?
 
   @conf = configatron.accounts.sms_2way_subscribe
-  client = tms_client(@conf)
-  @keyword = client.keywords.build(name: keyword)
-  STDOUT.puts @keyword.errors unless @keyword.post
+  @keyword = TmsClientManager.voice_client.keywords.build(name: keyword)
+  raise @keyword.errors.inspect unless @keyword.post
 end
 
 Then(/^I should receive an reserved keyword message$/) do

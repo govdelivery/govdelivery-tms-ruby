@@ -22,6 +22,7 @@ describe ServicesController do
       command_types: command_types_path,
       inbound_sms_messages: inbound_sms_index_path,
       sms_messages: sms_index_path,
+      sms_templates: templates_sms_index_path,
       email_messages: email_index_path,
       email_templates: templates_email_index_path,
       from_addresses: from_addresses_path,

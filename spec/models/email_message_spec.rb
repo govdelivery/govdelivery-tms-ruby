@@ -107,6 +107,10 @@ describe EmailMessage do
   it_should_validate_as_email :reply_to, :errors_to
   it_behaves_like 'an email message that can be templated'
 
+  before do
+    Analytics::PublisherWorker.stubs(:perform_async)
+  end
+
   context "built via a user" do
     subject { user.email_messages.build }
 
@@ -227,6 +231,84 @@ describe EmailMessage do
           expect(templated_email_sans_link_params.body).to_not include '<a href="https://donkeys.com/store/">links</a>'
           expect(templated_email_sans_link_params.body).to include '<a href="https://donkeys.com/store/?pi=3">links</a>'
         end
+
+        it 'should merge email template macros if they are specified' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros:     {
+                 'macro1' => 'foo',
+                 'macro2' => 'bar',
+                 'first'  => 'bazeliefooga'
+               }})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: {'macro1' => 'baz', 'macro3' => 'baz'})
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'foo',
+            'macro2' => 'bar',
+            'macro3' => 'baz',
+            'first'  => 'bazeliefooga'
+          })
+        end
+
+        it 'should set email template macros if they are specified' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros: nil})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: {'macro1' => 'baz'})
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'baz'
+          })
+        end
+
+        it 'should use message macros if they are specified and the email template macros are nil' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros: {
+                'macro1' => 'bar'
+              }})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: nil)
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'bar'
+          })
+        end
+
+        it 'should not use nil email message macros if they are specified' do
+          macro_email = user.email_messages.build(
+            email_params.merge(
+              {from_email: account.from_email,
+               macros: {
+                'macro1' => nil
+              }})
+          )
+          macro_template = create(:email_template, account: account, user: user, from_address: from_address, macros: {'macro1' => 'foo'})
+          macro_email.email_template = macro_template
+          macro_email.save!
+          expect(macro_email.macros).to eq({
+            'macro1' => 'foo'
+          })
+        end
+
+        context '#insert_link_tracking_parameters' do
+          let(:body_with_links) {'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/s\'tore/">links</a>'}
+
+          it 'should use enhanced link parsing in govdelivery-links when asked' do
+            Conf.stubs(:use_simple_link_detection).returns(false)
+            email.send :insert_link_tracking_parameters
+            expect(email.body).to_not include 'longggg body with <a href="http://stuff.com/index.html?pi=3">some</a> great <a href="https://donkey?pi=3\'s.com/store/">links</a>'
+            expect(email.body).to include '<a href="https://donkeys.com/s\'tore/?pi=3">links</a>'
+          end
+        end
       end
 
       context 'and sending!' do
@@ -342,6 +424,35 @@ describe EmailMessage do
       expect(email_message.from_email).to eq other_from_address.from_email
       expect(email_message.errors_to).to eq other_from_address.errors_to
       expect(email_message.reply_to).to eq other_from_address.reply_to
+    end
+
+    it 'should require an existing from_address if user is not an admin' do
+      email.user.admin = false
+      email.from_email = 'no@exist.me'
+      expect(email).to_not be_valid
+      expect(email.errors.messages[:from_email]).to be_present
+    end
+
+    it 'should not require an existing from_address if user is admin' do
+      email.user.admin = true
+      email.from_email = 'no@exist.me'
+      expect(email).to be_valid
+    end
+    it 'should set the from_email when the user is admin' do
+      user.admin = true
+      user.save!
+      new_email = user.email_messages.build email_params.merge(from_email: 'no@exist.me' )
+      expect(new_email).to be_valid
+      new_email.save!
+      expect(new_email.reload.from_email).to eq( 'no@exist.me' )
+    end
+    it 'should set the from_email from default when the user is admin' do
+      user.admin = true
+      user.save!
+      new_email = user.email_messages.build email_params
+      expect(new_email).to be_valid
+      new_email.save!
+      expect(new_email.reload.from_email).to eq( user.account.default_from_address.from_email )
     end
   end
 end

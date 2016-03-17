@@ -2,6 +2,14 @@ XACT
 ====
 A Ruby on Rails application that sends SMS, email, and voice messages and reports on delivery statistics. Part of the GovDelivery TMS suite.
 
+Prerequisites
+=============
+
+1. install ant (e.g.: brew install ant)
+2. instantclient-sqlplus ( download from oracle )
+3. `export TNS_ADMIN=/Library/Oracle/instantclient` (or wherever)
+4. oracledev project vagrant vm
+
 Creating a tag
 ==============
 
@@ -13,6 +21,38 @@ Deploying
 
     ./deploy.sh  (defaults to master and qc)
     ./deploy.sh -e int-ep --vc-tag 1.4.0
+
+Packaging
+=========
+
+Ideally, you'll never think about this, but here's the basic flow:
+
+  * You commit, push, and merge to master
+  * => A package for QC is built containg the current repo state.
+       Versioned by the # of commits since the last tagged version
+       e.x. gd-xact-1.22.0.55
+
+  * You tag a build for proper release
+  * => A package for INT is built containing the repo state as tagged
+       It is automatically versioned by your tag.
+       e.x. gd-xact-1.23.0
+
+Some of this is WIP.
+
+A deploy process for the aforementioned packages is documented elsewhere.
+TODO: Link to said docs.
+
+As for the gd-prefix, it turns out we're not the first to name a product
+'Evolution'. In order to not clash with the mail client, (or anything else)
+a prefix is added to all of our internal packages.
+
+If you need to inspect or modify the packaging process, it is controlled by
+
+* `Makefile`
+* `gd-xact.spec.in`
+
+`gd-xact.spec` is required for koji, and is filled out by the `Makefile` using
+the spec.in file as a template.
 
 IPAWS Setup
 ===============
@@ -37,13 +77,13 @@ test account, but exists for the sole purpose of monitoring the
 platform.
 
     # Create the account
-    ./bin/accounts.rb -n "GovDelivery Monitoring Account" --email_vendor=10000 --sms_vendor=10001 --voice_vendor=10001 --sms_prefix='MONITOR'
+        ./bin/accounts.rb -n "GovDelivery Monitoring Account" --email_vendor=10000 --sms_vendor=10001 --voice_vendor=10001 --sms_prefix='MONITOR'
 
     # Create user and token
-	./bin/users.rb -a ACCOUNTID -e 'nagios@govdelivery.com' -s 0 -p 'SOMEpasSWORD'
+    ./bin/users.rb -a ACCOUNTID -e 'nagios@govdelivery.com' -s 0 -p 'SOMEpasSWORD'
 
     # List token
-	./bin/tokens.rb -u USERID --list
+    ./bin/tokens.rb -u USERID --list
 
 
 ipaws notes:
@@ -197,3 +237,10 @@ Generating a TMS Extended jar
 rake odm:jar
 ```
 will generate lib/tms_extended.jar from config/TMSExtended.wsdl
+
+
+Running Integration Tests
+=========================
+Specify different environments as needed
+
+    XACT_ENV=qc bundle exec cucumber --verbose features/xact_endtoend.feature

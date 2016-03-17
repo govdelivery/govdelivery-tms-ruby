@@ -30,6 +30,6 @@ describe CreateRecipientsWorker do
     message.expects(:complete!).returns(false)
     EmailMessage.expects(:find).with(1).returns(message)
 
-    expect {worker.perform('message_id' => 1, 'ssend_options' => {}, 'recipients' => {}, 'klass' => 'EmailMessage')}.to raise_error(Sidekiq::Retries::Fail)
+    expect {worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => {}, 'klass' => 'EmailMessage')}.to raise_error(Sidekiq::Retries::Fail)
   end
 end

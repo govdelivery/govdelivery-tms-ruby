@@ -1,5 +1,6 @@
 Xact::Application.routes.draw do
   require 'sidekiq/pro/web'
+  Sidekiq::Web.app_url = '/'
 
   constraint = ->(request) {request.env['warden'].authenticate? && request.env['warden'].user.admin?}
   constraints constraint do
@@ -43,7 +44,10 @@ Xact::Application.routes.draw do
   end
 
   scope :templates, path: 'templates', as: 'templates' do
-    resources :email, except: [:new, :edit], controller: :email_templates do
+    resources :email, except: [:new, :edit], controller: :email_templates, param: :uuid do
+      pageable
+    end
+    resources :sms, except: [:new, :edit], controller: :sms_templates, param: :uuid do
       pageable
     end
   end
@@ -124,6 +128,7 @@ Xact::Application.routes.draw do
   post 'twilio_voice_requests' => 'twilio_voice_requests#create'
   post 'twilio_status_callbacks' => 'twilio_status_callbacks#create'
   post 'twiml' => 'twilio_dial_plan#show', defaults: {format: 'xml'}
+  post 'mblox' => 'mblox#report'
 
   %w( 400 401 403 404 405 406 422 500).each do |code|
     get code, to: 'errors#show', code: code
