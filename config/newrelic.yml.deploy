@@ -223,4 +223,4 @@ stage:
 production:
   <<: *default_settings
   monitor_mode: true
-  app_name: XACT (production)
+  app_name: <%= Conf.new_relic.app_name %>
