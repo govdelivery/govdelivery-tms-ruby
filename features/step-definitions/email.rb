@@ -59,11 +59,6 @@ Then(/^the message should have "(.*)" set to "(.*)"$/) do |field, value|
   raise "expected message field #{field} to have value #{value} but was #{actual}" unless field.eql?(actual)
 end
 
-Then(/^I should receive the error "(.*)" in the "(.*)" payload$/) do |message, attribute|
-  response = @message.nil? ? @object : @message
-  raise "Did not find error: #{message} Messages: #{response.errors.inspect}".red unless !response.errors.nil? && !response.errors[attribute].nil? && response.errors[attribute].join(", ").include?(message)
-end
-
 Then(/^the (?:response|message|sms|email) should have no errors$/) do
   raise "Found error: #{@message.errors.inspect}" unless @message.errors.nil?
 end
