@@ -3,7 +3,8 @@ require 'uri'
 
 class CallbacksAPIClient
   attr_accessor :callback_uris
-  attr_accessor :callbacks_domain
+  attr_accessor :callback_domain
+  attr_accessor :callback_root
 
   def callback_types
     [:recipient_status,
@@ -12,8 +13,9 @@ class CallbacksAPIClient
 
 
   def initialize
-    uri = URI.parse('http://xact-webhook-callbacks.herokuapp.com/api/v3/')
-    @callbacks_domain = "#{uri.scheme}://#{uri.host}"
+    @callback_root = 'http://xact-webhook-callbacks.herokuapp.com/api/v3/'
+    uri = URI.parse(callback_root)
+    @callback_domain = "#{uri.scheme}://#{uri.host}"
     @callback_uris = []
   end
 
@@ -67,7 +69,7 @@ class CallbacksAPIClient
   private
 
   def get_a_faraday
-    Faraday.new(url: callbacks_root) do |faraday|
+    Faraday.new(url: callback_root) do |faraday|
       faraday.request :url_encoded
       # faraday.response    :logger
       faraday.adapter Faraday.default_adapter

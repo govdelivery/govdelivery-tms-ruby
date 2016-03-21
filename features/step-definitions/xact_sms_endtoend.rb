@@ -6,7 +6,7 @@ require 'twilio-ruby'
 
 Given(/^I have a user who can receive SMS messages$/) do
   @sms_receiver_uri      = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
-  @sms_receiver_full_uri = @capi.callbacks_domain + @sms_receiver_uri
+  @sms_receiver_full_uri = @capi.callback_domain + @sms_receiver_uri
 
   twil = TwilioClientManager.default_client
 
