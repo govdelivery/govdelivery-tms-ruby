@@ -215,18 +215,6 @@ def dev_not_live?
   !(configatron.xact.key?('user') && configatron.xact.user.key?('token'))
 end
 
-def dcm_base64_url
-  if ENV['XACT_ENV'] == 'qc'
-    'https://qc-api.govdelivery.com/api/account/CUKEAUTO_QC/subscribers/'
-  elsif ENV['XACT_ENV'] == 'integration'
-    'https://int-api.govdelivery.com/api/account/CUKEAUTO_INT/subscribers/'
-  elsif ENV['XACT_ENV'] == 'stage'
-    'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
-  elsif ENV['XACT_ENV'] == 'prod'
-    'https://api.govdelivery.com/api/account/CUKEAUTO_PROD/subscribers/'
-  end
-end
-
 def sample_subscriber_number
   '+16122236629'
 end
