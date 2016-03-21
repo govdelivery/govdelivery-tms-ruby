@@ -1,4 +1,4 @@
-@full-regression
+@full-regression @sms
 Feature: Interacting with TMS sms templates
 
   @QC-UUID-SMS_BLANK_STRING

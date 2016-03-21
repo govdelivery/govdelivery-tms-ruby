@@ -1,4 +1,4 @@
-@end-to-end
+@end-to-end @sms
 Feature: XACT SMS end to end tests.
 
   @XACT-390 @twilio @Test-Support-App

@@ -1,4 +1,4 @@
-@full-regression @QC-2239
+@full-regression @QC-2239 @email
 Feature: Tests around sending emails
 
   Scenario: TMS verify the ability to disable click tracking in my EMAIL sends
