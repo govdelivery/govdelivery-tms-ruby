@@ -139,65 +139,6 @@ configatron.voice_vendors.live.vendor.username                  = twilio_live_cr
 configatron.voice_vendors.live.vendor.password                  = twilio_live_credentials[:token]
 configatron.voice_vendors.live.vendor.twilio_test               = false
 
-def message_types
-  [
-    :email,
-    :sms,
-    :voice
-  ]
-end
-
-def event_types
-  [
-    :sending,
-    :sent,
-    :failed,
-    :blacklisted,
-    :inconclusive,
-    :canceled
-  ]
-end
-
-def magic_addresses(message_type)
-  case message_type
-  when :email
-    magic_emails
-  when :sms
-    magic_phone_numbers
-  when :voice
-    magic_phone_numbers
-  end
-end
-
-def magic_emails
-  {
-    sending: 'sending@sink.govdelivery.com',
-    sent: 'sent@sink.govdelivery.com',
-    failed: 'failed@sink.govdelivery.com',
-    blacklisted: 'blacklisted@sink.govdelivery.com',
-    inconclusive: 'inconclusive@sink.govdelivery.com',
-    canceled: 'canceled@sink.govdelivery.com'
-  }
-end
-
-def magic_phone_numbers
-  {
-    #:new => "15005550000",
-    sending: '15005550001',
-    inconclusive: '15005550002',
-    canceled: '15005550003',
-    failed: '15005550004',
-    blacklisted: '15005550005',
-    sent: '15005550006'
-  }
-end
-
-def status_for_address(magic_addresses, address)
-  matches = magic_addresses.select { |_status, magic_address| magic_address == address}
-  status = matches ? matches.first.first : nil
-  status
-end
-
 def twilio_xact_test_number_2
   '+17014842689'
 end
@@ -213,18 +154,6 @@ def dev_not_live?
   return false unless environment == :development
 
   !(configatron.xact.key?('user') && configatron.xact.user.key?('token'))
-end
-
-def dcm_base64_url
-  if ENV['XACT_ENV'] == 'qc'
-    'https://qc-api.govdelivery.com/api/account/CUKEAUTO_QC/subscribers/'
-  elsif ENV['XACT_ENV'] == 'integration'
-    'https://int-api.govdelivery.com/api/account/CUKEAUTO_INT/subscribers/'
-  elsif ENV['XACT_ENV'] == 'stage'
-    'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
-  elsif ENV['XACT_ENV'] == 'prod'
-    'https://api.govdelivery.com/api/account/CUKEAUTO_PROD/subscribers/'
-  end
 end
 
 def sample_subscriber_number

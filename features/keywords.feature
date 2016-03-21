@@ -30,3 +30,17 @@ Feature: Interacting with TMS keywords
   Scenario: TMS creating and deleting Subscribe commands for a Keyword when the account is invalid.
     When I create a keyword and command with an invalid account code
     Then I should receive the error "Dcm account code is not a valid code" in the "params" payload
+
+  @reservedkeyword
+  Scenario Outline: XACT reserved keyword creation
+    When I attempt to create a reserved keyword <keyword>
+    Then I should receive an reserved keyword message
+    Examples:
+      | keyword |
+      | unsubscribe |
+      | cancel |
+      | stopall |
+      | end |
+      | quit |
+      | yes |
+      | info |

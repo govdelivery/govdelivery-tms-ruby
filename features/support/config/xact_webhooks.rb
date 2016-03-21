@@ -29,3 +29,17 @@ when :stage
   webhooks.xact.user.token = 'XX298RJyjk5pnLRRDyxaBArz6ocBcCEo'
   webhooks.xact.user.email_address = 'stage-webhooks-test@govdelivery.com'
 end
+
+webhooks.magic.email.sending = 'sending@sink.govdelivery.com'
+webhooks.magic.email.sent = 'sent@sink.govdelivery.com'
+webhooks.magic.email.failed = 'failed@sink.govdelivery.com'
+webhooks.magic.email.blacklisted = 'blacklisted@sink.govdelivery.com'
+webhooks.magic.email.inconclusive = 'inconclusive@sink.govdelivery.com'
+webhooks.magic.email.canceled = 'canceled@sink.govdelivery.com'
+
+webhooks.magic.phone.sending = '15005550001'
+webhooks.magic.phone.inconclusive = '15005550002'
+webhooks.magic.phone.canceled = '15005550003'
+webhooks.magic.phone.failed = '15005550004'
+webhooks.magic.phone.blacklisted = '15005550005'
+webhooks.magic.phone.sent = '15005550006'

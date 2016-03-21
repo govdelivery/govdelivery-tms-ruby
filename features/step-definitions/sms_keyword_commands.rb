@@ -11,9 +11,9 @@ require 'multi_xml'
 #===SUBSCRIBE========================================>
 
 Given(/^I create a subscription keyword and command$/) do
-  next if dev_not_live?
+  pending "Not implemented for development"  if dev_not_live?
 
-  @conf = configatron.accounts.sms_2way_subscribe
+  @conf = configatron.accounts.sms_keyword_commands_subscribe
   client = TmsClientManager.from_configatron(@conf)
   @keyword = client.keywords.build(name: "subscribe::#{random_string}", response_text: 'subscribe')
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
@@ -29,7 +29,7 @@ Given(/^I create a subscription keyword and command$/) do
 end
 
 Given(/^I send an SMS to create a subscription on TMS$/) do
-  next if dev_not_live?
+  pending "Not implemented for development"  if dev_not_live?
 
   # create connection to XACT
   conn = Faraday.new(url: @conf.xact.url) do |faraday|
@@ -62,12 +62,15 @@ Given(/^I send an SMS to create a subscription on TMS$/) do
 end
 
 Then(/^a subscription should be created$/) do
-  next if dev_not_live?
+  pending "Not implemented for development" if dev_not_live?
 
-  user # dcm credentials
-  @request.url = dcm_base64_url + @base64
-  @data = HTTPI.get(@request)
-  puts @request.url
+  request = HTTPI::Request.new
+  request.headers['Content-Type'] = 'application/xml'
+  request.auth.basic(configatron.evolution.account.email_address, configatron.evolution.account.password)
+
+  request.url = configatron.evolution.api_url + @base64
+  @data = HTTPI.get(request)
+  puts request.url
   @response = MultiXml.parse(@data.raw_body)
   # some output that can be turned on/off if needed to verify things manually
   ap @response
@@ -87,16 +90,16 @@ Then(/^a subscription should be created$/) do
   end
 
   # delete subscriber so we can reuse the phone number for the next test
-  HTTPI.delete(@request)
+  HTTPI.delete(request)
 end
 
 #===STOP========================================>
 
 Given(/^I am subscribed to receive TMS messages$/) do
-  next if dev_not_live?
+  pending "Not implemented for development"  if dev_not_live?
 
   # subscribe first
-  @conf = configatron.accounts.sms_2way_stop
+  @conf = configatron.accounts.sms_keyword_commands_stop
   conn = Faraday.new(url: @conf.xact.url) do |faraday|
     faraday.request :url_encoded
     faraday.response :logger
@@ -124,7 +127,7 @@ Given(/^I am subscribed to receive TMS messages$/) do
 end
 
 Given(/^I create a stop keyword and command$/) do
-  next if dev_not_live?
+  pending "Not implemented for development"  if dev_not_live?
 
   client = TmsClientManager.from_configatron(@conf)
   @keyword = client.keywords.build(name: "stop::#{random_string}", response_text: 'stop')
@@ -140,7 +143,7 @@ Given(/^I create a stop keyword and command$/) do
 end
 
 When(/^I send an SMS to opt out of receiving TMS messages$/) do
-  next if dev_not_live?
+  pending "Not implemented for development"  if dev_not_live?
 
   # begin stop request
   conn = Faraday.new(url: @conf.xact.url) do |faraday|
@@ -167,7 +170,7 @@ When(/^I send an SMS to opt out of receiving TMS messages$/) do
 end
 
 Then(/^I should receive a STOP response$/) do
-  next if dev_not_live?
+  pending "Not implemented for development"  if dev_not_live?
 
   resp_xml = Hash.from_xml @resp.body
   if resp_xml['Response']['Sms'] != 'stop'
@@ -177,7 +180,7 @@ Then(/^I should receive a STOP response$/) do
 end
 
 Then(/^my subscription should be removed$/) do
-  next if dev_not_live?
+  pending "Not implemented for development"  if dev_not_live?
 
   # encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(twilio_xact_test_number_2)
@@ -185,10 +188,14 @@ Then(/^my subscription should be removed$/) do
   sleep(60)
 
   # check to see if subscription was removed
-  user # dcm credentials
-  @request.url = dcm_base64_url + @base64
-  @data = HTTPI.get(@request)
-  puts @request.url
+
+  request = HTTPI::Request.new
+  request.headers['Content-Type'] = 'application/xml'
+  request.auth.basic(configatron.evolution.account.email_address, configatron.evolution.account.password)
+
+  request.url = configatron.evolution.api_url + @base64
+  @data = HTTPI.get(request)
+  puts request.url
   @response = MultiXml.parse(@data.raw_body)
 
   ap @response
@@ -206,7 +213,7 @@ end
 #===STATIC========================================>
 
 Given(/^A keyword with static content is configured for an TMS account$/) do
-  @conf = configatron.accounts.sms_2way_static
+  @conf = configatron.accounts.sms_keyword_commands_static
   client = TmsClientManager.from_configatron(@conf)
   @keyword = client.keywords.build(name: random_string, response_text: random_string)
   @keyword.post!
@@ -239,42 +246,23 @@ end
 
 #===Common-2-Way-Real-Time-Steps================>
 
-def agency_command_params(agency)
-  url = case agency.downcase
-        when 'bart'
-          'https://xact-services-stage.herokuapp.com/bart'
-        when 'acetrain'
-          'https://xact-services-stage.herokuapp.com/acetrain'
-        when 'cdc'
-          'https://xact-services-stage.herokuapp.com/knowit'
-        end
-  {
-    url:           url,
-    http_method:   'get',
-    strip_keyword: true
+def agency_test(check)
+  expected_condition = 200
+  {condition: proc do
+    actions = check.call
+    actions.any? do |action|
+      action.status == expected_condition &&
+        !action.response_body.blank? &&
+        !action.response_body.include?('We are sorry, but the message you sent is not valid.')
+    end if actions
+  end,
+   msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
   }
 end
 
-def agency_test(agency, check)
-  case agency.downcase
-  when 'bart', 'acetrain', 'cdc'
-    expected_condition = 200
-    {condition: proc do
-      actions = check.call
-      actions.any? do |action|
-        action.status == expected_condition &&
-          !action.response_body.blank? &&
-          !action.response_body.include?('We are sorry, but the message you sent is not valid.')
-      end if actions
-    end,
-     msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
-    }
-  end
-end
-
-Given(/^I have an XACT account for (.+)$/) do |agency|
-  @conf = configatron.accounts["sms_2way_#{agency.downcase}"]
-  client = TmsClientManager.from_configatron(@conf)
+Given(/^I have an XACT account with a forward worker$/) do
+  @conf = configatron.accounts.sms_keyword_commands_forward_worker
+  @client = TmsClientManager.from_configatron(@conf)
 end
 
 Given(/^I register the keyword (.+)$/) do |agency|
@@ -284,16 +272,20 @@ Given(/^I register the keyword (.+)$/) do |agency|
   raise "Could not create #{@agency_keyword} keyword: #{@keyword.errors}" unless @keyword.post
 end
 
-Given(/^I register the (.+) forward command$/) do |agency|
+Given(/^I register the forward command$/) do
   @command = @keyword.commands.build(
-    name: "#{agency} Forwarding",
-    params: agency_command_params(agency),
+    name: "Cucumber Testing Forwarding",
+    params: {
+      url: 'https://xact-services-stage.herokuapp.com/knowit',
+      http_method:   'get',
+      strip_keyword: true
+    },
     command_type: :forward
   )
   raise "Could not create Forwarding command: #{@command.errors}" unless @command.post
 end
 
-When(/^I text '(.+)' to the (.+) account$/) do |message, _agency|
+When(/^I text '(.+)' to the forward worker account$/) do |message|
   # Don't actually care about the keyword that is passed to this test
   message = message.split[1..-1].join(' ')
 
@@ -314,7 +306,7 @@ When(/^I text '(.+)' to the (.+) account$/) do |message, _agency|
   end
 end
 
-Then(/^I should receive (.+) content as a response$/) do |agency_name|
+Then(/^I should receive any content as a response$/) do
   # TODO Can we find the actual message that XACT sent back?
 
   check = proc do
@@ -326,10 +318,10 @@ Then(/^I should receive (.+) content as a response$/) do |agency_name|
     @command.try(:command_actions).try(:collection)
   end
 
-  test = agency_test(agency_name, check)
+  test = agency_test(check)
 
   begin
-    backoff_check(test[:condition], "for #{agency_name} to send an acceptable response")
+    backoff_check(test[:condition], "for the forward worker to send an acceptable response")
   rescue
     msg = test[:msg]
     msg += "\nCommand URL: #{@command.href}"

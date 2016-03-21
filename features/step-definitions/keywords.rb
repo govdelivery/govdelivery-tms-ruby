@@ -1,6 +1,3 @@
-#!/bin/env ruby
-# encoding: utf-8
-
 require 'colored'
 require 'json'
 require 'awesome_print'
@@ -10,24 +7,37 @@ require 'faraday'
 require 'base64'
 require 'multi_xml'
 
+#####################################################
+# Given
+#####################################################
+
+
+#####################################################
+# When
+#####################################################
+
 # @QC-2453
-Given(/^I create a new keyword with a text response$/) do
+When(/^I create a new keyword with a text response$/) do
   @keyword = TmsClientManager.voice_client.keywords.build(name: "160CHARS#{Time.now.to_i.to_s}", response_text: '160CHARS')
   raise @keyword.errors.to_s unless @keyword.post
 end
 
-Then(/^I should be able to delete the keyword$/) do
-  @keyword.delete
+When(/^I attempt to create a reserved keyword (.*)$/) do |keyword|
+  pending "Not implemented in development" if dev_not_live?
+
+  @conf = configatron.accounts.sms_2way_subscribe
+  @keyword = TmsClientManager.voice_client.keywords.build(name: keyword)
+  @keyword.post
 end
 
 # @QC-2496
-Given(/^I attempt to create a keyword with a response text over 160 characters$/) do
+When(/^I attempt to create a keyword with a response text over 160 characters$/) do
   @object = TmsClientManager.voice_client.keywords.build(name: '162CHARS', response_text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient...')
   @object.post
 end
 
 # @QC-2492
-Given(/^I create a new forward keyword and command$/) do
+When(/^I create a new forward keyword and command$/) do
   @keyword = TmsClientManager.voice_client.keywords.build(name: "forwardy")
   @keyword.post!
   @command = @keyword.commands.build(
@@ -39,13 +49,8 @@ Given(/^I create a new forward keyword and command$/) do
   @command.put!
 end
 
-Then(/^I should be able to delete the forward keyword$/) do
-  @command.delete!
-  @keyword.delete!
-end
-
 # @QC-2488
-Given(/^I create a new subscribe keyword and command$/) do
+When(/^I create a new subscribe keyword and command$/) do
   @keyword = TmsClientManager.voice_client.keywords.build(name: "new_keyword")
   @keyword.post!
   @command = @keyword.commands.build(
@@ -55,12 +60,7 @@ Given(/^I create a new subscribe keyword and command$/) do
   @command.post!
 end
 
-Then(/^I should be able to delete the subscribe keyword$/) do
-  @command.delete!
-  @keyword.delete!
-end
-
-Given(/^I create a new unsubscribe keyword and command$/) do
+When(/^I create a new unsubscribe keyword and command$/) do
   @keyword = TmsClientManager.voice_client.keywords.build(name: "newish")
   @keyword.post!
   @command = @keyword.commands.build(
@@ -70,20 +70,34 @@ Given(/^I create a new unsubscribe keyword and command$/) do
   @command.post!
 end
 
-Then(/^I should be able to delete the unsubscribe keyword$/) do
-  @command.delete!
-  @keyword.delete!
-end
-
 # @QC-2452
-Given(/^I create a keyword and command with an invalid account code$/) do
+When(/^I create a keyword and command with an invalid account code$/) do
   @keyword = TmsClientManager.voice_client.keywords.build(name: "xxinvalid")
   @keyword.post!
   @object = @keyword.commands.build(
     name: "xxinvalid",
     params: {dcm_account_code: 'CUKEAUTO_NOPE', dcm_topic_codes: ['CUKEAUTO_BROKEN']},
     command_type: :dcm_subscribe)
-  @object.post #verification in next step
+  @object.post
+end
+
+
+#####################################################
+# Then
+#####################################################
+
+Then(/^I should receive an reserved keyword message$/) do
+  @output = JSON.parse(@keyword.errors.to_json)
+  raise 'Keyword was created erroneously.'.red unless @output.to_s.include?('reserved')
+end
+
+Then(/^I should be able to delete the keyword$/) do
+  @keyword.delete
+end
+
+Then(/^I should be able to delete the (?:forward|subscribe|unsubscribe) keyword$/) do
+  @command.delete!
+  @keyword.delete!
 end
 
 
