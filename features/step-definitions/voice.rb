@@ -20,7 +20,7 @@ end
 #####################################################
 
 When(/^I create a new voice message$/) do
-  @message = TmsClientManager.voice_client.voice_messages.build(play_url: configatron.voice.play_urls.sample)
+  @message = TmsClientManager.non_admin_client.voice_messages.build(play_url: configatron.voice.play_urls.sample)
 end
 
 When(/^I add a recipient to the voice message$/) do
@@ -71,7 +71,7 @@ Then(/^Twilio should complete the call$/) do
 end
 
 Then(/^I should see a list of messages with appropriate attributes$/) do
-  messages = TmsClientManager.voice_client.voice_messages.get.collection
+  messages = TmsClientManager.non_admin_client.voice_messages.get.collection
   sleep(2)
 
   messages.each do |message|

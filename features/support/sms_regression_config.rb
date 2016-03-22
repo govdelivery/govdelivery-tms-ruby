@@ -1,9 +1,5 @@
 module SmsRegressionConfig
 
-  def client_2
-    TmsClientManager.sms_regression_client
-  end
-
   def phone_number_to
     if ENV['XACT_ENV'] == 'qc'
       '+16519684981'

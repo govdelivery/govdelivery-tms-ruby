@@ -17,100 +17,24 @@ require 'multi_xml'
 ######## When ########
 ######################
 
-When(/^I send an SMS with an invalid word or command$/) do
-  sleep(20)
-  @message = TmsClientManager.sms_regression_client.sms_messages.build(body: 'ABCDEF jabberwocky')
-  @message.recipients.build(phone: SmsRegressionConfig.phone_number_to)
-  raise @message.errors.inspect unless @message.post
-  # ap @message.response
-
-  @client = TwilioClientManager.default_client
-  sleep(10)
-  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
-                                     to: phone_number_from, # sort by
-                                     direction: 'incoming').each do |_call|
-  end
-  @b = @a[0].uri # find uri of "reply" message,
-
-  sleep(2)
-  @request = HTTPI::Request.new # call to twilio callsid json
-  @request.headers['Content-Type'] = 'application/json'
-  @request.auth.basic('AC189315456a80a4d1d4f82f4a732ad77e', '88e3775ad71e487c7c90b848a55a5c88')
-  @request.url = 'https://api.twilio.com' + @b
-  @response = HTTPI.get(@request)
-  puts @response.raw_body
-
-  sleep(2)
-  i = 0
-  until JSON.parse(@response.raw_body)['body'] == 'Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month.' # loop until call status = completed
-    STDOUT.puts JSON.parse(@response.raw_body)['status'].yellow
-    @response = HTTPI.get(@request)
-    STDOUT.puts 'waiting for status for 5 seconds'.blue
-    sleep(5)
-    i += 1
-    if i > 9
-      raise 'waited 45 seconds for message to be delivered, but it was not found.'.red
-    end
-  end
-  puts 'Help message found'.green
-end
-
-When(/^I send an SMS to a shared account with an invalid prefix$/) do
-  sleep(20)
-  @message = TmsClientManager.sms_regression_client.sms_messages.build(body: 'ABCDEF help')
-  @message.recipients.build(phone: SmsRegressionConfig.phone_number_to)
-  raise @message.errors.inspect unless @message.post
-  # ap @message.response
-
-  @client = TwilioClientManager.default_client
-  sleep(1)
-  @a = @client.account.messages.list(date_created: Date.today, # grab full list of messages sent today
-                                     to: SmsRegressionConfig.phone_number_from, # sort by
-                                     direction: 'reply').each do |_call|
-  end
-  @b = @a[0].uri # find uri of "reply" message,
-
-  sleep(2)
-  @request = HTTPI::Request.new # call to twilio callsid json
-  @request.headers['Content-Type'] = 'application/json'
-  @request.auth.basic('AC189315456a80a4d1d4f82f4a732ad77e', '88e3775ad71e487c7c90b848a55a5c88')
-  @request.url = 'https://api.twilio.com' + @b
-  @response = HTTPI.get(@request)
-  puts @response.raw_body
-
-  sleep(2)
-  i = 0
-  until JSON.parse(@response.raw_body)['body'] == 'Visit Help@govdelivery.com for help or more at 800-314-0147. Reply STOP to cancel. Msg&Data rates may apply. 5msgs/month.' # loop until call status = completed
-    STDOUT.puts JSON.parse(@response.raw_body)['status'].yellow
-    @response = HTTPI.get(@request)
-    STDOUT.puts 'waiting for status for 5 seconds'.blue
-    sleep(5)
-    i += 1
-    if i > 9 # fails after 45 seconds
-      raise 'waited 45 seconds for message to be delivered, but it was not found.'.red
-    end
-  end
-  puts 'Help message found'.green
-end
-
 ## Successes
 
 When(/^I post a new SMS message with the correct number of characters$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '5551112222')
   raise @object.errors.inspect unless @object.post
   @last_response = @object.response
 end
 
 When(/^I post a new SMS message with the correct number of characters to a formatted phone number$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '(555) 111-2222')
   raise @object.errors.inspect unless @object.post
   @last_response = @object.response
 end
 
 When(/^I post a new SMS message and retrieve the message details$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '5551112222')
   raise @object.errors.inspect unless @object.post
 
@@ -124,7 +48,7 @@ When(/^I post a new SMS message and retrieve the message details$/) do
 end
 
 When(/^I post a new SMS message and retrieve the recipient details$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '5551112222')
   raise @object.errors.inspect unless @object.post
   sms = @object.get
@@ -138,7 +62,7 @@ When(/^I post a new SMS message and retrieve the recipient details$/) do
 end
 
 When(/^I post a new SMS message to multiple recipients$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '5551112222')
   @object.recipients.build(phone: '5551112223')
   raise @object.errors.inspect unless @object.post
@@ -146,14 +70,14 @@ When(/^I post a new SMS message to multiple recipients$/) do
 end
 
 When(/^I post a new SMS message to invalid recipients I should not receive failed recipients$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '55A')
   raise @object.errors.inspect unless @object.post
   @last_response = @object.response
 end
 
 When(/^I post a new SMS message with duplicate recipients$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '5551112222')
   @object.recipients.build(phone: '5551112222')
   @object.recipients.build(phone: '5551112222')
@@ -164,7 +88,7 @@ When(/^I post a new SMS message with duplicate recipients$/) do
 end
 
 When(/^I post a new SMS message which contains special characters$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You í á é ñ ó ú ü ¿ ¡ received this message as a result of feature testing special characters within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You í á é ñ ó ú ü ¿ ¡ received this message as a result of feature testing special characters within the GovDelivery platform.')
   @object.recipients.build(phone: '5551112222')
   raise @object.errors.inspect unless @object.post
   @last_response = @object.response
@@ -173,14 +97,14 @@ end
 ## Validations
 
 When(/^I post a new SMS message to an empty recipient$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'You have received this message as a result of feature testing within the GovDelivery platform.')
   @object.recipients.build(phone: '')
   @object.post
   @last_response = @object.response
 end
 
 When(/^I post a new SMS message with too many characters$/) do
-  @object = TmsClientManager.voice_client.sms_messages.build(body: 'PtFGdBXk65tYERi9yKuOAxPInGJQPrNeaIdNJ7YlLeEAxglMeoxaufoKTxJZUOEOkXo5jO84cFIyeUGHdywK2mOnUy2JM6Q9vdd2Plpce8mZFvWdtUQJgVQSDTOUwFUkLkHOLIXqGHE24CBJlTZmxOE2HuyVqYRof')
+  @object = TmsClientManager.non_admin_client.sms_messages.build(body: 'PtFGdBXk65tYERi9yKuOAxPInGJQPrNeaIdNJ7YlLeEAxglMeoxaufoKTxJZUOEOkXo5jO84cFIyeUGHdywK2mOnUy2JM6Q9vdd2Plpce8mZFvWdtUQJgVQSDTOUwFUkLkHOLIXqGHE24CBJlTZmxOE2HuyVqYRof')
   @object.recipients.build(phone: '5551112222')
   @object.post
   @last_response = @object.response

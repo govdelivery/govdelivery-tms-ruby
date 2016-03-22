@@ -18,7 +18,7 @@ require 'multi_xml'
 
 # @QC-2453
 When(/^I create a new keyword with a text response$/) do
-  @keyword = TmsClientManager.voice_client.keywords.build(name: "160CHARS#{Time.now.to_i.to_s}", response_text: '160CHARS')
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "160CHARS#{Time.now.to_i.to_s}", response_text: '160CHARS')
   raise @keyword.errors.to_s unless @keyword.post
 end
 
@@ -26,19 +26,19 @@ When(/^I attempt to create a reserved keyword (.*)$/) do |keyword|
   pending "Not implemented in development" if dev_not_live?
 
   @conf = configatron.accounts.sms_2way_subscribe
-  @keyword = TmsClientManager.voice_client.keywords.build(name: keyword)
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: keyword)
   @keyword.post
 end
 
 # @QC-2496
 When(/^I attempt to create a keyword with a response text over 160 characters$/) do
-  @object = TmsClientManager.voice_client.keywords.build(name: '162CHARS', response_text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient...')
+  @object = TmsClientManager.non_admin_client.keywords.build(name: '162CHARS', response_text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient...')
   @object.post
 end
 
 # @QC-2492
 When(/^I create a new forward keyword and command$/) do
-  @keyword = TmsClientManager.voice_client.keywords.build(name: "forwardy")
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "forwardy")
   @keyword.post!
   @command = @keyword.commands.build(
     name: "forwardy 1",
@@ -51,7 +51,7 @@ end
 
 # @QC-2488
 When(/^I create a new subscribe keyword and command$/) do
-  @keyword = TmsClientManager.voice_client.keywords.build(name: "new_keyword")
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "new_keyword")
   @keyword.post!
   @command = @keyword.commands.build(
     name: "new_command",
@@ -61,7 +61,7 @@ When(/^I create a new subscribe keyword and command$/) do
 end
 
 When(/^I create a new unsubscribe keyword and command$/) do
-  @keyword = TmsClientManager.voice_client.keywords.build(name: "newish")
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "newish")
   @keyword.post!
   @command = @keyword.commands.build(
     name: "newish unsub",
@@ -72,7 +72,7 @@ end
 
 # @QC-2452
 When(/^I create a keyword and command with an invalid account code$/) do
-  @keyword = TmsClientManager.voice_client.keywords.build(name: "xxinvalid")
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "xxinvalid")
   @keyword.post!
   @object = @keyword.commands.build(
     name: "xxinvalid",

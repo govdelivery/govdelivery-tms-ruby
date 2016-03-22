@@ -20,7 +20,7 @@ Given(/^A Gmail recipient/) do
 end
 
 When(/^I get the list of from addresses/) do
-  @addresses = TmsClientManager.voice_client.from_addresses.get
+  @addresses = TmsClientManager.non_admin_client.from_addresses.get
 end
 
 Then(/^I should be able to list and read from addresses/) do
@@ -29,7 +29,7 @@ Then(/^I should be able to list and read from addresses/) do
 end
 
 Given(/^I send an email from an account that has link tracking params configured$/) do
-  @message = TmsClientManager.voice_client.email_messages.build(body:       '<p><a href="http://www.cnn.com">Test</a>',
+  @message = TmsClientManager.admin_client.email_messages.build(body:       '<p><a href="http://www.cnn.com">Test</a>',
                                                                 subject:    TmsClientManager.subject,
                                                                 from_email: TmsClientManager.from_email)
   @message.recipients.build(email: TmsClientManager.mail_accounts)
@@ -64,24 +64,29 @@ Then(/^those params should resolve within the body of the email I send$/) do
   end
 end
 
-Given(/^I am a TMS user and not an admin$/) do
+Given(/^A non-admin account token$/) do
+  @account_token = TmsClientManager.non_admin_token
+end
+
+When(/^I request the accounts api/) do
   @request         = HTTPI::Request.new
   @request.url     = TmsClientManager.url
-  @request.headers = {'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => TmsClientManager.non_admin_token}
+  @request.headers = {'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => @account_token}
+  @response = HTTPI.get(@request)
+  @last_response = @response
 end
 
 Given(/^I am using a non-admin TMS client$/) do
   @client = TmsClientManager.from_configatron(configatron.accounts.email_endtoend)
 end
 
-Then(/^I should not be able to see the accounts endpoint$/) do
-  @response = HTTPI.get(@request)
-
-  if JSON.parse(@response.raw_body) == {'error' => 'forbidden'}
-    puts 'Forbidden found, passing test'.green
+Then(/^I should get a( not)? forbidden response$/) do |check|
+  if check == " not"
+    raise 'should not be able to view accounts as a non-admin user.' if JSON.parse(@response.raw_body) == {'error' => 'forbidden'}
   else
-    raise 'Was able to view accounts as a user, test failed'.red
+    raise 'should not be able to view accounts as a non-admin user.' unless JSON.parse(@response.raw_body) == {'error' => 'forbidden'}
   end
+
 end
 
 #================2239 tests===============>
