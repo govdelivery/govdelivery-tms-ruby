@@ -82,7 +82,7 @@ end
 Then(/^the callback should receive a POST$/) do
   check_condition = proc do
     passed = false
-    condition = (environment == :integration ? xact_url.sub('int-', 'integration-') : xact_url) + @recipient.href
+    condition = xact_url + @recipient.href
     payloads = []
     @event_callback['payloads'].each do |payload_info|
       payloads << @capi.get(payload_info['url'])
