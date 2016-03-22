@@ -59,15 +59,14 @@ end
 Then(/^I should be able to identify my unique message is among all SMS messages$/) do
   next if dev_not_live?
   payloads        = []
-  check_condition = proc do
-    payloads = @capi.get(@sms_receiver_uri)
-    passed   = payloads['payloads'].any? do |payload_info|
-      payload_info['body'] == @expected_message
-    end
-    passed
-  end
+
   begin
-    backoff_check(check_condition, 'for the test user to receive the message I sent')
+    GovDelivery::Proctor.backoff_check(10.minutes, 'for the test user to receive the message I sent') do
+      payloads = @capi.get(@sms_receiver_uri)
+      payloads['payloads'].any? do |payload_info|
+        payload_info['body'] == @expected_message
+      end
+    end
   rescue
     msg = "Message I sent: '#{condition}'\n"
     msg += "Message URL: #{configatron.xact.url + @message.href}\n"
@@ -120,6 +119,9 @@ Then(/^I should receive either a canceled message or a success$/) do
                         end
                     end
   backoff_check(check_condition, "checking for completed recipient status")
+  GovDelivery::Proctor.backoff_check(5.minutes, 'checking for completed recipient status') do
+    
+  end
 end
 
 Given(/^I create a new sms template with "(.*)" uuid$/) do |uuid|

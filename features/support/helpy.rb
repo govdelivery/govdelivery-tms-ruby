@@ -90,27 +90,30 @@ module Helpy
   # Polls mail server for messages and validates message if found
   def validate_message
     next if dev_not_live?
-    condition = proc do
+
+    GovDelivery::Proctor.backoff_check(20.minutes, "find message #{@expected_subject}") do
       # get message
       body, reply_to, errors_to = get_emails(@expected_subject)
-      next if body.nil?
+      passed = false
+      unless body.nil?
 
-      # validate from address information
-      raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && reply_to != @expected_reply_to
-      raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if @expected_errors_to && errors_to != @expected_errors_to
+        # validate from address information
+        raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && reply_to != @expected_reply_to
+        raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if @expected_errors_to && errors_to != @expected_errors_to
 
-      # validate link is present
-      if @expected_link &&
-        (href = Nokogiri::HTML(body).css('a').
-          map { |link| link['href'] }.
-          detect { |href| test_link(href, @expected_link, expected_link_prefix) })
-        puts "Link #{href} redirects to #{@expected_link}".green
-        return true
+        # validate link is present
+        if @expected_link &&
+          (href = Nokogiri::HTML(body).css('a').
+            map { |link| link['href'] }.
+            detect { |href| test_link(href, @expected_link, expected_link_prefix) })
+          log.info("Link #{href} redirects to #{@expected_link}".green)
+          passed = true
+        else
+          raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
+        end
       end
-
-      raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
+      return passed
     end
-    backoff_check(condition, "find message #{@expected_subject}")
   ensure
     clean_inbox
   end

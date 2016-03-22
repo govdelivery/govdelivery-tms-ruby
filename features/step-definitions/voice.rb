@@ -43,14 +43,13 @@ end
 Then(/^Twilio should have an active call$/) do
   @client = TwilioClientManager.default_client
   calls = []
-  condition = proc {
+  GovDelivery::Proctor.backoff_check(20.minutes, "have a ringing call") do
     calls = @client.account.calls.list(start_time: Date.today,
-                                      status:     'ringing',
-                                      from:       '(651) 504-3057')
+                                       status:     'ringing',
+                                       from:       '(651) 504-3057')
 
     !calls.empty?
-  }
-  backoff_check(condition, "have a ringing call")
+  end
   @call = calls.first.uri
 end
 
@@ -63,11 +62,9 @@ Then(/^Twilio should complete the call$/) do
   @request.auth.basic(configatron.test_support.twilio.account.sid , configatron.test_support.twilio.account.token)
   @request.url = "https://api.twilio.com/#{@call}"
 
-  condition = proc {
+  GovDelivery::Proctor.backoff_check(20.minutes, "call") do
     JSON.parse(HTTPI.get(@request).raw_body)['status'] == 'completed'
-  }
-
-  backoff_check(condition, "call")
+  end
 end
 
 Then(/^I should see a list of messages with appropriate attributes$/) do

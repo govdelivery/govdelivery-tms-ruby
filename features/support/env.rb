@@ -3,6 +3,7 @@ require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'configatron'
 require 'multi_xml'
+require 'govdelivery-proctor'
 require 'govdelivery-tms-internal'
 
 
@@ -36,6 +37,10 @@ def environment
   env = ENV.key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
   raise "Unsupported XACT Environment: #{env}" unless environments.include?(env)
   env
+end
+
+def log
+  GovDelivery::Proctor.log
 end
 
 def site

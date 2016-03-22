@@ -246,20 +246,6 @@ end
 
 #===Common-2-Way-Real-Time-Steps================>
 
-def agency_test(check)
-  expected_condition = 200
-  {condition: proc do
-    actions = check.call
-    actions.any? do |action|
-      action.status == expected_condition &&
-        !action.response_body.blank? &&
-        !action.response_body.include?('We are sorry, but the message you sent is not valid.')
-    end if actions
-  end,
-   msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
-  }
-end
-
 Given(/^I have an XACT account with a forward worker$/) do
   @conf = configatron.accounts.sms_keyword_commands_forward_worker
   @client = TmsClientManager.from_configatron(@conf)
@@ -309,19 +295,22 @@ end
 Then(/^I should receive any content as a response$/) do
   # TODO Can we find the actual message that XACT sent back?
 
-  check = proc do
-    # The API does not provide the command_actions relation on a command if there are no command actions
-    # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
-    # by the time the test wants to check for one.
-    @command.get
-    @command.try(:command_actions).try(:get)
-    @command.try(:command_actions).try(:collection)
-  end
-
-  test = agency_test(check)
-
   begin
-    backoff_check(test[:condition], "for the forward worker to send an acceptable response")
+    GovDelivery::Proctor.backoff_check(20.minutes, "for the forward worker to send an acceptable response") do
+      # The API does not provide the command_actions relation on a command if there are no command actions
+      # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
+      # by the time the test wants to check for one.
+      @command.get
+      @command.try(:command_actions).try(:get)
+      actions = @command.try(:command_actions).try(:collection)
+
+      actions.any? do |action|
+        action.status == 200 &&
+          !action.response_body.blank? &&
+          !action.response_body.include?('We are sorry, but the message you sent is not valid.')
+      end if actions
+    end
+
   rescue
     msg = test[:msg]
     msg += "\nCommand URL: #{@command.href}"

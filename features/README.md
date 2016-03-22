@@ -94,9 +94,6 @@ Just set the email/voice/sms attribute of the account's config to a clone of the
 There are many functions in env.rb and general_support_functions.rb available to help you write tests. Below are a few
 hightlights.
 
-- backoff_check(conditon_fnc, desc) - Function that will call condition_fnc (assumed to be a Proc that returns true or false),
-  wait, and call it again until it returns true or eventually times out (after about 15 minutes). The wait time increases with
-  each iteration by a factor of 2.
 - magic_addresses - returns magic addresses for the loopback workers that will force specific states on recipients.
   Type of address is dependant on the message type provided. If :email, magic email addresses are returned. If :sms or :voice,
   magic phone numbers are returned.

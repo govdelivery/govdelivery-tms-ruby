@@ -40,35 +40,30 @@ When(/^I send an email message to magic address for event (.*)$/) do |event|
 end
 
 When(/^I wait for the message recipients to be built$/) do
-  condition = proc do
+  GovDelivery::Proctor.backoff_check(5.minutes, 'build recipients list') do
     begin
       @message.recipients.get
     rescue GovDelivery::TMS::Request::InProgress
-      STDOUT.puts "Recipient list is not ready"
+      log.info("Recipient list is not ready")
     end
   end
-
-  backoff_check(condition, 'build recipients list')
 end
 
 When(/^I wait for the recipient to have an event status of (.*)/) do |status_type|
   @recipient = @message.recipients.collection.first
-  condition = proc do
+  GovDelivery::Proctor.backoff_check(1.minute, 'arrive at expected status') do
     @recipient.get
     status_type == @recipient.attributes[:status]
   end
-
-  backoff_check(condition, 'arrive at expected status')
 end
 
 When(/^I wait for the callback payload to contain my uri$/) do
   @event_callback = nil
-  condition = proc do
+
+  GovDelivery::Proctor.backoff_check(5.minutes, "have at least 1 callback") do
     @event_callback = @capi.get(@event_callback_uri)
     @event_callback['payload_count'] >= 1
   end
-
-  backoff_check(condition, "have at least 1 callback")
 end
 
 #####################################################
@@ -80,16 +75,9 @@ Then(/^the callback payload should be non-nil$/) do
 end
 
 Then(/^the callback should receive a POST$/) do
-  check_condition = proc do
-    passed = false
+  GovDelivery::Proctor.backoff_check(1.minute, 'have all payloads expected') do
     condition = xact_url + @recipient.href
-    payloads = []
-    @event_callback['payloads'].each do |payload_info|
-      payloads << @capi.get(payload_info['url'])
-      passed = payloads.any? { |payload| payload['payload']['recipient_url'] == condition}
-    end
-    passed
+    payloads = @event_callback['payloads'].map { |payload_info| @capi.get(payload_info['url']) }
+    payloads.any? { |payload| payload['payload']['recipient_url'] == condition}
   end
-
-  backoff_check(check_condition, 'have all the payloads expected')
 end

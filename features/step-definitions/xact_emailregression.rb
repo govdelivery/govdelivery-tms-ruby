@@ -37,30 +37,28 @@ Given(/^I send an email from an account that has link tracking params configured
 end
 
 Then(/^those params should resolve within the body of the email I send$/) do
-  condition = proc do
-    STDOUT.puts "Checking Gmail IMAP for subject \"#{TmsClientManager.subject}\""
-    emails = Mail.find(what: :last, count: 1000, order: :dsc)
-    STDOUT.puts "Found #{emails.size} emails"
-    STDOUT.puts "subjects:\n\t#{emails.map(&:subject).join("\n\t")}" if emails.any?
+  begin
+    GovDelivery::Proctor.backoff_check(20.minutes, 'looking for link params in email body') do
+      log.info("Checking Gmail IMAP for subject \"#{TmsClientManager.subject}\"")
+      emails = Mail.find(what: :last, count: 1000, order: :dsc)
+      log.info("Found #{emails.size} emails")
+      log.info("subjects:\n\t#{emails.map(&:subject).join("\n\t")}") if emails.any?
 
-    if (message = emails.detect { |mail| mail.subject == TmsClientManager.subject })
-      doc = Nokogiri::HTML.parse(message.html_part.body.decoded) # Using Nokogiri to parse out the HTML to be something more readable
-      url = doc.css('p a').map { |link| link['href'] }[0] # forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
-      puts "Link found goes to: #{url}".green
+      if (message = emails.detect { |mail| mail.subject == TmsClientManager.subject })
+        doc = Nokogiri::HTML.parse(message.html_part.body.decoded) # Using Nokogiri to parse out the HTML to be something more readable
+        url = doc.css('p a').map { |link| link['href'] }[0] # forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
+        log.info("Link found goes to: #{url}".green)
 
-      if url.include? 'utf8=true'
-        puts "params found in #{url}".green
-      else
-        raise "params not found in #{url}".red
+        if url.include? 'utf8=true'
+          log.info("params found in #{url}".green)
+        else
+          raise "params not found in #{url}".red
+        end
       end
     end
-  end
-
-  begin
-    backoff_check(condition, 'looking for link params in email body')
   ensure
     Mail.find_and_delete(what: :all)
-    puts 'Inbox email deleted'.green if Mail.all == []
+    log.info('Inbox email deleted'.green) if Mail.all == []
   end
 end
 
