@@ -1,5 +1,3 @@
-require 'colored'
-
 After('@keyword') do |scenario|
   if !scenario.failed? && defined?(@keyword)
     log.info 'Deleting keyword created for this test'.blue

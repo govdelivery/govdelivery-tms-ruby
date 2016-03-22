@@ -1,11 +1,3 @@
-require 'capybara'
-require 'capybara/cucumber'
-require 'capybara/poltergeist'
-require 'awesome_print'
-require 'colored'
-require 'mail'
-require 'pry'
-
 module TmsClientManager
 
   def from_configatron(conf)

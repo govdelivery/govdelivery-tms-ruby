@@ -1,9 +1,3 @@
-require 'colored'
-require 'httpi'
-require 'json'
-require 'awesome_print'
-require 'twilio-ruby'
-
 Given(/^I have a user who can receive SMS messages$/) do
   @sms_receiver_uri      = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
   @sms_receiver_full_uri = @capi.callback_domain + @sms_receiver_uri

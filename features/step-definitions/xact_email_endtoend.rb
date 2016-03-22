@@ -1,15 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-require 'awesome_print'
-require 'capybara'
-require 'capybara/cucumber'
-require 'colored'
-require 'govdelivery-tms'
-require 'mail'
-require 'mechanize'
-require 'rubygems'
-
 World(Helpy)
 
 When(/^I POST a new EMAIL message to TMS$/) do

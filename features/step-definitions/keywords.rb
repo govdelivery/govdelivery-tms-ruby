@@ -1,11 +1,3 @@
-require 'colored'
-require 'json'
-require 'awesome_print'
-require 'twilio-ruby'
-require 'httpi'
-require 'base64'
-require 'multi_xml'
-
 #####################################################
 # Given
 #####################################################

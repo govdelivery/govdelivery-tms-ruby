@@ -1,6 +1,3 @@
-require 'uri'
-require 'net/http'
-require 'pp'
 
 #####################################################
 # Given

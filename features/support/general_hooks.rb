@@ -1,5 +1,3 @@
-require 'colored'
-
 # Destroy created endpoints on the Test Support App if we don't need to keep them
 After('@Test-Support-App') do |scenario|
   unless scenario.failed?

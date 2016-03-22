@@ -1,10 +1,3 @@
-require 'colored'
-require 'json'
-require 'awesome_print'
-require 'twilio-ruby'
-require 'base64'
-require 'multi_xml'
-
 #===SUBSCRIBE========================================>
 
 Given(/^I create a subscription keyword and command$/) do

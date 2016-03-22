@@ -1,5 +1,3 @@
-require 'uri'
-
 class CallbacksAPIClient
   attr_accessor :callback_uris
   attr_accessor :callback_domain
