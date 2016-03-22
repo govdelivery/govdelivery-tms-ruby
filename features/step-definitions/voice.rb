@@ -1,9 +1,5 @@
 require 'date'
-require 'httpi'
-require 'colored'
 require 'json'
-require 'awesome_print'
-require 'httpi'
 require 'base64'
 
 #####################################################

@@ -1,13 +1,6 @@
 #!/bin/env ruby
 # encoding: utf-8
 
-require 'colored'
-require 'json'
-require 'awesome_print'
-require 'httpi'
-require 'base64'
-require 'multi_xml'
-
 Given(/^A Gmail recipient/) do
   Mail.defaults do
     retriever_method :imap,
@@ -62,28 +55,8 @@ Then(/^those params should resolve within the body of the email I send$/) do
   end
 end
 
-Given(/^A non-admin account token$/) do
-  @account_token = TmsClientManager.non_admin_token
-end
-
-When(/^I request the accounts api/) do
-  @request         = HTTPI::Request.new
-  @request.url     = TmsClientManager.url
-  @request.headers = {'Content-Type' => 'application/json', 'X-AUTH-TOKEN' => @account_token}
-  @response = HTTPI.get(@request)
-  @last_response = @response
-end
-
 Given(/^I am using a non-admin TMS client$/) do
   @client = TmsClientManager.from_configatron(configatron.accounts.email_endtoend)
-end
-
-
-Then(/^I should get a( not)? forbidden response$/) do |check|
-  if check == " not"
-    raise 'should not be able to view accounts as a non-admin user.' if JSON.parse(@response.raw_body) == {'error' => 'forbidden'}
-  end
-
 end
 
 #================2239 tests===============>

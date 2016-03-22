@@ -2,7 +2,6 @@ require 'colored'
 require 'json'
 require 'awesome_print'
 require 'twilio-ruby'
-require 'httpi'
 require 'base64'
 require 'multi_xml'
 
@@ -58,14 +57,11 @@ end
 Then(/^a subscription should be created$/) do
   pending "Not implemented for development" if dev_not_live?
 
-  request = HTTPI::Request.new
-  request.headers['Content-Type'] = 'application/xml'
-  request.auth.basic(configatron.evolution.account.email_address, configatron.evolution.account.password)
+  conn = faraday(configatron.evolution.api_url + @base64)
+  conn.headers['Content-Type'] = 'application/xml'
+  conn.basic_auth(configatron.evolution.account.email_address, configatron.evolution.account.password)
 
-  request.url = configatron.evolution.api_url + @base64
-  @data = HTTPI.get(request)
-  log.info request.url
-  @response = MultiXml.parse(@data.raw_body)
+  @response = MultiXml.parse(conn.get.body)
   # some output that can be turned on/off if needed to verify things manually
   log.ap @response
   log.info @response['subscriber']['phone']
@@ -84,7 +80,7 @@ Then(/^a subscription should be created$/) do
   end
 
   # delete subscriber so we can reuse the phone number for the next test
-  HTTPI.delete(request)
+  conn.delete
 end
 
 #===STOP========================================>
@@ -175,14 +171,11 @@ Then(/^my subscription should be removed$/) do
 
   # check to see if subscription was removed
 
-  request = HTTPI::Request.new
-  request.headers['Content-Type'] = 'application/xml'
-  request.auth.basic(configatron.evolution.account.email_address, configatron.evolution.account.password)
+  conn = faraday(configatron.evolution.api_url + @base64)
+  conn.headers['Content-Type'] = 'application/xml'
+  conn.basic_auth(configatron.evolution.account.email_address, configatron.evolution.account.password)
 
-  request.url = configatron.evolution.api_url + @base64
-  @data = HTTPI.get(request)
-  log.info request.url
-  @response = MultiXml.parse(@data.raw_body)
+  @response = MultiXml.parse(conn.get.body)
 
   log.ap @response
   # some output that can be turned on/off if needed to verify things manually
