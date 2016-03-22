@@ -29,7 +29,7 @@ end
 
 When(/^I POST it/) do
   raise @message.errors.inspect unless @message.post
-  ap @message.errors if @message.errors
+  log.ap @message.errors if @message.errors
 end
 
 When(/^I add another phone number to the message$/) do
@@ -43,7 +43,7 @@ end
 Then(/^Twilio should have an active call$/) do
   @client = TwilioClientManager.default_client
   calls = []
-  GovDelivery::Proctor.backoff_check(20.minutes, "have a ringing call") do
+  GovDelivery::Proctor.backoff_check(10.minutes, "have a ringing call") do
     calls = @client.account.calls.list(start_time: Date.today,
                                        status:     'ringing',
                                        from:       '(651) 504-3057')
@@ -57,13 +57,12 @@ Then(/^Twilio should complete the call$/) do
 
 
   # call to twilio callsid json
-  @request                         = HTTPI::Request.new
-  @request.headers['Content-Type'] = 'application/json'
-  @request.auth.basic(configatron.test_support.twilio.account.sid , configatron.test_support.twilio.account.token)
-  @request.url = "https://api.twilio.com/#{@call}"
+  conn = faraday("https://api.twilio.com/#{@call}")
+  conn.headers['Content-Type'] = 'application/json'
+  conn.basic_auth(configatron.test_support.twilio.account.sid , configatron.test_support.twilio.account.token)
 
-  GovDelivery::Proctor.backoff_check(20.minutes, "call") do
-    JSON.parse(HTTPI.get(@request).raw_body)['status'] == 'completed'
+  GovDelivery::Proctor.backoff_check(10.minutes, "call") do
+    JSON.parse(conn.get.body)['status'] == 'completed'
   end
 end
 
@@ -90,7 +89,7 @@ Then(/^I should be able to verify details of the message$/) do
 
   %w{recipients failed self sent human machine busy no_answer could_not_connect}.each do |rel|
     if voice_links.include?(rel)
-      puts "#{rel} relation found".green
+      log.info "#{rel} relation found".green
     else
       raise "#{rel} relation was not found in #{body}".red
     end
@@ -102,7 +101,7 @@ Then(/^I should be able to verify details of the message$/) do
 
   %w{total new sending inconclusive blacklisted canceled sent failed}.each do |recipient_count|
     if recipient_counts.has_key?(recipient_count)
-      puts "#{recipient_count} found".green
+      log.info "#{recipient_count} found".green
     else
       raise 'Total was not found'.red
     end

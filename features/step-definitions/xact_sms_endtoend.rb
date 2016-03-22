@@ -34,7 +34,7 @@ Given(/^I POST a new SMS message to TMS$/) do
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
-  puts configatron.test_support.twilio.phone.number
+  log.info configatron.test_support.twilio.phone.number
   message.post!
   @message = message
 end
@@ -46,7 +46,7 @@ Given(/^I POST a new blank SMS message to TMS$/) do
   @expected_message = message_body_identifier
   message           = client.sms_messages.build
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
-  puts configatron.test_support.twilio.phone.number
+  log.info configatron.test_support.twilio.phone.number
   message.post!
   @message = message
 end
@@ -74,13 +74,6 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
     msg += "Payloads the test user received: #{JSON.pretty_generate(payloads)}"
     raise $ERROR_INFO, "#{$ERROR_INFO}\n#{msg}"
   end
-
-  # ap @list
-  # if @list["payloads"]["body"] == "#{BT[1]}"
-  #   puts 'body found'
-  # else
-  #   fail
-  # end
 end
 
 
@@ -94,33 +87,27 @@ Given(/^I POST a new SMS message to MBLOX$/) do
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.mblox.phone.number)
-  puts configatron.test_support.mblox.phone.number
+  log.info configatron.test_support.mblox.phone.number
   message.post!
   @message = message
 
 end
 
 Then(/^I should receive either a canceled message or a success$/) do
-  check_condition = case ENV['XACT_ENV']
-                      when 'mbloxqc', 'mbloxintegration', 'mbloxstage'
-                        proc do
-                          response_body = @message.get.response.body
-                          STDOUT.puts "got body: #{response_body}"
-                          response_body["recipient_counts"] &&
-                            (response_body["recipient_counts"]["canceled"] == 1||
-                              response_body["recipient_counts"]["failed"] == 1
-                            )
-                        end
-                      when 'mbloxproduction'
-                        proc do
-                          response_body = @message.get.response.body
-                          STDOUT.puts "got body: #{response_body}"
-                          response_body["recipient_counts"] && response_body["recipient_counts"]["sent"] == 1
-                        end
-                    end
-  backoff_check(check_condition, "checking for completed recipient status")
   GovDelivery::Proctor.backoff_check(5.minutes, 'checking for completed recipient status') do
-    
+    case ENV['XACT_ENV']
+      when 'mbloxqc', 'mbloxintegration', 'mbloxstage'
+        response_body = @message.get.response.body
+        log.info "got body: #{response_body}"
+        response_body["recipient_counts"] &&
+          (response_body["recipient_counts"]["canceled"] == 1||
+            response_body["recipient_counts"]["failed"] == 1
+          )
+      when 'mbloxproduction'
+        response_body = @message.get.response.body
+        log.info "got body: #{response_body}"
+        response_body["recipient_counts"] && response_body["recipient_counts"]["sent"] == 1
+    end
   end
 end
 

@@ -64,7 +64,6 @@ Then(/^the (?:response|message|sms|email) should have no errors$/) do
 end
 
 Then(/^the response body should contain valid _links$/) do
-  # ap email.response.body
   raise "self not found _links: #{email.response.body['_links']}".red unless @message.get.response.body['_links']['self'].include?('messages/email')
   raise "recipients not found _links:#{email.response.body['_links']}".red unless @message.get.response.body['_links']['recipients'].include?('recipients')
 end

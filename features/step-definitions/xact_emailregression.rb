@@ -38,7 +38,7 @@ end
 
 Then(/^those params should resolve within the body of the email I send$/) do
   begin
-    GovDelivery::Proctor.backoff_check(20.minutes, 'looking for link params in email body') do
+    GovDelivery::Proctor.backoff_check(10.minutes, 'looking for link params in email body') do
       log.info("Checking Gmail IMAP for subject \"#{TmsClientManager.subject}\"")
       emails = Mail.find(what: :last, count: 1000, order: :dsc)
       log.info("Found #{emails.size} emails")
@@ -78,11 +78,10 @@ Given(/^I am using a non-admin TMS client$/) do
   @client = TmsClientManager.from_configatron(configatron.accounts.email_endtoend)
 end
 
+
 Then(/^I should get a( not)? forbidden response$/) do |check|
   if check == " not"
     raise 'should not be able to view accounts as a non-admin user.' if JSON.parse(@response.raw_body) == {'error' => 'forbidden'}
-  else
-    raise 'should not be able to view accounts as a non-admin user.' unless JSON.parse(@response.raw_body) == {'error' => 'forbidden'}
   end
 
 end

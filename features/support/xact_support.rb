@@ -22,13 +22,11 @@ class XACTHelper
       {"subject":"#{subject}","from_name":"TMStester@evotest.govdelivery.com","body":"#{body}","recipients":[{"email":"#{recipient}"}]#{from_email_json}}
     REQUEST_BODY
     begin
-      # ap @request
       @data = HTTPI.post(@request)
-      # ap @data.code
       @data.body = JSON.parse(@data.raw_body)
-      ap @data.code
-      ap @data.headers
-      ap @data.body
+      log.ap @data.code
+      log.ap @data.headers
+      log.ap @data.body
     rescue StandardError => e
       raise(('Cannot POST email to XACT: ' + e.message).red)
     end
@@ -47,7 +45,7 @@ class IMAPCleaner
       imap.store(message_id, '+FLAGS', [:Deleted])
     end
   rescue StandardError => e
-    puts "Error interacting with #{server} IMAP, trying to delete messages (no retry, will clean up next time): #{e.message}"
+    log.error "Error interacting with #{server} IMAP, trying to delete messages (no retry, will clean up next time): #{e.message}"
   ensure
     imap.logout
     imap.disconnect

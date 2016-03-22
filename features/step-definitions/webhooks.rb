@@ -40,11 +40,11 @@ When(/^I send an email message to magic address for event (.*)$/) do |event|
 end
 
 When(/^I wait for the message recipients to be built$/) do
-  GovDelivery::Proctor.backoff_check(5.minutes, 'build recipients list') do
+  GovDelivery::Proctor.backoff_check(5.minutes, 'recipient list is being built') do
     begin
       @message.recipients.get
     rescue GovDelivery::TMS::Request::InProgress
-      log.info("Recipient list is not ready")
+      false
     end
   end
 end
