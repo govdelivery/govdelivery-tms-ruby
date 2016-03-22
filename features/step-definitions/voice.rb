@@ -40,25 +40,34 @@ end
 # Then
 #####################################################
 
-Then(/^Twilio should complete the call$/) do
+Then(/^Twilio should have an active call$/) do
   @client = TwilioClientManager.default_client
-  sleep(10)
-  call = @client.account.calls.list(start_time: Date.today,
-                                    status:     'ringing',
-                                    from:       '(651) 504-3057').first.uri
+  calls = []
+  condition = proc {
+    calls = @client.account.calls.list(start_time: Date.today,
+                                      status:     'ringing',
+                                      from:       '(651) 504-3057')
+
+    !calls.empty?
+  }
+  backoff_check(condition, "have a ringing call")
+  @call = calls.first.uri
+end
+
+Then(/^Twilio should complete the call$/) do
 
 
   # call to twilio callsid json
   @request                         = HTTPI::Request.new
   @request.headers['Content-Type'] = 'application/json'
   @request.auth.basic(configatron.test_support.twilio.account.sid , configatron.test_support.twilio.account.token)
-  @request.url = "https://api.twilio.com/#{call}"
+  @request.url = "https://api.twilio.com/#{@call}"
 
   condition = proc {
     JSON.parse(HTTPI.get(@request).raw_body)['status'] == 'completed'
   }
 
-  backoff_check(condition, "should call")
+  backoff_check(condition, "call")
 end
 
 Then(/^I should see a list of messages with appropriate attributes$/) do
