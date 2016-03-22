@@ -123,6 +123,6 @@ Then(/^I should receive either a canceled message or a success$/) do
 end
 
 Given(/^I create a new sms template with "(.*)" uuid$/) do |uuid|
-  @template = TmsClientManager.voice_client.sms_templates.build(body: message_body_identifier, uuid: uuid)
+  @template = TmsClientManager.non_admin_client.sms_templates.build(body: message_body_identifier, uuid: uuid)
   @template.post!
 end
