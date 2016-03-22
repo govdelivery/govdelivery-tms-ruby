@@ -103,3 +103,10 @@ group :test do
   gem 'mocha', require: false
   gem 'shoulda-matchers', '<3'
 end
+
+source 'http://prod-rubygems1-ep.tops.gdi/' do
+  group :test do
+    gem 'govdelivery-proctor'
+    gem 'cuke_sniffer', '0.0.8.ruleConfig5'
+  end
+end

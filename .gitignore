@@ -36,3 +36,4 @@ config/vagrant_user_config.yml
 tags
 .*.swp
 cuke_sniffer_result.html
+sniffer_result.xml

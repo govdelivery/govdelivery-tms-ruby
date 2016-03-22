@@ -22,7 +22,11 @@ Before() do |_scenario|
 end
 
 Before('@Dev-Safety') do |_scenario|
-  STDOUT.puts "\tSkipping on Dev with Non-Live Account".red if dev_not_live?
+  begin
+    STDOUT.puts "\tSkipping on Dev with Non-Live Account".red if dev_not_live?
+  rescue => e
+    STDERR.puts "Could not print message about skipping dev to stdout."
+  end
 end
 
 # Set our Twilio test account to have no callbacks when we are done
