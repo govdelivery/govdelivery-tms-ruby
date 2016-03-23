@@ -4,12 +4,12 @@ After('@webhooks') do |scenario|
     begin
       webhook.delete
     rescue => e
-      STDERR.puts "Could not unregister webhook: #{e.message}"
+      log.error "Could not unregister webhook: #{e.message}"
     end
   end
 
   unless scenario.failed?
-    STDOUT.puts 'Deleting Callback URIs'
+    log.info 'Deleting Callback URIs'
     @capi.destroy_all_callback_uris
   end
 end

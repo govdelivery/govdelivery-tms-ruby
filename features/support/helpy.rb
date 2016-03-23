@@ -53,16 +53,16 @@ module Helpy
     email_message.recipients.build(email: @conf_gmail.imap.user_name)
     email_message.post!
     response = email_message.response
-    ap response.status
-    ap response.headers
-    ap response.body
+    log.ap response.status
+    log.ap response.headers
+    log.ap response.body
   end
 
   def get_emails(expected_subject)
-    STDOUT.puts "Checking Gmail IMAP for subject \"#{expected_subject}\""
+    log.info "Checking Gmail IMAP for subject \"#{expected_subject}\""
     emails = Mail.find(what: :last, count: 1000, order: :dsc)
-    STDOUT.puts "Found #{emails.size} emails"
-    STDOUT.puts "subjects:\n\t#{emails.map(&:subject).join("\n\t")}" if emails.any?
+    log.info "Found #{emails.size} emails"
+    log.info "subjects:\n\t#{emails.map(&:subject).join("\n\t")}" if emails.any?
 
     if (mail = emails.detect { |mail| mail.subject == expected_subject })
       [mail.html_part.body.decoded,
@@ -73,8 +73,8 @@ module Helpy
     end
 
   rescue => e
-    STDOUT.puts "Error interacting with Gmail IMAP: #{e.message}"
-    STDOUT.puts e.backtrace
+    log.error "Error interacting with Gmail IMAP: #{e.message}"
+    log.error e.backtrace
   end
 
   def clean_inbox
@@ -84,33 +84,36 @@ module Helpy
       @conf_gmail.imap.enable_ssl,
       @conf_gmail.imap.user_name,
       @conf_gmail.imap.password)
-    puts 'Cleaned inbox'.green
+    log.info 'Cleaned inbox'.green
   end
 
   # Polls mail server for messages and validates message if found
   def validate_message
     next if dev_not_live?
-    condition = proc do
+
+    GovDelivery::Proctor.backoff_check(10.minutes, "find message #{@expected_subject}") do
       # get message
       body, reply_to, errors_to = get_emails(@expected_subject)
-      next if body.nil?
+      passed = false
+      unless body.nil?
 
-      # validate from address information
-      raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && reply_to != @expected_reply_to
-      raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if @expected_errors_to && errors_to != @expected_errors_to
+        # validate from address information
+        raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && reply_to != @expected_reply_to
+        raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if @expected_errors_to && errors_to != @expected_errors_to
 
-      # validate link is present
-      if @expected_link &&
-        (href = Nokogiri::HTML(body).css('a').
-          map { |link| link['href'] }.
-          detect { |href| test_link(href, @expected_link, expected_link_prefix) })
-        puts "Link #{href} redirects to #{@expected_link}".green
-        return true
+        # validate link is present
+        if @expected_link &&
+          (href = Nokogiri::HTML(body).css('a').
+            map { |link| link['href'] }.
+            detect { |href| test_link(href, @expected_link, expected_link_prefix) })
+          log.info("Link #{href} redirects to #{@expected_link}".green)
+          passed = true
+        else
+          raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
+        end
       end
-
-      raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
+      return passed
     end
-    backoff_check(condition, "find message #{@expected_subject}")
   ensure
     clean_inbox
   end

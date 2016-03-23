@@ -1,13 +1,5 @@
 #!/bin/env ruby
 # encoding: utf-8
-require 'colored'
-require 'json'
-require 'awesome_print'
-require 'twilio-ruby'
-require 'httpi'
-require 'faraday'
-require 'base64'
-require 'multi_xml'
 
 ######################
 ####### Given ########
@@ -16,6 +8,7 @@ require 'multi_xml'
 ######################
 ######## When ########
 ######################
+
 
 ## Successes
 
@@ -40,7 +33,7 @@ When(/^I post a new SMS message and retrieve the message details$/) do
 
   sms = @object.get
   if sms.response.body['_links']['self'].include?('messages/sms')
-    puts 'message details found'.green
+    log.info 'message details found'.green
   else
     raise 'message details not found'.red
   end
@@ -54,7 +47,7 @@ When(/^I post a new SMS message and retrieve the recipient details$/) do
   sms = @object.get
 
   if sms.response.body['_links'].include?('recipients')
-    puts 'recipient details found'.green
+    log.info 'recipient details found'.green
   else
     raise 'recipient details not found'.red
   end

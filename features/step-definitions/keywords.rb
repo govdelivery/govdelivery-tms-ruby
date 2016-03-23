@@ -1,12 +1,3 @@
-require 'colored'
-require 'json'
-require 'awesome_print'
-require 'twilio-ruby'
-require 'httpi'
-require 'faraday'
-require 'base64'
-require 'multi_xml'
-
 #####################################################
 # Given
 #####################################################
@@ -102,8 +93,8 @@ end
 
 
 Then(/^I should expect the uuid and the id to be the same for the (.*) template$/) do |type|
-  puts "#{type.capitalize} template id: #{@template.id}"
-  puts "#{type.capitalize} template uuid: #{@template.uuid}"
+  log.info "#{type.capitalize} template id: #{@template.id}"
+  log.info "#{type.capitalize} template uuid: #{@template.uuid}"
   raise 'Both id and uuid are not the same' unless @template.id.to_s.eql?(@template.uuid.to_s)
   raise @template.errors.to_s unless @template.delete
 end

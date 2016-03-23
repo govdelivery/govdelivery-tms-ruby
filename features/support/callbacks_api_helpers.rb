@@ -1,6 +1,3 @@
-require 'faraday'
-require 'uri'
-
 class CallbacksAPIClient
   attr_accessor :callback_uris
   attr_accessor :callback_domain
@@ -23,7 +20,7 @@ class CallbacksAPIClient
     raise 'Must provide callback type' if type.nil?
     raise "Callback Type #{type} not supported " unless callback_types.include?(type)
 
-    conn = get_a_faraday
+    conn = faraday(callback_root)
 
     payload = {}
     payload[:desc] = desc if desc
@@ -37,7 +34,7 @@ class CallbacksAPIClient
   end
 
   def destroy_callback_uri(uri)
-    conn = get_a_faraday
+    conn = faraday(callback_root)
 
     resp = conn.delete uri
 
@@ -58,7 +55,7 @@ class CallbacksAPIClient
   end
 
   def get(uri)
-    conn = get_a_faraday
+    conn = faraday(callback_root)
     resp = conn.get uri
 
     raise "Callback Endpoint Get Failed\n Status: #{resp.status}\n #{resp.body}" unless resp.status == 200
@@ -66,13 +63,4 @@ class CallbacksAPIClient
     JSON.parse(resp.body)
   end
 
-  private
-
-  def get_a_faraday
-    Faraday.new(url: callback_root) do |faraday|
-      faraday.request :url_encoded
-      # faraday.response    :logger
-      faraday.adapter Faraday.default_adapter
-    end
-  end
 end

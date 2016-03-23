@@ -152,6 +152,7 @@ GEM
       activesupport
       addressable (~> 2.3.0)
       rack
+    govdelivery-proctor (1.0.0)
     govdelivery-tms (0.8.14)
       activesupport
       faraday
@@ -466,6 +467,7 @@ DEPENDENCIES
   govdelivery-crypt
   govdelivery-dbtasks (~> 0.3.2)
   govdelivery-links
+  govdelivery-proctor!
   govdelivery-tms (~> 0.8.14)
   govdelivery-tms-internal (~> 0.0.2)
   guard-rspec
