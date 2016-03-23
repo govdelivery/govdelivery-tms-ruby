@@ -1,0 +1,18 @@
+output:
+  format: html
+
+rules:
+  :implementation_word:
+    :enabled: false
+  :commented_code:
+    :enabled: false
+  :implementation_word_tab:
+    :enabled: false
+  :implementation_word_button:
+    :enabled: false
+  :commas_in_description:
+    :enabled: false
+  :too_many_steps:
+    :max: 10
+  :numbers_in_description:
+    :enabled: false
