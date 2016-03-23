@@ -1,9 +1,25 @@
+require 'awesome_print'
+require 'base64'
 require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'configatron'
-require 'multi_xml'
+require 'colored'
+require 'date'
+require 'faraday'
+require 'govdelivery-proctor'
 require 'govdelivery-tms-internal'
+require 'json'
+require 'mail'
+require 'mechanize'
+require 'multi_xml'
+require 'net/imap'
+require 'net/http'
+require 'pp'
+require 'pry'
+require 'rubygems'
+require 'uri'
+require 'twilio-ruby'
 
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
@@ -38,6 +54,18 @@ def environment
   env
 end
 
+def log
+  GovDelivery::Proctor.log
+end
+
+def faraday(url)
+  Faraday.new(url: url) do |faraday|
+    faraday.request :url_encoded
+    faraday.response :logger, log
+    faraday.adapter Faraday.default_adapter
+  end
+end
+
 def site
   sites = [
     :dc3,
@@ -66,7 +94,7 @@ def xact_url
   end
 
   url = urls[(environment.to_s + lsite.to_s).to_sym]
-  puts "url: #{url}"
+  log.info "url: #{url}"
   raise "No XACT URL defined for environment #{environment}" if !url
   url
 end

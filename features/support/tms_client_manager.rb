@@ -1,23 +1,16 @@
-require 'capybara'
-require 'capybara/cucumber'
-require 'capybara/poltergeist'
-require 'awesome_print'
-require 'colored'
-require 'mail'
-require 'pry'
-
 module TmsClientManager
 
   def from_configatron(conf)
-    GovDelivery::TMS::Client.new(conf.xact.user.token, api_root: conf.xact.url)
+    client_factory(conf.xact.user.token, conf.xact.url)
   end
 
+  # TODO: Ostensibly an admin user, not sure
   def admin_client
-    @admin_client ||= GovDelivery::TMS::Client.new(configatron.tms.admin.token, api_root: configatron.tms.api_root)
+    @admin_client ||= client_factory(configatron.tms.admin.token, configatron.tms.api_root)
   end
 
   def non_admin_client
-    @non_admin_client ||= GovDelivery::TMS::Client.new(configatron.tms.non_admin.token, api_root: configatron.tms.api_root)
+    @non_admin_client ||= client_factory(configatron.tms.non_admin.token, configatron.tms.api_root)
   end
 
   def non_admin_token
@@ -53,4 +46,9 @@ module TmsClientManager
   end
 
   extend self
+
+  private
+  def client_factory(token, root)
+    GovDelivery::TMS::Client.new(token, api_root: root, logger: log)
+  end
 end

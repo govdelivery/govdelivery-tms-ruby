@@ -1,13 +1,3 @@
-require 'colored'
-require 'json'
-require 'awesome_print'
-require 'twilio-ruby'
-require 'httpi'
-require 'pry'
-require 'faraday'
-require 'base64'
-require 'multi_xml'
-
 #===SUBSCRIBE========================================>
 
 Given(/^I create a subscription keyword and command$/) do
@@ -32,11 +22,7 @@ Given(/^I send an SMS to create a subscription on TMS$/) do
   pending "Not implemented for development"  if dev_not_live?
 
   # create connection to XACT
-  conn = Faraday.new(url: @conf.xact.url) do |faraday|
-    faraday.request :url_encoded
-    faraday.response :logger
-    faraday.adapter Faraday.default_adapter
-  end
+  conn = faraday(@conf.xact.url)
 
   # create tms/xact twilio request
   payload = {}
@@ -44,7 +30,7 @@ Given(/^I send an SMS to create a subscription on TMS$/) do
   payload['From'] = sample_subscriber_number
   payload['AccountSid'] = @conf.sms.vendor.username
   payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
-  puts "Mocking text '#{payload['Body']}' to #{payload['To']}"
+  log.info "Mocking text '#{payload['Body']}' to #{payload['To']}"
   @payload = payload
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'
@@ -64,24 +50,21 @@ end
 Then(/^a subscription should be created$/) do
   pending "Not implemented for development" if dev_not_live?
 
-  request = HTTPI::Request.new
-  request.headers['Content-Type'] = 'application/xml'
-  request.auth.basic(configatron.evolution.account.email_address, configatron.evolution.account.password)
+  conn = faraday(configatron.evolution.api_url + @base64)
+  conn.headers['Content-Type'] = 'application/xml'
+  conn.basic_auth(configatron.evolution.account.email_address, configatron.evolution.account.password)
 
-  request.url = configatron.evolution.api_url + @base64
-  @data = HTTPI.get(request)
-  puts request.url
-  @response = MultiXml.parse(@data.raw_body)
+  @response = MultiXml.parse(conn.get.body)
   # some output that can be turned on/off if needed to verify things manually
-  ap @response
-  puts @response['subscriber']['phone']
+  log.ap @response
+  log.info @response['subscriber']['phone']
 
 
 
   # verifying if subscriber is present
   begin
     if @response['subscriber']['phone'] == sample_subscriber_number[2...12] # about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
-      puts 'Subscriber found, test passed'.green
+      log.info 'Subscriber found, test passed'.green
     else
       raise 'Subscriber not found'.red
     end
@@ -90,7 +73,7 @@ Then(/^a subscription should be created$/) do
   end
 
   # delete subscriber so we can reuse the phone number for the next test
-  HTTPI.delete(request)
+  conn.delete
 end
 
 #===STOP========================================>
@@ -100,11 +83,7 @@ Given(/^I am subscribed to receive TMS messages$/) do
 
   # subscribe first
   @conf = configatron.accounts.sms_keyword_commands_stop
-  conn = Faraday.new(url: @conf.xact.url) do |faraday|
-    faraday.request :url_encoded
-    faraday.response :logger
-    faraday.adapter Faraday.default_adapter
-  end
+  conn = faraday(@conf.xact.url)
 
   # create tms/xact twilio request
   payload = {}
@@ -112,7 +91,7 @@ Given(/^I am subscribed to receive TMS messages$/) do
   payload['From'] = twilio_xact_test_number_2
   payload['AccountSid'] = @conf.sms.vendor.username
   payload['Body'] = "#{@conf.sms.prefix} subscribe"
-  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
+  log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   resp = conn.post do |req|
     req.url '/twilio_requests.xml'
     req.body = payload
@@ -146,11 +125,7 @@ When(/^I send an SMS to opt out of receiving TMS messages$/) do
   pending "Not implemented for development"  if dev_not_live?
 
   # begin stop request
-  conn = Faraday.new(url: @conf.xact.url) do |faraday|
-    faraday.request :url_encoded
-    faraday.response :logger
-    faraday.adapter Faraday.default_adapter
-  end
+  conn = faraday(@conf.xact.url)
 
   # create tms/xact twilio request
   payload = {}
@@ -158,7 +133,7 @@ When(/^I send an SMS to opt out of receiving TMS messages$/) do
   payload['From'] = twilio_xact_test_number_2
   payload['AccountSid'] = @conf.sms.vendor.username
   payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
-  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
+  log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'
     req.body = payload
@@ -174,7 +149,7 @@ Then(/^I should receive a STOP response$/) do
 
   resp_xml = Hash.from_xml @resp.body
   if resp_xml['Response']['Sms'] != 'stop'
-    ap @resp
+    log.ap @resp
     raise 'Did not receive STOP response'
   end
 end
@@ -189,22 +164,19 @@ Then(/^my subscription should be removed$/) do
 
   # check to see if subscription was removed
 
-  request = HTTPI::Request.new
-  request.headers['Content-Type'] = 'application/xml'
-  request.auth.basic(configatron.evolution.account.email_address, configatron.evolution.account.password)
+  conn = faraday(configatron.evolution.api_url + @base64)
+  conn.headers['Content-Type'] = 'application/xml'
+  conn.basic_auth(configatron.evolution.account.email_address, configatron.evolution.account.password)
 
-  request.url = configatron.evolution.api_url + @base64
-  @data = HTTPI.get(request)
-  puts request.url
-  @response = MultiXml.parse(@data.raw_body)
+  @response = MultiXml.parse(conn.get.body)
 
-  ap @response
+  log.ap @response
   # some output that can be turned on/off if needed to verify things manually
-  # puts @response['subscriber']['phone']
+  log.info @response['subscriber']['phone']
 
   # verifying if subscriber is present
   if @response['errors'] && @response['errors']['error'] == 'Subscriber not found'
-    puts 'Subscriber not found'.green
+    log.info 'Subscriber not found'.green
   else
     raise 'Subscriber found - Expected subscriber to not exist'.red
   end
@@ -220,17 +192,13 @@ Given(/^A keyword with static content is configured for an TMS account$/) do
 end
 
 Given(/^I send that keyword as an SMS to TMS$/) do
-  conn = Faraday.new(url: "#{@conf.xact.url}") do |faraday|
-    faraday.request :url_encoded
-    faraday.response :logger
-    faraday.adapter Faraday.default_adapter
-  end
+  conn = faraday(@conf.xact.url)
   payload = {}
   payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15555555555'
   payload['AccountSid'] = @conf.sms.vendor.username
   payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
-  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
+  log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'
     req.body = payload
@@ -245,20 +213,6 @@ Then(/^I should receive static content$/) do
 end
 
 #===Common-2-Way-Real-Time-Steps================>
-
-def agency_test(check)
-  expected_condition = 200
-  {condition: proc do
-    actions = check.call
-    actions.any? do |action|
-      action.status == expected_condition &&
-        !action.response_body.blank? &&
-        !action.response_body.include?('We are sorry, but the message you sent is not valid.')
-    end if actions
-  end,
-   msg: "Expected to receive HTTP Status #{expected_condition},to receive non-blank response_text, and to not receive an error message"
-  }
-end
 
 Given(/^I have an XACT account with a forward worker$/) do
   @conf = configatron.accounts.sms_keyword_commands_forward_worker
@@ -289,17 +243,13 @@ When(/^I text '(.+)' to the forward worker account$/) do |message|
   # Don't actually care about the keyword that is passed to this test
   message = message.split[1..-1].join(' ')
 
-  conn = Faraday.new(url: "#{@conf.xact.url}") do |faraday|
-    faraday.request :url_encoded
-    faraday.response :logger
-    faraday.adapter Faraday.default_adapter
-  end
+  conn = faraday(@conf.xact.url)
   payload = {}
   payload['To'] = @conf.sms.phone.number
   payload['From'] = '+15005550006'
   payload['AccountSid'] = @conf.sms.vendor.username
   payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name} #{message}"
-  puts "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
+  log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'
     req.body = payload
@@ -309,19 +259,22 @@ end
 Then(/^I should receive any content as a response$/) do
   # TODO Can we find the actual message that XACT sent back?
 
-  check = proc do
-    # The API does not provide the command_actions relation on a command if there are no command actions
-    # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
-    # by the time the test wants to check for one.
-    @command.get
-    @command.try(:command_actions).try(:get)
-    @command.try(:command_actions).try(:collection)
-  end
-
-  test = agency_test(check)
-
   begin
-    backoff_check(test[:condition], "for the forward worker to send an acceptable response")
+    GovDelivery::Proctor.backoff_check(10.minutes, "for the forward worker to send an acceptable response") do
+      # The API does not provide the command_actions relation on a command if there are no command actions
+      # Thus, we need to be ready to catch a NoMethodError in case a command action has not been created
+      # by the time the test wants to check for one.
+      @command.get
+      @command.try(:command_actions).try(:get)
+      actions = @command.try(:command_actions).try(:collection)
+
+      actions.any? do |action|
+        action.status == 200 &&
+          !action.response_body.blank? &&
+          !action.response_body.include?('We are sorry, but the message you sent is not valid.')
+      end if actions
+    end
+
   rescue
     msg = test[:msg]
     msg += "\nCommand URL: #{@command.href}"
