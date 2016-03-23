@@ -14,11 +14,9 @@ Given(/^I create a subscription keyword and command$/) do
     params: {dcm_account_code: @conf.xact.account.dcm_account_id,
              dcm_topic_codes: @conf.xact.account.dcm_topic_codes})
   raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
-
-  sleep(2)
 end
 
-Given(/^I send an SMS to create a subscription on TMS$/) do
+When(/^I send an SMS to create a subscription on TMS$/) do
   pending "Not implemented for development"  if dev_not_live?
 
   # create connection to XACT
@@ -43,8 +41,6 @@ Given(/^I send an SMS to create a subscription on TMS$/) do
 
   # encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(sample_subscriber_number)
-  sleep(10)
-
 end
 
 Then(/^a subscription should be created$/) do
@@ -54,26 +50,19 @@ Then(/^a subscription should be created$/) do
   conn.headers['Content-Type'] = 'application/xml'
   conn.basic_auth(configatron.evolution.account.email_address, configatron.evolution.account.password)
 
-  @response = MultiXml.parse(conn.get.body)
-  # some output that can be turned on/off if needed to verify things manually
-  log.ap @response
-  log.info @response['subscriber']['phone']
-
-
-
-  # verifying if subscriber is present
   begin
-    if @response['subscriber']['phone'] == sample_subscriber_number[2...12] # about this...DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
-      log.info 'Subscriber found, test passed'.green
-    else
-      raise 'Subscriber not found'.red
-    end
-  rescue NoMethodError
-    raise JSON.pretty_generate(@response)
-  end
+    GovDelivery::Proctor.backoff_check(3.minutes, 'should create subscriber') do
+      @response = MultiXml.parse(conn.get.body)
+      # some output that can be turned on/off if needed to verify things manually
+      log.ap @response
 
-  # delete subscriber so we can reuse the phone number for the next test
-  conn.delete
+      # DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
+      @response && @response['subscriber'] && @response['subscriber']['phone'] == sample_subscriber_number[2...12]
+    end
+  ensure
+    # delete subscriber so we can reuse the phone number for the next test
+    conn.delete
+  end
 end
 
 #===STOP========================================>
@@ -101,8 +90,7 @@ Given(/^I am subscribed to receive TMS messages$/) do
     raise "Error mocking text, received HTTP 500: #{resp.body}"
   end
 
-  # sleep to give subscription time to create in DCM
-  sleep(10)
+  sleep 10
 end
 
 Given(/^I create a stop keyword and command$/) do
@@ -117,8 +105,6 @@ Given(/^I create a stop keyword and command$/) do
     name: 'unsubscribe',
     params: {dcm_account_codes: @conf.xact.account.dcm_account_id})
   raise "Could not create #{@command.name} command: #{@command.errors}" unless @command.post
-
-  sleep(2)
 end
 
 When(/^I send an SMS to opt out of receiving TMS messages$/) do
@@ -160,25 +146,15 @@ Then(/^my subscription should be removed$/) do
   # encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
   @base64 = Base64.encode64(twilio_xact_test_number_2)
 
-  sleep(60)
-
-  # check to see if subscription was removed
-
   conn = faraday(configatron.evolution.api_url + @base64)
   conn.headers['Content-Type'] = 'application/xml'
   conn.basic_auth(configatron.evolution.account.email_address, configatron.evolution.account.password)
 
-  @response = MultiXml.parse(conn.get.body)
+  GovDelivery::Proctor.backoff_check(3.minutes, 'should remove subscriber') do
+    @response = MultiXml.parse(conn.get.body)
 
-  log.ap @response
-  # some output that can be turned on/off if needed to verify things manually
-  log.info @response['subscriber']['phone']
-
-  # verifying if subscriber is present
-  if @response['errors'] && @response['errors']['error'] == 'Subscriber not found'
-    log.info 'Subscriber not found'.green
-  else
-    raise 'Subscriber found - Expected subscriber to not exist'.red
+    log.ap @response
+    @response['errors'] && @response['errors']['error'] == 'Subscriber not found'
   end
 end
 

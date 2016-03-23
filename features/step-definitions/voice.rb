@@ -60,8 +60,6 @@ end
 
 Then(/^I should see a list of messages with appropriate attributes$/) do
   messages = TmsClientManager.non_admin_client.voice_messages.get.collection
-  sleep(2)
-
   messages.each do |message|
     %w{play_url status created_at}.each do |attr|
       raise "#{attr} was not found in message #{message.attributes}".red unless message.attributes[attr.to_sym]
@@ -70,33 +68,24 @@ Then(/^I should see a list of messages with appropriate attributes$/) do
 end
 
 Then(/^I should be able to verify details of the message$/) do
-  sleep(10)
-
-  @message.get
-  body = @message.response.body
-
-  unless (voice_links = body['_links'])
-    raise "No _links relation found in #{body}".red
+  body = nil
+  GovDelivery::Proctor.backoff_check(30.seconds, 'should have _links relation found in the body') do
+    @message.get
+    body = @message.response.body
+    log.info "body: #{body}"
+    !body['_links'].nil?
   end
+
+  voice_links = body['_links']
 
   %w{recipients failed self sent human machine busy no_answer could_not_connect}.each do |rel|
-    if voice_links.include?(rel)
-      log.info "#{rel} relation found".green
-    else
-      raise "#{rel} relation was not found in #{body}".red
-    end
+    raise "#{rel} relation was not found in #{body}".red unless voice_links.include?(rel)
   end
 
-  unless (recipient_counts = body['recipient_counts'])
-    raise "No recipient_counts found in #{body}".red
-  end
+  raise "No recipient_counts found in #{body}".red unless (recipient_counts = body['recipient_counts'])
 
   %w{total new sending inconclusive blacklisted canceled sent failed}.each do |recipient_count|
-    if recipient_counts.has_key?(recipient_count)
-      log.info "#{recipient_count} found".green
-    else
-      raise 'Total was not found'.red
-    end
+    raise 'Total was not found'.red unless recipient_counts.has_key?(recipient_count)
   end
 end
 
