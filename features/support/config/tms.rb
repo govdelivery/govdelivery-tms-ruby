@@ -34,17 +34,20 @@ case environment
     tms.admin.token = '4TvzJZtjAQ8fhaFP6HyFCseq8t7GptSu'
     tms.admin.id = 10100
     tms.admin.email = 'cukeautoqc@govdelivery.com'
-    tms.admin.account_id = 10120
+    tms.account.id = 10120
+    tms.account.errors_to = 'cukeautoqc-errors@govdelivery.com'
   when :integration
     tms.admin.token = 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL'
     tms.admin.id = 10060
     tms.admin.email = 'cukeautoint@govdelivery.com'
-    tms.admin.account_id = 10060
+    tms.account.id = 10060
+    tms.account.errors_to = 'cukeautoint-errors@govdelivery.com'
   when :stage
     tms.admin.token = 'Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD' #id: 10440, account_id: 10360, email: "cukestage@govdelivery.com", e
     tms.admin.id = 10440
     tms.admin.email = 'cukestage@govdelivery.com'
-    tms.admin.account_id = 10360
+    tms.account.id = 10360
+    tms.account.errors_to = 'cukestage-errors@govdelivery.com'
 end
 
 # NON Admin (not super user)
