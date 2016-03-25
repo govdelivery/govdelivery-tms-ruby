@@ -67,6 +67,17 @@ describe SmsRecipient do
     end
   end
 
+  describe 'when sent' do
+    before do
+      subject.sent!('foo_ack')
+    end
+
+    it 'should no-op if sent! is called again' do
+      expect{subject.sent!('foo_ack')}.to_not raise_error
+      expect(subject.ack).to eq 'foo_ack'
+    end
+  end
+
   describe 'timeout_expired' do
     let(:vendor) {create(:sms_vendor)}
     let(:account) {create(:account, sms_vendor: vendor, name: 'account')}
