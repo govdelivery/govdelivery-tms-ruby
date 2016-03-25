@@ -11,7 +11,7 @@ gem 'govdelivery-links'
 gem 'jakety_jak', '~>1.1.0', require: nil
 gem 'brick'
 gem 'aasm'
-gem 'activerecord-oracle_enhanced-adapter', "~>1.6.0"
+gem 'activerecord-oracle_enhanced-adapter', "~>1.6.7"
 gem 'addressable'
 gem 'celluloid'
 gem 'clockwork'
@@ -27,7 +27,7 @@ gem 'phony_rails'
 gem 'protected_attributes'
 gem 'rabl'
 gem 'rack-ssl'
-gem 'rails', '~>4.2.0'
+gem 'rails', '~>4.2.6'
 gem 'rails-api'
 gem 'redis'
 gem 'redis-activesupport'
