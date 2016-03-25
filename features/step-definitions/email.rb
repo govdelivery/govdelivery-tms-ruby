@@ -95,8 +95,12 @@ Then(/^the response body should contain valid _links$/) do
   raise "recipients not found _links:#{email.response.body['_links']}".red unless @message.get.response.body['_links']['recipients'].include?('recipients')
 end
 
-Then(/^the response should have a failed recipient$/) do
-  pending # Validate that the response has a failed recipient in it.
+Then(/^the response should have only one recipient$/) do
+  backoff_check(5.minutes, "should have only one recipient") do
+   no_of_recipients = @message.get.recipients.get.collection
+    log.info ("Collection of recipients: #{no_of_recipients}")
+    no_of_recipients.length == 1
+  end
 end
 
 Then(/^the reply to address should be the from email address/) do
