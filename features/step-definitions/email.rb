@@ -96,10 +96,14 @@ Then(/^the response body should contain valid _links$/) do
 end
 
 Then(/^the response should have only one recipient$/) do
-  backoff_check(5.minutes, "should have only one recipient") do
-   no_of_recipients = @message.get.recipients.get.collection
+  GovDelivery::Proctor.backoff_check(5.minutes, "should have only one recipient") do
+  begin
+    no_of_recipients = @message.get.recipients.get.collection
     log.info ("Collection of recipients: #{no_of_recipients}")
     no_of_recipients.length == 1
+    rescue GovDelivery::TMS::Request::InProgress
+    false
+  end
   end
 end
 
