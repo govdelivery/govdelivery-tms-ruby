@@ -6,12 +6,12 @@ Feature: Validate interaction with recipeints
     When I get the list of from addresses
     Then I should be able to list and read from addresses
 
-  Scenario: New EMAIL message with one VALID and one INVALID RECIPIENT produces a Created response and a failed recipient
+  Scenario: New EMAIL message with one VALID and one INVALID RECIPIENT produces a Created response with only one recipient
     Given I create an email
     When I add recipient 'govdelivery.com'
     And I send the message
     Then the response should have no errors
-    And the response should have a failed recipient
+    And the response should have only one recipient
     And the response code should be '201'
 
   Scenario: New EMAIL message with an empty FROM_EMAIL produces an Unprocessable Entity error

@@ -37,3 +37,4 @@ tags
 .*.swp
 cuke_sniffer_result.html
 sniffer_result.xml
+.DS_Store
