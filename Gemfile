@@ -77,7 +77,7 @@ group :development, :test do
   gem 'poltergeist'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.4.2'
   gem 'yaml_db'
 end
 
@@ -87,7 +87,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rubocop'
+  gem 'rubocop', '~> 0.38.0'
   gem 'rubocop-checkstyle_formatter', require: false
   gem 'pry'
   gem 'pry-rails'

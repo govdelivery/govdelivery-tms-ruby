@@ -11,16 +11,16 @@ module Service
     end
     describe Fetcher do
       it 'only allows real methods' do
-        expect {Fetcher.new(:invalid, 'creds', nil, 1000)}.to raise_error
+        expect {Fetcher.new(:invalid, 'creds', nil, 1000)}.to raise_error(RuntimeError)
       end
       it "doesn't allow a batch_size of zero" do
-        expect {Fetcher.new(:delivery, 'creds', nil, 0)}.to raise_error
+        expect {Fetcher.new(:delivery, 'creds', nil, 0)}.to raise_error(RuntimeError)
       end
       describe 'with a service that raises' do
         it 'allows service exceptions to bubble' do
           service = mock
           service.expects(:delivery_activity_since).raises(Exception.new('foo'))
-          expect {Fetcher.new(:delivery, 'creds', service, 1000).fetch('a sequence')}.to raise_error
+          expect {Fetcher.new(:delivery, 'creds', service, 1000).fetch('a sequence')}.to raise_error('foo')
         end
       end
       [:open, :delivery, :click].each do |type|

@@ -135,10 +135,10 @@ describe EmailTemplate do
       expect{subject.save!}.not_to raise_error
 
       subject.open_tracking_enabled = nil
-      expect{subject.save!}.to raise_error
+      expect{subject.save!}.to raise_error(ActiveRecord::RecordInvalid)
       subject.open_tracking_enabled = true
       subject.click_tracking_enabled = nil
-      expect{subject.save!}.to raise_error
+      expect{subject.save!}.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 end
