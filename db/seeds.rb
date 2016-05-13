@@ -22,14 +22,14 @@ twilio_sms_sender.update_attributes(
   worker:   'TwilioMessageWorker',
   username: twilio_username,
   password: twilio_password,
-  from:     twilio_number)
+  from_phone:     twilio_number)
 
 twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test SMS Sender')
 twilio_sms_test_sender.update_attributes(
   worker:   'TwilioMessageWorker',
   username: twilio_test_username,
   password: twilio_test_password,
-  from:     '+15005550006')
+  from_phone:     '+15005550006')
 
 twilio_voice_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Voice Sender')
 twilio_voice_sender.update_attributes(

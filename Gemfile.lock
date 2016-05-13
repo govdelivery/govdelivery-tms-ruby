@@ -1,3 +1,14 @@
+GIT
+  remote: http://dev-scm.office.gdi/development/govdelivery-dbtasks.git
+  revision: b84c05ebfbf0f87e88be560f3fc869aadc8fb913
+  ref: b84c05ebfbf0f87e88be560f3fc869aadc8fb913
+  specs:
+    govdelivery-dbtasks (0.4.4)
+      activerecord (~> 4.0)
+      activerecord-oracle_enhanced-adapter
+      activesupport (~> 4.0)
+      ruby-plsql
+
 GEM
   remote: https://rubygems.org/
   remote: https://ed5779be:de10e893@gems.contribsys.com/
@@ -143,11 +154,6 @@ GEM
       activesupport (>= 4.1.0)
     govdelivery-crypt (0.2.1)
       activesupport
-    govdelivery-dbtasks (0.3.10)
-      activerecord (> 3.2.0, < 5)
-      activerecord-oracle_enhanced-adapter
-      activesupport (> 3.2.20, < 5)
-      ruby-plsql
     govdelivery-links (0.1.7)
       activesupport
       addressable (~> 2.3.0)
@@ -471,7 +477,7 @@ DEPENDENCIES
   faraday
   faraday_middleware
   govdelivery-crypt
-  govdelivery-dbtasks (~> 0.3.2)
+  govdelivery-dbtasks!
   govdelivery-links
   govdelivery-proctor!
   govdelivery-tms (~> 0.8.14)
