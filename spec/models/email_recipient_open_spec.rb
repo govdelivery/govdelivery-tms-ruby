@@ -46,7 +46,7 @@ describe EmailRecipientOpen do
       assert result.send(c)
     end
     not_cols.each do |c|
-      expect {result.send(c)}.to raise_error
+      expect {result.send(c)}.to raise_error(ActiveModel::MissingAttributeError)
     end
   end
 end

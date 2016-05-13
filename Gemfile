@@ -6,7 +6,7 @@ gem 'sidekiq-pro'
 gem 'config_spartan', '~>1.0.0'
 gem 'dcm_client'
 gem 'govdelivery-crypt', require: 'govdelivery/crypt'
-gem 'govdelivery-dbtasks', '~>0.3.2'
+gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'b84c05ebfbf0f87e88be560f3fc869aadc8fb913'
 gem 'govdelivery-links'
 gem 'jakety_jak', '~>1.1.0', require: nil
 gem 'brick'
@@ -77,7 +77,7 @@ group :development, :test do
   gem 'poltergeist'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.4.2'
   gem 'yaml_db'
 end
 
@@ -87,7 +87,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rubocop'
+  gem 'rubocop', '~> 0.38.0'
   gem 'rubocop-checkstyle_formatter', require: false
   gem 'pry'
   gem 'pry-rails'
