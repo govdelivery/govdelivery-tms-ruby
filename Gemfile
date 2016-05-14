@@ -6,7 +6,7 @@ gem 'sidekiq-pro'
 gem 'config_spartan', '~>1.0.0'
 gem 'dcm_client'
 gem 'govdelivery-crypt', require: 'govdelivery/crypt'
-gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'b84c05ebfbf0f87e88be560f3fc869aadc8fb913'
+
 gem 'govdelivery-links'
 gem 'jakety_jak', '~>1.1.0', require: nil
 gem 'brick'
@@ -47,6 +47,8 @@ gem 'strip_attributes'
 gem 'twilio-ruby'
 gem 'valid_email'
 gem 'validate_url'
+
+gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'b84c05ebfbf0f87e88be560f3fc869aadc8fb913'
 
 gem 'attr_encrypted'
 
