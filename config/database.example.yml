@@ -1,6 +1,7 @@
 vagrant_defaults: &vagrant_defaults
   adapter: oracle_enhanced
   database: dev-oracledev1.local.gdi:1521/xe
+  url: jdbc:oracle:thin:@dev-oracledev1.local.gdi:1521:xe
   password: abcd1234
   checkout_timeout: 15
   pool: 10

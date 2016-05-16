@@ -9,6 +9,16 @@ Prerequisites
 2. instantclient-sqlplus ( download from oracle )
 3. `export TNS_ADMIN=/Library/Oracle/instantclient` (or wherever)
 4. oracledev project vagrant vm
+5. bundle install
+6. lockjar lock #installs Maven deps
+
+Building the database
+=============
+
+1. cp config/database.yml.example config/database.yml
+2. rake db:setup
+3. rake db:seed
+4. rake db:test:prepare
 
 Creating a tag
 ==============
