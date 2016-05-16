@@ -1,6 +1,7 @@
 class EmailMessage < ActiveRecord::Base
   include Message
   include Personalized
+  include MessageTypeSetter
   has_many :email_recipient_clicks
   has_many :email_recipient_opens
   belongs_to :email_template
@@ -13,7 +14,8 @@ class EmailMessage < ActiveRecord::Base
                   :from_name,
                   :open_tracking_enabled,
                   :reply_to,
-                  :subject
+                  :subject,
+                  :message_type
 
   before_validation :remove_macro_nils, on: :create
   before_validation :apply_from_email, on: :create

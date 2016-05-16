@@ -455,4 +455,20 @@ describe EmailMessage do
       expect(new_email.reload.from_email).to eq( user.account.default_from_address.from_email )
     end
   end
+
+  context 'MessageType' do
+    it 'should save with message type as string' do
+      email_message = user.email_messages.create(email_params)
+      email_message.update_attributes(message_type: 'type_a')
+      expect(email_message.message_type.name_key).to eq( 'type_a' )
+      expect(email_message.message_type.name).to eq( 'type_a' )
+    end
+
+    it 'should save with message type as hash' do
+      email_message = user.email_messages.create(email_params)
+      email_message.update_attributes(message_type: {'type_b' => 'Type B'})
+      expect(email_message.message_type.name_key).to eq( 'type_b' )
+      expect(email_message.message_type.name).to eq( 'Type B' )
+    end
+  end
 end
