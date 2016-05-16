@@ -94,6 +94,7 @@ group :development, :test do
   gem 'pry'
   gem 'pry-rails'
   gem 'pry-remote'
+  gem 'pry-nav'
 end
 
 group :test do
