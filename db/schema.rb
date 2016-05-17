@@ -220,8 +220,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
 
   create_table "message_types", force: :cascade do |t|
     t.integer "account_id", limit: nil, null: false
-    t.string  "name",                   null: false
-    t.string  "name_key",               null: false
+    t.string  "label",                  null: false
+    t.string  "code",                   null: false
   end
 
   create_table "sms_messages", force: :cascade do |t|
