@@ -29,6 +29,7 @@ class Account < ActiveRecord::Base
   has_many :incoming_voice_messages, through: :from_numbers
   has_many :call_scripts, through: :voice_messages
   has_many :webhooks, dependent: :delete_all
+  has_many :message_types, dependent: :delete_all
 
   has_many :email_templates, dependent: :destroy
   has_many :sms_templates, dependent: :destroy
