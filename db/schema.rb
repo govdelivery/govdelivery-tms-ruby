@@ -146,6 +146,7 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uuid"
+    t.integer  "message_type_id",          limit: nil
   end
 
   add_index "email_templates", ["account_id", "uuid"], name: "i_ema_tem_acc_id_uui", unique: true, tablespace: "tsms_indx01"

@@ -1,7 +1,7 @@
 class MessageTypesController < ApplicationController
   before_action :find_user
   before_action :find_message_type, except: [:index, :create]
-  wrap_parameters :message_type, include: [:name, :name_key], format: [:json, :url_encoded_form]
+  wrap_parameters :message_type, include: [:label, :code], format: [:json, :url_encoded_form]
 
   def index
     @message_types = @account.message_types.page(params[:page])

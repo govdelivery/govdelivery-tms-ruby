@@ -6,6 +6,9 @@
 
 class MessageType < ActiveRecord::Base
   belongs_to :account
+  has_many :email_templates
+
+  attr_accessible :label, :code
 
   validates :code,
             presence:   true,
@@ -19,7 +22,7 @@ class MessageType < ActiveRecord::Base
   private
 
   def code_not_changed
-    if self.code_changed? && self.persisted?
+    if code_changed? && persisted?
       errors.add(:code, "changing is not allowed")
     end
   end

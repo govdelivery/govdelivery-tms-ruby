@@ -124,4 +124,21 @@ describe EmailTemplatesController do
       expect(template.from_address.id).not_to eq(other_from_address.id)
     end
   end
+
+  context 'with a message type' do
+    render_views
+    it 'accepts message_type as a string' do
+      mt_params = valid_params.merge(message_type_code: 'salutations')
+      post :create, email_template: mt_params
+      expect(response.response_code).to eq(201)
+      expect(response.body).to include('salutations')
+    end
+
+    it 'does not accept message_type_label' do
+      mt_params = valid_params.merge(message_type_label: 'nope')
+      post :create, email_template: mt_params
+      expect(response.response_code).to eq(201)
+      expect(response.body).to_not include('nope')
+    end
+  end
 end

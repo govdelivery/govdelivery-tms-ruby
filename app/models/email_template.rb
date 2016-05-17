@@ -3,6 +3,7 @@ class EmailTemplate < ActiveRecord::Base
   belongs_to :account
   belongs_to :user
   belongs_to :from_address
+  belongs_to :message_type
   has_many :email_messages
   serialize :macros
 
@@ -29,6 +30,14 @@ class EmailTemplate < ActiveRecord::Base
 
   def to_param
     uuid
+  end
+
+  attr_reader :message_type_code
+  attr_accessible :message_type_code
+
+  def message_type_code= code
+    self.message_type = MessageType.where(account_id: user.account.id, code: code).first_or_create
+    @message_type_code = message_type.code
   end
 
   protected

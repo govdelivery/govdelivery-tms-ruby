@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe MessageTypesController, type: :controller do
   let(:account) {create(:account)}
   let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
-  let(:valid_params) {{name: 'The Salutations message type', name_key: 'salutations'}}
+  let(:valid_params) {{label: 'The Salutations message type', code: 'salutations'}}
   let(:message_types) do
     build_list(:message_type, 3, account: account)
   end
@@ -41,18 +41,18 @@ RSpec.describe MessageTypesController, type: :controller do
     expect(assigns(:message_type)).to eq(message_type)
   end
 
-  it 'can update :name' do
+  it 'can update :label' do
     message_type = account.message_types.create!(valid_params)
-    patch :update, id: message_type.to_param, message_type: valid_params.merge(name: 'something else')
+    patch :update, id: message_type.to_param, message_type: valid_params.merge(label: 'something else')
     expect(response.status).to eq(200)
     expect(hook = assigns(:message_type)).to eq(message_type)
-    expect(hook.name_key).to eq('salutations')
-    expect(hook.name).to eq('something else')
+    expect(hook.code).to eq('salutations')
+    expect(hook.label).to eq('something else')
   end
 
-  it 'can not update :name_key' do
+  it 'can not update :code' do
     message_type = account.message_types.create!(valid_params)
-    patch :update, id: message_type.to_param, message_type: valid_params.merge(name_key: 'oops_nope')
+    patch :update, id: message_type.to_param, message_type: valid_params.merge(code: 'oops_nope')
     expect(response.status).to eq(422)
   end
 
