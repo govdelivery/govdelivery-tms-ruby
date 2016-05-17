@@ -5,6 +5,7 @@ class EmailMessage < ActiveRecord::Base
   has_many :email_recipient_clicks
   has_many :email_recipient_opens
   belongs_to :email_template
+  belongs_to :message_type
 
   attr_accessible :body,
                   :click_tracking_enabled,
@@ -14,8 +15,7 @@ class EmailMessage < ActiveRecord::Base
                   :from_name,
                   :open_tracking_enabled,
                   :reply_to,
-                  :subject,
-                  :message_type
+                  :subject
 
   before_validation :remove_macro_nils, on: :create
   before_validation :apply_from_email, on: :create

@@ -28,6 +28,19 @@ describe EmailMessagesController do
   end
   let(:templated_messages) {create_list(:email_message, 3, email_template: email_template, user: user)}
   let(:recipients) {[{email: "arbys@everythingsucks.com"}]}
+  let(:valid_params) do
+    {
+        body:                   "#{'A' * 40} [[happy]]",
+        subject:                'n/a',
+        from_email:             'duane@everythingsucks.com',
+        errors_to:              'jeff@everythingsucks.com',
+        reply_to:               'bob@everythingsucks.com',
+        click_tracking_enabled: true,
+        open_tracking_enabled:  false,
+        macros:                 {'happy' => 'doggies'},
+        recipients_attributes:  [{email: '800BUNNIES'}]
+    }
+  end
 
   let(:model) {EmailMessage}
 
@@ -103,6 +116,15 @@ describe EmailMessagesController do
       user.save!
       post :create, message: {from_email: 'no@exist.me', recipients: recipients, body: nil, _links: {email_template: email_template.uuid}}
       expect(response.response_code).to eq(201)
+    end
+  end
+
+  context 'with a message type' do
+    it 'accepts message type as a string' do
+      post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template.uuid}, message_type_code: 'salutations'}
+      expect(response.response_code).to eq(201)
+      expect(assigns(:message).message_type.code).to eq('salutations')
+      expect(assigns(:message).message_type.label).to eq('Salutations')
     end
   end
 end
