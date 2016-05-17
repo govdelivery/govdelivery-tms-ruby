@@ -12,7 +12,7 @@ class SmsTemplate < ActiveRecord::Base
   validates :account, presence: true
   validates :uuid,
             length: {maximum: 128},
-            format: { with: /\A[a-zA-Z0-9_-]*\z/, message: "only letters, numbers, -, and _ are allowed" },
+            format: {with: /\A[a-zA-Z0-9_-]*\z/, message: "only letters, numbers, -, and _ are allowed"},
             uniqueness: {scope: :account, case_sensitive: false}
 
   validate :user_belongs_to_account
@@ -31,9 +31,7 @@ class SmsTemplate < ActiveRecord::Base
   end
 
   def set_uuid
-    if uuid.nil? || uuid.empty?
-      self.uuid = id
-    end
+    self.uuid = id if uuid.blank?
     save!
   end
 

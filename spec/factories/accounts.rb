@@ -3,9 +3,9 @@ FactoryGirl.define do
     sequence(:name) { |n| "ACME_#{n}"}
     dcm_account_codes ['ACME']
 
-    before(:create) do |_account, evaluator|
-      evaluator.from_addresses.build(from_email: 'hey@dude.test', is_default: true)
-      evaluator.from_numbers.build(phone_number: '+18885551234', is_default: true)
+    before(:create) do |account, evaluator|
+      account.from_addresses.build(from_email: 'hey@dude.test', is_default: true)
+      account.from_numbers.build(phone_number: '+18885551234', is_default: true)
     end
 
     factory :account_with_sms do

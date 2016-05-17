@@ -17,7 +17,7 @@ describe EmailTemplatesController do
       link_tracking_parameters: 'tracking=param&one=two',
       macros: {'HELLO' => 'WORLD'},
       click_tracking_enabled: true,
-      open_tracking_enabled: true
+      open_tracking_enabled: true,
     }
   end
   let(:model) {EmailTemplate}
@@ -63,7 +63,7 @@ describe EmailTemplatesController do
 
   it 'should not update an email template id' do
     original_template_id = template.id
-    patch :update, uuid: template.uuid, email_template: valid_params.merge({id: 8820123})
+    patch :update, uuid: template.uuid, email_template: valid_params.merge(id: 8_820_123)
     expect(response.response_code).to eq(200)
     template.reload
     expect(template.id).to eq(original_template_id)
@@ -71,7 +71,7 @@ describe EmailTemplatesController do
 
   it 'should not update an email template uuid' do
     original_template_uuid = template.uuid
-    patch :update, uuid: template.uuid, email_template: valid_params.merge({uuid: "new-template-name"})
+    patch :update, uuid: template.uuid, email_template: valid_params.merge(uuid: "new-template-name")
     expect(response.response_code).to eq(422)
     template.reload
     expect(template.uuid).to eq(original_template_uuid)
@@ -87,7 +87,7 @@ describe EmailTemplatesController do
   end
 
   it 'should delete an email template' do
-    email_templates   # We have to create email_templates before there are email_templates
+    email_templates # We have to create email_templates before there are email_templates
     expect(account.email_templates.count).to eq(3)
     delete :destroy, uuid: template.uuid
     expect(response.response_code).to eq(204)
