@@ -17,7 +17,7 @@ describe EmailTemplatesController do
       link_tracking_parameters: 'tracking=param&one=two',
       macros: {'HELLO' => 'WORLD'},
       click_tracking_enabled: true,
-      open_tracking_enabled: true
+      open_tracking_enabled: true,
     }
   end
   let(:model) {EmailTemplate}
@@ -63,7 +63,7 @@ describe EmailTemplatesController do
 
   it 'should not update an email template id' do
     original_template_id = template.id
-    patch :update, uuid: template.uuid, email_template: valid_params.merge({id: 8820123})
+    patch :update, uuid: template.uuid, email_template: valid_params.merge(id: 8_820_123)
     expect(response.response_code).to eq(200)
     template.reload
     expect(template.id).to eq(original_template_id)
@@ -71,7 +71,7 @@ describe EmailTemplatesController do
 
   it 'should not update an email template uuid' do
     original_template_uuid = template.uuid
-    patch :update, uuid: template.uuid, email_template: valid_params.merge({uuid: "new-template-name"})
+    patch :update, uuid: template.uuid, email_template: valid_params.merge(uuid: "new-template-name")
     expect(response.response_code).to eq(422)
     template.reload
     expect(template.uuid).to eq(original_template_uuid)
@@ -87,7 +87,7 @@ describe EmailTemplatesController do
   end
 
   it 'should delete an email template' do
-    email_templates   # We have to create email_templates before there are email_templates
+    email_templates # We have to create email_templates before there are email_templates
     expect(account.email_templates.count).to eq(3)
     delete :destroy, uuid: template.uuid
     expect(response.response_code).to eq(204)
@@ -122,6 +122,22 @@ describe EmailTemplatesController do
       expect(response.response_code).to eq(422)
       template.reload
       expect(template.from_address.id).not_to eq(other_from_address.id)
+    end
+  end
+
+  context 'with a message type' do
+    render_views
+    it 'accepts message_type as a string' do
+      mt_params = valid_params.merge(message_type_code: 'salutations')
+      post :create, email_template: mt_params
+      expect(response.response_code).to eq(201)
+      expect(response.body).to include('salutations')
+    end
+
+    it 'does not accept message_type_label without message_type_code' do
+      mt_params = valid_params.merge(message_type_label: 'nope')
+      post :create, email_template: mt_params
+      expect(response.response_code).to eq(422)
     end
   end
 end

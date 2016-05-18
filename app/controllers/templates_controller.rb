@@ -1,5 +1,4 @@
 class TemplatesController < ApplicationController
-
   before_action :find_user
 
   def index

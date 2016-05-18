@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 describe MessageType do
-  subject {create(:message_type)}
+  let(:account) {create(:account)}
+  let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
+  subject {create(:message_type, account: account)}
   it {is_expected.to be_valid}
   it {is_expected.to validate_presence_of(:label)}
   it {is_expected.to validate_presence_of(:code)}
@@ -37,6 +39,17 @@ describe MessageType do
       expect do
         create(:message_type)
       end.not_to raise_error
+    end
+  end
+
+  context 'cannot be destroyed' do
+    it 'when email_messages exist' do
+      message_type = subject
+      _et = create(:email_message,
+                   account: account,
+                   user: user,
+                   message_type_id: message_type.id)
+      expect(message_type.destroy).to be(false)
     end
   end
 end

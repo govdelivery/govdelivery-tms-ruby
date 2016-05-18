@@ -1,30 +1,13 @@
 module MessageTypeSetter
   def self.included(base)
     base.class_eval do
-      attr_accessible :message_type_code, :message_type_label
       attr_accessor :message_type_code, :message_type_label
+      attr_accessible :message_type_code, :message_type_label
 
+      # message types are only auto-created when other things are created
       before_create :create_message_type
     end
   end
-
-  #I don't know why I have to create these
-  def message_type_code=code
-    @message_type_code = code
-  end
-
-  def message_type_code
-    @message_type_code
-  end
-
-  def message_type_label=label
-    @message_type_label = label
-  end
-
-  def message_type_label
-    @message_type_label
-  end
-
 
   def create_message_type
     if message_type_code && account
@@ -36,8 +19,9 @@ module MessageTypeSetter
       end
       self.message_type_id = message_type.id
     elsif message_type_label
-      raise ActiveRecord::ActiveRecordError, "Message type code is required."
-      return false
+      # raise ActiveRecord::ActiveRecordError, "Message type code is required."
+      errors.add(:message_type_label, "Message type code is required.")
+      false
     end
   end
 end

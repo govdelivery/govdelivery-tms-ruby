@@ -1,8 +1,10 @@
 class EmailTemplate < ActiveRecord::Base
   include HasLinkTrackingParameters
+  include MessageTypeSetter
   belongs_to :account
   belongs_to :user
   belongs_to :from_address
+  belongs_to :message_type
   has_many :email_messages
   serialize :macros
 

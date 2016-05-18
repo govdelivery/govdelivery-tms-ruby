@@ -4,10 +4,12 @@ FactoryGirl.define do
   end
 
   factory :default_from_address, class: FromAddress, traits: [:email_sequence] do
+    account
     is_default true
   end
 
   factory :from_address, traits: [:email_sequence] do
+    account
     is_default false
   end
 end

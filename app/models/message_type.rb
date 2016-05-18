@@ -6,20 +6,32 @@
 
 class MessageType < ActiveRecord::Base
   belongs_to :account
+  has_many :email_messages
+
+  attr_accessible :label, :code
 
   validates :code,
             presence:   true,
-            format: { with: /\A[a-zA-Z0-9_]*\z/, message: "only letters, numbers and underscores are allowed" },
+            format: {with: /\A[a-zA-Z0-9_]*\z/, message: "only letters, numbers and underscores are allowed"},
             length:     {maximum: 255},
             uniqueness: {scope: :account, case_sesitive: false}
   validates :label, presence: true, length: {maximum: 255}
 
   validate :code_not_changed
 
+  before_destroy :ensure_no_messages
+
   private
 
+  def ensure_no_messages
+    if email_messages.exists?
+      errors.add(:base, 'Cannot be destroyed because email messages exist with this message type')
+      false
+    end
+  end
+
   def code_not_changed
-    if self.code_changed? && self.persisted?
+    if code_changed? && persisted?
       errors.add(:code, "changing is not allowed")
     end
   end

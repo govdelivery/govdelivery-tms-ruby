@@ -1,5 +1,6 @@
 object @template
 attributes :id, :uuid, :body, :subject, :link_tracking_parameters,
+           :message_type_code,
            :macros, :open_tracking_enabled, :click_tracking_enabled, :created_at
 
 node(:_links) do |e|
