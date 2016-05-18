@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe MessageTypesController, type: :controller do
-  let(:account) {create(:account)}
+  let(:vendor) {create(:email_vendor, worker: 'LoopbackEmailWorker')}
+  let(:account) {create(:account, email_vendor: vendor)}
   let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
   let(:valid_params) {{label: 'The Salutations message type', code: 'salutations'}}
   let(:message_types) do
@@ -25,6 +26,12 @@ RSpec.describe MessageTypesController, type: :controller do
       expect(response.headers['Link']).to match(/next/)
       expect(response.headers['Link']).to match(/last/)
     end
+  end
+
+  it 'renders forbidden when feature not enabled' do
+    account.email_vendor.destroy!
+    get :index
+    expect(response.status).to eq(403)
   end
 
   it 'can create' do

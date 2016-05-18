@@ -19,6 +19,7 @@ class ServicesController < ApplicationController
       @services[:email_messages] = email_index_path
       @services[:email_templates] = templates_email_index_path
       @services[:from_addresses] = from_addresses_path
+      @services[:message_types] = message_types_path
     end
 
     if @account.voice_vendor
