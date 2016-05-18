@@ -42,6 +42,6 @@ class IMAPCleaner
     log.error "Error interacting with #{server} IMAP, trying to delete messages (no retry, will clean up next time): #{e.message}"
   ensure
     imap.logout
-    imap.disconnect
+    imap.disconnect unless imap.disconnected?
   end
 end
