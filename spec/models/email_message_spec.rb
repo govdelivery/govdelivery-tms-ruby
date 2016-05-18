@@ -461,6 +461,7 @@ describe EmailMessage do
       email_message = user.email_messages.create(email_params.merge(message_type_code: 'type_a'))
       expect(email_message.message_type.code).to eq( 'type_a' )
       expect(email_message.message_type.label).to eq( 'Type A' )
+      expect(email_message.message_type).to be_persisted
     end
 
     it 'should save with label and code' do
