@@ -4,7 +4,7 @@ FactoryGirl.define do
       message_type.account ||= create(:account)
     end
 
-    name 'steve'
-    name_key 'steve_key'
+    label 'steve'
+    code 'steve_key'
   end
 end

@@ -3,24 +3,24 @@ require 'rails_helper'
 describe MessageType do
   subject {create(:message_type)}
   it {is_expected.to be_valid}
-  it {is_expected.to validate_presence_of(:name)}
-  it {is_expected.to validate_presence_of(:name_key)}
+  it {is_expected.to validate_presence_of(:label)}
+  it {is_expected.to validate_presence_of(:code)}
 
-  context 'when name_key has a space' do
-    subject {build(:message_type, name_key: 'steve mcqueen').tap(&:valid?)}
-    its(:errors) {should include(:name_key)}
+  context 'when code has a space' do
+    subject {build(:message_type, code: 'steve mcqueen').tap(&:valid?)}
+    its(:errors) {should include(:code)}
   end
 
-  context 'when name_key is, like, weird' do
-    subject {build(:message_type, name_key: 'asd-fsd784tawt34a0w9erts897dfg*&^&*').tap(&:valid?)}
-    its(:errors) {should include(:name_key)}
+  context 'when code is, like, weird' do
+    subject {build(:message_type, code: 'asd-fsd784tawt34a0w9erts897dfg*&^&*').tap(&:valid?)}
+    its(:errors) {should include(:code)}
   end
 
-  context 'when name_key is updated' do
+  context 'when code is updated' do
     subject {create(:message_type)}
     it 'should throw an error' do
       expect do
-        subject.name_key = 'bob'
+        subject.code = 'bob'
         subject.save!
       end.to raise_error(ActiveRecord::RecordInvalid)
     end

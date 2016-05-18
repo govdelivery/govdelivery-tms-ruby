@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160512164204) do
+ActiveRecord::Schema.define(version: 20160516175947) do
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name",                                  null: false
@@ -84,10 +84,12 @@ ActiveRecord::Schema.define(version: 20160512164204) do
     t.string   "reply_to"
     t.string   "errors_to"
     t.integer  "email_template_id",      limit: nil
+    t.integer  "message_type_id",        limit: nil
   end
 
   add_index "email_messages", ["account_id", "id"], name: "em_inv_idx1", tablespace: "tsms_indx01"
   add_index "email_messages", ["email_template_id"], name: "i_ema_mes_ema_tem_id", tablespace: "tsms_indx01"
+  add_index "email_messages", ["message_type_id"], name: "i_ema_mes_mes_typ_id", tablespace: "tsms_indx01"
   add_index "email_messages", ["user_id", "created_at", "status", "subject", "id"], name: "em_idx3", tablespace: "tsms_indx01"
 
   create_table "email_recipient_clicks", force: :cascade do |t|
@@ -218,8 +220,8 @@ ActiveRecord::Schema.define(version: 20160512164204) do
 
   create_table "message_types", force: :cascade do |t|
     t.integer "account_id", limit: nil, null: false
-    t.string  "name",                   null: false
-    t.string  "name_key",               null: false
+    t.string  "label",                  null: false
+    t.string  "code",                   null: false
   end
 
   create_table "sms_messages", force: :cascade do |t|

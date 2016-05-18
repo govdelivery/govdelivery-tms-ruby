@@ -455,4 +455,24 @@ describe EmailMessage do
       expect(new_email.reload.from_email).to eq( user.account.default_from_address.from_email )
     end
   end
+
+  context 'MessageType' do
+    it 'should save with just code' do
+      email_message = user.email_messages.create(email_params.merge(message_type_code: 'type_a'))
+      expect(email_message.message_type.code).to eq( 'type_a' )
+      expect(email_message.message_type.label).to eq( 'Type A' )
+    end
+
+    it 'should save with label and code' do
+      email_message = user.email_messages.create(email_params.merge(message_type_code: 'type_b', message_type_label: 'Type B'))
+      expect(email_message.message_type.code).to eq( 'type_b' )
+      expect(email_message.message_type.label).to eq( 'Type B' )
+    end
+
+    it 'should not save with just label' do
+      expect do
+        user.email_messages.create(email_params.merge(message_type_label: 'Type B'))
+      end.to raise_exception(ActiveRecord::ActiveRecordError)
+    end
+  end
 end
