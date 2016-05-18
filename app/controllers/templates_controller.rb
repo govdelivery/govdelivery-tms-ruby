@@ -10,10 +10,7 @@ class TemplatesController < ApplicationController
   end
 
   def create
-    @template = account_templates.build
-    #this extra step is to enable the use of account in the message_type= setter
-    @template.attributes = template_params
-    @template.save
+    @template = account_templates.create(template_params)
     respond_with @template
   end
 
