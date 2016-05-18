@@ -1,5 +1,9 @@
 class MessageTypesController < ApplicationController
   before_action :find_user
+  
+  include FeatureChecker
+  feature :email
+
   before_action :find_message_type, except: [:index, :create]
   wrap_parameters :message_type, include: [:label, :code], format: [:json, :url_encoded_form]
 

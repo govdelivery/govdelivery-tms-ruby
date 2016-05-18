@@ -25,6 +25,7 @@ describe ServicesController do
       sms_templates: templates_sms_index_path,
       email_messages: email_index_path,
       email_templates: templates_email_index_path,
+      message_types: message_types_path,
       from_addresses: from_addresses_path,
       voice_messages: voice_index_path,
       incoming_voice_messages: incoming_voice_messages_path,
