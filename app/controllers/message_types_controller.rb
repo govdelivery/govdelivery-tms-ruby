@@ -18,13 +18,8 @@ class MessageTypesController < ApplicationController
   end
 
   def destroy
-    if @message_type.email_templates.count == 0
-      # todo check for messages
-      @message_type.destroy
-      render status: 204, nothing: true
-    else
-      render status: 422, text: 'a Message type with message templates can not be deleted'
-    end
+    @message_type.destroy
+    respond_with(@message_type)
   end
 
   protected

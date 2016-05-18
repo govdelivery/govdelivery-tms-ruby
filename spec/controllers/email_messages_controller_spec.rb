@@ -28,19 +28,6 @@ describe EmailMessagesController do
   end
   let(:templated_messages) {create_list(:email_message, 3, email_template: email_template, user: user)}
   let(:recipients) {[{email: "arbys@everythingsucks.com"}]}
-  let(:valid_params) do
-    {
-        body:                   "#{'A' * 40} [[happy]]",
-        subject:                'n/a',
-        from_email:             'duane@everythingsucks.com',
-        errors_to:              'jeff@everythingsucks.com',
-        reply_to:               'bob@everythingsucks.com',
-        click_tracking_enabled: true,
-        open_tracking_enabled:  false,
-        macros:                 {'happy' => 'doggies'},
-        recipients_attributes:  [{email: '800BUNNIES'}]
-    }
-  end
 
   let(:model) {EmailMessage}
 

@@ -1,5 +1,6 @@
 class EmailTemplate < ActiveRecord::Base
   include HasLinkTrackingParameters
+  include MessageTypeSetter
   belongs_to :account
   belongs_to :user
   belongs_to :from_address
@@ -30,14 +31,6 @@ class EmailTemplate < ActiveRecord::Base
 
   def to_param
     uuid
-  end
-
-  attr_reader :message_type_code
-  attr_accessible :message_type_code
-
-  def message_type_code= code
-    self.message_type = MessageType.where(account_id: user.account.id, code: code).first_or_create
-    @message_type_code = message_type.code
   end
 
   protected

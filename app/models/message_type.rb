@@ -6,7 +6,7 @@
 
 class MessageType < ActiveRecord::Base
   belongs_to :account
-  has_many :email_templates
+  has_many :email_messages
 
   attr_accessible :label, :code
 
@@ -19,7 +19,16 @@ class MessageType < ActiveRecord::Base
 
   validate :code_not_changed
 
+  before_destroy :ensure_no_messages
+
   private
+
+  def ensure_no_messages
+    if email_messages.exists?
+      errors.add(:base, 'Cannot be destroyed because email messages exist with this message type')
+      false
+    end
+  end
 
   def code_not_changed
     if code_changed? && persisted?

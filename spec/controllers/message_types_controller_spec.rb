@@ -63,15 +63,14 @@ RSpec.describe MessageTypesController, type: :controller do
     expect {MessageType.find(message_type.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it 'can not destroy if :email_templates present' do
+  it 'can not destroy if :email_messages present' do
     message_type = create(:message_type, account: account)
-    _et = create(:email_template,
+    _em = create(:email_message,
                  account: account,
                  user: user,
-                 from_address: account.from_addresses.first,
                  message_type_id: message_type.id)
     delete :destroy, id: message_type.to_param
     expect(response.status).to eq(422)
-    expect {MessageType.find(message_type.id)}.to_not raise_error(ActiveRecord::RecordNotFound)
+    expect(MessageType.find(message_type.id)).to be_a(MessageType)
   end
 end
