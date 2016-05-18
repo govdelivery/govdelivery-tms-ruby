@@ -138,6 +138,8 @@ describe EmailTemplatesController do
       mt_params = valid_params.merge(message_type_label: 'nope')
       post :create, email_template: mt_params
       expect(response.response_code).to eq(422)
+      expect(assigns(:template).errors[:message_type_label]).to be_present
+      expect(response.body).to include('Message type code is required.')
     end
   end
 end
