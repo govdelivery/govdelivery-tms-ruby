@@ -53,3 +53,13 @@ Feature: Tests around sending emails
     When I set the body to 'A message with CSS. <div style=\"background-color:#c0c0c0;">TEXT</div>'
     And I send the email
     Then the response should have no errors
+
+  @message_types
+  Scenario: New EMAIL message with message_type_code in the message
+    Given I create an email
+    When I set the message_type_code to 'test_message_code'
+    And I send the email
+    Then the response should have no errors
+    And the response should contain a message_type_code with value 'test_message_code'
+    And the response should contain a link to the message type
+    And the message type should have user visible text 'Test Message Code'
