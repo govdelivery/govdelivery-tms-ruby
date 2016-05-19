@@ -20,12 +20,12 @@ Source0:        %{_name}-%{version}.tar.gz
 BuildRequires:  git
 BuildRequires:  oracle-instantclient11.2-devel
 BuildRequires:  jruby
-BuildRequires:  jrubygem-bundler = 1.7.2
+BuildRequires:  jrubygem-bundler
 
 Requires:       gd-xact-code%{version}
 Requires:       gd-xact-fake-libclntsh
 Requires:       jruby
-Requires:       jrubygem-bundler = 1.7.2
+Requires:       jrubygem-bundler
 
 %description
 GovDelivery Xact Package
