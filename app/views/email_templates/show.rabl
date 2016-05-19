@@ -10,3 +10,9 @@ node(:_links) do |e|
     h[:from_address] = e.persisted? ? from_address_path(e.from_address) : ""
   end
 end
+
+if root_object
+  unless root_object.errors.empty?
+    node(:errors) { |template| template.errors }
+  end
+end

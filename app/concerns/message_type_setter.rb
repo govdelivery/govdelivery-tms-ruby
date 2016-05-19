@@ -19,9 +19,10 @@ module MessageTypeSetter
       end
       self.message_type_id = message_type.id
     elsif message_type_label
-      # raise ActiveRecord::ActiveRecordError, "Message type code is required."
       errors.add(:message_type_label, "Message type code is required.")
       false
+    elsif self.class.name == 'EmailMessage' && email_template && account #if message_type is undefined for message, inherit from template
+      self.message_type_id = email_template.try(:message_type).try(:id)
     end
   end
 end

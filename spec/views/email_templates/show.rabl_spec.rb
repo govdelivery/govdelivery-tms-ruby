@@ -15,8 +15,7 @@ describe 'email_templates/show.rabl' do
   it 'should work when valid' do
     render
     expect(rendered).to be_json_for(email_template)
-      .with_attributes(:id, :uuid, :body, :subject, :link_tracking_parameters,
-                       :message_type_code,
+      .with_attributes(:id, :uuid, :body, :subject, :link_tracking_parameters, :message_type_code,
                        :macros, :open_tracking_enabled, :click_tracking_enabled)
       .with_timestamps(:created_at)
       .with_links('self' => '/templates/email/email_template',
