@@ -2,15 +2,15 @@ module Service
   class TwilioResponseMapper
     def self.recipient_callback(twilio_status)
       case twilio_status
-      when 'queued', 'sending', 'ringing', 'in-progress'
+      when 'accepted', 'queued', 'sending', 'ringing', 'in-progress'
         :sending!
-      when 'sent', 'completed'
+      when 'sent', 'delivered', 'completed'
         :sent!
-      when 'failed', 'busy', 'no-answer'
+      when 'failed', 'busy', 'no-answer', 'undelivered'
         :failed!
       when 'canceled'
         :canceled!
-      else
+      else # e.g. 'received'
         :ack!
       end
     end

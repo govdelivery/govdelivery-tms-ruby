@@ -34,8 +34,9 @@ module Recipient
       end
 
       # ack, sent_at, error_message, call_status (for voice)
-      event :mark_sent, after: [:finalize, :invoke_webhooks] do
-        transitions from: [:new, :sending, :inconclusive], to: :sent
+      event :mark_sent do
+        transitions from: [:new, :sending, :inconclusive], to: :sent, after: [:finalize, :invoke_webhooks]
+        transitions from: :sent, to: :sent
       end
 
       event :mark_inconclusive, after: [:invoke_webhooks] do
