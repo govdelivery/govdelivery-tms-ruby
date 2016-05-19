@@ -62,4 +62,3 @@ Feature: Tests around sending emails
     Then the response should have no errors
     And the response should contain a message_type_code with value 'test_message_code'
     And the response should contain a link to the message type
-    And the message type should have user visible text 'Test Message Code'

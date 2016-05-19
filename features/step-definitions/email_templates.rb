@@ -12,8 +12,9 @@ Given(/^I build an email template(?: with uuid '(.*)?')?$/) do |uuid|
                                             click_tracking_enabled: false)
 end
 
-Given(/^an email template exists$/) do
+Given(/^an email template exists(?: with a message_type_code '(.*)')?$/) do |code|
   step 'I build an email template'
+  step "I set the message_type_code on the template to '#{code}'" if code
   step 'I save the email template'
 end
 
@@ -61,9 +62,10 @@ When(/^I send an email with everything specified and a template$/) do
   step "I send the email"
 end
 
-When(/^I send an EMAIL message specifying just that template and a recipient$/) do
+When(/^I send an EMAIL message specifying just that template and a recipient(?: and message_type_code '(.*)')?$/) do |code|
   @message = @client.email_messages.build
   @message.links[:email_template] = @template.uuid
+  step "I set the message_type_code to '#{code}'" if code
   @message.recipients.build(email: 'happy@golucky.com')
 end
 
@@ -99,4 +101,20 @@ Then(/^the message should have the attributes from the template$/) do
       raise "Template value for #{attr} not used in message: expected #{@template.send(attr)}, found #{@message.send(attr)}"
     end
   end
+end
+
+And(/^I (?:set|update) the message_type_code on the template to '(.*)'$/) do |message_type_code|
+  @template.message_type_code = message_type_code
+end
+
+And(/^I remove the message_type_code from the template$/) do
+  @template.message_type_code = nil
+end
+
+And(/^the response should not contain a message_type_code$/) do
+  raise "message type code should not be in the template".red if @template.get.response.body.include?('message_type_code')
+end
+
+And(/^the response should not contain a link to the message type$/) do
+  raise "link to the message type should not be in the template".red if @template.get.links.include?(:message_type)
 end

@@ -50,6 +50,16 @@ When(/^I set the body to '(.*)'$/) do |body|
   @message.body = body
 end
 
+When(/^I set the message_type_code to '(.*)'$/) do |message_type_code|
+  @message.message_type_code = message_type_code
+end
+
+Given(/^an email message exists with a message_type_code '(.*)'$/) do |code|
+  step 'I create an email'
+  step "I set the message_type_code to '#{code}'"
+  step 'I send the email'
+end
+
 When(/^I add recipient '(.*)$/) do |recipient|
   @message.recipients.build(email: recipient)
 end
@@ -93,6 +103,16 @@ end
 Then(/^the response body should contain valid _links$/) do
   raise "self not found _links: #{email.response.body['_links']}".red unless @message.get.response.body['_links']['self'].include?('messages/email')
   raise "recipients not found _links:#{email.response.body['_links']}".red unless @message.get.response.body['_links']['recipients'].include?('recipients')
+end
+
+And(/^the response should contain a message_type_code with value '(.*)'$/) do |message_type_code|
+  code = @message.get.response.body['message_type_code']
+  raise "message type code field not found".red if code.nil?
+  raise "message type code not found in #{code}".red unless code == message_type_code
+end
+
+And(/^the response should contain a link to the message type$/) do
+  raise "the response did not contain a link to the message type".red unless @message.get.links.include?(:message_type)
 end
 
 Then(/^the response should have only one recipient$/) do
