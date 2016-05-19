@@ -461,6 +461,7 @@ describe EmailMessage do
       email_message = user.email_messages.create(email_params.merge(message_type_code: 'type_a'))
       expect(email_message.message_type.code).to eq( 'type_a' )
       expect(email_message.message_type.label).to eq( 'Type A' )
+      expect(email_message.message_type).to be_persisted
     end
 
     it 'should save with label and code' do
@@ -470,9 +471,9 @@ describe EmailMessage do
     end
 
     it 'should not save with just label' do
-      expect do
-        user.email_messages.create(email_params.merge(message_type_label: 'Type B'))
-      end.to raise_exception(ActiveRecord::ActiveRecordError)
+      email_message = user.email_messages.create(email_params.merge(message_type_label: 'Type B'))
+      expect(email_message.message_type).to be_nil
+      expect(email_message.errors[:message_type_label]).to be_present
     end
   end
 end

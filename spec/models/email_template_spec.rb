@@ -141,4 +141,26 @@ describe EmailTemplate do
       expect{subject.save!}.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
+
+  context 'MessageType' do
+    let(:template_params){{body: 'hello', subject: 'greetings'}}
+    it 'should save with just code' do
+      email_template = user.email_templates.create(template_params.merge(message_type_code: 'type_a'))
+      expect(email_template.message_type.code).to eq( 'type_a' )
+      expect(email_template.message_type.label).to eq( 'Type A' )
+    end
+
+    it 'should save with label and code' do
+      email_template = user.email_templates.create(template_params.merge(message_type_code: 'type_b', message_type_label: 'Type B'))
+      expect(email_template.message_type.code).to eq( 'type_b' )
+      expect(email_template.message_type.label).to eq( 'Type B' )
+      expect(email_template.message_type).to be_persisted
+    end
+
+    it 'should not save with just label' do
+      email_template = user.email_templates.create(template_params.merge(message_type_label: 'Type B'))
+      expect(email_template.errors[:message_type_label]).to be_present
+      expect(email_template).to be_new_record
+    end
+  end
 end

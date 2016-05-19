@@ -26,6 +26,7 @@ class EmailTemplate < ActiveRecord::Base
             uniqueness: {scope: :account, case_sensitive: false}
 
   validate :id_and_uuid_cannot_change
+  before_update :auto_create_message_type # change message type or change label
 
   after_create :set_uuid
 

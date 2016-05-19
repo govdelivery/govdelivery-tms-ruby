@@ -107,11 +107,18 @@ describe EmailMessagesController do
   end
 
   context 'with a message type' do
+    render_views
     it 'accepts message type as a string' do
       post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template.uuid}, message_type_code: 'salutations'}
       expect(response.response_code).to eq(201)
       expect(assigns(:message).message_type.code).to eq('salutations')
       expect(assigns(:message).message_type.label).to eq('Salutations')
+    end
+
+    it 'rejects message_type_label without message_type_code' do
+      post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template.uuid}, message_type_label: 'Salutations'}
+      expect(response.response_code).to eq(422)
+      expect(response.body).to include('Message type code is required.')
     end
   end
 end

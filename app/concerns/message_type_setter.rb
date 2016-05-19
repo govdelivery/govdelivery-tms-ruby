@@ -5,11 +5,11 @@ module MessageTypeSetter
       attr_accessible :message_type_code, :message_type_label
 
       # message types are only auto-created when other things are created
-      before_create :create_message_type
+      before_create :auto_create_message_type
     end
   end
 
-  def create_message_type
+  def auto_create_message_type
     if message_type_code && account
       message_type = MessageType.where(account_id: account.id, code: message_type_code).first_or_create
       if !message_type_label.nil? && message_type.label != message_type_label
