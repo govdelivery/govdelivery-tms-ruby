@@ -50,7 +50,7 @@ gem 'validate_url'
 
 gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'b84c05ebfbf0f87e88be560f3fc869aadc8fb913'
 
-gem 'attr_encrypted'
+gem 'attr_encrypted', '=1.4.0'
 
 platforms :ruby do
   gem 'ruby-oci8'
@@ -78,8 +78,8 @@ group :development, :test do
   gem 'nokogiri'
   gem 'poltergeist'
   gem 'rspec-collection_matchers'
-  gem 'rspec-its'
-  gem 'rspec-rails', '~> 3.4.2'
+  gem 'rspec-its', '~> 1.2.0'
+  gem 'rspec-rails', '~> 3.1.0'
   gem 'yaml_db'
 end
 
@@ -89,7 +89,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rubocop', '~> 0.38.0'
+  gem 'rubocop'
   gem 'rubocop-checkstyle_formatter', require: false
   gem 'pry'
   gem 'pry-rails'
