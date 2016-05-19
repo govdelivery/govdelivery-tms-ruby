@@ -37,8 +37,7 @@ When(/^I update the message type with user visible text '(.*)'$/) do|visible_tex
 end
 
 Given(/^I list message types in an account without message types$/) do
-  #Todo: admin_client or non_admin_client? We need to use an account without message_types
-  @empty_message_type_list = TmsClientManager.non_admin_client.message_types.get
+  @empty_message_type_list = TmsClientManager.other_non_admin_client.message_types.get
 end
 
 Then(/^the listing should be empty$/) do
