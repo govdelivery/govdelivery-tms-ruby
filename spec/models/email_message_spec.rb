@@ -44,6 +44,7 @@ describe EmailMessage do
   let(:from_address) { account.default_from_address }
   let(:user) { account.users.create(email: 'foo@evotest.govdelivery.com', password: 'schwoop') }
   let(:email_template) { create(:email_template, account: account, user: user, from_address: from_address) }
+  let(:email_template_with_type) { create(:email_template, account: account, user: user, from_address: from_address, message_type_code: 'template_type') }
   let(:email_template_sans_link_params) { create(:email_template, account: account, user: user, from_address: from_address, link_tracking_parameters: nil) }
   let(:body_with_links) { 'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>' }
   let(:email_params) {
@@ -93,6 +94,13 @@ describe EmailMessage do
           account:        account,
           body:           body_with_links,
           email_template: email_template)
+  end
+  let(:templated_email_with_typed_template) do
+    build(:email_message,
+          user:           user,
+          account:        account,
+          body:           body_with_links,
+          email_template: email_template_with_type)
   end
   let(:templated_email_sans_link_params) do
     build(:email_message,
@@ -474,6 +482,17 @@ describe EmailMessage do
       email_message = user.email_messages.create(email_params.merge(message_type_label: 'Type B'))
       expect(email_message.message_type).to be_nil
       expect(email_message.errors[:message_type_label]).to be_present
+    end
+
+    it 'should inherit template type' do
+      templated_email_with_typed_template.save!
+      expect(templated_email_with_typed_template.message_type.code).to eq('template_type')
+    end
+
+    it 'should not inherit template type when type is given' do
+      templated_email_with_typed_template.message_type_code = 'email_type'
+      templated_email_with_typed_template.save!
+      expect(templated_email_with_typed_template.message_type.code).to eq('email_type')
     end
   end
 end

@@ -1,5 +1,5 @@
 object MessagePresenter.new(@message, self)
-attributes :id, *@content_attributes, :created_at, :status, :message_type_code, :_links
+attributes :id, *@content_attributes, :created_at, :message_type_code, :status, :_links
 
 if root_object
   unless root_object.errors.empty?
