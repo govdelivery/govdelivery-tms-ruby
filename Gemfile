@@ -48,7 +48,7 @@ gem 'twilio-ruby'
 gem 'valid_email'
 gem 'validate_url'
 
-gem 'govdelivery-dbtasks'#, git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'b84c05ebfbf0f87e88be560f3fc869aadc8fb913'
+gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'b84c05ebfbf0f87e88be560f3fc869aadc8fb913'
 
 gem 'attr_encrypted', '=1.4.0'
 
