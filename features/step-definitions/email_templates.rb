@@ -4,6 +4,7 @@
 
 Given(/^I build an email template(?: with uuid '(.*)?')?$/) do |uuid|
   @template = @client.email_templates.build(body: '<p><a href="http://www.cnn.com">Test</a>',
+                                            link_tracking_parameters: "from=me&one=two",
                                             subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
                                             macros: {"closing" => "yo"},
                                             uuid: uuid || nil,
@@ -93,7 +94,10 @@ end
 Then(/^the message should have the attributes from the template$/) do
   raise @message.error.to_s unless @message.post
   raise @message.errors.to_s unless @message.get
-  [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+  if @message.body != '<p><a href="http://www.cnn.com?from=me&one=two">Test</a>'
+    raise "Template value for body not used in message: expected '<p><a href=\"http://www.cnn.com?from=me&one=two\">Test</a>', found #{@message.body}"
+  end
+  [:subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
     if @message.send(attr) != @template.send(attr)
       raise "Template value for #{attr} not used in message: expected #{@template.send(attr)}, found #{@message.send(attr)}"
     end
