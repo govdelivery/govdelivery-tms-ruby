@@ -4,7 +4,6 @@
 
 Given(/^I build an email template(?: with uuid '(.*)?')?$/) do |uuid|
   @template = @client.email_templates.build(body: '<p><a href="http://www.cnn.com">Test</a>',
-                                            link_tracking_parameters: "from=me&one=two",
                                             subject: "XACT-545-1 Email Test for link parameters #{Time.new}",
                                             macros: {"closing" => "yo"},
                                             uuid: uuid || nil,
