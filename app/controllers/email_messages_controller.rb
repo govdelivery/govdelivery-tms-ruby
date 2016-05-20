@@ -47,7 +47,8 @@ class EmailMessagesController < MessagesController
       :from_name,
       :macros,
       :open_tracking_enabled,
-      :reply_to
+      :reply_to,
+      :message_type_code
     ]) unless action_name == 'index'
   end
 end

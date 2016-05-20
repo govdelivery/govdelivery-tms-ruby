@@ -5,7 +5,7 @@ describe 'messages/show.rabl' do
   let(:account) {create(:account, sms_vendor: sms_vendor)}
   let(:sms_message) {create(:sms_message, account: account)}
   let(:voice_message) {create(:voice_message, account: account)}
-  let(:email_message) {create(:email_message, account: account)}
+  let(:email_message) {create(:email_message, account: account, message_type_code: 'subscriber')}
 
   it 'should work with an SMS' do
     Rabl::Engine.any_instance.stubs(:controller_name).returns('sms_messages')
@@ -43,10 +43,10 @@ describe 'messages/show.rabl' do
   it 'should work with an email message' do
     Rabl::Engine.any_instance.stubs(:controller_name).returns('email_messages')
     assign(:message, email_message)
-    assign(:content_attributes, [:from_name, :from_email, :errors_to, :reply_to, :subject, :body, :open_tracking_enabled, :click_tracking_enabled, :macros])
+    assign(:content_attributes, [:from_name, :from_email, :errors_to, :reply_to, :subject, :body, :open_tracking_enabled, :click_tracking_enabled, :macros, :message_type_code])
     render
     expect(rendered).to be_json_for(email_message)
-      .with_attributes(:id, :from_name, :from_email, :subject, :body, :status, :open_tracking_enabled, :click_tracking_enabled, :macros, :reply_to, :errors_to, :message_type_code)
+      .with_attributes(:id, :from_name, :from_email, :subject, :body, :status, :open_tracking_enabled, :click_tracking_enabled, :macros, :message_type_code, :reply_to, :errors_to)
       .with_timestamps(:created_at)
       .with_links('self' => email_path(email_message),
                   'recipients' => email_recipients_path(email_message),

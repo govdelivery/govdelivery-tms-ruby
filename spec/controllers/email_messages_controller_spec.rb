@@ -55,6 +55,7 @@ describe EmailMessagesController do
                                  :reply_to,
                                  :click_tracking_enabled,
                                  :open_tracking_enabled,
+                                 :message_type_code,
                                  :macros)
   context "using a template" do
     it_should_create_a_message(_links: :email_template_link)
@@ -67,6 +68,7 @@ describe EmailMessagesController do
                                    :reply_to,
                                    :click_tracking_enabled,
                                    :open_tracking_enabled,
+                                   :message_type_code,
                                    :macros)
 
     it "should apply the template to the message" do
