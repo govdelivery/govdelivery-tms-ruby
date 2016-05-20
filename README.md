@@ -28,9 +28,9 @@ Creating a tag
 
 Deploying
 =========
+There is a webhook connecting Gitlab to Jenkins
+see: http://qc-buildbox-master.ep.gdi:8080/job/XACT/job/xact_build_head_rpm/
 
-    ./deploy.sh  (defaults to master and qc)
-    ./deploy.sh -e int-ep --vc-tag 1.4.0
 
 Packaging
 =========
