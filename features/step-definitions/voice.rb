@@ -69,7 +69,7 @@ end
 
 Then(/^I should be able to verify details of the message$/) do
   body = nil
-  GovDelivery::Proctor.backoff_check(30.seconds, 'should have _links relation found in the body') do
+  GovDelivery::Proctor.backoff_check(60.seconds, 'should have _links relation found in the body') do
     @message.get
     body = @message.response.body
     log.info "body: #{body}"
