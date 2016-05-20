@@ -111,6 +111,8 @@ describe EmailMessagesController do
     it 'accepts message type as a string' do
       post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template.uuid}, message_type_code: 'salutations'}
       expect(response.response_code).to eq(201)
+      expect(response.body).to include('salutations')
+      assigns(:message).reload
       expect(assigns(:message).message_type.code).to eq('salutations')
       expect(assigns(:message).message_type.label).to eq('Salutations')
     end

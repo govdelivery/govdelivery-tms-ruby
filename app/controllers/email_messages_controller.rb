@@ -14,6 +14,7 @@ class EmailMessagesController < MessagesController
                     :recipients,
                     :reply_to,
                     :subject,
+                    :message_type_code,
                     :_links
                   ],
                   format:  [:json, :url_encoded_form]
