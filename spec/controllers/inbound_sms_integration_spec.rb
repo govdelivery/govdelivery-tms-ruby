@@ -85,6 +85,7 @@ describe TwilioRequestsController do
     @sid.succ!
     {format: 'xml',
      'SmsSid' => @sid,
+     'MessageSid' => @sid,
      'AccountSid' => vendor.username,
      'From' => '+15551113333',
      'To' => vendor.from_phone,

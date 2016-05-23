@@ -1,7 +1,7 @@
 GIT
   remote: http://dev-scm.office.gdi/development/govdelivery-dbtasks.git
-  revision: b84c05ebfbf0f87e88be560f3fc869aadc8fb913
-  ref: b84c05ebfbf0f87e88be560f3fc869aadc8fb913
+  revision: 58ab1233613aaf1f3f960440a3984a298966969a
+  ref: v0.4.5
   specs:
     govdelivery-dbtasks (0.4.4)
       activerecord (~> 4.0)
@@ -541,4 +541,4 @@ DEPENDENCIES
   yaml_db
 
 BUNDLED WITH
-   1.11.2
+   1.12.4

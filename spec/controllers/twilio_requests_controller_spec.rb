@@ -4,7 +4,7 @@ describe TwilioRequestsController, '#create' do
   render_views
   # a short_code has been provisioned with twilio
   # a vendor has been provisioned with credentials from twilio
-  # AccountSid and SmsSid are added to the request by twilio
+  # AccountSid and MessageSid are added to the request by twilio
 
   # let(:vendor) { create(:sms_vendor) }
   # let(:response_text) { 'a response!' }
@@ -146,6 +146,7 @@ describe TwilioRequestsController, '#create' do
     @sid.succ!
     {format: 'xml',
      'SmsSid' => @sid,
+     'MessageSid' => @sid,
      'AccountSid' => vendor.username,
      'From' => vendor.username,
      'To' => vendor.from_phone,

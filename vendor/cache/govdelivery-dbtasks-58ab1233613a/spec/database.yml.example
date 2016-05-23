@@ -1,0 +1,38 @@
+vagrant_defaults: &vagrant_defaults
+  adapter: oracle_enhanced
+  database: dev-oracledev1.local.gdi:1521/xe
+  password: abcd1234
+  checkout_timeout: 15
+  pool: 10
+  migration_username: gd_code_deploy
+  migration_password: abcd1234
+  structure_dump: db_stored_code
+  structure_drop: db_stored_code
+
+example:
+  <<: *vagrant_defaults
+  username: xact_oper
+  schema: xact
+
+example_with_invalid_oper_password:
+  <<: *vagrant_defaults
+  username: xact_oper
+  schema: xact
+  password: invalid
+
+example_without_schema:
+  <<: *vagrant_defaults
+  migration_username:
+  username: oracle_enhanced
+
+# for testing Rails environment-y stuff
+
+development:
+  <<: *vagrant_defaults
+  username: xact_oper
+  schema: xact
+
+test:
+  <<: *vagrant_defaults
+  username: xact_ut_oper
+  schema: xact_ut
