@@ -50,6 +50,8 @@ module GovDelivery::TMS #:nodoc:
                          :from_email,
                          :from_name,
                          :macros,
+                         :message_type_code,
+                         :message_type_label,
                          :open_tracking_enabled,
                          :reply_to,
                          :subject
@@ -77,6 +79,6 @@ module GovDelivery::TMS #:nodoc:
     # A CollectionResource of EmailRecipients that failed, not neccessarily bounced
     collection_attribute :failed, 'EmailRecipients'
 
-    linkable_attributes :email_template
+    linkable_attributes :email_template, :message_type
   end
 end

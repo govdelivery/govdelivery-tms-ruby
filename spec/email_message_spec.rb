@@ -86,7 +86,9 @@ describe GovDelivery::TMS::EmailMessage do
                    'reply_to'   => 'replyto@evotest.govdelivery.com',
                    'recipients' => [{ email: 'billy@evotest.govdelivery.com' }],
                    'created_at' => 'time',
-                   '_links'     => { 'self' => '/messages/email/new-template', 'email_template' => '/templates/email/new-template' }
+                   '_links'     => { 'self' => '/messages/email/new-template',
+                                     'message_type' => '/message_type/abc',
+                                     'email_template' => '/templates/email/new-template' }
                   }
       expect(@message.client).to receive('get').with(@message.href).and_return(double('response', status: 200, body: response))
       @message.get
@@ -97,6 +99,7 @@ describe GovDelivery::TMS::EmailMessage do
       expect(@message.errors_to).to eq('errors@evotest.govdelivery.com')
       expect(@message.created_at).to eq('time')
       expect(@message.email_template).to be_a(GovDelivery::TMS::EmailTemplate)
+      expect(@message.message_type).to be_a(GovDelivery::TMS::MessageType)
     end
   end
 end
