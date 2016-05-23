@@ -5,7 +5,6 @@ describe MessageType do
   let(:user) {account.users.create!(email: 'foo@evotest.govdelivery.com', password: 'schwoop')}
   subject {create(:message_type, account: account)}
   it {is_expected.to be_valid}
-  it {is_expected.to validate_presence_of(:label)}
   it {is_expected.to validate_presence_of(:code)}
 
   context 'when code has a space' do
