@@ -22,8 +22,8 @@ describe TwilioStatusCallbacksController do
     let (:params) do
       {
         format: 'xml',
-        'SmsSid' => '5678',
-        'SmsStatus' => '1234'
+        'MessageSid' => '5678',
+        'MessageStatus' => '1234'
       }
     end
     it 'should background the status worker and always succeed' do

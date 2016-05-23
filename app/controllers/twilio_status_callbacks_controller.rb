@@ -5,10 +5,10 @@ class TwilioStatusCallbacksController < ApplicationController
 
   def create
     Twilio::StatusWorker.perform_async({
-      status: params['SmsStatus'] || params['CallStatus'] || '',
+      status: params['MessageStatus'] || params['CallStatus'] || '',
       answered_by: params['AnsweredBy'],
-      sid: params['SmsSid'] || params['CallSid'],
-      type: params.key?('SmsStatus') ? 'sms' : 'voice'
+      sid: params['MessageSid'] || params['CallSid'],
+      type: params.key?('MessageStatus') ? 'sms' : 'voice'
     })
     render text: '', status: 201
   end
