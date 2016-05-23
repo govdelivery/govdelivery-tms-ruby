@@ -28,6 +28,14 @@ describe MessageType do
     end
   end
 
+  context 'when label is nil' do
+    it 'should generate it from the code' do
+      subject.label = nil
+      subject.valid?
+      expect(subject.label).to eql('Steve Key')
+    end
+  end
+
   context 'when duplicated' do
     subject {create(:message_type)}
     it 'should throw an error in same account' do

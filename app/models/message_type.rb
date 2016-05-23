@@ -19,9 +19,14 @@ class MessageType < ActiveRecord::Base
 
   validate :code_not_changed
 
+  before_validation :ensure_label
   before_destroy :ensure_no_messages
 
   private
+
+  def ensure_label
+    self.label ||= code.try :titleize
+  end
 
   def ensure_no_messages
     if email_messages.exists?
