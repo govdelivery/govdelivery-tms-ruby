@@ -22,6 +22,19 @@ describe 'email_templates/show.rabl' do
                   'from_address' => from_address_path(from_address))
   end
 
+  context 'with message_type' do
+    before do
+      @message_type = create(:message_type)
+      email_template.message_type = @message_type
+      assign(:template, email_template)
+    end
+
+    it 'should render a link to a message_type' do
+      render
+      expect(rendered).to include(message_type_path(@message_type))
+    end
+  end
+
   context "account link" do
     context "for non-admin users" do
       before do

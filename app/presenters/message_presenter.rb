@@ -25,7 +25,7 @@ class MessagePresenter < SimpleDelegator
   end
 
   def email_links
-    message_type == 'email' ? {clicked: clicked_link, opened: opened_link}.merge(insert_email_template_link) : {}
+    message_type == 'email' ? {clicked: clicked_link, opened: opened_link}.merge(insert_email_template_link).merge(insert_message_type_link) : {}
   end
 
   def voice_links
@@ -85,6 +85,10 @@ class MessagePresenter < SimpleDelegator
 
   def insert_email_template_link
     @message.email_template.blank? ? {} : {email_template: context.templates_email_path(@message.email_template)}
+  end
+
+  def insert_message_type_link
+    @message.message_type.blank? ? {} : {message_type: context.message_type_path(@message.message_type)}
   end
 
   def recipients_link
