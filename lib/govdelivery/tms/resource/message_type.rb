@@ -1,6 +1,6 @@
 module GovDelivery::TMS #:nodoc:
   # A MessageType is a like a tag that can be attached to an EmailTemplate or an
-  # EmailMessage. It is included in encoded links and can be used to as a
+  # EmailMessage. It is included in encoded links and can be used as a
   # Segmentation filter.
   #
   #
