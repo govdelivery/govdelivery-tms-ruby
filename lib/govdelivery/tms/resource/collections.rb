@@ -73,6 +73,10 @@ class GovDelivery::TMS::EmailTemplates
   include GovDelivery::TMS::CollectionResource
 end
 
+class GovDelivery::TMS::MessageTypes
+  include GovDelivery::TMS::CollectionResource
+end
+
 class GovDelivery::TMS::SmsTemplates
   include GovDelivery::TMS::CollectionResource
 end
