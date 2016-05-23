@@ -11,6 +11,6 @@ module GovDelivery::TMS #:nodoc:
     include InstanceResource
 
     # @!parse attr_reader :code, :label
-    readonly_attributes :code, :label
+    writeable_attributes :code, :label
   end
 end
