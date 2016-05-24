@@ -109,7 +109,7 @@ module Recipient
     update_attribute(:ack, ack)
   end
 
-  def retry!
+  def retry!(*_)
     if sending?
       logger.info("retrying send for #{self.class.name} #{id}")
       args = {

@@ -22,7 +22,7 @@ Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
 
 I18n.enforce_available_locales = true
 
-require File.join(File.expand_path('../../lib', __FILE__), 'xact_middleware', 'skip_query_cache')
+require File.join(File.expand_path('../../lib', __FILE__), 'xact_middleware', 'conditional_query_cache')
 
 module Xact
   class Application < Rails::Application
@@ -58,8 +58,8 @@ module Xact
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-    config.skip_url_regex = /^\/twilio_status_callbacks/
-    config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::SkipQueryCache
+    config.no_db_regex = /^\/(twilio_status_callbacks|mblox)/
+    config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::ConditionalQueryCache
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding                                    = 'utf-8'
