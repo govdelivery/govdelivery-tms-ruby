@@ -1,5 +1,5 @@
 object @message_type
-attributes :name, :name_key, :created_at
+attributes :code, :label
 
 if root_object
   if root_object.errors.any?
