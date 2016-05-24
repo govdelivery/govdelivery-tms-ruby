@@ -25,7 +25,6 @@ And(/^the message type code starts with '(.*)'$/) do |code_prefix|
 end
 
 And(/^the message type user visible text is '(.*)'$/) do |visible_text|
-  binding.pry
   expect(@message_type.label).to start_with(visible_text)
 end
 
