@@ -3,7 +3,15 @@ module GovDelivery::TMS #:nodoc:
     include InstanceResource
 
     # @!parse attr_accessor :body, :subject, :link_tracking_parameters, :macros, :open_tracking_enabled, :click_tracking_enabled
-    writeable_attributes :body, :subject, :link_tracking_parameters, :macros, :open_tracking_enabled, :click_tracking_enabled, :uuid
+    writeable_attributes :body,
+                         :subject,
+                         :link_tracking_parameters,
+                         :macros,
+                         :message_type_code,
+                         :message_type_label,
+                         :open_tracking_enabled,
+                         :click_tracking_enabled,
+                         :uuid
 
     linkable_attributes :from_address, :message_type
 
