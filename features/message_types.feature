@@ -18,7 +18,7 @@ Feature: Interacting with TMS Message Types API.
 
   Scenario: Listing message types in an account without message types
     When I list message types in an account without message types
-    Then the listing should be empty
+    Then the client should not have message_types
 
   Scenario: Listing message types in an account with message types
     Given a message type exists with code 'listing_message_type_testing'
@@ -40,5 +40,4 @@ Feature: Interacting with TMS Message Types API.
 
   Scenario: Delete a message type after adding it to a message
     Given an email message exists with a message_type_code 'delete_template_message_type'
-    When I delete the message type with code prefix 'delete_template_message_type'
-    Then the message type should have an error
+    Then that message type cannot be deleted

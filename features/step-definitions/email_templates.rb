@@ -25,6 +25,7 @@ end
 When(/^I save the email template$/) do
   @template.post
   @last_response = @template.response
+  @message_type = @template.message_type if @template.respond_to?(:message_type)
 end
 
 When(/^I update the email template$/) do
@@ -112,9 +113,9 @@ And(/^I remove the message_type_code from the template$/) do
 end
 
 And(/^the response should not contain a message_type_code$/) do
-  raise "message type code should not be in the template".red if @template.get.response.body.include?('message_type_code')
+  expect(@template.message_type_code).to be_nil
 end
 
 And(/^the response should not contain a link to the message type$/) do
-  raise "link to the message type should not be in the template".red if @template.get.links.include?(:message_type)
+  expect(@template.message_type).to be_nil
 end
