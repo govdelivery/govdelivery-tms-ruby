@@ -86,6 +86,7 @@ describe GovDelivery::TMS::EmailMessage do
                    'reply_to'   => 'replyto@evotest.govdelivery.com',
                    'recipients' => [{ email: 'billy@evotest.govdelivery.com' }],
                    'created_at' => 'time',
+                   'message_type_code' => 'salutations',
                    '_links'     => { 'self' => '/messages/email/new-template',
                                      'message_type' => '/message_type/abc',
                                      'email_template' => '/templates/email/new-template' }
@@ -98,6 +99,7 @@ describe GovDelivery::TMS::EmailMessage do
       expect(@message.reply_to).to eq('replyto@evotest.govdelivery.com')
       expect(@message.errors_to).to eq('errors@evotest.govdelivery.com')
       expect(@message.created_at).to eq('time')
+      expect(@message.message_type_code).to eq('salutations')
       expect(@message.email_template).to be_a(GovDelivery::TMS::EmailTemplate)
       expect(@message.message_type).to be_a(GovDelivery::TMS::MessageType)
     end

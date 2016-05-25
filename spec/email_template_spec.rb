@@ -80,7 +80,6 @@ describe GovDelivery::TMS::EmailTemplate do
         'open_tracking_enabled'      => true,
         'click_tracking_enabled'     => true,
         'message_type_code'          => 'salutations',
-        'message_type_label'         => 'hi',
         'created_at'                 => 'sometime',
         '_links'                     => { 'self' => '/templates/email/new-template',
                                           'account' => '/accounts/1',
@@ -98,7 +97,6 @@ describe GovDelivery::TMS::EmailTemplate do
       expect(@template.open_tracking_enabled).to eq(true)
       expect(@template.click_tracking_enabled).to eq(true)
       expect(@template.message_type_code).to eql('salutations')
-      expect(@template.message_type_label).to eql('hi')
       expect(@template.created_at).to eq('sometime')
       expect(@template.from_address).to be_a(GovDelivery::TMS::FromAddress)
       expect(@template.message_type).to be_a(GovDelivery::TMS::MessageType)

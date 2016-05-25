@@ -51,7 +51,6 @@ module GovDelivery::TMS #:nodoc:
                          :from_name,
                          :macros,
                          :message_type_code,
-                         :message_type_label,
                          :open_tracking_enabled,
                          :reply_to,
                          :subject
