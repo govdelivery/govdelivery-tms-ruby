@@ -22,7 +22,7 @@ Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
 
 I18n.enforce_available_locales = true
 
-require File.join(File.expand_path('../../lib', __FILE__), 'xact_middleware', 'skip_query_cache')
+require File.join(File.expand_path('../../lib', __FILE__), 'xact_middleware', 'conditional_query_cache')
 
 module Xact
   class Application < Rails::Application
@@ -58,6 +58,8 @@ module Xact
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+    config.no_db_regex = /^\/(twilio_status_callbacks|mblox)/
+    config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::ConditionalQueryCache
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding                                    = 'utf-8'
@@ -149,7 +151,13 @@ module Xact
     }
 
     # Default log level is DEBUG
-    config.logger    = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default']
+    config.logger = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default'].tap do |logger|
+      # Log4r doesn't implement the interface that rails is looking for, but we can fake it.
+      # unfortunately this means only one formatter will be used, but we only have one now, so we'll use that
+      # environments other than development don't seem to be affected by this - not sure why
+      logger.class.send :attr_reader, :formatter
+      logger.instance_variable_set :@formatter, logger.outputters.first.formatter
+    end
 
     host                       = GovDelivery::Host.new
     config.datacenter_location = host.datacenter

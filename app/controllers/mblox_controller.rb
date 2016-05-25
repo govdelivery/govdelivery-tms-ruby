@@ -4,33 +4,17 @@ class MbloxController < ApplicationController
   respond_to :json
 
   def report
-    recipient.send(transition, recipient.ack) if transition
+    Mblox::StatusWorker.perform_async(
+      {
+        status:    params['status'],
+        code:      params['code'],
+        ack:       params['batch_id'],
+        recipient: params['recipient']
+      })
     render text: '', status: 201
   end
 
   private
 
-  def recipient
-    @recipient ||= SmsRecipient.where(ack: params['batch_id'], formatted_phone: PhoneNumber.new(params['recipient']).e164).first || raise(ActiveRecord::RecordNotFound)
-  end
 
-  def transition
-    secondary_status = params['code']
-    case params['status']
-    when "Queued", "Dispatched"
-      nil # noop
-    when "Aborted"
-      ["402", "405", "407"].include?(secondary_status) ? recipient.retry! : :canceled!
-    when "Expired"
-      recipient.retry!
-    when "Delivered"
-      :sent!
-    when "Failed", "Rejected"
-      :failed!
-    when "Unknown"
-      :inconclusive!
-    else
-      raise StandardError.new("Invalid delivery state")
-    end
-  end
 end
