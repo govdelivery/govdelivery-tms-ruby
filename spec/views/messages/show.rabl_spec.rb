@@ -54,6 +54,6 @@ describe 'messages/show.rabl' do
                   'sent' => sent_email_recipients_path(email_message),
                   'opened' => opened_email_recipients_path(email_message),
                   'clicked' => clicked_email_recipients_path(email_message),
-                  'message_type' => message_types_path(email_message))
+                  'message_type' => message_type_path(email_message.message_type))
   end
 end
