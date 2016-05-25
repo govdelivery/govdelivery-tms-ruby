@@ -159,7 +159,7 @@ message.post
 
 Webhooks
 -------
-### POST to a URL when a recipient is blacklisted (i.e. to remove from your list)  
+### POST to a URL when a recipient is blacklisted (i.e. to remove from your list)
 
 
 ```ruby
@@ -209,7 +209,7 @@ Configuring 2-way SMS
 ---------------------
 
 ### Listing Command Types
-Command Types are the available commands that can be used to respond to an incoming SMS message.  
+Command Types are the available commands that can be used to respond to an incoming SMS message.
 
 ```ruby
 command_types = client.command_types.get
@@ -334,7 +334,7 @@ Running Tests
 -------------
 ```ruby
 appraisal install
-# optionally specify an activesupport version to test against (2/3/4), e.g.
+# optionally specify an activesupport version to test against (3/4), e.g.
 # appraisal 4 rake          ## for ruby 2.1.2
 appraisal rake
 ```
