@@ -80,8 +80,8 @@ class EmailRecipient < ActiveRecord::Base
                                                                                    message_id: message.id,
                                                                                    recipient_id: id,
                                                                                    recipient_email: email,
-                                                                                   message_type_label: message.message_type.label,
-                                                                                   message_type_code: message.message_type.code,
+                                                                                   message_type_label: message.try(:message_type).try(:label),
+                                                                                   message_type_code: message.try(:message_type).try(:code),
                                                                                    clicked_at: date,
                                                                                    url: url})
     end
@@ -102,8 +102,8 @@ class EmailRecipient < ActiveRecord::Base
                                                                                    message_id: message.id,
                                                                                    recipient_id: id,
                                                                                    recipient_email: email,
-                                                                                   message_type_label: message.message_type.label,
-                                                                                   message_type_code: message.message_type.code,
+                                                                                   message_type_label: message.try(:message_type).try(:label),
+                                                                                   message_type_code: message.try(:message_type).try(:code),
                                                                                    opened_at: date})
 
     end
@@ -118,8 +118,8 @@ class EmailRecipient < ActiveRecord::Base
                                                                                    message_id: message.id,
                                                                                    recipient_id: id,
                                                                                    recipient_email: email,
-                                                                                   message_type_label: message.message_type.label,
-                                                                                   message_type_code: message.message_type.code,
+                                                                                   message_type_label: message.try(:message_type).try(:label),
+                                                                                   message_type_code: message.try(:message_type).try(:code),
                                                                                    sent_at: date_sent})
     end
   end
