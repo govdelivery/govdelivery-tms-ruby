@@ -58,8 +58,6 @@ module Xact
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-    config.no_db_regex = /^\/(twilio_status_callbacks|mblox)/
-    config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::ConditionalQueryCache
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding                                    = 'utf-8'
@@ -89,6 +87,8 @@ module Xact
     config.middleware.use Rack::SSL, exclude: ->(env) {!Rack::Request.new(env).ssl?}
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
+    config.no_db_regex = /^\/(twilio_status_callbacks|mblox)/
+    config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::ConditionalQueryCache
 
     redis_opts = {url: Conf.redis_uri}
 
