@@ -1,2 +1,4 @@
-class StatusWorker
+module Mblox
+  class StatusWorker
+  end
 end
