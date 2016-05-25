@@ -79,8 +79,12 @@ describe GovDelivery::TMS::EmailTemplate do
         'macros'                     => { 'MACRO1' => '1' },
         'open_tracking_enabled'      => true,
         'click_tracking_enabled'     => true,
+        'message_type_code'          => 'salutations',
         'created_at'                 => 'sometime',
-        '_links'                     => { 'self' => '/templates/email/new-template', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
+        '_links'                     => { 'self' => '/templates/email/new-template',
+                                          'account' => '/accounts/1',
+                                          'message_type' => '/message_types/abc',
+                                          'from_address' => '/from_addresses/1' }
       }
       expect(@template.client).to receive('post').with(@template).and_return(double('response', status: 201, body: response))
       @template.post
@@ -92,8 +96,10 @@ describe GovDelivery::TMS::EmailTemplate do
       expect(@template.macros).to eq('MACRO1' => '1')
       expect(@template.open_tracking_enabled).to eq(true)
       expect(@template.click_tracking_enabled).to eq(true)
+      expect(@template.message_type_code).to eql('salutations')
       expect(@template.created_at).to eq('sometime')
       expect(@template.from_address).to be_a(GovDelivery::TMS::FromAddress)
+      expect(@template.message_type).to be_a(GovDelivery::TMS::MessageType)
     end
   end
 
