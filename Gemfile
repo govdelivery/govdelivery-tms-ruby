@@ -98,7 +98,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'govdelivery-tms', '~>0.8.14'
+  gem 'govdelivery-tms', '~>0.9.0'
   gem 'govdelivery-tms-internal', '~>0.0.2'
   gem 'configatron'
   gem 'fakeredis', require: 'fakeredis/rspec'
