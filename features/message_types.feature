@@ -16,8 +16,8 @@ Feature: Interacting with TMS Message Types API.
     Then the message type code starts with 'update_message_type_testing'
     And the message type user visible text is 'New Message Type Testing'
 
-  Scenario: Listing message types in an account without message types
-    When I list message types in an account without message types
+  Scenario: Listing message types in an account without an email vendor
+    When I list message types in an account without an email vendor
     Then the client should not have message_types
 
   Scenario: Listing message types in an account with message types

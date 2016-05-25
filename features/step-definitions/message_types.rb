@@ -37,7 +37,7 @@ When(/^I update the message type with user visible text '(.*)'$/) do|visible_tex
   raise "message type was not updated with new user visible text: #{visible_text_prefix + suffix}".red unless @message_type.put
 end
 
-Given(/^I list message types in an account without message types$/) do
+Given(/^I list message types in an account without an email vendor$/) do
   @client = TmsClientManager.other_non_admin_client
 end
 
