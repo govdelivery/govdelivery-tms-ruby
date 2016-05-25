@@ -4,7 +4,8 @@ describe EmailRecipient do
   let(:macros) {{'one' => 'one_value', 'five' => 'five_value', 'two' => 'two_value'}}
   let(:vendor) {create(:email_vendor)}
   let(:account) {create(:account, email_vendor: vendor, name: 'account', sid: 'foo')}
-  let(:email_message) {create(:email_message, account: account)}
+  let(:message_type) {create(:message_type, account: account)}
+  let(:email_message) {create(:email_message, account: account, message_type: message_type)}
   let(:other_email) do
     em = create(:email_message, account: account)
     em.recipients.build(email: 'doo@doo.com')
@@ -200,16 +201,22 @@ describe EmailRecipient do
       end
 
       it 'should publish sent transitions' do
+        the_time = Time.now
         expected = {
           channel: 'email_channel',
           message: has_entries(v: '1',
                                recipient_id: subject.id,
                                message_id: subject.message.id,
                                account_sid: subject.message.account.sid,
-                               uri: 'sent')
+                               uri: 'sent',
+                               recipient_email: subject.email,
+                               account_id: subject.message.account.id,
+                               message_type_label: subject.message.message_type.label,
+                               message_type_code: subject.message.message_type.code,
+                               sent_at: the_time)
         }
         Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
-        subject.sent!('ack', nil)
+        subject.sent!('ack', the_time)
       end
 
       context 'after receiving the message' do
@@ -218,6 +225,7 @@ describe EmailRecipient do
         end
 
         it 'publishes click events' do
+          the_time = Time.now
           expected = {
             channel: 'email_channel',
             message: has_entries(v: '1',
@@ -225,10 +233,15 @@ describe EmailRecipient do
                                  message_id: subject.message.id,
                                  account_sid: subject.message.account.sid,
                                  uri: 'clicked',
-                                 url: 'http://www.google.com')
+                                 url: 'http://www.google.com',
+                                 recipient_email: subject.email,
+                                 account_id: subject.message.account.id,
+                                 message_type_label: subject.message.message_type.label,
+                                 message_type_code: subject.message.message_type.code,
+                                 clicked_at: the_time)
           }
           Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
-          subject.clicked!('http://www.google.com', Time.now)
+          subject.clicked!('http://www.google.com', the_time)
         end
 
         it 'publishes arfs' do
@@ -245,16 +258,22 @@ describe EmailRecipient do
         end
 
         it "publishes open events" do
+          the_time = Time.now
           expected = {
             channel: 'email_channel',
             message: has_entries(v: '1',
                                  recipient_id: subject.id,
                                  message_id: subject.message.id,
                                  account_sid: subject.message.account.sid,
-                                 uri: 'opened')
+                                 uri: 'opened',
+                                 recipient_email: subject.email,
+                                 account_id: subject.message.account.id,
+                                 message_type_label: subject.message.message_type.label,
+                                 message_type_code: subject.message.message_type.code,
+                                 opened_at: the_time)
           }
           Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
-          subject.opened!('127.0.0.1', Time.now)
+          subject.opened!('127.0.0.1', the_time)
         end
 
         it "publishes bounce events" do

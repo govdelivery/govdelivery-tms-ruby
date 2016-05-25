@@ -73,7 +73,17 @@ class EmailRecipient < ActiveRecord::Base
       erc.email_message = message
       erc.email = email
       erc.save!
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "clicked", v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id, url: url})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: "clicked",
+                                                                                   v: '1',
+                                                                                   account_sid: message.account.sid,
+                                                                                   account_id: message.account.id,
+                                                                                   message_id: message.id,
+                                                                                   recipient_id: id,
+                                                                                   recipient_email: email,
+                                                                                   message_type_label: message.message_type.label,
+                                                                                   message_type_code: message.message_type.code,
+                                                                                   clicked_at: date,
+                                                                                   url: url})
     end
   end
 
@@ -85,13 +95,32 @@ class EmailRecipient < ActiveRecord::Base
       ero.email_message = message
       ero.email = email
       ero.save!
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'opened', v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'opened',
+                                                                                   v: '1',
+                                                                                   account_sid: message.account.sid,
+                                                                                   account_id: message.account.id,
+                                                                                   message_id: message.id,
+                                                                                   recipient_id: id,
+                                                                                   recipient_email: email,
+                                                                                   message_type_label: message.message_type.label,
+                                                                                   message_type_code: message.message_type.code,
+                                                                                   opened_at: date})
+
     end
   end
 
   def sent!(ack, date_sent=nil, _=nil)
     super.tap do
-      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'sent', v: '1', account_sid: message.account.sid, message_id: message.id, recipient_id: id})
+      Analytics::PublisherWorker.perform_async(channel: 'email_channel', message: {uri: 'sent',
+                                                                                   v: '1',
+                                                                                   account_sid: message.account.sid,
+                                                                                   account_id: message.account.id,
+                                                                                   message_id: message.id,
+                                                                                   recipient_id: id,
+                                                                                   recipient_email: email,
+                                                                                   message_type_label: message.message_type.label,
+                                                                                   message_type_code: message.message_type.code,
+                                                                                   sent_at: date_sent})
     end
   end
 
