@@ -10,6 +10,7 @@
 When(/^I send the (?:email|sms|message)$/) do
   @message.post
   @last_response = @message.response
+  @message_type = @message.message_type if @message.respond_to?(:message_type)
 end
 
 #########################################
