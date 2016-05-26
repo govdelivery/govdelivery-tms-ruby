@@ -50,7 +50,6 @@ When(/^I list message types$/) do
 end
 
 Then(/^the listing should include a message type with code '(.*)'$/) do |code|
-  pending('cleanup needed - delete the message type after each run')
   expect(@message_type_list.collection.select { |mt| mt.code && mt.code == code }).to_not be_empty
 end
 
