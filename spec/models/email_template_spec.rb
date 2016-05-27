@@ -162,5 +162,12 @@ describe EmailTemplate do
       expect(email_template.errors[:message_type_label]).to be_present
       expect(email_template).to be_new_record
     end
+
+    it 'should resolve message_type_code from message_type' do
+      subject.message_type_code = 'salutations'
+      subject.save
+      message = EmailTemplate.find(subject.id)
+      expect(message.message_type_code).to eql('salutations')
+    end
   end
 end

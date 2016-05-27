@@ -494,5 +494,12 @@ describe EmailMessage do
       templated_email_with_typed_template.save!
       expect(templated_email_with_typed_template.message_type.code).to eq('email_type')
     end
+
+    it 'should resolve message_type_code from message_type' do
+      subject.message_type_code = 'salutations'
+      subject.save
+      message = EmailMessage.find(subject.id)
+      expect(message.message_type_code).to eql('salutations')
+    end
   end
 end
