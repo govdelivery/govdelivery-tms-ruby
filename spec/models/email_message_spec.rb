@@ -497,7 +497,7 @@ describe EmailMessage do
 
     it 'should resolve message_type_code from message_type' do
       subject.message_type_code = 'salutations'
-      subject.save
+      subject.save!
       message = EmailMessage.find(subject.id)
       expect(message.message_type_code).to eql('salutations')
     end
