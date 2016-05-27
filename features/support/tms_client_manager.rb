@@ -13,6 +13,10 @@ module TmsClientManager
     @non_admin_client ||= client_factory(configatron.tms.non_admin.token, configatron.tms.api_root)
   end
 
+  def other_non_admin_client
+    @other_non_admin_client ||= client_factory(configatron.tms.sms.token, configatron.tms.api_root)
+  end
+
   def non_admin_token
     configatron.tms.non_admin.token
   end

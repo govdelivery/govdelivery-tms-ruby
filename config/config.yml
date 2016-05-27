@@ -18,13 +18,15 @@ analytics:
     request.required.acks: '1'
 redis_sentinel_uris: [] # optional for environments with
 nsca_password: ""       # for nagios alerting
-shared_phone_numbers:
+shared_phone_numbers:   # shared between XACT and CC 
   - '+16514336311' # dev
   - '+16519684981' # qc
   - '+18573665390' # qc
   - '+19177468378' # int
   - '+16122604683' # stage
-  - '468311'       # production
+  - '468311'       # production GOV311
+  - '85123'        # UK Twilio short code
+  - '64468'        # MIGOV short code
   # 89568 467873 566948 734876 667873 99511 - production short codes (as of 4/2015)
   # TXLOT INSURE KNOWIT seguro MNSURE WY511 - don't forward these, stop commands will handle unsubscribing
 secret_key_base: #nil

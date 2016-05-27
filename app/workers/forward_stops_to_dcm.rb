@@ -13,6 +13,24 @@ class ForwardStopsToDcm
     perform_async(opts) if should_forward?(opts['Body'], opts['To'])
   end
 
+  ##
+  # A stop request should be forwarded to CC for global removal there if: 
+  #   * The message text begins with a STOP word (i.e. it is a global stop request)
+  #   * The number that the stop word was sent to is a shared number as defined by 
+  #     config/config.yml.
+  #
+  # The meaning of "shared" is that the number is being used in both TMS (XACT)
+  # and CC (BP2) for sending.  
+  #
+  # Messages are *not* forwarded to CC if the text message does not start with a 
+  # stop word. If the message begins with an account keyword and has a stop word 
+  # after that, the stop request is handled for that account.
+  #
+  # If an account is using a number for SMS sending in BP2 and it is not marked 
+  # as "shared" in XACT, and the number is configured to point incoming text 
+  # messages to XACT via Twilio, global stop messages will not make it to CC for subscriber
+  # removal. 
+  #
   def self.should_forward?(body, to)
     Keyword.stop?(body) && Rails.configuration.shared_phone_numbers.include?(to)
   end
