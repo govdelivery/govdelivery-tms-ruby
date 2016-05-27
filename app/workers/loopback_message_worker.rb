@@ -16,6 +16,7 @@ class LoopbackMessageWorker
             logger.info('Magic New Recipient: Staying in New State.')
           when self.class.magic_addresses[:sending]
             logger.info('Magic Sending Recipient: Going to Sending State.')
+            @message.sending!
             recipient.sending!(ack)
           when self.class.magic_addresses[:inconclusive]
             logger.info('Magic Inconclusive Recipient: Going to Inconclusive State.')
@@ -28,16 +29,19 @@ class LoopbackMessageWorker
             recipient.failed!(ack, nil, 'magical failure')
           when self.class.magic_addresses[:bounced]
             logger.info('Magic Bounced Recipient: Sending a bounce')
+            @message.sending!
             recipient.sending!(ack)
             recipient.hard_bounce!('ack', Time.now, 'bounce')
           when self.class.magic_addresses[:blacklisted]
             logger.info('Magic Blacklisted Recipient: Going to Blacklisted State.')
             recipient.blacklist!
           when self.class.magic_addresses[:sent]
-            logger.info('Magic Sent Recipient: Going to Sent State.')
+            logger.info("Magic Sent Recipient #{recipient.id}: Going to Sent State.")
+            @message.sending!
             recipient.sent!(ack, nil, :human)
           when self.class.magic_addresses[:opened]
             logger.info('Magic Opened Recipient: Sending an open')
+            @message.sending!
             recipient.sent!(ack, nil, :human)
             recipient.opened!('127.0.0.1', Time.now)
           else

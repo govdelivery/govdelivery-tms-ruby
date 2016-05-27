@@ -127,12 +127,16 @@ module Recipient
   end
 
   def invoke_webhooks(*_)
+    logger.debug "Invoking webhook for message #{message.id}"
     message.account.webhooks.where(event_type: status).each do |webhook|
+      logger.debug "WEBHOOK!!"
+      logger.debug webhook.inspect
       webhook.invoke(self)
     end
   end
 
   def finalize(ack, completed_at, error_message)
+    logger.debug "Finalizing recipient #{self.id}"
     self.ack           = ack if ack.present?
     self.completed_at  = completed_at || Time.now
     self.error_message = error_message
