@@ -13,6 +13,7 @@ RSpec.describe LoopbackEmailWorker, type: :worker do
     LoopbackEmailWorker.magic_addresses.each do |_type, email|
       email_message.recipients.create!(email: email)
     end
+    email_message.ready! #recipients are processed
     subject.perform('message_id' => email_message.id)
 
     state_map = LoopbackEmailWorker.magic_addresses.each_with_object({}) { |(k,v), h| h[k] = k }

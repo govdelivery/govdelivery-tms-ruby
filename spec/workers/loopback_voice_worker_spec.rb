@@ -16,6 +16,7 @@ RSpec.describe LoopbackVoiceWorker, type: :worker do
     LoopbackVoiceWorker.magic_addresses.each do |_type, number|
       voice_message.recipients.create!(phone: number)
     end
+    voice_message.ready! #recipients are processed
     subject.perform('message_id' => voice_message.id)
     LoopbackVoiceWorker.magic_addresses.each do |type, _number|
       expect(voice_message.recipients.where(status: type).count).to eq 1

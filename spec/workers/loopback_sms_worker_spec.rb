@@ -16,6 +16,7 @@ RSpec.describe LoopbackSmsWorker, type: :worker do
     LoopbackSmsWorker.magic_addresses.each do |_type, number|
       sms_message.recipients.create!(phone: number)
     end
+    sms_message.ready! #recipients are processed
     subject.perform('message_id' => sms_message.id)
     LoopbackSmsWorker.magic_addresses.each do |type, _number|
       expect(sms_message.recipients.where(status: type).count).to eq 1
