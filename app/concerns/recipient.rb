@@ -127,7 +127,7 @@ module Recipient
   end
 
   def invoke_webhooks(*_)
-    message.account.webhooks.where(event_type: status).each do |webhook|
+    message.account.webhooks.where(event_type: aasm.to_state).each do |webhook|
       webhook.invoke(self)
     end
   end

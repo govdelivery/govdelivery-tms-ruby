@@ -24,8 +24,10 @@ RSpec.describe LoopbackSmsWorker, type: :worker do
   end
 
   it 'should get to sent state' do
+    hooky = create(:webhook, account: account, event_type: 'sent', url: 'http://webhook.org')
     sms_message.recipients.create!(phone: LoopbackSmsWorker.magic_addresses[:sent])
     sms_message.ready! #recipients are processed
+    Webhook.any_instance.expects(:invoke) #AASM properly calls webhook for sent transition
     subject.perform('message_id' => sms_message.id)
 
     expect(sms_message.recipients.where(status: :sent).count).to eq 1
