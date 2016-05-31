@@ -112,6 +112,12 @@ And(/^I remove the message_type_code from the template$/) do
   @template.message_type_code = nil
 end
 
+And(/^the template response should contain a message_type_code with value '(.*)'$/) do |message_type_code|
+  code = @template.get.response.body['message_type_code']
+  raise "message type code field not found".red if code.nil?
+  raise "message type code not found in #{code}".red unless code == message_type_code
+end
+
 And(/^the response should not contain a message_type_code$/) do
   expect(@template.message_type_code).to be_nil
 end
