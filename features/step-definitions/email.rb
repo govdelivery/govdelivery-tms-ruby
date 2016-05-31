@@ -112,7 +112,7 @@ And(/^the response should contain a message_type_code with value '(.*)'$/) do |m
 end
 
 And(/^the response should contain a link to the message type$/) do
-  raise "the response did not contain a link to the message type".red unless @message.get.links.include?(:message_type)
+  expect(@message.message_type).to be_a(GovDelivery::TMS::MessageType)
 end
 
 Then(/^the response should have only one recipient$/) do
