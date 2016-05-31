@@ -144,6 +144,8 @@ describe EmailTemplate do
 
   context 'MessageType' do
     let(:template_params){{body: 'hello', subject: 'greetings'}}
+    # these are the steps to set the message_type
+    let(:template){ subject.message_type_code = 'salutations'; subject.save!; subject; }
     it 'should save with just code' do
       email_template = user.email_templates.create(template_params.merge(message_type_code: 'type_a'))
       expect(email_template.message_type.code).to eq( 'type_a' )
@@ -164,10 +166,16 @@ describe EmailTemplate do
     end
 
     it 'should resolve message_type_code from message_type' do
-      subject.message_type_code = 'salutations'
-      subject.save!
-      message = EmailTemplate.find(subject.id)
-      expect(message.message_type_code).to eql('salutations')
+      new_template = EmailTemplate.find(template.id)
+      expect(new_template.message_type_code).to eql('salutations')
+    end
+
+    it 'should remove message_type when updating with message_type_code set to nil' do
+      template.message_type_code = nil
+      template.save!
+      template.reload
+      expect(template.message_type).to be_nil
+      expect(template.message_type_code).to be_nil
     end
   end
 end

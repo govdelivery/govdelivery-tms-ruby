@@ -22,6 +22,8 @@ class EmailMessage < ActiveRecord::Base
   before_validation :apply_template, on: :create
   before_validation :apply_defaults, on: :create
 
+  before_create :auto_create_message_type
+
   validates :body, presence: true, on: :create
   validates :subject, presence: true, length: {maximum: 400}, on: :create
   validates :from_email, presence: true
