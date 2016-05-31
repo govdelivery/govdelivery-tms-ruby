@@ -4,11 +4,6 @@ module MessageTypeSetter
       attr_accessor :message_type_label
       attr_accessor :remove_message_type # the unset tracker, because the message_type_code will cascade
       attr_accessible :message_type_code, :message_type_label
-
-      # message types are only auto-created when other things are created
-      before_create :auto_create_message_type
-      # this is assuming email messages can't be updated because email_messages shouldn't have their message_types removed
-      before_update :auto_remove_message_type
     end
   end
 

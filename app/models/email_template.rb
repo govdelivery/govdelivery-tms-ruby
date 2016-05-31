@@ -26,7 +26,9 @@ class EmailTemplate < ActiveRecord::Base
             uniqueness: {scope: :account, case_sensitive: false}
 
   validate :id_and_uuid_cannot_change
+  before_update :auto_remove_message_type
   before_update :auto_create_message_type # change message type or change label
+  before_create :auto_create_message_type # create or set message type
 
   after_create :set_uuid
 
@@ -41,10 +43,7 @@ class EmailTemplate < ActiveRecord::Base
   end
 
   def set_uuid
-    if uuid.nil? || uuid.empty?
-      self.uuid = id
-    end
-    save!
+    update_attribute :uuid, id if uuid.blank?
   end
 
   def id_and_uuid_cannot_change
