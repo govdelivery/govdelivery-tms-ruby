@@ -45,6 +45,17 @@ module GovDelivery::TMS::InstanceResource
     end
 
     ##
+    # Nullable attributes are sent as null in the request
+    #
+    def nullable_attributes(*attrs)
+      @nullable_attributes ||= []
+      if attrs.any?
+        @nullable_attributes.map!(&:to_sym).concat(attrs).uniq! if attrs.any?
+      end
+      @nullable_attributes
+    end
+
+    ##
     # For collections that are represented as attributes (i.e. inline, no href)
     #
     # @example
@@ -166,7 +177,9 @@ module GovDelivery::TMS::InstanceResource
         json_hash[:_links]       ||= {}
         json_hash[:_links][attr] = @links[attr]
       end
-      json_hash.reject { |_, value| value.nil? }
+      json_hash.reject do |key, value|
+        value.nil? && !self.class.nullable_attributes.include?(key)
+      end
     end
 
     protected

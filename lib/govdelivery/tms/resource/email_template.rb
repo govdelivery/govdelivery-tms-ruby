@@ -18,5 +18,7 @@ module GovDelivery::TMS #:nodoc:
     readonly_attributes :id, :created_at
 
     collection_attribute :from_address, 'FromAddress'
+
+    nullable_attributes :message_type_code
   end
 end
