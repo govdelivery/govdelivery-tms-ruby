@@ -35,6 +35,14 @@ describe GovDelivery::TMS::InstanceResource do
       expect(@instance_resource.to_json).to eq({blah: {recipients: [], opened: [], clicked: [], sent: [], failed: []}})
     end
 
+    it 'should ignore nils in to_json unless an attribute in nullable_attributes' do
+      @instance_resource.class.nullable_attributes :bar
+      @instance_resource.bar = nil
+      expect(@instance_resource.to_json).to eq({blah: {recipients: [], opened: [], clicked: [], sent: [], failed: []},
+                                                bar: nil})
+      @instance_resource.class.instance_variable_set :@nullable_attributes, []
+    end
+
     it 'should not GET on initialization' do
       expect(client).not_to receive(:get)
       Foo.new(client, 'https://example.com/foos/1')
