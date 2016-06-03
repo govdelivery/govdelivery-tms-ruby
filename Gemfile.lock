@@ -161,7 +161,7 @@ GEM
       addressable (~> 2.3.0)
       rack
     govdelivery-proctor (1.1.1)
-    govdelivery-tms (0.9.3)
+    govdelivery-tms (0.9.4)
       activesupport
       faraday
       faraday_middleware
@@ -483,7 +483,7 @@ DEPENDENCIES
   govdelivery-dbtasks!
   govdelivery-links
   govdelivery-proctor!
-  govdelivery-tms (~> 0.9.2)
+  govdelivery-tms (~> 0.9.4)
   govdelivery-tms-internal (~> 0.0.2)
   guard-rspec
   highline
