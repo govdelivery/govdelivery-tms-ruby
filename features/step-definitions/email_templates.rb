@@ -118,6 +118,10 @@ And(/^the template response should contain a message_type_code with value '(.*)'
   raise "message type code not found in #{code}".red unless code == message_type_code
 end
 
+And(/^the template response should contain a link to the message type$/) do
+  expect(@template.message_type).to be_a(GovDelivery::TMS::MessageType)
+end
+
 And(/^the response should not contain a message_type_code$/) do
   expect(@template.message_type_code).to be_nil
 end

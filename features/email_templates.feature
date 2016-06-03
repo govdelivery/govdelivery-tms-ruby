@@ -61,7 +61,7 @@ Feature: Interacting with TMS email templates
     When I save the email template
     Then the response code should be '201'
     And the template response should contain a message_type_code with value 'test_template_message_type_code'
-    And the response should contain a link to the message type
+    And the template response should contain a link to the message type
 
   @message_types
   Scenario: TMS admin verifies that a template without a message_type_code can be updated with a message_type_code
@@ -70,7 +70,7 @@ Feature: Interacting with TMS email templates
     And I update the email template
     Then the response code should be '200'
     And the template response should contain a message_type_code with value 'test_update_template_message_type_code'
-    And the response should contain a link to the message type
+    And the template response should contain a link to the message type
 
   @message_types
   Scenario: TMS admin verifies that a template with a message_type_code can be updated with a new message_type_code
@@ -79,7 +79,7 @@ Feature: Interacting with TMS email templates
     And I update the email template
     Then the response code should be '200'
     And the template response should contain a message_type_code with value 'after_message_type_code'
-    And the response should contain a link to the message type
+    And the template response should contain a link to the message type
 
   @message_types
   Scenario: TMS admin verifies that a template with a message_type_code can be updated to remove message_type_code
