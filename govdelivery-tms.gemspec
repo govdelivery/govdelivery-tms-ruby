@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'activesupport'
   s.add_runtime_dependency 'faraday'
   s.add_runtime_dependency 'faraday_middleware'
-  s.add_runtime_dependency 'mime-types', '2.99.2' # later versions require ruby>2
+  s.add_runtime_dependency 'mime-types'
 
   s.files       = %w(
     Gemfile
