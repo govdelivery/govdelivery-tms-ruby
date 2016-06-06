@@ -96,8 +96,18 @@ end
 
 Then(/^the message should have the attributes from the template$/) do
   raise @message.error.to_s unless @message.post
-  raise @message.errors.to_s unless @message.get
-  [:body, :subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
+  GovDelivery::Proctor.backoff_check(1.minutes, " for message to get queued") do
+    begin
+      @message.get
+      @message.status != "new"
+    rescue GovDelivery::TMS::Request::InProgress
+      false
+    end
+  end
+  if @message.body == @template.body
+    raise "Message body has not been modified according to template: found #{@message.body}"
+  end
+  [:subject, :macros, :open_tracking_enabled, :click_tracking_enabled].each do |attr|
     if @message.send(attr) != @template.send(attr)
       raise "Template value for #{attr} not used in message: expected #{@template.send(attr)}, found #{@message.send(attr)}"
     end
