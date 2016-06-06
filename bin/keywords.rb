@@ -69,7 +69,7 @@ class KeywordsCLI < Thor
     end
   end
 
-  desc 'bulk_create ACCOUNT_NAME FILE', "create many keywords at once using a keyword CSV file. The file format is:\n'KEYWORD_NAME','RESPONSE TEXT'"
+  desc 'bulk_create ACCOUNT_NAME FILE', "create many keywords at once using a keyword CSV file. The file format is:\nKEYWORD_NAME, ACCOUNT_CODE, TOPIC_CODE"
   def bulk_create(account_name, file)
     account = get_account(account_name)
     raise Thor::Error.new("can't read #{file}") unless File.readable?(file)

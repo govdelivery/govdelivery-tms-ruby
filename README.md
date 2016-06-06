@@ -16,6 +16,7 @@ Building the database
 =============
 
 1. cp config/database.yml.example config/database.yml
+2. cp config/config.local.example.yml config/config.local.yml
 2. rake db:setup
 3. rake db:seed
 4. rake db:test:prepare
