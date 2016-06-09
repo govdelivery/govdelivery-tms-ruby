@@ -123,9 +123,9 @@ start () {
     RETVAL=$?
     if [[ $RETVAL -ne 0 ]]; then
         echo "${app_name} failed to start"
+    else
+	f5-node-enable
     fi;
-
-    f5-node-enable
 
     return ${RETVAL}
 }
@@ -143,8 +143,13 @@ stop () {
             return 0
             ;;
         0)
+	    # Stop the application.
             echo "Stopping ${app_name}"
             echo "$(date) Stopping ${app_name}" >> "${log_file}"
+
+	    # Disable the F5 and wait for connections to drop
+	    f5-node-disable
+	    tcp-conn-wait
 
             cd "${app_path}" || exit 5
             pid=$(cat "$pid_file")
@@ -158,9 +163,6 @@ stop () {
             return $stat
             ;;
     esac;
-
-    f5-node-disable
-    tcp-conn-wait
 
     i=10
     RETVAL=0
@@ -194,7 +196,7 @@ reload () {
 tcp-conn-wait () { ## Wait for connections to App to end
     [[ -z "${APP_PORT}" ]] && return 0
     i=30
-    printf "\nWaiting $i rounds for connections to $MULE_APP to end: "
+    printf "\nWaiting $i rounds for connections to trinidad to end: "
     LB_NIC=$(route -n | grep ^0.0.0.0 | awk '{ print $8 }') || die 9 "Couldn't determine Load Balanacer NIC"
     IP=$(/sbin/ip addr show dev ${LB_NIC} | grep "inet " | sed -e 's/[^0-9]* \([0-9.]*\)\/.*/\1/g') || die 3 "Couldn't get IP for Load Balancer Pools"
     while netstat -nt | egrep -q "${IP}:${APP_PORT} .*ESTABLISHED" && test $i -gt 0; do
