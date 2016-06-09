@@ -69,14 +69,14 @@ class KeywordsCLI < Thor
     end
   end
 
-  desc 'bulk_create ACCOUNT_NAME FILE', "create many keywords at once using a keyword CSV file. The file format is:\nKEYWORD_NAME, ACCOUNT_CODE, TOPIC_CODE"
+  desc 'bulk_create ACCOUNT_NAME FILE', "create many keywords at once using a keyword CSV file. The file format is:\nKEYWORD_NAME, ACCOUNT_CODE, TOPIC_CODE,TOPIC_CODE..."
   def bulk_create(account_name, file)
     account = get_account(account_name)
     raise Thor::Error.new("can't read #{file}") unless File.readable?(file)
-    CSV.foreach(file) do |l|
-      keyword_name, account_code, topic_code = l[0..2]
+    CSV.foreach(file) do |line|
+      keyword_name, account_code, *topic_codes = line
       keyword = account.keywords.build(name: keyword_name)
-      keyword.commands.build(command_type: :dcm_subscribe, params: {dcm_account_code: account_code, dcm_topic_codes: [topic_code]})
+      keyword.commands.build(command_type: :dcm_subscribe, params: {dcm_account_code: account_code, dcm_topic_codes: topic_codes})
       if keyword.save
         say "successfully created #{keyword.name}", :green
       else
