@@ -76,9 +76,10 @@ class KeywordsCLI < Thor
     CSV.foreach(file) do |line|
       keyword_name, account_code, *topic_codes = line
       keyword = account.keywords.build(name: keyword_name)
-      keyword.commands.build(command_type: :dcm_subscribe, params: {dcm_account_code: account_code, dcm_topic_codes: topic_codes})
+      dcm_topic_codes = topic_codes.map{|tc| tc.split(',')}.flatten
+      keyword.commands.build(command_type: :dcm_subscribe, params: {dcm_account_code: account_code, dcm_topic_codes: dcm_topic_codes})
       if keyword.save
-        say "successfully created #{keyword.name}", :green
+        say "successfully created #{keyword.name} for #{dcm_topic_codes.join(',')}", :green
       else
         say "errors creating #{keyword.name}: #{keyword.errors.full_messages.to_sentence}", :red
       end
