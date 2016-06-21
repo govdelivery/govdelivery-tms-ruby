@@ -88,7 +88,8 @@ USAGE
   end
 
   def create_token
-    user.build_authentication_token
+    t = user.authentication_tokens.build
+    t.token = user.generate_token
     user.save!
     out.puts 'Create OK'
     list_tokens
