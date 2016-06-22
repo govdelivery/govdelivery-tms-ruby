@@ -12,6 +12,7 @@ describe GovDelivery::TMS::FromAddress do
     it 'should be able to get a list of email templates' do
       response = [{
         'from_email'      => 'something@evotest.govdelivery.com',
+        'from_name'       => 'Something',
         'reply_to_email'  => 'something@evotest.govdelivery.com',
         'bounce_email'    => 'something@evotest.govdelivery.com',
         'is_default'      => true,
@@ -25,6 +26,7 @@ describe GovDelivery::TMS::FromAddress do
       expect(addresses.collection.length).to eq(1)
       expect(addresses.collection.first.class).to eq(GovDelivery::TMS::FromAddress)
       expect(addresses.collection.first.from_email).to eq('something@evotest.govdelivery.com')
+      expect(addresses.collection.first.from_name).to eq('Something')
     end
   end
 
@@ -35,6 +37,7 @@ describe GovDelivery::TMS::FromAddress do
 
     before do
       @fromaddress = GovDelivery::TMS::FromAddress.new(client, '/from_addresses',            from_email:      'something@evotest.govdelivery.com',
+                                                                                             from_name:       'Something',
                                                                                              reply_to_email:  'something@evotest.govdelivery.com',
                                                                                              bounce_email:    'something@evotest.govdelivery.com',
                                                                                              is_default:      true)
@@ -43,6 +46,7 @@ describe GovDelivery::TMS::FromAddress do
     it 'should post successfully' do
       response = {
         'from_email'      => 'something@evotest.govdelivery.com',
+        'from_name'       => 'Something',
         'reply_to_email'  => 'something@evotest.govdelivery.com',
         'bounce_email'    => 'something@evotest.govdelivery.com',
         'is_default'      => true,
@@ -52,6 +56,7 @@ describe GovDelivery::TMS::FromAddress do
       expect(@fromaddress.client).to receive('post').with(@fromaddress).and_return(double('response', status: 201, body: response))
       @fromaddress.post
       expect(@fromaddress.from_email).to eq('something@evotest.govdelivery.com')
+      expect(@fromaddress.from_name).to eq('Something')
       expect(@fromaddress.reply_to_email).to eq('something@evotest.govdelivery.com')
       expect(@fromaddress.bounce_email).to eq('something@evotest.govdelivery.com')
       expect(@fromaddress.is_default).to eq(true)
