@@ -7,7 +7,7 @@ describe FromAddress do
   it_should_validate_as_email :from_email, :reply_to_email, :bounce_email
 
   context 'a valid from address' do
-    let!(from_address){ account.from_addresses.create(is_default: true, from_email: 'one@example.com') }
+    let!(:from_address){ account.from_addresses.create(is_default: true, from_email: 'one@example.com') }
 
     it 'should not allow duplicate default addresses' do
       account.from_addresses.create(is_default: true, from_email: 'two@example.com')

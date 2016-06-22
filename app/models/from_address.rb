@@ -1,6 +1,6 @@
 class FromAddress < ActiveRecord::Base
   belongs_to :account, inverse_of: :from_addresses
-  attr_accessible :from_email, :bounce_email, :errors_to, :reply_to, :reply_to_email, :is_default
+  attr_accessible :from_email, :from_name, :bounce_email, :errors_to, :reply_to, :reply_to_email, :is_default
 
   alias_attribute :reply_to, :reply_to_email
   alias_attribute :errors_to, :bounce_email

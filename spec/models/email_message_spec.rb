@@ -416,6 +416,7 @@ describe EmailMessage do
       email_message = user.email_messages.build(email_params)
       expect(email_message.valid?).to be true
       expect(email_message.from_email).to eq from_address.from_email
+      expect(email_message.from_name).to be_blank
       expect(email_message.errors_to).to eq from_address.from_email
       expect(email_message.reply_to).to eq from_address.from_email
     end
@@ -423,6 +424,7 @@ describe EmailMessage do
       email_message = user.email_messages.build(email_params.merge(email_template: email_template_non_default_from_address))
       expect(email_message.valid?).to be true
       expect(email_message.from_email).to eq template_from_address.from_email
+      expect(email_message.from_name).to be_blank
       expect(email_message.errors_to).to eq template_from_address.errors_to
       expect(email_message.reply_to).to eq template_from_address.reply_to
     end
@@ -430,6 +432,7 @@ describe EmailMessage do
       email_message = user.email_messages.build(email_params.merge(email_template: email_template_non_default_from_address, from_email: other_from_address.from_email))
       expect(email_message.valid?).to be true
       expect(email_message.from_email).to eq other_from_address.from_email
+      expect(email_message.from_name).to be_blank
       expect(email_message.errors_to).to eq other_from_address.errors_to
       expect(email_message.reply_to).to eq other_from_address.reply_to
     end
@@ -461,6 +464,39 @@ describe EmailMessage do
       expect(new_email).to be_valid
       new_email.save!
       expect(new_email.reload.from_email).to eq( user.account.default_from_address.from_email )
+    end
+
+    context 'from address with a from name' do
+      let(:template_from_address) do
+      account.from_addresses.create(from_email: 'template@sink.govdelivery.com',
+                                    from_name: 'Shamrock',
+                                    reply_to:   'template-reply-to@sink.govdelivery.com',
+                                    errors_to:  'template-bounces@sink.govdelivery.com')
+      end
+      let(:email_template_non_default_from_address) { create(:email_template, account: account, user: user, from_address: template_from_address) }
+      let(:other_from_address) do
+        account.from_addresses.create(from_email: 'other@sink.govdelivery.com',
+                                      from_name: 'A Horse With No Name',
+                                      reply_to:   'other-reply-to@sink.govdelivery.com',
+                                      errors_to:  'other-bounces@sink.govdelivery.com')
+      end
+
+      it 'should use template' do
+        email_message = user.email_messages.build(email_params.merge(email_template: email_template_non_default_from_address))
+        expect(email_message.valid?).to be true
+        expect(email_message.from_email).to eq template_from_address.from_email
+        expect(email_message.from_name).to eq template_from_address.from_name
+        expect(email_message.errors_to).to eq template_from_address.errors_to
+        expect(email_message.reply_to).to eq template_from_address.reply_to
+      end
+      it 'should override template' do
+        email_message = user.email_messages.build(email_params.merge(email_template: email_template_non_default_from_address, from_email: other_from_address.from_email))
+        expect(email_message.valid?).to be true
+        expect(email_message.from_email).to eq other_from_address.from_email
+        expect(email_message.from_name).to eq other_from_address.from_name
+        expect(email_message.errors_to).to eq other_from_address.errors_to
+        expect(email_message.reply_to).to eq other_from_address.reply_to
+      end
     end
   end
 
