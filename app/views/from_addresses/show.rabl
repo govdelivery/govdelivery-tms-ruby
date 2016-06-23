@@ -1,5 +1,5 @@
 object @from_address
-attributes :id, :from_email, :reply_to_email, :bounce_email, :is_default, :created_at
+attributes :id, :from_email, :from_name, :reply_to_email, :bounce_email, :is_default, :created_at
 
 if root_object
   if root_object.errors.any?

@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160516175947) do
+ActiveRecord::Schema.define(version: 20160622194127) do
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name",                                  null: false
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "voice_vendor_id",          limit: nil
     t.integer  "email_vendor_id",          limit: nil
     t.integer  "sms_vendor_id",            limit: nil
@@ -31,8 +31,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
   create_table "authentication_tokens", force: :cascade do |t|
     t.integer  "user_id",    limit: nil, null: false
     t.string   "token",                  null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "authentication_tokens", ["token"], name: "i_authentication_tokens_token", unique: true, tablespace: "tsms_indx01"
@@ -57,8 +57,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
   create_table "commands", force: :cascade do |t|
     t.string   "name"
     t.string   "params",       limit: 4000
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "command_type",              null: false
     t.integer  "keyword_id",   limit: nil
   end
@@ -73,8 +73,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.string   "from_name"
     t.string   "subject",                limit: 400
     t.datetime "completed_at"
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "ack"
     t.datetime "sent_at"
     t.boolean  "open_tracking_enabled",  limit: nil
@@ -87,10 +87,9 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.integer  "message_type_id",        limit: nil
   end
 
-  add_index "email_messages", ["account_id", "id"], name: "em_inv_idx1", tablespace: "tsms_indx01"
   add_index "email_messages", ["email_template_id"], name: "i_ema_mes_ema_tem_id", tablespace: "tsms_indx01"
   add_index "email_messages", ["message_type_id"], name: "i_ema_mes_mes_typ_id", tablespace: "tsms_indx01"
-  add_index "email_messages", ["user_id", "created_at", "status", "subject", "id"], name: "em_idx3", tablespace: "tsms_indx01"
+  add_index "email_messages", ["user_id", "created_at", "status", "subject", "id"], name: "em_idx4", tablespace: "tsms_indx01"
 
   create_table "email_recipient_clicks", force: :cascade do |t|
     t.integer  "email_message_id",   limit: nil,  null: false
@@ -113,7 +112,6 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.datetime "created_at",                     null: false
   end
 
-  add_index "email_recipient_opens", ["email_message_id", "created_at"], name: "ero_inv_idx1", tablespace: "tsms_indx01"
   add_index "email_recipient_opens", ["email_message_id", "email_recipient_id", "id", "opened_at"], name: "ero_idx1", tablespace: "tsms_indx01"
   add_index "email_recipient_opens", ["email_message_id", "email_recipient_id"], name: "i46e4b3758023b96cabd6e28d7f0bc", tablespace: "tsms_indx01"
 
@@ -126,8 +124,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.string   "error_message", limit: 512
     t.datetime "sent_at"
     t.datetime "completed_at"
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.text     "macros"
   end
 
@@ -154,8 +152,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
   create_table "email_vendors", force: :cascade do |t|
     t.string   "name",                null: false
     t.string   "worker",              null: false
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "deliveries_sequence"
     t.string   "clicks_sequence"
     t.string   "opens_sequence"
@@ -168,6 +166,7 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.string   "bounce_email"
     t.datetime "created_at"
     t.boolean  "is_default",     limit: nil, default: false
+    t.string   "from_name"
   end
 
   create_table "from_numbers", force: :cascade do |t|
@@ -181,8 +180,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.integer  "vendor_id",        limit: nil
     t.string   "caller_phone"
     t.string   "body",             limit: 300
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "vendor_phone",     limit: 100
     t.integer  "keyword_id",       limit: nil
     t.string   "keyword_response"
@@ -207,15 +206,15 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.text     "public_password_encrypted",              null: false
     t.text     "private_password_encrypted",             null: false
     t.binary   "jks",                                    null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "keywords", force: :cascade do |t|
     t.integer  "account_id",    limit: nil, null: false
     t.string   "name",          limit: 160, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "response_text", limit: 160
   end
 
@@ -243,8 +242,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.string   "prefix",                    null: false
     t.integer  "account_id",    limit: nil, null: false
     t.integer  "sms_vendor_id", limit: nil, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "sms_recipients", force: :cascade do |t|
@@ -279,8 +278,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.string   "password",                                                                                                                                                 null: false
     t.string   "from_phone",                                                                                                                                               null: false
     t.string   "worker",                                                                                                                                                   null: false
-    t.datetime "created_at",                                                                                                                                               null: false
-    t.datetime "updated_at",                                                                                                                                               null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "help_text",             default: "This service is provided by GovDelivery. If you are a customer in need of assistance, please contact customer support.", null: false
     t.string   "stop_text",             default: "You will no longer receive SMS messages.",                                                                               null: false
     t.string   "default_response_text"
@@ -292,8 +291,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
   create_table "stop_requests", force: :cascade do |t|
     t.integer  "vendor_id",  limit: nil, null: false
     t.string   "phone",                  null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "account_id", limit: nil
   end
 
@@ -304,8 +303,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.string   "email",                                          null: false
     t.string   "encrypted_password",                             null: false
     t.boolean  "admin",              limit: nil, default: false
-    t.datetime "created_at",                                     null: false
-    t.datetime "updated_at",                                     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, tablespace: "tsms_indx01"
@@ -352,8 +351,8 @@ ActiveRecord::Schema.define(version: 20160516175947) do
     t.string   "username",   null: false
     t.string   "password",   null: false
     t.string   "worker",     null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "webhooks", force: :cascade do |t|

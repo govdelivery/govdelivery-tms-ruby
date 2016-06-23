@@ -8,7 +8,7 @@ describe 'from_addresses/show.rabl' do
     assign(:from_address, from_address)
     render
     expect(rendered).to be_json_for(from_address)
-      .with_attributes(:from_email, :bounce_email, :reply_to_email, :is_default, :id)
+      .with_attributes(:from_email, :from_name, :bounce_email, :reply_to_email, :is_default, :id)
       .with_timestamps(:created_at)
       .with_links('self' => from_address_path(from_address))
   end

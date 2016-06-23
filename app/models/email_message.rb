@@ -94,7 +94,7 @@ class EmailMessage < ActiveRecord::Base
 
   def apply_from_address(from_address)
     return unless from_address
-    [:from_email, :errors_to, :reply_to].each do |attr|
+    [:from_email, :errors_to, :reply_to, :from_name].each do |attr|
       # if attribute is already set, presumably the client wanted something specific so don't reset it
       self[attr] ||= from_address.send(attr)
     end
