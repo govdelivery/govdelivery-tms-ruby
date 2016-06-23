@@ -7,28 +7,44 @@ describe FromAddress do
   it_should_validate_as_email :from_email, :reply_to_email, :bounce_email
 
   context 'a valid from address' do
-    let!(:from_address){ account.from_addresses.create(is_default: true, from_email: 'one@example.com') }
+    let!(:from_address){account.from_addresses.create(is_default: true, from_email: 'one@example.com')}
 
     it 'should not allow duplicate default addresses' do
       account.from_addresses.create(is_default: true, from_email: 'two@example.com')
       expect(account.from_addresses.where(is_default: true).count).to eq(1)
     end
 
-    it 'should not allow duplicate from emails' do
+    it 'should not allow duplicate from name/from email on the same account' do
+      from_address.from_name = 'one'
+      from_address.save!
+      fa = account.from_addresses.create(from_email: 'one@example.com', from_name: 'one')
+      expect(fa.new_record?).to be true
+      expect(fa.errors[:from_name]).not_to be_blank
+    end
+
+    it 'should not allow duplicate from email with nil from name on the same account' do
       fa = account.from_addresses.create(from_email: 'one@example.com')
       expect(fa.new_record?).to be true
-      expect(fa.errors[:from_email]).not_to be_nil
+      expect(fa.errors[:from_name]).not_to be_blank
+    end
+
+    it 'should allow duplicate from name with different from email on the same account' do
+      from_address.from_name = 'one'
+      from_address.save!
+      fa = account.from_addresses.create(from_email: 'two@example.com', from_name: 'one')
+      expect(fa.new_record?).to be false
+      expect(fa.errors[:from_name]).to eq([])
     end
 
     context 'from name' do
       it 'should allow a from name to be assigned' do
         from_address.from_name = 'bill'
-        expect { from_address.save! }.not_to raise_exception
+        expect {from_address.save!}.not_to raise_exception
       end
 
       it 'should allow a null from name' do
         from_address.from_name = nil
-        expect { from_address.save! }.not_to raise_exception
+        expect {from_address.save!}.not_to raise_exception
       end
 
       it 'should default to null' do
