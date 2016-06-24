@@ -4,17 +4,8 @@ class MbloxController < ApplicationController
   respond_to :json
 
   def report
-    Mblox::StatusWorker.perform_async(
-      {
-        status:    params['status'],
-        code:      params['code'],
-        ack:       params['batch_id'],
-        recipient: params['recipient']
-      })
+    Mblox::StatusWorker.perform_async(params.slice(:status, :code, :batch_id, :recipient))
     render text: '', status: 201
   end
-
-  private
-
 
 end

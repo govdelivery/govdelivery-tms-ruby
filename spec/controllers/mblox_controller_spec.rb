@@ -7,11 +7,11 @@ describe MbloxController do
   let(:message) { user.sms_messages.create(body: 'A' * 160) }
 
   let (:params) do
-    {code: '402', batch_id: "2", recipient: "+161255512001", status: "Awesome"}.stringify_keys
+    {code: '402', batch_id: "2", recipient: "+161255512001", status: "Awesome"}
   end
 
   it 'should background the status worker and always succeed' do
-    Mblox::StatusWorker.expects(:perform_async).with(status: 'Awesome', code: '402', ack: '2', recipient: '+161255512001')
+    Mblox::StatusWorker.expects(:perform_async).with({status: 'Awesome', code: '402', batch_id: '2', recipient: '+161255512001'}.stringify_keys)
     post :report, params
     expect(response.response_code).to eq(201)
   end
