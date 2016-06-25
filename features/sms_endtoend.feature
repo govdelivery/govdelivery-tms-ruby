@@ -8,7 +8,7 @@ Feature: XACT SMS end to end tests.
     And I wait for a response from twilio
     Then I should be able to identify my unique message is among all SMS messages
 
-  @XACT-640 @twilio
+  @XACT-640 @twilio @pending
   Scenario: End to End sms template test for all environments.
     Given I have a user who can receive SMS messages
     And I have an SMS template

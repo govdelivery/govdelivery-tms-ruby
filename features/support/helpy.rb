@@ -42,12 +42,11 @@ module Helpy
   def post_message(opts={})
     next if dev_not_live?
     opts[:body] ||= %|This is a test for end to end email delivery. <a href="#{@expected_link}">With a link</a>|
+    opts[:from_name] = @from_name unless @from_name.blank?
+    opts[:subject] = @expected_subject
     email_message = GovDelivery::TMS::Client
                     .new(@conf_xact.user.token, api_root: api_root)
-                    .email_messages.build(from_email: opts[:from_email],
-                                          macros:     opts[:macros],
-                                          body:       opts[:body],
-                                          subject:    @expected_subject)
+                    .email_messages.build(opts)
     email_message.recipients.build(email: @conf_gmail.imap.user_name)
     email_message.post!
     response = email_message.response
@@ -84,37 +83,6 @@ module Helpy
       @conf_gmail.imap.user_name,
       @conf_gmail.imap.password)
     log.info 'Cleaned inbox'.green
-  end
-
-  # Polls mail server for messages and validates message if found
-  def validate_message
-    next if dev_not_live?
-
-    GovDelivery::Proctor.backoff_check(10.minutes, "find message #{@expected_subject}") do
-      # get message
-      body, reply_to, errors_to = get_emails(@expected_subject)
-      passed = false
-      unless body.nil?
-
-        # validate from address information
-        raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && reply_to != @expected_reply_to
-        raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if @expected_errors_to && errors_to != @expected_errors_to
-
-        # validate link is present
-        if @expected_link &&
-           (href = Nokogiri::HTML(body).css('a')
-                   .map { |link| link['href']}
-                   .detect { |inner_href| test_link(inner_href, @expected_link, expected_link_prefix)})
-          log.info("Link #{href} redirects to #{@expected_link}".green)
-          passed = true
-        else
-          raise "Message #{@expected_subject} was found but no links redirect to #{@expected_link}".red
-        end
-      end
-      return passed
-    end
-  ensure
-    clean_inbox
   end
 
   def test_link(link_url, expected, expected_prefix)

@@ -15,12 +15,14 @@ Given(/^I have an SMS template$/) do
 
   client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
   @expected_message = message_body_identifier
-  @template         = client.sms_templates.build(body: @expected_message, uuid: "new-sms-template-#{Time.now.to_i.to_s}")
+  @template         = client.sms_templates.build(body: @expected_message, uuid: "new-sms-template-#{Time.now.to_i}")
   @template.post!
   @template
 end
 
-
+# blank message throws
+# Couldn't POST GovDelivery::TMS::SmsMessage to /messages/sms:
+# body can't be blank (GovDelivery::TMS::Errors::InvalidPost)
 Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
@@ -44,7 +46,6 @@ Given(/^I POST a new blank SMS message to TMS$/) do
   message.post!
   @message = message
 end
-
 
 When(/^I wait for a response from twilio$/) do
   next if dev_not_live?
@@ -70,11 +71,9 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
   end
 end
 
-
-#MBLOX start=====================
-#MBLOX ==========================
-#MBLOX ==========================
-
+# MBLOX start=====================
+# MBLOX ==========================
+# MBLOX ==========================
 
 Given(/^I POST a new SMS message to MBLOX$/) do
   client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
@@ -84,23 +83,22 @@ Given(/^I POST a new SMS message to MBLOX$/) do
   log.info configatron.test_support.mblox.phone.number
   message.post!
   @message = message
-
 end
 
 Then(/^I should receive either a canceled message or a success$/) do
   GovDelivery::Proctor.backoff_check(5.minutes, 'checking for completed recipient status') do
     case ENV['XACT_ENV']
-      when 'mbloxqc', 'mbloxintegration', 'mbloxstage'
-        response_body = @message.get.response.body
-        log.info "got body: #{response_body}"
-        response_body["recipient_counts"] &&
-          (response_body["recipient_counts"]["canceled"] == 1||
-            response_body["recipient_counts"]["failed"] == 1
-          )
-      when 'mbloxproduction'
-        response_body = @message.get.response.body
-        log.info "got body: #{response_body}"
-        response_body["recipient_counts"] && response_body["recipient_counts"]["sent"] == 1
+    when 'mbloxqc', 'mbloxintegration', 'mbloxstage'
+      response_body = @message.get.response.body
+      log.info "got body: #{response_body}"
+      response_body["recipient_counts"] &&
+        (response_body["recipient_counts"]["canceled"] == 1 ||
+          response_body["recipient_counts"]["failed"] == 1
+        )
+    when 'mbloxproduction'
+      response_body = @message.get.response.body
+      log.info "got body: #{response_body}"
+      response_body["recipient_counts"] && response_body["recipient_counts"]["sent"] == 1
     end
   end
 end
