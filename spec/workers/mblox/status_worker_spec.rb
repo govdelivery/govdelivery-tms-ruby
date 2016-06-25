@@ -18,7 +18,7 @@ describe Mblox::StatusWorker do
 
   context '#report' do
     it 'should return 404 on a non-existant Recipient' do
-      expect { subject.perform({batch_id: "2", recipient: "+161255512001", status: "Delivered"}.stringify_keys) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect{ subject.perform({batch_id: "2", recipient: "+161255512001", status: "Delivered"}.stringify_keys)}.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'should return find a recipient by batch id and phone number' do
@@ -29,7 +29,7 @@ describe Mblox::StatusWorker do
 
   context "status maps" do
     it 'should raise an error if no matching status is found' do
-      expect { subject.perform({batch_id: "1", recipient: "+16125551201"}.stringify_keys) }.to raise_error(StandardError)
+      expect {subject.perform({batch_id: "1", recipient: "+16125551201"}.stringify_keys)}.to raise_error(StandardError)
     end
 
     it 'should noop if status is Queued' do
@@ -73,6 +73,10 @@ describe Mblox::StatusWorker do
     it 'should mark as inconclusive if status is Unknown' do
       subject.perform({batch_id: "1", recipient: "+16125551201", status: "Unknown"}.stringify_keys)
       expect(subject.recipient.status).to eq("inconclusive")
+    end
+
+    it 'should not blow up when sent "perform_async"' do
+      Mblox::StatusWorker.perform_async
     end
   end
 

@@ -1,5 +1,9 @@
+require 'base'
+
 module Mblox
   class StatusWorker
+    include Workers::Base
+
     attr_accessor :recipient
 
     def perform(params)
