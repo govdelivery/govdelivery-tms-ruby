@@ -16,14 +16,14 @@ module Helpy
 
   def expected_link_prefix
     case ENV['XACT_ENV']
-      when 'qc'
-        'http://qc-links.govdelivery.com:80'
-      when 'integration'
-        'http://int-links.govdelivery.com:80'
-      when 'stage'
-        'http://stage-links.govdelivery.com:80/track'
-      when 'prod'
-        'https://odlinks.govdelivery.com'
+    when 'qc'
+      'http://qc-links.govdelivery.com:80'
+    when 'integration'
+      'http://int-links.govdelivery.com:80'
+    when 'stage'
+      'http://stage-links.govdelivery.com:80/track'
+    when 'prod'
+      'https://odlinks.govdelivery.com'
     end
   end
 
@@ -36,20 +36,18 @@ module Helpy
   end
 
   def path
-    api_root+messages_path
+    api_root + messages_path
   end
 
   def post_message(opts={})
     next if dev_not_live?
-    opts[:body]   ||= %Q|This is a test for end to end email delivery. <a href="#{@expected_link}">With a link</a>|
-    email_message = GovDelivery::TMS::Client.
-      new(@conf_xact.user.token, api_root: api_root).
-      email_messages.build(
-      from_email: opts[:from_email],
-      macros:     opts[:macros],
-      body:       opts[:body],
-      subject:    @expected_subject
-    )
+    opts[:body] ||= %|This is a test for end to end email delivery. <a href="#{@expected_link}">With a link</a>|
+    email_message = GovDelivery::TMS::Client
+                    .new(@conf_xact.user.token, api_root: api_root)
+                    .email_messages.build(from_email: opts[:from_email],
+                                          macros:     opts[:macros],
+                                          body:       opts[:body],
+                                          subject:    @expected_subject)
     email_message.recipients.build(email: @conf_gmail.imap.user_name)
     email_message.post!
     response = email_message.response
@@ -64,10 +62,11 @@ module Helpy
     log.info "Found #{emails.size} emails"
     log.info "subjects:\n\t#{emails.map(&:subject).join("\n\t")}" if emails.any?
 
-    if (mail = emails.detect { |mail| mail.subject == expected_subject })
+    if (mail = emails.detect { |mail| mail.subject == expected_subject})
       [mail.html_part.body.decoded,
-       mail.header.fields.detect { |field| field.name == 'Reply-To' }.value,
-       mail.header.fields.detect { |field| field.name == 'Errors-To' }.value]
+       mail.header.fields.detect { |field| field.name == 'Reply-To'}.value,
+       mail.header.fields.detect { |field| field.name == 'Errors-To'}.value,
+       mail.header.fields.detect { |field| field.name == 'From'}.value]
     else
       nil
     end
@@ -103,9 +102,9 @@ module Helpy
 
         # validate link is present
         if @expected_link &&
-          (href = Nokogiri::HTML(body).css('a').
-            map { |link| link['href'] }.
-            detect { |href| test_link(href, @expected_link, expected_link_prefix) })
+           (href = Nokogiri::HTML(body).css('a')
+                   .map { |link| link['href']}
+                   .detect { |inner_href| test_link(inner_href, @expected_link, expected_link_prefix)})
           log.info("Link #{href} redirects to #{@expected_link}".green)
           passed = true
         else
@@ -123,8 +122,7 @@ module Helpy
       agent.user_agent_alias = 'Mac Safari'
       agent.redirect_ok      = false
     end.get(link_url) do |page| # retrieve link_url from agent
-      page.forms.any? { |f| ((f['url'].eql? expected) && (link_url.start_with? expected_prefix)) }
+      page.forms.any? { |f| ((f['url'].eql? expected) && (link_url.start_with? expected_prefix))}
     end
   end
-
 end

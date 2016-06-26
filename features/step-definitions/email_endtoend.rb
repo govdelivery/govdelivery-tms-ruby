@@ -35,7 +35,7 @@ When(/^I POST a new EMAIL message to TMS using a random from address$/) do
 end
 
 When(/^I POST a new EMAIL message to TMS with long macro replacements$/) do
-  post_message body: %Q|[[MAC1]]\n\n[[MAC2]]\n\n<a href="#{@expected_link}">With a link</a>|, macros: {'MAC1' => 'a'*800, 'MAC1' => 'b'*150}
+  post_message body: %|[[MAC1]]\n\n[[MAC2]]\n\n<a href="#{@expected_link}">With a link</a>|, macros: {'MAC1' => 'a' * 800, 'MAC1' => 'b' * 150}
 end
 
 Then(/^I go to Gmail to check for message delivery$/) do
