@@ -125,4 +125,15 @@ describe EmailMessagesController do
       expect(response.body).to include('Message type code is required.')
     end
   end
+
+  context 'with multiple from addresses with the same from email and from name' do
+    let(:from_address_two) {create(:from_address, account: from_address.account, from_name: from_address.from_name)}
+    let(:email_template_two) {create(:email_template, account: from_address.account, user: user, from_address: from_address_two)}
+    it 'sends the message' do
+      post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template_two.uuid}}
+      expect(response.response_code).to eq(201)
+      expect(assigns(:message).email_template).to eq(email_template_two)
+      expect(assigns(:message).body).to eq(email_template.body)
+    end
+  end
 end

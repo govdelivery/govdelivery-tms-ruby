@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe Account do
-  let(:email_vendor) { create(:email_vendor) }
-  let(:sms_vendor) { create(:sms_vendor) }
-  let(:voice_vendor) { create(:voice_vendor) }
+  let(:email_vendor) {create(:email_vendor)}
+  let(:sms_vendor) {create(:sms_vendor)}
+  let(:voice_vendor) {create(:voice_vendor)}
 
-  it { is_expected.to belong_to(:ipaws_vendor) }
+  it {is_expected.to belong_to(:ipaws_vendor)}
 
   context 'from_email_allowed?' do
     subject do
@@ -18,6 +18,14 @@ describe Account do
       expect(subject.from_email_allowed?(subject.default_from_address.from_email.upcase)).to be true
       expect(subject.from_email_allowed?(nil)).to be false
     end
+    it 'should allow more than one from_address with the same from_email' do
+      create(:from_address, account_id: subject.id, from_email: subject.default_from_address.from_email)
+      expect(subject.from_email_allowed? subject.default_from_address.from_email).to be true
+    end
+  end
+
+  context 'from_number_allowed' do
+    # look into
   end
 
   context 'with SMS vendor' do
@@ -36,7 +44,7 @@ describe Account do
     end
 
     context 'with an existing account with a prefix' do
-      let(:other_account) { create(:account, sms_vendor: sms_vendor) }
+      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
       before do
         other_account.sms_prefixes.create!(prefix: 'ELSE')
         subject.sms_vendor.reload
@@ -48,7 +56,7 @@ describe Account do
     end
 
     context 'with an existing account without a prefix' do
-      let(:other_account) { create(:account, sms_vendor: sms_vendor) }
+      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
       before do
         other_account
         subject.sms_vendor.reload
