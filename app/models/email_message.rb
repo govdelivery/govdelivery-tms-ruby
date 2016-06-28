@@ -89,7 +89,7 @@ class EmailMessage < ActiveRecord::Base
 
   def apply_from_email
     return unless self.from_email
-    apply_from_address(account.from_addresses.find_by_from_email(from_email))
+    apply_from_address(FromAddress.where(account: account, from_email: from_email).first)
   end
 
   def apply_from_address(from_address)

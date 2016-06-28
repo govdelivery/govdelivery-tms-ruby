@@ -138,6 +138,27 @@ describe EmailMessage do
     end
   end
 
+  context '#apply_from_email' do
+    it 'should order results by from_address.id' do
+      from_email = 'from@govdelivery.com'
+      account.from_addresses.create(from_email: from_email, reply_to_email: 'r2@govdelivery.com', is_default: false)
+      account.from_addresses.create(from_email: from_email, reply_to_email: 'r1@govdelivery.com', is_default: false)
+      account.from_addresses.create(from_email: from_email, reply_to_email: 'r3@govdelivery.com', is_default: false)
+      account.save!
+      expect(FromAddress.where(from_email: from_email).count).to eq(3)
+      em = account.email_messages.build(from_email: from_email)
+      em.send :apply_from_email
+      expect(em.reply_to).to eq 'r2@govdelivery.com'
+
+      fal = account.from_addresses.last
+      fal.id = 1
+      fal.save!
+      em = account.email_messages.build(from_email: from_email)
+      em.send :apply_from_email
+      expect(em.reply_to).to eq 'r3@govdelivery.com'
+    end
+  end
+
   context 'with nil tracking flags' do
     it 'should interpret them as true' do
       email.open_tracking_enabled  = nil
