@@ -110,7 +110,7 @@ class Account < ActiveRecord::Base
   end
 
   def from_email_allowed?(email)
-    !email.nil? && from_addresses.where('lower(from_email) = ?', email.downcase).count == 1
+    !email.nil? && from_addresses.where('lower(from_email) = ?', email.downcase).any?
   end
 
   def from_number_allowed?(phone)

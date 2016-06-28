@@ -18,14 +18,14 @@ describe FromAddress do
       from_address.from_name = 'one'
       from_address.save!
       fa = account.from_addresses.create(from_email: 'one@example.com', from_name: 'one')
-      expect(fa.new_record?).to be true
-      expect(fa.errors[:from_name]).not_to be_blank
+      expect(fa.new_record?).to be false
+      expect(fa.errors[:from_name]).to be_blank
     end
 
-    it 'should not allow duplicate from email with nil from name on the same account' do
+    it 'should allow duplicate from email with nil from name on the same account' do
       fa = account.from_addresses.create(from_email: 'one@example.com')
-      expect(fa.new_record?).to be true
-      expect(fa.errors[:from_name]).not_to be_blank
+      expect(fa.new_record?).to be false
+      expect(fa.errors[:from_name]).to be_blank
     end
 
     it 'should allow duplicate from name with different from email on the same account' do

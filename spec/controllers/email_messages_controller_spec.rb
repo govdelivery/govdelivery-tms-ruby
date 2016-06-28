@@ -125,4 +125,32 @@ describe EmailMessagesController do
       expect(response.body).to include('Message type code is required.')
     end
   end
+
+  context 'with multiple from addresses with the same from email' do
+    context 'on the same account' do
+      let(:from_address_two) {from_address.account.from_addresses.create(from_email: from_address.from_email)}
+      let(:email_template_two) {create(:email_template, account: from_address.account, user: user, from_address: from_address_two)}
+      it 'sends the message' do
+        expect(user.admin?).to be false
+        post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template_two.uuid}}
+        expect(response.response_code).to eq(201)
+        expect(assigns(:message).email_template).to eq(email_template_two)
+        expect(assigns(:message).body).to eq(email_template.body)
+      end
+    end
+
+    context 'on different accounts' do
+      let!(:account_two) {create(:account)}
+      let!(:user_two) {account_two.users.create(email: 'pigeon@evotest.govdelivery.com', password: 'coocoo')}
+      let!(:from_address_two) {account_two.from_addresses.create(from_email: from_address.from_email)}
+      let!(:email_template_two) {create(:email_template, account: account_two, user: user_two, from_address: from_address_two)}
+      it 'sends the message' do
+        expect(user.admin?).to be false
+        post :create, message: {recipients: recipients, body: nil, _links: {email_template: email_template.uuid}}
+        expect(response.response_code).to eq(201)
+        expect(assigns(:message).email_template).to eq(email_template)
+        expect(assigns(:message).body).to eq(email_template.body)
+      end
+    end
+  end
 end

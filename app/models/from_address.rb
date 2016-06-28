@@ -8,7 +8,7 @@ class FromAddress < ActiveRecord::Base
   validates :from_email, presence: true, length: {maximum: 255}, format: Devise.email_regexp
   validates :bounce_email,   length: {maximum: 255}, allow_blank: true, format: Devise.email_regexp
   validates :reply_to_email, length: {maximum: 255}, allow_blank: true, format: Devise.email_regexp
-  validates :from_name, length: {maximum: 255}, uniqueness: {scope: [:account_id, :from_email]}
+  validates :from_name, length: {maximum: 255}
 
   has_many :email_templates
 
