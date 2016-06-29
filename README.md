@@ -68,8 +68,7 @@ inbound_sms.attributes                                      # {:from=>"+15005550
 
 ```ruby
 message = client.email_messages.build(:body=>'<p><a href="http://example.com">Visit here</a></p>',
-                                      :subject => 'Hey',
-                                      :from_email => 'foo@example.com')
+                                      :subject => 'Hey')
 message.recipients.build(:email=>'example1@example.com')
 message.recipients.build(:email=>'')
 message.post             # true
@@ -90,6 +89,45 @@ message.recipients.build(:email=>'amy@example.com', :macros=>{"name"=>"Amy"})
 message.recipients.build(:email=>'bill@example.com')
 message.post
 ```
+
+#### From Addresses
+
+From Addresses are read only resources that define which email addresses you
+can send an email from and have replies and bounces sent to. From Addresses
+also have an associated default display name. If you wish to send a message
+from an address that is not your account's default, you will need to specify a
+From Address on your Message.
+
+To add or edit From Addresses, you will need to contact your CSC.
+
+```ruby
+# Fetch the from_addresses on your account
+client.from_addresses.get
+
+# Get the first from address on your account
+from_address = client.from_addresses.collection.first
+
+# Lets see what the emails and display name are
+puts from_address.from_email
+puts from_address.reply_to_email
+puts from_address.bound_email
+puts from_address.from_name
+
+# Is this from address the account's default?
+puts from_address.is_default
+
+# New messages default to using the default from_address of your account
+message = client.email_messages.build(:body=>'<p><a href="http://example.com">Visit here</a></p>',
+                                      :subject => 'Hey')
+
+# Specifiy a different from_address using the links hash
+message.links[:from_address] = from_address.id
+
+# If you want, you can override the form_name on a message
+message.from_name = 'Better Name'
+message.post
+```
+
 
 ### Creating an Email Template
 
