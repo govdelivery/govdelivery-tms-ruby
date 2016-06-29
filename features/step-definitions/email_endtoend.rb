@@ -38,6 +38,17 @@ When(/^I POST a new EMAIL message to TMS with message\-level from name using a f
   post_message from_email: @conf_xact.user.from_address_two, from_name: 'message-level from name'
 end
 
+When(/^I POST a new EMAIL message to TMS with a from_address$/) do
+  from_address = GovDelivery::TMS::Client
+                  .new(@conf_xact.user.token, api_root: api_root)
+                  .from_addresses.get.collection.first
+  @expected_reply_to = from_address.reply_to_email
+  @expected_errors_to = from_address.bounce_email
+  @expected_from_name = "#{from_address.from_name} <#{from_address.from_email}>"
+
+  post_message from_email: from_address.from_email
+end
+
 When(/^I POST a new EMAIL message to TMS using a random from address$/) do
   @expected_reply_to = "product-noexist@evotest.govdelivery.com"
   @expected_errors_to = "product-noexist@evotest.govdelivery.com"

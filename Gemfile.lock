@@ -161,11 +161,11 @@ GEM
       addressable (~> 2.3.0)
       rack
     govdelivery-proctor (1.1.1)
-    govdelivery-tms (0.9.4)
+    govdelivery-tms (0.10.0)
       activesupport
       faraday
       faraday_middleware
-      mime-types
+      mime-types (< 3.0)
     govdelivery-tms-internal (0.0.3)
       govdelivery-tms (~> 0.8)
     guard (2.6.1)
@@ -483,7 +483,7 @@ DEPENDENCIES
   govdelivery-dbtasks!
   govdelivery-links
   govdelivery-proctor!
-  govdelivery-tms (~> 0.9.4)
+  govdelivery-tms (~> 0.10.0)
   govdelivery-tms-internal (~> 0.0.2)
   guard-rspec
   highline
@@ -540,3 +540,6 @@ DEPENDENCIES
   valid_email
   validate_url
   yaml_db
+
+BUNDLED WITH
+   1.12.5
