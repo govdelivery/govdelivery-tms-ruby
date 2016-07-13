@@ -42,7 +42,7 @@ end
 
 # @QC-2488
 When(/^I create a new subscribe keyword and command$/) do
-  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "new_keyword")
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "new_keyword_#{Time.now.strftime("%Y%m%d_%H%M%S")}")
   @keyword.post!
   @command = @keyword.commands.build(
     name: "new_command",
