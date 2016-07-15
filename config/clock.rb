@@ -16,9 +16,15 @@ module Clockwork
   every(5.minutes, 'NscaStatusWorker')
 
   if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
-    every(5.minutes, 'Odm::TmsExtendedStatisticsWorker')
-    every(5.minutes, 'Odm::TmsExtendedOpensWorker')
-    every(5.minutes, 'Odm::TmsExtendedClicksWorker')
+    odm_polling_interval = unless %w(qc integration).include? Rails.env.to_s
+      5.minutes
+    else
+      1.minute
+    end
+
+    every(odm_polling_interval, 'Odm::TmsExtendedStatisticsWorker')
+    every(odm_polling_interval, 'Odm::TmsExtendedOpensWorker')
+    every(odm_polling_interval, 'Odm::TmsExtendedClicksWorker')
   else
     warn('ODM polling is disabled')
   end
