@@ -41,6 +41,10 @@ class LoopbackMessageWorker
             logger.info('Magic Opened Recipient: Sending an open')
             recipient.sent!(ack, nil, :human)
             recipient.opened!('127.0.0.1', Time.now)
+          when self.class.magic_addresses[:clicked]
+            logger.info('Magic Opened Recipient: Sending a click')
+            recipient.sent!(ack, nil, :human)
+            recipient.clicked!('http://loopback.gd', Time.now)
           else
             logger.info('Non-Magic Recipient: Default Action - Going to Sent State.')
             recipient.sent!(ack, nil, :machine)
