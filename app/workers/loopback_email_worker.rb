@@ -7,6 +7,7 @@ class LoopbackEmailWorker < LoopbackMessageWorker
   @magic_addresses =     {
     sent:         'sent@sink.govdelivery.com',
     opened:       'opened@sink.govdelivery.com',
+    clicked:      'clicked@sink.govdelivery.com',
     blacklisted:  'blacklisted@sink.govdelivery.com',
     failed:       'failed@sink.govdelivery.com',
     bounced:      'bounced@sink.govdelivery.com',

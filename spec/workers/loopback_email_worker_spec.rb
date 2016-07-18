@@ -19,9 +19,10 @@ RSpec.describe LoopbackEmailWorker, type: :worker do
     state_map = LoopbackEmailWorker.magic_addresses.each_with_object({}) { |(k,v), h| h[k] = k }
     state_map[:bounced] = :failed
     state_map[:opened] = :sent
+    state_map[:clicked] = :sent
     state_count = state_map.values.each_with_object({}) {|state, h| h[state] = 1}
     state_count[:failed] = 2
-    state_count[:sent] = 2
+    state_count[:sent] = 3
 
     LoopbackEmailWorker.magic_addresses.each do |type, _email|
       expect(email_message.reload.recipients.where(status: state_map[type]).count).to eq state_count[state_map[type]]
