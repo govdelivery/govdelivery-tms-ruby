@@ -42,7 +42,6 @@ Feature: Tests around sending emails
     When I send the email
     Then the response body should contain valid _links
 
-  @patching
   Scenario: New EMAIL message with HTML within the message body
     Given I create an email
     When I set the body to '<p><a href="http://govdelivery.com">Test</a>'
