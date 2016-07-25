@@ -9,6 +9,13 @@ GIT
       activesupport (~> 4.0)
       ruby-plsql
 
+GIT
+  remote: http://dev-scm.office.gdi/development/govdelivery-health_check.git
+  revision: ea1d5e1b2bb517d6b041ceaee871e91396dafa1e
+  ref: v0.1.0
+  specs:
+    govdelivery-health_check (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   remote: https://ed5779be:de10e893@gems.contribsys.com/
@@ -481,6 +488,7 @@ DEPENDENCIES
   faraday_middleware
   govdelivery-crypt
   govdelivery-dbtasks!
+  govdelivery-health_check!
   govdelivery-links
   govdelivery-proctor!
   govdelivery-tms (~> 0.10.0)

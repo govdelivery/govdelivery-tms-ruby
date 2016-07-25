@@ -1,10 +1,11 @@
 Xact::Application.routes.draw do
+
+  mount GovDelivery::HealthCheck::Web.new(happy_text: 'XACT Donkey Cookies'), at: '/load_balancer'
+
   require 'sidekiq/pro/web'
   Sidekiq::Web.app_url = '/'
-
-  constraint = ->(request) {request.env['warden'].authenticate? && request.env['warden'].user.admin?}
-  constraints constraint do
-    mount Sidekiq::Web => '/sidekiq'
+  authenticate :user, lambda { |user| user.admin? } do
+    mount Sidekiq::Web, at: '/sidekiq'
   end
 
   devise_for :users, skip: :all
@@ -124,7 +125,6 @@ Xact::Application.routes.draw do
     resources :alerts, only: :create
   end
 
-  get 'load_balancer' => 'load_balancer#show'
   get 'command_types' => 'command_types#index'
   post 'twilio_requests' => 'twilio_requests#create'
   post 'twilio_voice_requests' => 'twilio_voice_requests#create'
