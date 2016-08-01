@@ -12,7 +12,10 @@ archive_name?=$(app_name)-$(archive_version)
 extra_dirs=""
 
 
-sources: bundle configure
+install-deps:
+	yum install -y jruby-1.7.25
+
+sources: install-deps bundle configure
 	echo $(revision) > .revision
 	echo $(commit_time) > .commit-time
 	echo $(archive_version) > .version
