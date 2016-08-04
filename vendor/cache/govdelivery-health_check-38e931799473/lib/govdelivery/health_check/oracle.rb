@@ -6,7 +6,7 @@ module GovDelivery
 
       def check!
         return unless defined?(::ActiveRecord)
-        ::ActiveRecord::Base.with_connection do |connection|
+        ::ActiveRecord::Base.connection_pool.with_connection do |connection|
           connection.select_value(QUERY)
         end
       end

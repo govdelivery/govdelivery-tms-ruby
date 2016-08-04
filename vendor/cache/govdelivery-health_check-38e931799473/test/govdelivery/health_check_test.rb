@@ -4,12 +4,19 @@ require 'fileutils'
 
 class ActiveRecord
   class Base
-    def self.with_connection
-      yield Connection.new
+    def self.connection_pool
+      Connection.new
     end
   end
 
   class Connection
+    @@okay = true
+
+    def with_connection(*args)
+      raise "uh oh" unless @@okay
+      yield self
+    end
+
     def select_value(*_)
       Time.now
     end
@@ -73,6 +80,7 @@ class GovDelivery::HealthCheckTest < Minitest::Test
     @env       = {}
     Rails::Cache.class_variable_set('@@status', true)
     Sidekiq::Redis.class_variable_set('@@status', true)
+    ActiveRecord::Connection.class_variable_set('@@okay', true)
     Sidekiq::ProcessSet.class_variable_set('@@size', 1)
   end
 
@@ -108,6 +116,12 @@ class GovDelivery::HealthCheckTest < Minitest::Test
   def test_sidekiq_down
     Sidekiq::ProcessSet.class_variable_set('@@size', 0)
     assert_equal [429, {"Content-Type" => 'text/plain'}, ["GovDelivery::HealthCheck::Sidekiq: no active sidekiq processes"]], @app.call(@env)
+  end
+
+  def test_sidekiq_down_and_database_error
+    Sidekiq::ProcessSet.class_variable_set('@@size', 0)
+    ActiveRecord::Connection.class_variable_set('@@okay', false)
+    assert_equal [500, {"Content-Type" => 'text/plain'}, ["uh oh"]], @app.call(@env)
   end
 
 end

@@ -11,8 +11,8 @@ GIT
 
 GIT
   remote: http://dev-scm.office.gdi/development/govdelivery-health_check.git
-  revision: ea1d5e1b2bb517d6b041ceaee871e91396dafa1e
-  ref: v0.1.0
+  revision: 38e931799473417ef21573daee23acdab96dcaee
+  ref: v0.1.2
   specs:
     govdelivery-health_check (0.1.0)
 

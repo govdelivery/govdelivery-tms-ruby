@@ -29,15 +29,16 @@ module GovDelivery
         end
 
         begin
-          checks.each do |check|
-            check.instance.check!
-          end
-
-          [200, HEADERS, [@happy_text]]
-        rescue Warning => e
-          [429, HEADERS, [e.message]]
-        rescue => e
-          [500, HEADERS, [e.message]]
+          checks.map do |check|
+            begin
+              check.instance.check!
+              [200, HEADERS, [@happy_text]]
+            rescue Warning => e
+              [429, HEADERS, [e.message]]
+            rescue => e
+              [500, HEADERS, [e.message]]
+            end
+          end.sort { |a, b| b<=> a }.first
         end
 
       end
