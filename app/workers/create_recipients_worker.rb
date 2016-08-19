@@ -2,6 +2,7 @@ require 'base'
 
 class CreateRecipientsWorker
   include Workers::Base
+  sidekiq_options retry: 0, queue: :recipient
 
   def self.perform_async_with_job_key(params)
     Rails.cache.write(job_key(params[:message_id]), 1)

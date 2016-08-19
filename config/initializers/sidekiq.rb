@@ -31,7 +31,7 @@ Sidekiq.configure_server do |config|
 
   config.redis                 = default.merge(Xact::Application.config.sidekiq[:server])
   config.options[:concurrency] = 30
-  config.options[:queues]      = %w(sender default webhook stats low)
+  config.options[:queues]      = %w(sender recipient default webhook stats low)
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
   end
