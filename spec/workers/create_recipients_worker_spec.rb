@@ -11,6 +11,7 @@ describe CreateRecipientsWorker do
     SmsMessage.expects(:find).with(1).returns(message)
 
     worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => recipient_params, 'klass' => 'SmsMessage')
+    expect(worker.class.get_sidekiq_options['queue']).to eq(:recipient)
   end
 
   it 'should complete if there are no recipients' do
