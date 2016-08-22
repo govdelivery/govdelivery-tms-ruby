@@ -44,7 +44,7 @@ When(/^I POST a new EMAIL message to TMS with a from_address$/) do
                   .from_addresses.get.collection.first
   @expected_reply_to = from_address.reply_to_email
   @expected_errors_to = from_address.bounce_email
-  @expected_from_name = "#{from_address.from_name} <#{from_address.from_email}>"
+  @expected_from_name = "#{from_address.from_email}"
 
   post_message from_email: from_address.from_email
 end
