@@ -32,9 +32,15 @@ Feature: XACT API PROD STAGE INT Email end to end tests.
     Then I go to Gmail to check for message delivery
 
   @XACT-758
+  Scenario: End to End email using from_address with nil from name
+    Given A non-admin user
+    When I POST a new EMAIL message to TMS with a from_address with 'nil' as the from name
+    Then I go to Gmail to check for message delivery
+
+  @XACT-758
   Scenario: End to End email using from_name from from_address
     Given A non-admin user
-    When I POST a new EMAIL message to TMS with a from_address
+    When I POST a new EMAIL message to TMS with a from_address with 'something' as the from name
     Then I go to Gmail to check for message delivery
 
   @XACT-758
