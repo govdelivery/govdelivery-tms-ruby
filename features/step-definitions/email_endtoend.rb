@@ -38,13 +38,14 @@ When(/^I POST a new EMAIL message to TMS with message\-level from name using a f
   post_message from_email: @conf_xact.user.from_address_two, from_name: 'message-level from name'
 end
 
-When(/^I POST a new EMAIL message to TMS with a from_address$/) do
+When(/^I POST a new EMAIL message to TMS with a from_address with '(.*)' as the from name$/) do |value|
+  nil_from_name = value == 'nil'
   from_address = GovDelivery::TMS::Client
                   .new(@conf_xact.user.token, api_root: api_root)
-                  .from_addresses.get.collection.first
+                  .from_addresses.get.collection.find{|f| nil_from_name ? f.from_name.nil? : !f.from_name.nil?}
   @expected_reply_to = from_address.reply_to_email
   @expected_errors_to = from_address.bounce_email
-  @expected_from_name = "#{from_address.from_email}"
+  @expected_from_name = nil_from_name ? "#{from_address.from_email}" : "#{from_address.from_name} <#{from_address.from_email}>"
 
   post_message from_email: from_address.from_email
 end
