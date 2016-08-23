@@ -39,23 +39,14 @@ Packaging
 Ideally, you'll never think about this, but here's the basic flow:
 
   * You commit, push, and merge to master
-  * => A package for QC is built containg the current repo state.
+  * => A gd-xact package for QC is built containg the current repo state.
        Versioned by the # of commits since the last tagged version
        e.x. gd-xact-1.22.0.55
 
   * You tag a build for proper release
-  * => A package for INT is built containing the repo state as tagged
+  * => A gd-xact package for INT is built containing the repo state as tagged
        It is automatically versioned by your tag.
-       e.x. gd-xact-1.23.0
-
-Some of this is WIP.
-
-A deploy process for the aforementioned packages is documented elsewhere.
-TODO: Link to said docs.
-
-As for the gd-prefix, it turns out we're not the first to name a product
-'Evolution'. In order to not clash with the mail client, (or anything else)
-a prefix is added to all of our internal packages.
+       e.x. gd-xact-1.23.0      
 
 If you need to inspect or modify the packaging process, it is controlled by
 
@@ -64,6 +55,12 @@ If you need to inspect or modify the packaging process, it is controlled by
 
 `gd-xact.spec` is required for koji, and is filled out by the `Makefile` using
 the spec.in file as a template.
+
+If you want to build an RPM on koji (e.g. on a branch build, etc.), there's a script for that:
+```
+SHA=XXXXXXXX SCRATCH=yeah ENV=qc rpm/koji-submit.sh
+```
+
 
 IPAWS Setup
 ===============
