@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.authors = ["Benjamin Ortega"]
   s.bindir = "exe"
-  s.date = "2016-08-04"
+  s.date = "2016-08-24"
   s.description = "health check middleware and some other stuff"
   s.email = ["ben.ortega@gmail.com"]
   s.files = [".gitignore", ".gitlab-ci.yml", "CODE_OF_CONDUCT.md", "Gemfile", "README.md", "Rakefile", "bin/console", "bin/setup", "govdelivery-health_check.gemspec", "lib/govdelivery/health_check.rb", "lib/govdelivery/health_check/oracle.rb", "lib/govdelivery/health_check/rails_cache.rb", "lib/govdelivery/health_check/sidekiq.rb", "lib/govdelivery/health_check/version.rb", "lib/govdelivery/health_check/warning.rb", "lib/govdelivery/health_check/web.rb"]

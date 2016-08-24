@@ -19,6 +19,7 @@ module GovDelivery
         @happy_text = opts[:happy_text] || "200 totally OK"
         @stopfile   = opts[:stopfile] || "/var/run/service-stop.lock"
         @maintfile  = opts[:maintfile] || "/var/run/maintenance.lock"
+        @logger     = opts[:logger]
       end
 
       def call(env)
@@ -34,7 +35,8 @@ module GovDelivery
               check.instance.check!
               [200, HEADERS, [@happy_text]]
             rescue Warning => e
-              [429, HEADERS, [e.message]]
+              # Some F5 checks look explicitly for the happy_text
+              [429, HEADERS, ["#{@happy_text} - #{e.message}"]]
             rescue => e
               [500, HEADERS, [e.message]]
             end
@@ -55,17 +57,6 @@ module GovDelivery
         @checks ||= [RailsCache, Sidekiq, Oracle]
       end
 
-      protected
-
-      def check_oracle
-
-      end
-
-      def check_redis(sysdate)
-
-
-      end
-
       def logger
         @logger ||= if defined?(Sidekiq)
                       Sidekiq.logger
@@ -75,6 +66,7 @@ module GovDelivery
                       Logger.new(STDOUT)
                     end
       end
+
     end
 
   end

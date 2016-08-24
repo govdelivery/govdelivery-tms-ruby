@@ -89,6 +89,12 @@ class GovDelivery::HealthCheckTest < Minitest::Test
     FileUtils.rm_rf(@maintfile)
   end
 
+  def test_custom_logger
+    logger = Object.new
+    @app   = GovDelivery::HealthCheck::Web.new(logger: logger)
+    assert_equal logger, @app.logger
+  end
+
   def test_happy_path
     assert_equal [200, {"Content-Type" => 'text/plain'}, ["just a test"]], @app.call(@env)
   end
@@ -105,7 +111,7 @@ class GovDelivery::HealthCheckTest < Minitest::Test
 
   def test_rails_cache_fail
     Rails::Cache.class_variable_set('@@status', false)
-    assert_equal [429, {"Content-Type" => 'text/plain'}, ["GovDelivery::HealthCheck::RailsCache: cache write failed"]], @app.call(@env)
+    assert_equal [429, {"Content-Type" => 'text/plain'}, ["just a test - GovDelivery::HealthCheck::RailsCache: cache write failed"]], @app.call(@env)
   end
 
   def test_sidekiq_redis_fail
@@ -115,7 +121,7 @@ class GovDelivery::HealthCheckTest < Minitest::Test
 
   def test_sidekiq_down
     Sidekiq::ProcessSet.class_variable_set('@@size', 0)
-    assert_equal [429, {"Content-Type" => 'text/plain'}, ["GovDelivery::HealthCheck::Sidekiq: no active sidekiq processes"]], @app.call(@env)
+    assert_equal [429, {"Content-Type" => 'text/plain'}, ["just a test - GovDelivery::HealthCheck::Sidekiq: no active sidekiq processes"]], @app.call(@env)
   end
 
   def test_sidekiq_down_and_database_error
