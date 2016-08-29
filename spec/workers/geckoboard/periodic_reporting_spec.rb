@@ -11,7 +11,8 @@ describe Geckoboard::PeriodicReporting do
       message.created_at = message.created_at - 1.hour
       message.save!
     end
-    Geckoboard::EventsReporting.expects(:perform_async).times(Account.count)
+    Conf.stubs(:allowed_geckoboard_accounts).returns([account.id])
+    Geckoboard::EventsReporting.expects(:perform_async).times(1)
     subject.perform('EventsReporting', account.id, 'name', 'clicks')
   end
 end
