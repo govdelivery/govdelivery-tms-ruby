@@ -23,7 +23,7 @@ module Analytics
 
     def self.perform_inline_or_async(opts)
       new.perform(opts)
-    rescue Sidekiq::Retries::Retry => e
+    rescue StandardError => e
       perform_async(opts)
     end
 

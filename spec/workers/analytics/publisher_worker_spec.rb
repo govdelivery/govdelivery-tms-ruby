@@ -28,7 +28,7 @@ describe Analytics::PublisherWorker do
 
       context 'with exceptions' do
         before do
-          subject.any_instance.stubs(:perform).raises(Sidekiq::Retries::Retry, 'foo')
+          subject.any_instance.stubs(:perform).raises(StandardError, 'foo')
           subject.expects(:perform_async)
         end
 
