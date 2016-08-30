@@ -24,6 +24,7 @@ module Analytics
     def self.perform_inline_or_async(opts)
       new.perform(opts)
     rescue StandardError => e
+      Sidekiq.logger.warn("#{self}: Error while publishing Kafka event inline: #{e.inspect}. Retrying asynchronously...")
       perform_async(opts)
     end
 
