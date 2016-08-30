@@ -64,4 +64,5 @@ Xact::Application.configure do
   config.public_callback = true
 
   config.custom_report_account_id = 10_120
+  config.allowed_geckoboard_accounts = 10_120
 end

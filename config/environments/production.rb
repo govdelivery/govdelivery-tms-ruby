@@ -71,6 +71,6 @@ Xact::Application.configure do
   config.auto_response_threshold = 1
 
   config.custom_report_account_id = 10_060
-
+  config.allowed_geckoboard_accounts = 10_060,10_061
   config.log_level = :warn # this is actually INFO because Log4r is terrible (see railties bootstrap.rb)
 end
