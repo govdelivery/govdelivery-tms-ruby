@@ -21,6 +21,12 @@ module Analytics
       raise Sidekiq::Retries::Retry.new(e)
     end
 
+    def self.perform_inline_or_async(opts)
+      new.perform(opts)
+    rescue Sidekiq::Retries::Retry => e
+      perform_async(opts)
+    end
+
     private
 
     def publisher

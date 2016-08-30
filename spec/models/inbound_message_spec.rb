@@ -132,7 +132,7 @@ describe InboundMessage do
                            body: message.body,
                            uri: 'xact:sms:inbound')
     }
-    Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+    Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
     message.save!
   end
 end

@@ -121,7 +121,7 @@ describe EmailRecipient do
 
         context 'and bounces' do
           it 'should update error message and status' do
-            Analytics::PublisherWorker.expects(:perform_async).with(
+            Analytics::PublisherWorker.expects(:perform_inline_or_async).with(
               channel: 'email_channel',
               message: {uri: "bounced", v: '1', account_sid: subject.message.account.sid, message_id: subject.message.id, recipient_id: subject.id, error_message: 'boing!'})
             subject.hard_bounce!(nil, nil, 'boing!')
@@ -132,7 +132,7 @@ describe EmailRecipient do
 
         context 'and ARFs' do
           it 'should update error message but not status' do
-            Analytics::PublisherWorker.expects(:perform_async).with(
+            Analytics::PublisherWorker.expects(:perform_inline_or_async).with(
               channel: 'email_channel',
               message: {uri: "arf", v: '1', account_sid: subject.message.account.sid, message_id: subject.message.id, recipient_id: subject.id, error_message: 'woof!'})
             subject.arf!(nil, nil, 'woof!')
@@ -183,7 +183,7 @@ describe EmailRecipient do
                                uri:           'failed',
                                error_message: 'equine error')
         }
-        Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+        Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
         subject.failed!(nil, nil, 'equine error')
       end
 
@@ -196,7 +196,7 @@ describe EmailRecipient do
                                account_sid: subject.message.account.sid,
                                uri: 'canceled')
         }
-        Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+        Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
         subject.canceled!('ack')
       end
 
@@ -215,7 +215,7 @@ describe EmailRecipient do
                                message_type_code: subject.message.message_type.code,
                                sent_at: the_time)
         }
-        Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+        Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
         subject.sent!('ack', the_time)
       end
 
@@ -240,7 +240,7 @@ describe EmailRecipient do
                                  message_type_code: subject.message.message_type.code,
                                  clicked_at: the_time)
           }
-          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
           subject.clicked!('http://www.google.com', the_time)
         end
 
@@ -253,7 +253,7 @@ describe EmailRecipient do
                                  account_sid: subject.message.account.sid,
                                  uri: 'arf')
           }
-          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
           subject.arf!(nil, nil, 'ok')
         end
 
@@ -272,7 +272,7 @@ describe EmailRecipient do
                                  message_type_code: subject.message.message_type.code,
                                  opened_at: the_time)
           }
-          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
           subject.opened!('127.0.0.1', the_time)
         end
 
@@ -285,7 +285,7 @@ describe EmailRecipient do
                                  account_sid: subject.message.account.sid,
                                  uri: 'bounced')
           }
-          Analytics::PublisherWorker.expects(:perform_async).with(has_entries(expected))
+          Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
           subject.hard_bounce!('ack', Time.now, 'bounce')
         end
       end
