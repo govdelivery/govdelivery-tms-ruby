@@ -116,7 +116,7 @@ describe EmailMessage do
   it_behaves_like 'an email message that can be templated'
 
   before do
-    Analytics::PublisherWorker.stubs(:perform_async)
+    Analytics::PublisherWorker.stubs(:perform_inline_or_async)
   end
 
   context "built via a user" do

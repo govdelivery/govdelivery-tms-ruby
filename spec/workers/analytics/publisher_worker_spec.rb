@@ -13,6 +13,31 @@ describe Analytics::PublisherWorker do
 
     subject {Analytics::PublisherWorker.new}
 
+    context '::perform_inline_or_async' do
+      subject {Analytics::PublisherWorker}
+      context 'without exceptions' do
+        before do
+          subject.any_instance.expects(:perform)
+          subject.expects(:perform_async).never
+        end
+
+        it 'performs inline' do
+          subject.perform_inline_or_async(channel: 'foo', message: {foo: 1})
+        end
+      end
+
+      context 'with exceptions' do
+        before do
+          subject.any_instance.stubs(:perform).raises(StandardError, 'foo')
+          subject.expects(:perform_async)
+        end
+
+        it 'performs async' do
+          subject.perform_inline_or_async(channel: 'foo', message: {foo: 1})
+        end
+      end
+    end
+
     context 'and connection pool times out' do
       before do
         publisher = stub

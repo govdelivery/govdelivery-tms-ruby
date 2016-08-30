@@ -61,14 +61,17 @@ class InboundMessage < ActiveRecord::Base
   end
 
   def publish_event
-    Analytics::PublisherWorker.perform_async(channel: 'sms_channel', message: {
-                                               uri:        'xact:sms:inbound',
-                                               v:          '1',
-                                               from_phone: from,
-                                               to_phone:   to,
-                                               body:       body,
-                                               created_at: created_at
-                                             })
+    Analytics::PublisherWorker.perform_inline_or_async(
+      channel: 'sms_channel',
+      message: {
+        uri:        'xact:sms:inbound',
+        v:          '1',
+        from_phone: from,
+        to_phone:   to,
+        body:       body,
+        created_at: created_at
+      }
+    )
   end
 
   def set_response_status
