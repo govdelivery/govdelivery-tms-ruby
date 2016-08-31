@@ -21,6 +21,7 @@ BuildRequires:  git
 BuildRequires:  oracle-instantclient11.2-devel
 BuildRequires:  jruby1.7.25
 BuildRequires:  jrubygem-bundler = 1.12.5
+BuildRequires:  jruby1.7.25
 
 Requires:       gd-xact-code%{version}
 Requires:       gd-xact-fake-libclntsh
