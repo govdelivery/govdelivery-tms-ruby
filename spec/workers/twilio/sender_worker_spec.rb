@@ -65,7 +65,7 @@ describe Twilio::SenderWorker do
     end
 
     context 'a send that blows up because we such' do
-      it 'should retry' do
+      it 'should retry on runtime errors' do
         subject.expects(:find_message_and_recipient).raises(RuntimeError, 'foo')
         client.stubs(:account).returns(stub('calls', calls: mock))
         expect do
@@ -74,6 +74,18 @@ describe Twilio::SenderWorker do
             message_class: message.class.name,
             recipient_id:  message.recipients.first.id,
             callback_url:  'http://localhost')
+        end.to raise_exception(Sidekiq::Retries::Retry)
+      end
+
+      it 'should retry on db connection errors' do
+        message.class.expects(:find).with(message.id).raises(ActiveRecord::ConnectionTimeoutError.new('oopz'))
+        client.stubs(:account).returns(stub('calls', calls: mock))
+        expect do
+          subject.perform(
+              message_id:    message.id,
+              message_class: message.class.name,
+              recipient_id:  message.recipients.first.id,
+              callback_url:  'http://localhost')
         end.to raise_exception(Sidekiq::Retries::Retry)
       end
     end

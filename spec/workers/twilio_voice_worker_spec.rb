@@ -25,4 +25,9 @@ describe TwilioVoiceWorker do
     Twilio::SenderWorker.expects(:perform_async).never
     expect {subject.perform(message_id: message.id)}.to raise_error Sidekiq::Retries::Retry
   end
+
+  it 'should retry on connection error' do
+    subject.stubs(:get_message).raises(ActiveRecord::ConnectionTimeoutError.new('oopz'))
+    expect {subject.perform(message_id: message.id)}.to raise_error Sidekiq::Retries::Retry
+  end
 end

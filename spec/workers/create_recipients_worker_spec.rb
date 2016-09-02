@@ -33,4 +33,12 @@ describe CreateRecipientsWorker do
 
     expect {worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => {}, 'klass' => 'EmailMessage')}.to raise_error(Sidekiq::Retries::Fail)
   end
+
+  it 'should retry the job if database connection error' do
+    message = mock('message')
+    message.stubs(:id).returns(1)
+    EmailMessage.expects(:find).with(1).raises(ActiveRecord::ConnectionTimeoutError.new('oopz'))
+
+    expect {worker.perform('message_id' => 1, 'send_options' => {}, 'recipients' => {}, 'klass' => 'EmailMessage')}.to raise_error(Sidekiq::Retries::Retry)
+  end
 end

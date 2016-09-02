@@ -18,7 +18,7 @@ class CreateRecipientsWorker
   end
 
   def perform(options)
-    message          = options['klass'].constantize.find(options['message_id'])
+    message          = retryable_connection { options['klass'].constantize.find(options['message_id']) }
     recipient_params = options['recipients']
 
     begin

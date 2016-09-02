@@ -24,9 +24,11 @@ module Twilio
         callback_url               = options[:callback_url]
         message_url                = options[:message_url]
         vendor, message, recipient = nil
-        ActiveRecord::Base.connection_pool.with_connection do
-          message, recipient = find_message_and_recipient(options)
-          vendor             = message.vendor
+        retryable_connection do
+          ActiveRecord::Base.connection_pool.with_connection do
+            message, recipient = find_message_and_recipient(options)
+            vendor             = message.vendor
+          end
         end
         client = vendor.delivery_mechanism
         logger.debug {"Sending message to #{recipient.phone}"}
