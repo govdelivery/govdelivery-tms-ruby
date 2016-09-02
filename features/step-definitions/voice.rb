@@ -12,7 +12,7 @@ end
 #####################################################
 
 When(/^I create a new voice message$/) do
-  @message = TmsClientManager.non_admin_client.voice_messages.build(play_url: configatron.voice.play_urls.sample)
+  @message = TmsClientManager.non_admin_client.voice_messages.build(play_url: configatron.voice.play_urls.sample, from_number: configatron.voice.send_number)
 end
 
 When(/^I add a recipient to the voice message$/) do
@@ -35,25 +35,30 @@ end
 Then(/^Twilio should have an active call$/) do
   @client = TwilioClientManager.default_client
   calls = []
-  GovDelivery::Proctor.backoff_check(10.minutes, "have a ringing call") do
+  times = 0
+
+  # Not using Proctor because this condition doesn't last long
+  # We want to check for a ringing call consistently and often
+  while calls.empty? && times < 20 do
+    times += 1
     calls = @client.account.calls.list(start_time: Date.today,
                                        status:     'ringing',
-                                       from:       '(651) 504-3057')
-
-    !calls.empty?
+                                       from:       configatron.voice.send_number_formatted)
+    GovDelivery::Proctor.getStandardLogger.info("Still waiting for call to be ringing after #{times} tries")
+    sleep 3
   end
   @call = calls.first.uri
 end
 
 Then(/^Twilio should complete the call$/) do
-
-
   # call to twilio callsid json
   conn = faraday("https://api.twilio.com/#{@call}")
   conn.headers['Content-Type'] = 'application/json'
   conn.basic_auth(configatron.test_support.twilio.account.sid , configatron.test_support.twilio.account.token)
+  is_completed = false
+  times = 0
 
-  GovDelivery::Proctor.backoff_check(10.minutes, "call") do
+  GovDelivery::Proctor.accelerating_check(80.seconds, 'should have completed call') do
     JSON.parse(conn.get.body)['status'] == 'completed'
   end
 end
@@ -69,7 +74,7 @@ end
 
 Then(/^I should be able to verify details of the message$/) do
   body = nil
-  GovDelivery::Proctor.backoff_check(60.seconds, 'should have _links relation found in the body') do
+  GovDelivery::Proctor.accelerating_check(60.seconds, 'should have _links relation found in the body') do
     @message.get
     body = @message.response.body
     log.info "body: #{body}"
@@ -88,4 +93,3 @@ Then(/^I should be able to verify details of the message$/) do
     raise 'Total was not found'.red unless recipient_counts.has_key?(recipient_count)
   end
 end
-

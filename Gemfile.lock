@@ -166,7 +166,7 @@ GEM
       activesupport
       addressable (~> 2.3.0)
       rack
-    govdelivery-proctor (1.1.1)
+    govdelivery-proctor (1.2.1)
     govdelivery-tms (0.10.0)
       activesupport
       faraday
