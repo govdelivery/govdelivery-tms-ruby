@@ -15,7 +15,7 @@ Prerequisites
 Building the database
 =============
 
-1. cp config/database.yml.example config/database.yml
+1. cp config/database.example.yml config/database.yml
 2. cp config/config.local.example.yml config/config.local.yml
 3. rake db:setup # which runs db:seed, too
 4. rake db:test:prepare
