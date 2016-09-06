@@ -29,7 +29,7 @@ end
 
 # @QC-2492
 When(/^I create a new forward keyword and command$/) do
-  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "forwardy")
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "forwardy_#{Time.now.strftime("%Y%m%d_%H%M%S")}")
   @keyword.post!
   @command = @keyword.commands.build(
     name: "forwardy 1",
@@ -52,7 +52,7 @@ When(/^I create a new subscribe keyword and command$/) do
 end
 
 When(/^I create a new unsubscribe keyword and command$/) do
-  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "newish")
+  @keyword = TmsClientManager.non_admin_client.keywords.build(name: "newish_#{Time.now.strftime("%Y%m%d_%H%M%S")}")
   @keyword.post!
   @command = @keyword.commands.build(
     name: "newish unsub",
