@@ -9,7 +9,7 @@ gem 'govdelivery-crypt', require: 'govdelivery/crypt'
 gem 'govdelivery-health_check', git: 'http://dev-scm.office.gdi/development/govdelivery-health_check.git'
 
 gem 'govdelivery-links'
-gem 'jakety_jak', '~>1.1.0', require: nil
+gem 'govdelivery-synapse', require: 'synapse'
 gem 'brick'
 gem 'aasm'
 gem 'activerecord-oracle_enhanced-adapter', "~>1.6.7"
