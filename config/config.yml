@@ -43,3 +43,5 @@ new_relic:
 #twilio_number: 'fake'
 #twilio_test_sid: 'fake'
 #twilio_test_token: 'fake'
+
+allowed_geckoboard_accounts: [10_060]
