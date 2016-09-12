@@ -54,7 +54,7 @@ Then(/^Twilio should complete the call$/) do
   # call to twilio callsid json
   conn = faraday("https://api.twilio.com/#{@call}")
   conn.headers['Content-Type'] = 'application/json'
-  conn.basic_auth(configatron.test_support.twilio.account.sid , configatron.test_support.twilio.account.token)
+  conn.basic_auth(configatron.test_support.twilio.account.sid, configatron.test_support.twilio.account.token)
   is_completed = false
   times = 0
 
