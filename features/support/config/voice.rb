@@ -24,9 +24,10 @@ case environment
     voice.send_number = '+16515043057'
     voice.send_number_formatted = '(651) 504-3057'
   when :stage
-    voice.send_number = '+16515043057'
-    voice.send_number_formatted = '(651) 504-3057'
-  when :prod
-    voice.send_number = '+16515043057'
-    voice.send_number_formatted = '(651) 504-3057'
+    voice.send_number = '+16123459610'
+    voice.send_number_formatted = '(612) 345-9610'
+  # need prod account -- see support/config/tms.rb
+  # when :prod
+  #   voice.send_number = '+16123459610'
+  #   voice.send_number_formatted = '(612) 345-9610'
 end
