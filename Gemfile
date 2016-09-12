@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-source 'https://ed5779be:de10e893@gems.contribsys.com/'
+source 'https://9954a10b:3891f6a5@gems.contribsys.com/'
 source 'http://prod-rubygems1-ep.tops.gdi'
 
 gem 'sidekiq-pro'

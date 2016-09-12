@@ -17,7 +17,7 @@ GIT
 
 GEM
   remote: https://rubygems.org/
-  remote: https://ed5779be:de10e893@gems.contribsys.com/
+  remote: https://9954a10b:3891f6a5@gems.contribsys.com/
   remote: http://prod-rubygems1-ep.tops.gdi/
   specs:
     aasm (4.1.0)
