@@ -15,7 +15,7 @@ module Clockwork
   every(1.minutes, 'Sidekiq::RateLimitedQueue::LockInvalidator')
   every(5.minutes, 'NscaStatusWorker')
 
-  if defined?(JRUBY_VERSION) && Rails.configuration.odm_polling_enabled
+  if Rails.configuration.odm_polling_enabled
     odm_polling_interval = unless %w(qc integration).include? Rails.env.to_s
       5.minutes
     else

@@ -35,4 +35,13 @@ class SmsRecipient < ActiveRecord::Base
       .where("#{StopRequest.table_name}.phone is null")
       .readonly(false)
   }
+
+  def to_kahlo
+    {
+      callback_id: to_param,
+      from:        vendor.from,
+      to:          phone,
+      body:        Service::SmsBody.annotated(message.body)
+    }
+  end
 end

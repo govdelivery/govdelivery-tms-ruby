@@ -30,6 +30,7 @@ end
 
 def shared_loopback_vendors_config
   {
+    kahlo_vendor_name: 'Test - Kahlo Loopback SMS Vendor',
     sms_vendor_name: 'Test - Shared Loopback SMS Vendor',
     voice_vendor_name: 'Test - Shared Loopback Voice Vendor',
     email_vendor_name: 'Test - Shared Loopback Email Vendor',
@@ -158,7 +159,7 @@ def create_test_account(test_name, account_vendors_config)
         puts "SMS Prefix created for #{account_config[:name]}: #{sms_prefix.prefix}"
       end
 
-      if lb.from_numbers.blank?
+      if lb.from_numbers.blank? && lb.voice_vendor.present?
         from_number = lb.from_numbers.build(phone_number: account_vendors_config[:from_number], is_default: true)
         puts "Added #{from_number.from_number} phone number to account."
       end

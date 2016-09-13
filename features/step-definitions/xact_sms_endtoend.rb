@@ -1,6 +1,6 @@
 Given(/^I have a user who can receive SMS messages$/) do
-  @sms_receiver_uri      = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
-  @sms_receiver_full_uri = @capi.callback_domain + @sms_receiver_uri
+  @event_uri             = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
+  @sms_receiver_full_uri = @capi.callback_domain + @event_uri
 
   twil = TwilioClientManager.default_client
 
@@ -57,7 +57,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
 
   begin
     GovDelivery::Proctor.backoff_check(10.minutes, 'for the test user to receive the message I sent') do
-      payloads = @capi.get(@sms_receiver_uri)
+      payloads = @capi.get(@event_uri)
       payloads['payloads'].any? do |payload_info|
         payload_info['body'] == @expected_message
       end

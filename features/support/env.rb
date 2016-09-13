@@ -111,6 +111,10 @@ end
 
 configatron.configure_from_hash(YAML.load_file(File.join(File.dirname(__FILE__), 'config', 'common.yaml')))
 
+if (File.exists?(env_config = File.join(File.dirname(__FILE__), 'config', "#{environment}.yaml")))
+  configatron.configure_from_hash(YAML.load_file(env_config))
+end
+
 configatron.xact.url = xact_url
 
 twilio_live_numbers = {

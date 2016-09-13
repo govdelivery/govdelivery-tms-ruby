@@ -32,6 +32,7 @@ sms_vendors:
       password: '5b1c96ca034d474c6d4b68f8d05c99f5'
       shared: true
       twilio_test: false
+  #kahlo_loopback:
 voice_vendors:
   # live:                     # is env-specific
   loopback:

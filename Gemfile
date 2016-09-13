@@ -7,6 +7,7 @@ gem 'config_spartan', '~>1.0.0'
 gem 'dcm_client'
 gem 'govdelivery-crypt', require: 'govdelivery/crypt'
 gem 'govdelivery-health_check', git: 'http://dev-scm.office.gdi/development/govdelivery-health_check.git'
+gem 'govdelivery-kahlo', git: 'http://dev-scm.office.gdi/development/govdelivery-kahlo.git'
 
 gem 'govdelivery-links'
 gem 'govdelivery-synapse', require: 'synapse'

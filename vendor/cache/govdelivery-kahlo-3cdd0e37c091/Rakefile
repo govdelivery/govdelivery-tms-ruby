@@ -1,0 +1,26 @@
+require "rubygems"
+require "bundler/setup"
+require "bundler/gem_tasks"
+require "rake/testtask"
+
+# you also need to do this in your gemspec:
+# spec.metadata['allowed_push_host'] = "http://prod-rubygems1-ep.tops.gdi"
+module Bundler
+  class GemHelper
+    GEM_HOST = "http://prod-rubygems1-ep.tops.gdi"
+
+    protected
+    def rubygem_push(path)
+      sh("gem push '#{path}' --host #{GEM_HOST}")
+      Bundler.ui.confirm "Pushed #{name} #{version} to #{GEM_HOST}."
+    end
+  end
+end
+
+Rake::TestTask.new(:test) do |t|
+  t.libs << "test"
+  t.libs << "lib"
+  t.test_files = FileList['test/**/*_test.rb']
+end
+
+task :default => :test
