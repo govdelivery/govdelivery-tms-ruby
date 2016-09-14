@@ -9,7 +9,6 @@ Sidekiq::Client.reliable_push!
 # We have workers that enqueue other jobs; need the client stuff everywhere
 require './config/clock.rb'
 require './lib/clockwork/sidekiq_clockwork_scheduler.rb'
-require './config/initializers/jakety_jak'
 
 default = Xact::Application.config.sidekiq[:default]
 
@@ -37,11 +36,12 @@ Sidekiq.configure_server do |config|
   end
   SidekiqClockworkScheduler.new.async.run
 
-  if Rails.configuration.analytics[:enabled]
+  if Conf.analytics_enabled
+    require 'sidekiq/synapse'
     require 'rjack-slf4j/log4j12'
-    JaketyJak::Subscriber::Supervisor.go!
+    Synapse::Supervisor.go!
   else
-    warn('JaketyJak analytics are disabled')
+    warn('Synapse::Supervisor not started')
   end
 
   Sidekiq::RateLimitedQueue::Configuration.load!(Rails.root.join('config', 'sidekiq_rate_limited_queues.yml'))

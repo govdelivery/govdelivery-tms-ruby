@@ -143,13 +143,6 @@ module Xact
     # as this is not a vendor-specific behavior.
     config.auto_response_threshold = 0.5
 
-    # Controls whether this environment will publish/subscribe to Kafka
-    config.analytics               = {
-      enabled:    Conf.analytics_enabled,
-      kafkas:     Conf.analytics_kafkas,
-      zookeepers: Conf.analytics_zookeepers
-    }
-
     # Default log level is DEBUG
     config.logger = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default'].tap do |logger|
       # Log4r doesn't implement the interface that rails is looking for, but we can fake it.

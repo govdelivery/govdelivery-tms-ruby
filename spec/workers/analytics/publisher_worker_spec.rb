@@ -1,14 +1,13 @@
 require 'rails_helper'
-require 'jakety_jak'
 describe Analytics::PublisherWorker do
   it 'should not perform when analytics is disabled' do
-    Rails.configuration.stubs(:analytics).returns(enabled: false)
+    Conf.stubs(:analytics_enabled).returns(false)
     Analytics::PublisherWorker.new.perform({})
   end
 
   describe 'when analytics is enabled' do
     before do
-      Rails.configuration.stubs(:analytics).returns(enabled: true, kafkas: ['localhost:9092'])
+      Conf.stubs(:analytics_enabled).returns(true)
     end
 
     subject {Analytics::PublisherWorker.new}
@@ -41,7 +40,7 @@ describe Analytics::PublisherWorker do
     context 'and connection pool times out' do
       before do
         publisher = stub
-        publisher.stubs(:publish).raises(Timeout::Error, 'foo')
+        publisher.stubs(:publishJSON).raises(Timeout::Error, 'foo')
         subject.stubs(:publisher).returns(publisher)
       end
       it 'should retry' do
@@ -60,7 +59,7 @@ describe Analytics::PublisherWorker do
       message   = {foo: 3}
       expected  = {foo: 3, 'src' => 'xact'}
       publisher = stub
-      publisher.expects(:publish).with('donkey', expected)
+      publisher.expects(:publishJSON).with('donkey', expected)
       subject.expects(:publisher).returns(publisher)
       subject.perform(channel: 'donkey', message: message)
     end

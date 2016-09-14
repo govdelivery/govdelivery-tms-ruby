@@ -5,18 +5,13 @@ module Analytics
     sidekiq_options retry: 0
     sidekiq_retry_in { 15 }
 
-    PUBLISHER = JaketyJak::Publisher.new(
-      Rails.configuration.analytics[:kafkas].join(','),
-      "#{Socket.gethostname}-#{Process.pid}",
-      Conf.analytics.publisher_options.to_hash) unless Rails.env.test?
-
     def perform(opts)
-      return unless Rails.configuration.analytics[:enabled]
+      return unless Conf.analytics_enabled
       validate_opts(opts.symbolize_keys!)
       channel = opts[:channel]
       message = opts[:message].merge('src' => 'xact')
       logger.info("#{self.class}: Publishing #{channel} #{message}")
-      publisher.publish(channel, message)
+      publisher.publishJSON(channel, message)
     rescue Timeout::Error => e
       raise Sidekiq::Retries::Retry.new(e)
     end
@@ -31,7 +26,7 @@ module Analytics
     private
 
     def publisher
-      PUBLISHER
+      Synapse
     end
 
     def validate_opts(opts)
