@@ -112,7 +112,7 @@ GEM
     concurrent-ruby (1.0.2-java)
     config_spartan (1.0.102)
       hashie
-    configatron (4.2.1)
+    configatron (4.5.0)
     connection_pool (2.2.0)
     countries (0.11.2)
       currencies (~> 0.4.2)

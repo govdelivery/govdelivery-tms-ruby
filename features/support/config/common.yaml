@@ -1,0 +1,93 @@
+---
+sample_subscriber_number: '+16122236629'
+test_support:
+  twilio_xact_test_number: '+17014842689'
+  twilio_xact_test_number_2: '+17014842689'
+  mblox:
+    phone:
+      number: '+16122546317'
+  twilio:
+    phone:
+      number: '+15183004174'
+      sid: 'PN53d0531f78bf8061549b953c6619b753'
+    account:
+      sid: 'AC189315456a80a4d1d4f82f4a732ad77e'
+      token: '88e3775ad71e487c7c90b848a55a5c88'
+      twilio_test: false
+sms_vendors:
+  # live:                     # is env-specific
+  loopback:
+    phone:
+      number: '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+    vendor:
+      username: 'shared_loopback_sms_username'
+      password: 'dont care'
+      shared: true
+      twilio_test: false
+  twilio_valid_test:
+    phone:
+      number: '+15005550006'
+    vendor:
+      username: 'ACc66477e37af9ebee0f12b349c7b75117'
+      password: '5b1c96ca034d474c6d4b68f8d05c99f5'
+      shared: true
+      twilio_test: false
+voice_vendors:
+  # live:                     # is env-specific
+  loopback:
+    phone:
+      number: '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
+    vendor:
+      username: 'shared_loopback_voice_username'
+      password: 'dont care'
+      shared: true
+      twilio_test: false
+accounts:
+ # account_name:
+ # prefix:
+ # xact:
+ #   account_id:
+ #   token:
+ #   email_address:
+ #   dcm_account_id:
+ #   dcm_account_codes: []
+  sms_keyword_commands_forward_worker:
+    prefix: 'sms_2way_cdc'
+  sms_keyword_commands_static:
+    prefix: 'sms_2way_static'
+  sms_keyword_commands_stop:
+    prefix: 'sms_2way_stop'
+  sms_keyword_commands_subscribe:
+    prefix: 'sms_2way_subscribe'
+  sms_end_to_end:
+    sms_prefix: 'sms_end_to_end'
+  email_endtoend:   #loopback
+    xact:
+      from_name_two: 'from_address_level_from_name'
+    gmail:
+      imap:
+        address: 'imap.gmail.com'
+        port:  993
+        password: 'govdel01!'
+        enable_ssl: true
+  #webhooks:
+
+gmail:
+  address: 'xactqctest1@gmail.com'
+  password: 'govdel01!'
+
+voice:
+  play_urls:
+    - http://xact-webhook-callbacks.herokuapp.com/voice/first.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/second.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/third.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/fourth.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/fifth.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/sixth.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/seventh.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/eighth.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/ninth.mp3
+    - http://xact-webhook-callbacks.herokuapp.com/voice/tenth.mp3
+  recipient:
+    number: '+16124679346'
+    secondary_number: '+16123145807'

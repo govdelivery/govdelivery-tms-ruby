@@ -14,21 +14,8 @@ module Helpy
     end
   end
 
-  def expected_link_prefix
-    case ENV['XACT_ENV']
-    when 'qc'
-      'http://qc-links.govdelivery.com:80'
-    when 'integration'
-      'http://int-links.govdelivery.com:80'
-    when 'stage'
-      'http://stage-links.govdelivery.com:80/track'
-    when 'prod'
-      'https://odlinks.govdelivery.com'
-    end
-  end
-
   def api_root
-    @conf_xact.url
+    configatron.xact.url
   end
 
   def messages_path
@@ -45,7 +32,7 @@ module Helpy
     opts[:from_name] = @from_name unless @from_name.blank?
     opts[:subject] = @expected_subject
     email_message = GovDelivery::TMS::Client
-                    .new(@conf_xact.user.token, api_root: api_root)
+                    .new(@conf_xact.token, api_root: api_root)
                     .email_messages.build(opts)
     email_message.recipients.build(email: @conf_gmail.imap.user_name)
     email_message.post!

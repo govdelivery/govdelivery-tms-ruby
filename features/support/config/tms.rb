@@ -1,10 +1,6 @@
 
 tms = configatron.tms
 
-tms.password = 'govdel01!'
-tms.mail_accounts = 'xactqctest1@gmail.com'
-tms.default_subject = "XACT-533-2 Email Test for link parameters #{Time.new}"
-
 case environment
   when :qc
     tms.account_code = 'CUKEAUTO_QC'

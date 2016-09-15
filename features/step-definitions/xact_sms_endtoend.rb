@@ -13,7 +13,7 @@ end
 Given(/^I have an SMS template$/) do
   next if dev_not_live?
 
-  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   @template         = client.sms_templates.build(body: @expected_message, uuid: "new-sms-template-#{Time.now.to_i}")
   @template.post!
@@ -26,7 +26,7 @@ end
 Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
-  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
@@ -38,7 +38,7 @@ end
 Given(/^I POST a new blank SMS message to TMS$/) do
   next if dev_not_live?
 
-  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
@@ -76,7 +76,7 @@ end
 # MBLOX ==========================
 
 Given(/^I POST a new SMS message to MBLOX$/) do
-  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.mblox.phone.number)

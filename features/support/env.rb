@@ -66,6 +66,16 @@ def faraday(url)
   end
 end
 
+def ensure_deleted(record)
+  begin
+    if record.try(:get)
+      record.delete!
+    end
+  rescue GovDelivery::TMS::Request::Error, GovDelivery::TMS::Errors::InvalidGet
+# ignored
+  end
+end
+
 def site
   sites = [
     :dc3,
@@ -99,16 +109,9 @@ def xact_url
   url
 end
 
-# Set general configuration options
-twilio_test_credentials = {
-  sid: 'ACc66477e37af9ebee0f12b349c7b75117',
-  token: '5b1c96ca034d474c6d4b68f8d05c99f5'
-}
+configatron.configure_from_hash(YAML.load_file(File.join(File.dirname(__FILE__), 'config', 'common.yaml')))
 
-twilio_live_credentials = {
-  sid: 'AC189315456a80a4d1d4f82f4a732ad77e',
-  token: '88e3775ad71e487c7c90b848a55a5c88'
-}
+configatron.xact.url = xact_url
 
 twilio_live_numbers = {
   development: '+16514336311',
@@ -124,52 +127,12 @@ twilio_live_phone_sids = {
   stage: 'PNe896243b192ff04674538f3aa11ea839'
 }
 
-configatron.xact.url                                  = xact_url
-configatron.test_support.mblox.phone.number           = '+16122546317'
-configatron.test_support.twilio.phone.number          = '+15183004174'
-configatron.test_support.twilio.phone.sid             = 'PN53d0531f78bf8061549b953c6619b753'
-configatron.test_support.twilio.account.sid           = 'AC189315456a80a4d1d4f82f4a732ad77e'
-configatron.test_support.twilio.account.token         = '88e3775ad71e487c7c90b848a55a5c88'
-configatron.test_support.twilio.account.twilio_test   = false
+configatron.sms_vendors.live.phone.number = twilio_live_numbers[environment]
+configatron.sms_vendors.live.phone.sid    = twilio_live_phone_sids[environment]
 
-configatron.sms_vendors.loopback.phone.number          = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
-configatron.sms_vendors.loopback.vendor.username       = 'shared_loopback_sms_username'
-configatron.sms_vendors.loopback.vendor.password       = 'dont care'
-configatron.sms_vendors.loopback.vendor.shared         = true
-configatron.sms_vendors.loopback.vendor.twilio_test    = false
+configatron.voice_vendors.live.phone.number = twilio_live_numbers[environment]
+configatron.voice_vendors.live.phone.sid    = twilio_live_phone_sids[environment]
 
-configatron.voice_vendors.loopback.phone.number        = '+15552287439'   # 1-555-BBushey --or-- 1-555-CatShew --or-- 1-555-BatsHey
-configatron.voice_vendors.loopback.vendor.password     = 'dont care'
-configatron.voice_vendors.loopback.vendor.twilio_test  = false
-
-configatron.sms_vendors.twilio_valid_test.phone.number       = '+15005550006'
-configatron.sms_vendors.twilio_valid_test.vendor.username    = twilio_test_credentials[:sid]
-configatron.sms_vendors.twilio_valid_test.vendor.password    = twilio_test_credentials[:token]
-configatron.sms_vendors.twilio_valid_test.vendor.shared      = true
-configatron.sms_vendors.twilio_valid_test.vendor.twilio_test = true
-
-configatron.sms_vendors.twilio_invalid_test.phone.number       = '+15005550001'
-configatron.sms_vendors.twilio_invalid_test.vendor.username    = twilio_test_credentials[:sid]
-configatron.sms_vendors.twilio_invalid_test.vendor.password    = twilio_test_credentials[:token]
-configatron.sms_vendors.twilio_invalid_test.vendor.shared      = true
-configatron.sms_vendors.twilio_invalid_test.vendor.twilio_test = true
-
-configatron.sms_vendors.live.phone.number                       = twilio_live_numbers[environment]
-configatron.sms_vendors.live.phone.sid                          = twilio_live_phone_sids[environment]
-configatron.sms_vendors.live.vendor.username                    = twilio_live_credentials[:sid]
-configatron.sms_vendors.live.vendor.password                    = twilio_live_credentials[:token]
-configatron.sms_vendors.live.vendor.shared                      = true
-configatron.sms_vendors.live.vendor.twilio_test                 = false
-
-configatron.voice_vendors.live.phone.number                     = twilio_live_numbers[environment]
-configatron.voice_vendors.live.phone.sid                        = twilio_live_phone_sids[environment]
-configatron.voice_vendors.live.vendor.username                  = twilio_live_credentials[:sid]
-configatron.voice_vendors.live.vendor.password                  = twilio_live_credentials[:token]
-configatron.voice_vendors.live.vendor.twilio_test               = false
-
-def twilio_xact_test_number_2
-  '+17014842689'
-end
 
 def message_body_identifier
   [Time.new, '::', rand(100_000)].map(&:to_s).join
@@ -181,9 +144,6 @@ end
 def dev_not_live?
   return false unless environment == :development
 
-  !(configatron.xact.key?('user') && configatron.xact.user.key?('token'))
+  !configatron.xact.key?('token')
 end
 
-def sample_subscriber_number
-  '+16122236629'
-end

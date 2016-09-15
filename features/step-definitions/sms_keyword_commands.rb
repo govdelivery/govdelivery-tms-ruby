@@ -4,7 +4,8 @@ Given(/^I create a subscription keyword and command$/) do
   pending "Not implemented for development"  if dev_not_live?
 
   @conf = configatron.accounts.sms_keyword_commands_subscribe
-  client = TmsClientManager.from_configatron(@conf)
+  @vendor = configatron.sms_vendors.twilio_valid_test
+  client = TmsClientManager.from_configatron(@conf.xact.token)
   @keyword = client.keywords.build(name: "subscribe::#{random_string}", response_text: 'subscribe')
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
@@ -20,15 +21,15 @@ When(/^I send an SMS to create a subscription on TMS$/) do
   pending "Not implemented for development"  if dev_not_live?
 
   # create connection to XACT
-  conn = faraday(@conf.xact.url)
+  conn = faraday(configatron.xact.url)
 
   # create tms/xact twilio request
   payload = {}
-  payload['To'] = @conf.sms.phone.number
-  payload['From'] = sample_subscriber_number
-  payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
-  log.info "Mocking text '#{payload['Body']}' to #{payload['To']}"
+  payload['To'] = @vendor.phone.number
+  payload['From'] = configatron.sample_subscriber_number
+  payload['AccountSid'] = @vendor.vendor.username
+  payload['Body'] = "#{@conf.prefix} #{@keyword.name}"
+  log.info "Mocking text '#{payload}'"
   @payload = payload
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'
@@ -40,7 +41,7 @@ When(/^I send an SMS to create a subscription on TMS$/) do
   end
 
   # encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
-  @base64 = Base64.encode64(sample_subscriber_number)
+  @base64 = Base64.encode64(configatron.sample_subscriber_number)
 end
 
 Then(/^a subscription should be created$/) do
@@ -57,7 +58,7 @@ Then(/^a subscription should be created$/) do
       log.ap @response
 
       # DCM strips the +1 from numbers, so we have to also do so to verify if the number exists.
-      @response && @response['subscriber'] && @response['subscriber']['phone'] == sample_subscriber_number[2...12]
+      @response && @response['subscriber'] && @response['subscriber']['phone'] == configatron.sample_subscriber_number[2...12]
     end
   ensure
     # delete subscriber so we can reuse the phone number for the next test
@@ -72,14 +73,15 @@ Given(/^I am subscribed to receive TMS messages$/) do
 
   # subscribe first
   @conf = configatron.accounts.sms_keyword_commands_stop
-  conn = faraday(@conf.xact.url)
+  @vendor = configatron.sms_vendors.twilio_valid_test
+  conn = faraday(configatron.xact.url)
 
   # create tms/xact twilio request
   payload = {}
-  payload['To'] = @conf.sms.phone.number
-  payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} subscribe"
+  payload['To'] = @vendor.phone.number
+  payload['From'] = configatron.test_support.twilio_xact_test_number_2
+  payload['AccountSid'] = @vendor.vendor.username
+  payload['Body'] = "#{@conf.prefix} subscribe"
   log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   resp = conn.post do |req|
     req.url '/twilio_requests.xml'
@@ -96,7 +98,7 @@ end
 Given(/^I create a stop keyword and command$/) do
   pending "Not implemented for development"  if dev_not_live?
 
-  client = TmsClientManager.from_configatron(@conf)
+  client = TmsClientManager.from_configatron(@conf.xact.token)
   @keyword = client.keywords.build(name: "stop::#{random_string}", response_text: 'stop')
   raise "Could not create #{@keyword.name} keyword: #{@keyword.errors}" unless @keyword.post
   @command = @keyword.commands.build(
@@ -111,14 +113,14 @@ When(/^I send an SMS to opt out of receiving TMS messages$/) do
   pending "Not implemented for development"  if dev_not_live?
 
   # begin stop request
-  conn = faraday(@conf.xact.url)
+  conn = faraday(configatron.xact.url)
 
   # create tms/xact twilio request
   payload = {}
-  payload['To'] = @conf.sms.phone.number
-  payload['From'] = twilio_xact_test_number_2
-  payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
+  payload['To'] = @vendor.phone.number
+  payload['From'] = configatron.test_support.twilio_xact_test_number_2
+  payload['AccountSid'] = @vendor.vendor.username
+  payload['Body'] = "#{@conf.prefix} #{@keyword.name}"
   log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'
@@ -133,6 +135,7 @@ end
 Then(/^I should receive a STOP response$/) do
   pending "Not implemented for development"  if dev_not_live?
 
+  raise "received incorrect response #{@resp.status}" unless @resp.status==201
   resp_xml = Hash.from_xml @resp.body
   if resp_xml['Response']['Sms'] != 'stop'
     log.ap @resp
@@ -144,7 +147,7 @@ Then(/^my subscription should be removed$/) do
   pending "Not implemented for development"  if dev_not_live?
 
   # encode FROM number as base64 so we're able to retrieve the subscriber record in DCM subscribers API
-  @base64 = Base64.encode64(twilio_xact_test_number_2)
+  @base64 = Base64.encode64(configatron.test_support.twilio_xact_test_number_2)
 
   conn = faraday(configatron.evolution.api_url + @base64)
   conn.headers['Content-Type'] = 'application/xml'
@@ -161,19 +164,20 @@ end
 #===STATIC========================================>
 
 Given(/^A keyword with static content is configured for an TMS account$/) do
+  @vendor = configatron.sms_vendors.loopback
   @conf = configatron.accounts.sms_keyword_commands_static
-  client = TmsClientManager.from_configatron(@conf)
+  client = TmsClientManager.from_configatron(@conf.xact.token)
   @keyword = client.keywords.build(name: random_string, response_text: random_string)
   @keyword.post!
 end
 
 Given(/^I send that keyword as an SMS to TMS$/) do
-  conn = faraday(@conf.xact.url)
+  conn = faraday(configatron.xact.url)
   payload = {}
-  payload['To'] = @conf.sms.phone.number
+  payload['To'] = @vendor.phone.number
   payload['From'] = '+15555555555'
-  payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name}"
+  payload['AccountSid'] = @vendor.vendor.username
+  payload['Body'] = "#{@conf.prefix} #{@keyword.name}"
   log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'
@@ -182,17 +186,19 @@ Given(/^I send that keyword as an SMS to TMS$/) do
 end
 
 Then(/^I should receive static content$/) do
+  raise "received incorrect response #{@resp.status}" unless @resp.status==201
   twiml = Hash.from_xml @resp.body
   received_content = twiml['Response']['Sms']
   expected_content = @keyword.response_text
-  raise "Received incorrect content: '#{received_content}', expected: '#{expected_content}', keyword url: #{@conf.xact.url}#{@keyword.href}" if received_content != expected_content
+  raise "Received incorrect content: '#{received_content}', expected: '#{expected_content}', keyword url: #{configatron.xact.url}#{@keyword.href}" if received_content != expected_content
 end
 
 #===Common-2-Way-Real-Time-Steps================>
 
 Given(/^I have an XACT account with a forward worker$/) do
   @conf = configatron.accounts.sms_keyword_commands_forward_worker
-  @client = TmsClientManager.from_configatron(@conf)
+  @vendor = configatron.sms_vendors.twilio_valid_test
+  @client = TmsClientManager.from_configatron(@conf.xact.token)
 end
 
 Given(/^I register the keyword (.+)$/) do |agency|
@@ -219,12 +225,12 @@ When(/^I text '(.+)' to the forward worker account$/) do |message|
   # Don't actually care about the keyword that is passed to this test
   message = message.split[1..-1].join(' ')
 
-  conn = faraday(@conf.xact.url)
+  conn = faraday(configatron.xact.url)
   payload = {}
-  payload['To'] = @conf.sms.phone.number
+  payload['To'] = @vendor.phone.number
   payload['From'] = '+15005550006'
-  payload['AccountSid'] = @conf.sms.vendor.username
-  payload['Body'] = "#{@conf.sms.prefix} #{@keyword.name} #{message}"
+  payload['AccountSid'] = @vendor.vendor.username
+  payload['Body'] = "#{@conf.prefix} #{@keyword.name} #{message}"
   log.info "Mocking text ''#{payload['Body']}'' to #{payload['To']}"
   @resp = conn.post do |req|
     req.url '/twilio_requests.xml'

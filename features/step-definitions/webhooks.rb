@@ -5,7 +5,7 @@
 
 Given(/^a callback url exists for (.*)$/) do |event_type|
   @event_callback_uri = @capi.create_callback_uri(:recipient_status, event_type)
-  @client = TmsClientManager.from_configatron(configatron.accounts.webhooks)
+  @client = TmsClientManager.from_configatron(configatron.accounts.webhooks.xact.token)
   webhook = @client.webhooks.build(url: @capi.callback_domain + @event_callback_uri, event_type: event_type)
   webhook.post!
   @webhooks << webhook

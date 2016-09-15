@@ -1,4 +1,4 @@
-@full-regression @QC-2440
+@full-regression @QC-2440 @keyword
 Feature: Interacting with TMS keywords
 
   @QC-2453
