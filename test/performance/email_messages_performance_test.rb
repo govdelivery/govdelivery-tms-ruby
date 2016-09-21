@@ -15,6 +15,7 @@ class EmailMessagesPerformanceTest < Thor
 option :environment, aliases: ['-e'], required: true, default: 'qc', type: :string, desc: 'qc,int,stg,prod'
 option :api_key, aliases: ['-k'], type: :string, required: true
 option :from_email, aliases: ['f'], type: :string, required: true
+option :recipients, aliases: ['-r'], type: :numeric, required: true, default: 1, desc: 'number of recipients per message'
 method_option :n, type: :numeric, desc: 'number of requests', default: 10
 method_option :c, type: :numeric, desc: 'max number of concurrent requests', default: 1
 desc 'send', 'send messages to randomly created recipients'
@@ -22,6 +23,7 @@ desc 'send', 'send messages to randomly created recipients'
 
       n = options[:n]
       c = options[:c]
+      r = options[:recipients]
       g_size = (n.to_f/c).ceil
       g = (n.to_f/g_size).ceil
       t = 0
@@ -40,12 +42,14 @@ desc 'send', 'send messages to randomly created recipients'
           while (m < g_size) && (t < n) do
             threads << Thread.new do
               Thread.current[:time] = Benchmark.realtime do
-                recipient ||= "#{SecureRandom.hex(6)}.tms.perf.test@sink.govdelivery.com"
                 message = client.email_messages.build(
                   body: 'performance test message',
                   subject: 'Performance testing TMS email message sends',
-                  from_email: options[:from_email] )
-                message.recipients.build(email: recipient)
+                  from_email: options[:from_email]
+                  )
+                options[:recipients].times do |i|
+                  message.recipients.build(email: recipient(i))
+                end
                 message.post
             end
             cell << '.'
@@ -68,6 +72,7 @@ desc 'send', 'send messages to randomly created recipients'
      rps = n / total_time
 
      summary << "Total Requests: #{n}"
+     summary << "Recipients Per Request #{r}"
      summary << "Total Time: #{total_time.round(2)} seconds (#{(total_time * 1000).round(0)} ms)"
      summary << "Average Per Request: #{avg.round(0)} ms"
      summary << "Requests Per Second: #{rps.round(2)}\n"
@@ -80,6 +85,10 @@ desc 'send', 'send messages to randomly created recipients'
 
 
 private
+
+  def recipient i=0
+    "#{SecureRandom.hex(6)}tms.activity.perf.test#{i}@sink.govdelivery.com"
+  end
 
   def client
     @client ||= client_factory(options[:api_key], ENVS.fetch(options[:environment]))
