@@ -1,62 +1,106 @@
 require 'securerandom'
 require 'govdelivery-proctor'
 require 'govdelivery-tms-internal'
-require 'configatron'
+require 'thor'
+require 'benchmark'
 
-# Sends N_MESSAGES to N_RECIPIENTS for TMS email messages performance testing.
-#
-# XACT_ENV=qc bundle exec ruby test/performance/email_messages_performance_test.rb
+class EmailMessagesPerformanceTest < Thor
 
-N_RECIPIENTS = 1
-N_MESSAGES = 1
+# Sends email messages to random recipients for TMS performance testing.
+  ENVS = { 'qc'   => 'https://qc-tms.govdelivery.com',
+          'int'  => 'https://int-tms.govdelivery.com',
+          'stg'  => 'https://stage-tms.govdelivery.com',
+          'prod' => 'https://tms.govdelivery.com' }
 
-def environment
-  environments = [
-    :qc,
-    :integration,
-    :stage,
-    :prod
-  ]
-  env = ENV.fetch 'XACT_ENV'
-  env.to_sym
-end
+option :environment, aliases: ['-e'], required: true, default: 'qc', type: :string, desc: 'qc,int,stg,prod'
+option :api_key, aliases: ['-k'], type: :string, required: true
+option :from_email, aliases: ['f'], type: :string, required: true
+option :recipients, aliases: ['-r'], type: :numeric, required: true, default: 1, desc: 'number of recipients per message'
+method_option :n, type: :numeric, desc: 'number of requests', default: 10
+method_option :c, type: :numeric, desc: 'max number of concurrent requests', default: 1
+desc 'send', 'send messages to randomly created recipients'
+  def send
 
-# loading config data
-require_relative '../../features/support/config/tms.rb'
+      n = options[:n]
+      c = options[:c]
+      r = options[:recipients]
+      g_size = (n.to_f/c).ceil
+      g = (n.to_f/g_size).ceil
+      t = 0
 
-def recipients
-  @recipients ||= (0...N_RECIPIENTS).map{ |i| "#{SecureRandom.hex(6)}.tms.perf.test#{i}@sink.govdelivery.com" }
-end
+      summary = []
+      averages = []
+      results = []
+      client
+      total_time = Benchmark.realtime do
+        g.times do |i|
+          threads = []
+          m = 0
+          row = ["Group #{i+1}"]
+          cell = ''
+          while (m < g_size) && (t < n) do
+            threads << Thread.new do
+              Thread.current[:time] = Benchmark.realtime do
+                message = client.email_messages.build(
+                  body: 'performance test message',
+                  subject: 'Performance testing TMS email message sends',
+                  from_email: options[:from_email]
+                  )
+                options[:recipients].times do |i|
+                  message.recipients.build(email: recipient(i))
+                end
+                message.post
+            end
+            cell << '.'
+          end
+          m += 1
+          t += 1
+        end
+        threads.map(&:join)
+        average = (threads.map{ |thread| thread[:time] }.reduce(:+) / threads.size) * 1000
 
-def recipient
-  recipients.sample
-end
+         row << cell
+         row << "Requests: #{threads.size}"
+         row << "Average: #{average.round(0)} ms"
 
-def non_admin_client
-  @non_admin_client ||= client_factory(configatron.tms.admin.token, configatron.tms.api_root)
-end
+         averages << average
+         results << row.join(' ')
+      end
+    end
+     avg = averages.reduce(:+) / averages.size
+     rps = n / total_time
 
-def client_factory(token, root)
-  GovDelivery::TMS::Client.new(token, api_root: root, logger: log)
-end
+     summary << "Total Requests: #{n}"
+     summary << "Recipients Per Request #{r}"
+     summary << "Total Time: #{total_time.round(2)} seconds (#{(total_time * 1000).round(0)} ms)"
+     summary << "Average Per Request: #{avg.round(0)} ms"
+     summary << "Requests Per Second: #{rps.round(2)}\n"
 
-def log
-  GovDelivery::Proctor.log
-end
-
-def send_a_message
-  message = non_admin_client.email_messages.build(
-    body: 'performance test message',
-    subject: 'Performance testing TMS email message sends',
-    from_email: configatron.tms.from_email
-  )
-  message.recipients.build(email: recipient)
-  message.post
-end
-
-N_MESSAGES.times.to_a.map do |i|
-  Thread.new do
-    send_a_message
-    puts "Published message #{i+1} of #{N_MESSAGES}"
+     puts results
+     puts
+     puts summary
+     puts
   end
-end.map(&:join)
+
+
+private
+
+  def recipient i=0
+    "#{SecureRandom.hex(6)}tms.activity.perf.test#{i}@sink.govdelivery.com"
+  end
+
+  def client
+    @client ||= client_factory(options[:api_key], ENVS.fetch(options[:environment]))
+  end
+
+  def client_factory(key, root)
+    GovDelivery::TMS::Client.new(key, api_root: root, logger: log)
+  end
+
+  def log
+    GovDelivery::Proctor.log
+  end
+
+end
+
+EmailMessagesPerformanceTest.start(ARGV)
