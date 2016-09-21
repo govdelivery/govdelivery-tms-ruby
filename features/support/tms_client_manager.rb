@@ -1,7 +1,7 @@
 module TmsClientManager
 
-  def from_configatron(conf)
-    client_factory(conf.xact.user.token, conf.xact.url)
+  def from_configatron(token)
+    client_factory(token, configatron.xact.url)
   end
 
   # TODO: Ostensibly an admin user, not sure
@@ -33,20 +33,9 @@ module TmsClientManager
     configatron.tms.account_code
   end
 
-  def mail_accounts
-    configatron.tms.mail_accounts
-  end
-
-  def password
-    configatron.tms.password
-  end
 
   def topic_code
     configatron.tms.topic_code
-  end
-
-  def subject
-    configatron.tms.default_subject
   end
 
   extend self

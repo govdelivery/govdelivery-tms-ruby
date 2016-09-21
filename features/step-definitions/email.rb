@@ -12,11 +12,12 @@ Given(/^I create an email( with no recipients)?$/) do |recipients|
 end
 
 Given(/^I send an email from an account that has link tracking params configured$/) do
+  @subject = "XACT-533-2 Email Test for link parameters #{Time.now}"
   @message = TmsClientManager.admin_client.email_messages.build(body:       '<p><a href="http://www.cnn.com">Test</a>',
-                                                                subject:    TmsClientManager.subject,
+                                                                subject:    @subject,
                                                                 from_email: TmsClientManager.from_email)
-  @message.recipients.build(email: TmsClientManager.mail_accounts)
-  raise @message.errors.inspect unless @message.post
+  @message.recipients.build(email: configatron.gmail.address)
+  @message.post!
 end
 
 Given(/^A Gmail recipient/) do
@@ -24,14 +25,14 @@ Given(/^A Gmail recipient/) do
     retriever_method :imap,
                      address:    'imap.gmail.com',
                      port:       993,
-                     user_name:  TmsClientManager.mail_accounts,
-                     password:   TmsClientManager.password,
+                     user_name:  configatron.gmail.address,
+                     password:   configatron.gmail.password,
                      enable_ssl: true
   end
 end
 
 Given(/^I am using a non-admin TMS client$/) do
-  @client = TmsClientManager.from_configatron(configatron.accounts.email_endtoend)
+  @client = TmsClientManager.from_configatron(@conf_xact.token)
 end
 
 #########################################
@@ -141,12 +142,12 @@ end
 Then(/^those params should resolve within the body of the email I send$/) do
   begin
     GovDelivery::Proctor.backoff_check(10.minutes, 'looking for link params in email body') do
-      log.info("Checking Gmail IMAP for subject \"#{TmsClientManager.subject}\"")
+      log.info("Checking Gmail IMAP for subject \"#{@subject}\"")
       emails = Mail.find(what: :last, count: 1000, order: :dsc)
       log.info("Found #{emails.size} emails")
       log.info("subjects:\n\t#{emails.map(&:subject).join("\n\t")}") if emails.any?
 
-      if (message = emails.detect { |mail| mail.subject == TmsClientManager.subject })
+      if (message = emails.detect { |mail| mail.subject == @subject })
         doc = Nokogiri::HTML.parse(message.html_part.body.decoded) # Using Nokogiri to parse out the HTML to be something more readable
         url = doc.css('p a').map { |link| link['href'] }[0] # forcing an array mapping to the first <a href> within the first <p> tag since the email is built like that
         log.info("Link found goes to: #{url}".green)

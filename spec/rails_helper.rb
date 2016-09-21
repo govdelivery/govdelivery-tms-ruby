@@ -7,6 +7,8 @@ require 'celluloid/test'
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f}
 
+Synapse.configuration.source = 'xact'
+
 FakeWeb.allow_net_connect = false
 
 RSpec.configure do |config|

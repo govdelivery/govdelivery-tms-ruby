@@ -4,9 +4,9 @@
 World(Helpy)
 
 When(/^I POST a new EMAIL message to TMS$/) do
-  @expected_reply_to = @conf_xact.user.reply_to_address
-  @expected_errors_to = @conf_xact.user.bounce_address
-  @expected_from_name = @conf_xact.user.email_address
+  @expected_reply_to = @conf_xact.reply_to_address
+  @expected_errors_to = @conf_xact.bounce_address
+  @expected_from_name = @conf_xact.email_address
 
   post_message
 end
@@ -18,30 +18,30 @@ end
 
 Given(/An admin user/) do
   initialize_variables
-  unless (@conf_xact.user.token = ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'])
+  unless (@conf_xact.token = ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'])
     raise "ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'] is not set"
   end
 end
 
 When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
-  @expected_reply_to = @conf_xact.user.reply_to_address_two
-  @expected_errors_to = @conf_xact.user.bounce_address_two
-  @expected_from_name = "#{@conf_xact.user.from_name_two} <#{@conf_xact.user.from_address_two}>"
-  post_message from_email: @conf_xact.user.from_address_two
+  @expected_reply_to = @conf_xact.reply_to_address_two
+  @expected_errors_to = @conf_xact.bounce_address_two
+  @expected_from_name = "#{@conf_xact.from_name_two} <#{@conf_xact.from_address_two}>"
+  post_message from_email: @conf_xact.from_address_two
 end
 
 When(/^I POST a new EMAIL message to TMS with message\-level from name using a from address with a from name$/) do
-  @expected_reply_to = @conf_xact.user.reply_to_address_two
-  @expected_errors_to = @conf_xact.user.bounce_address_two
-  @expected_from_name = "message-level from name <#{@conf_xact.user.from_address_two}>"
+  @expected_reply_to = @conf_xact.reply_to_address_two
+  @expected_errors_to = @conf_xact.bounce_address_two
+  @expected_from_name = "message-level from name <#{@conf_xact.from_address_two}>"
 
-  post_message from_email: @conf_xact.user.from_address_two, from_name: 'message-level from name'
+  post_message from_email: @conf_xact.from_address_two, from_name: 'message-level from name'
 end
 
 When(/^I POST a new EMAIL message to TMS with a from_address with '(.*)' as the from name$/) do |value|
   nil_from_name = value == 'nil'
   from_address = GovDelivery::TMS::Client
-                  .new(@conf_xact.user.token, api_root: api_root)
+                  .new(@conf_xact.token, api_root: api_root)
                   .from_addresses.get.collection.find{|f| nil_from_name ? f.from_name.nil? : !f.from_name.nil?}
   @expected_reply_to = from_address.reply_to_email
   @expected_errors_to = from_address.bounce_email
@@ -57,14 +57,14 @@ When(/^I POST a new EMAIL message to TMS using a random from address$/) do
 end
 
 When(/^I POST a new EMAIL message to TMS with long macro replacements$/) do
-  @expected_from_name = "#{@conf_xact.user.email_address}"
+  @expected_from_name = "#{@conf_xact.email_address}"
   post_message body: %|[[MAC1]]\n\n[[MAC2]]\n\n<a href="#{@expected_link}">With a link</a>|, macros: {'MAC1' => 'a' * 800, 'MAC1' => 'b' * 150}
 end
 
 When(/^I POST a new EMAIL message to TMS with a message-level from name$/) do
-  @expected_from_name = "message-level from name <#{@conf_xact.user.email_address}>"
-  @expected_reply_to = @conf_xact.user.reply_to_address
-  @expected_errors_to = @conf_xact.user.bounce_address
+  @expected_from_name = "message-level from name <#{@conf_xact.email_address}>"
+  @expected_reply_to = @conf_xact.reply_to_address
+  @expected_errors_to = @conf_xact.bounce_address
   post_message from_name: 'message-level from name'
 end
 
@@ -86,7 +86,7 @@ Then(/^I go to Gmail to check for message delivery$/) do
         if @expected_link &&
            (href = Nokogiri::HTML(body).css('a')
                    .map { |link| link['href']}
-                   .detect { |inner_href| test_link(inner_href, @expected_link, expected_link_prefix)})
+                   .detect { |inner_href| test_link(inner_href, @expected_link, configatron.encoded_link_prefix)})
           log.info("Link #{href} redirects to #{@expected_link}".green)
           passed = true
         else

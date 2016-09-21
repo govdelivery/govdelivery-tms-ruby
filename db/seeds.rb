@@ -17,49 +17,47 @@ raise 'twilio_number not set' unless twilio_number = Conf.twilio_number
 raise 'twilio_test_sid not set' unless twilio_test_username = Conf.twilio_test_sid
 raise 'twilio_test_token not set' unless twilio_test_password = Conf.twilio_test_token
 
-twilio_sms_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Sender')
-twilio_sms_sender.update_attributes(
+kahlo_loopback_sender = SmsVendor.find_or_initialize_by(name: 'Kahlo Loopback Sender').update_attributes!(
+  worker:     'KahloMessageWorker',
+  username:   'n/a',
+  password:   'n/a',
+  from: '+15553665397')
+
+twilio_sms_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Sender').update_attributes!(
   worker:   'TwilioMessageWorker',
   username: twilio_username,
   password: twilio_password,
-  from_phone:     twilio_number)
+  from:     twilio_number)
 
-twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test SMS Sender')
-twilio_sms_test_sender.update_attributes(
+twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test SMS Sender').update_attributes!(
   worker:   'TwilioMessageWorker',
   username: twilio_test_username,
   password: twilio_test_password,
-  from_phone:     '+15005550006')
+  from:     '+15005550006')
 
-twilio_voice_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Voice Sender')
-twilio_voice_sender.update_attributes(
+twilio_voice_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Voice Sender').update_attributes!(
   worker:   'TwilioVoiceWorker',
   username: twilio_username,
   password: twilio_password)
 #  from:     twilio_number)
 
-twilio_voice_test_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender')
-twilio_voice_test_sender.update_attributes(
+twilio_voice_test_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender').update_attributes!(
   worker:   'TwilioVoiceWorker',
   username: twilio_test_username,
   password: twilio_test_password)
 #  from:     '+15005550006')
 
-sms_loopback = SmsVendor.find_or_initialize_by(name: 'Loopback SMS Sender')
-sms_loopback.update_attributes(
+sms_loopback = SmsVendor.find_or_initialize_by(name: 'Loopback SMS Sender').update_attributes!(
   worker:   'LoopbackSmsWorker',
   username: 'sms_loopback_username',
   password: 'dont care',
   from:     '+15551112222')
-voice_loopback = VoiceVendor.find_or_initialize_by(name: 'Loopback Voice Sender')
-voice_loopback.update_attributes(
+voice_loopback = VoiceVendor.find_or_initialize_by(name: 'Loopback Voice Sender').update_attributes!(
   worker:   'LoopbackVoiceWorker',
   username: 'voice_loopback_username',
   password: 'dont care')
 
-odm_sender = EmailVendor.find_or_initialize_by(
-  name: 'TMS Extended Sender')
-odm_sender.update_attributes(
+odm_sender = EmailVendor.find_or_initialize_by(name: 'TMS Extended Sender').update_attributes!(
   worker: Odm::TMS_EXTENDED_WORKER)
 
 email_loopback = EmailVendor.where(name: 'Email Loopback Sender').first_or_create(worker: 'LoopbackEmailWorker')
@@ -105,7 +103,7 @@ if Rails.env.development? || Rails.env.ci?
 
   # SERVICES FOO => POST to http://localhost/forward
   kw = omg.keywords.with_name('SERVICES').first_or_create!(name: 'SERVICES')
-  kw.create_command!(params:                                            CommandParameters.new(
+  kw.create_command!(params:                         CommandParameters.new(
     username:            'example@evotest.govdelivery.com',
     password:            'password',
     url:                 'http://localhost/forward',
@@ -122,7 +120,7 @@ if Rails.env.development? || Rails.env.ci?
   # Make the product user (admin)
   user = omg.users.find_or_initialize_by(email: 'product@govdelivery.com') do |u|
     u.password = 'retek01!'
-    u.admin   = true
+    u.admin    = true
   end
   user.save!
   puts "product's token: #{user.authentication_tokens.first.token}"

@@ -1,6 +1,6 @@
 Given(/^I have a user who can receive SMS messages$/) do
-  @sms_receiver_uri      = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
-  @sms_receiver_full_uri = @capi.callback_domain + @sms_receiver_uri
+  @event_uri             = @capi.create_callback_uri(:sms, "#{environment} SMS Receiver")
+  @sms_receiver_full_uri = @capi.callback_domain + @event_uri
 
   twil = TwilioClientManager.default_client
 
@@ -13,7 +13,7 @@ end
 Given(/^I have an SMS template$/) do
   next if dev_not_live?
 
-  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   @template         = client.sms_templates.build(body: @expected_message, uuid: "new-sms-template-#{Time.now.to_i}")
   @template.post!
@@ -26,7 +26,7 @@ end
 Given(/^I POST a new SMS message to TMS$/) do
   next if dev_not_live?
 
-  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
@@ -38,7 +38,7 @@ end
 Given(/^I POST a new blank SMS message to TMS$/) do
   next if dev_not_live?
 
-  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build
   message.recipients.build(phone: configatron.test_support.twilio.phone.number)
@@ -57,7 +57,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
 
   begin
     GovDelivery::Proctor.backoff_check(10.minutes, 'for the test user to receive the message I sent') do
-      payloads = @capi.get(@sms_receiver_uri)
+      payloads = @capi.get(@event_uri)
       payloads['payloads'].any? do |payload_info|
         payload_info['body'] == @expected_message
       end
@@ -76,7 +76,7 @@ end
 # MBLOX ==========================
 
 Given(/^I POST a new SMS message to MBLOX$/) do
-  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.mblox.phone.number)

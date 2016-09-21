@@ -16,7 +16,7 @@ end
 When(/^I attempt to create a reserved keyword (.*)$/) do |keyword|
   pending "Not implemented in development" if dev_not_live?
 
-  @conf = configatron.accounts.sms_2way_subscribe
+  @conf = configatron.accounts.sms_keyword_commands_subscribe
   @keyword = TmsClientManager.non_admin_client.keywords.build(name: keyword)
   @keyword.post
 end
