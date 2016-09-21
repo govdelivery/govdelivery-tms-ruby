@@ -31,13 +31,12 @@ desc 'send', 'send messages to randomly created recipients'
       summary = []
       averages = []
       results = []
-
+      client
       total_time = Benchmark.realtime do
         g.times do |i|
           threads = []
           m = 0
           row = ["Group #{i+1}"]
-
           cell = ''
           while (m < g_size) && (t < n) do
             threads << Thread.new do
