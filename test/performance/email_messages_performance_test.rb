@@ -40,6 +40,7 @@ desc 'send', 'send messages to randomly created recipients'
           while (m < g_size) && (t < n) do
             threads << Thread.new do
               Thread.current[:time] = Benchmark.realtime do
+                recipient ||= "#{SecureRandom.hex(6)}.tms.perf.test@sink.govdelivery.com"
                 message = client.email_messages.build(
                   body: 'performance test message',
                   subject: 'Performance testing TMS email message sends',
@@ -79,11 +80,6 @@ desc 'send', 'send messages to randomly created recipients'
 
 
 private
-
-  def recipient
-    @recipient ||= "#{SecureRandom.hex(6)}.tms.perf.test@sink.govdelivery.com"
-  end
-
 
   def client
     @client ||= client_factory(options[:api_key], ENVS.fetch(options[:environment]))
