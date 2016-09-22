@@ -1,5 +1,0 @@
-module GovDelivery
-  module Kahlo
-    VERSION = "0.1.0"
-  end
-end

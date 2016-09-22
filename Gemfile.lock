@@ -15,14 +15,6 @@ GIT
   specs:
     govdelivery-health_check (0.1.0)
 
-GIT
-  remote: http://dev-scm.office.gdi/development/govdelivery-kahlo.git
-  revision: 3cdd0e37c091ae1ef596d57fe56767fc6c7beaf1
-  specs:
-    govdelivery-kahlo (0.1.0-java)
-      global_phone
-      govdelivery-synapse (>= 0.8.0)
-
 GEM
   remote: https://rubygems.org/
   remote: https://9954a10b:3891f6a5@gems.contribsys.com/
@@ -171,6 +163,9 @@ GEM
       activesupport (>= 4.1.0)
     govdelivery-crypt (0.2.1)
       activesupport
+    govdelivery-kahlo (0.2.1)
+      global_phone
+      govdelivery-synapse (>= 0.8.0)
     govdelivery-links (0.1.7)
       activesupport
       addressable (~> 2.3.0)
@@ -482,12 +477,12 @@ DEPENDENCIES
   attr_encrypted (= 1.4.0)
   awesome_print
   brakeman-min
-  brick
+  brick!
   capybara
   celluloid
   clockwork
   colored
-  config_spartan (~> 1.0.0)
+  config_spartan (~> 1.0.0)!
   configatron
   cucumber
   cuke_sniffer (= 0.0.8.ruleConfig5)!
@@ -499,13 +494,13 @@ DEPENDENCIES
   fakeweb
   faraday
   faraday_middleware
-  govdelivery-crypt
+  govdelivery-crypt!
   govdelivery-dbtasks!
   govdelivery-health_check!
-  govdelivery-kahlo!
-  govdelivery-links
+  govdelivery-kahlo (~> 0.2.0)!
+  govdelivery-links!
   govdelivery-proctor!
-  govdelivery-synapse
+  govdelivery-synapse!
   govdelivery-tms (~> 0.10.0)
   govdelivery-tms-internal (~> 0.0.2)
   guard-rspec
@@ -550,7 +545,7 @@ DEPENDENCIES
   send_nsca
   shoulda-matchers (< 3)
   sidekiq
-  sidekiq-pro
+  sidekiq-pro!
   sidekiq-retries
   sidekiq-unique-jobs
   simple_token_authentication (= 1.5.1)

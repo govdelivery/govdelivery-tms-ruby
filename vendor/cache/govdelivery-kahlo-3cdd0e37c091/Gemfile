@@ -1,5 +1,0 @@
-source 'http://prod-rubygems1-ep.tops.gdi'
-source 'https://rubygems.org'
-
-# Specify your gem's dependencies in govdelivery-kahlo.gemspec
-gemspec

@@ -1,17 +1,9 @@
 source 'https://rubygems.org'
-source 'https://9954a10b:3891f6a5@gems.contribsys.com/'
-source 'http://prod-rubygems1-ep.tops.gdi'
 
-gem 'sidekiq-pro'
-gem 'config_spartan', '~>1.0.0'
-gem 'dcm_client'
-gem 'govdelivery-crypt', require: 'govdelivery/crypt'
+gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'v0.4.5'
 gem 'govdelivery-health_check', git: 'http://dev-scm.office.gdi/development/govdelivery-health_check.git'
-gem 'govdelivery-kahlo', git: 'http://dev-scm.office.gdi/development/govdelivery-kahlo.git'
 
-gem 'govdelivery-links'
-gem 'govdelivery-synapse', require: 'synapse'
-gem 'brick'
+gem 'dcm_client'
 gem 'aasm'
 gem 'activerecord-oracle_enhanced-adapter', "~>1.6.7"
 gem 'addressable'
@@ -40,6 +32,7 @@ gem 'responders'
 gem 'rjack-slf4j'
 gem 'send_nsca'
 gem 'sidekiq'
+gem 'sidekiq-pro', source: 'https://9954a10b:3891f6a5@gems.contribsys.com/'
 gem 'sidekiq-retries'
 gem 'sidekiq-unique-jobs'
 gem 'simple_token_authentication', "=1.5.1"
@@ -49,8 +42,6 @@ gem 'strip_attributes'
 gem 'twilio-ruby'
 gem 'valid_email'
 gem 'validate_url'
-
-gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'v0.4.5'
 
 gem 'attr_encrypted', '=1.4.0'
 
@@ -114,4 +105,11 @@ source 'http://prod-rubygems1-ep.tops.gdi/' do
     gem 'govdelivery-proctor'
     gem 'cuke_sniffer', '0.0.8.ruleConfig5'
   end
+
+  gem 'brick'
+  gem 'config_spartan', '~>1.0.0'
+  gem 'govdelivery-crypt', require: 'govdelivery/crypt'
+  gem 'govdelivery-kahlo', '~>0.2.0'
+  gem 'govdelivery-links'
+  gem 'govdelivery-synapse', require: 'synapse'
 end
