@@ -6,84 +6,77 @@ require 'benchmark'
 
 class EmailMessagesPerformanceTest < Thor
 
-# Sends email messages to random recipients for TMS performance testing.
+  # Sends email messages to random recipients for TMS performance testing.
   ENVS = { 'qc'   => 'https://qc-tms.govdelivery.com',
-          'int'  => 'https://int-tms.govdelivery.com',
-          'stg'  => 'https://stage-tms.govdelivery.com',
-          'prod' => 'https://tms.govdelivery.com' }
+           'int'  => 'https://int-tms.govdelivery.com',
+           'stg'  => 'https://stage-tms.govdelivery.com',
+           'prod' => 'https://tms.govdelivery.com' }
 
-option :environment, aliases: ['-e'], required: true, default: 'qc', type: :string, desc: 'qc,int,stg,prod'
-option :api_key, aliases: ['-k'], type: :string, required: true
-option :from_email, aliases: ['f'], type: :string, required: true
-option :recipients, aliases: ['-r'], type: :numeric, required: true, default: 1, desc: 'number of recipients per message'
-method_option :n, type: :numeric, desc: 'number of requests', default: 10
-method_option :c, type: :numeric, desc: 'max number of concurrent requests', default: 1
-desc 'send', 'send messages to randomly created recipients'
+  option :environment, aliases: ['-e'], required: true, default: 'qc', type: :string, desc: 'qc,int,stg,prod'
+  option :api_key, aliases: ['-k'], type: :string, required: true
+  option :from_email, aliases: ['f'], type: :string, required: true
+  option :recipients, aliases: ['-r'], type: :numeric, required: true, default: 1, desc: 'number of recipients per message'
+  method_option :n, type: :numeric, desc: 'total number of requests', required: true
+  method_option :c, type: :numeric, desc: 'max number of concurrent requests', default: 1
+  desc 'send', 'send messages to randomly created recipients'
+
   def send
 
-      n = options[:n]
-      c = options[:c]
-      r = options[:recipients]
-      g_size = (n.to_f/c).ceil
-      g = (n.to_f/g_size).ceil
-      t = 0
+    total_requests = options[:n]
+    thread_count = options[:c]
 
-      summary = []
-      averages = []
-      results = []
-      client
-      total_time = Benchmark.realtime do
-        g.times do |i|
-          threads = []
-          m = 0
-          row = ["Group #{i+1}"]
-          cell = ''
-          while (m < g_size) && (t < n) do
-            threads << Thread.new do
-              Thread.current[:time] = Benchmark.realtime do
-                message = client.email_messages.build(
-                  body: 'performance test message',
-                  subject: 'Performance testing TMS email message sends',
-                  from_email: options[:from_email]
-                  )
-                options[:recipients].times do |i|
-                  message.recipients.build(email: recipient(i))
-                end
-                message.post
-            end
-            cell << '.'
-          end
-          m += 1
-          t += 1
+    work_queue = Queue.new
+    total_requests.times do
+      work_queue << ->(client){
+        message = client.email_messages.build(
+          body: 'performance test message',
+          subject: 'Performance testing TMS email message sends',
+          from_email: options[:from_email]
+        )
+        options[:recipients].times do |i|
+          message.recipients.build(email: recipient(i))
         end
-        threads.map(&:join)
-        average = (threads.map{ |thread| thread[:time] }.reduce(:+) / threads.size) * 1000
-
-         row << cell
-         row << "Requests: #{threads.size}"
-         row << "Average: #{average.round(0)} ms"
-
-         averages << average
-         results << row.join(' ')
-      end
+        message.post
+      }
     end
-     avg = averages.reduce(:+) / averages.size
-     rps = n / total_time
 
-     summary << "Total Requests: #{n}"
-     summary << "Recipients Per Request #{r}"
-     summary << "Total Time: #{total_time.round(2)} seconds (#{(total_time * 1000).round(0)} ms)"
-     summary << "Average Per Request: #{avg.round(0)} ms"
-     summary << "Requests Per Second: #{rps.round(2)}\n"
 
-     puts results
-     puts
-     puts summary
-     puts
+    client = client_factory(options[:api_key], ENVS.fetch(options[:environment]))
+
+    start_time = Time.now
+
+    threads = thread_count.times.map{
+      Thread.new do
+        times = []
+        until work_queue.empty?
+          work = work_queue.pop(true) rescue nil
+          next unless work
+
+          start = Time.now
+          work.call(client)
+          times << Time.now - start
+        end
+        Thread.current[:times] = times
+      end
+    }
+
+    threads.map(&:join)
+
+    real_time = Time.now - start_time
+
+    results = threads.map{|t| t[:times]}
+    xs = results.flatten
+    num = xs.size
+    total_time = xs.reduce(:+)
+    average = total_time/num.to_f
+    puts "requests: #{num}"
+    puts "real_time: #{real_time}s"
+    puts "rps: #{num/real_time.to_f}"
+    puts "average: #{average}s"
   end
 
 
-private
+  private
 
   def recipient i=0
     "#{SecureRandom.hex(6)}tms.activity.perf.test#{i}@sink.govdelivery.com"
