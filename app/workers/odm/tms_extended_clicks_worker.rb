@@ -17,7 +17,7 @@ module Odm
     end
 
     def update_recipient(recipient, click_event)
-      clicked_at = Time.at(click_event.at.to_gregorian_calendar.time_in_millis / 1000).to_s
+      clicked_at = Time.at(click_event.at.to_gregorian_calendar.time_in_millis / 1000)
       recipient.clicked!(click_event.url, clicked_at)
     end
   end

@@ -5,23 +5,19 @@ module Analytics
     sidekiq_options retry: 0
     sidekiq_retry_in { 15 }
 
-    # Inject the publisher
-    # Disable async
-    class << self
-      attr_accessor :publisher, :async_disabled
-
-      def publisher
-        @publisher ||= Synapse
-      end
-    end
-
     def perform(opts)
       return unless Conf.analytics_enabled
       validate_opts(opts.symbolize_keys!)
       channel = opts[:channel]
       message = opts[:message].merge('src' => 'xact')
       logger.info("#{self.class}: Publishing #{channel} #{message}")
-      publisher.publishJSON(channel, message)
+      ## JaketyJak compatibility mode enabled!
+      # http://dev-scm.office.gdi/analytics/jakety_jak/blob/master/lib/jakety_jak/publisher.rb#L15
+      stringified_message = {}
+      message.each do |key, value|
+        stringified_message[key.to_s] = value.to_s
+      end
+      publisher.publishJSON(channel, stringified_message)
     rescue Timeout::Error => e
       raise Sidekiq::Retries::Retry.new(e)
     end
@@ -37,16 +33,7 @@ module Analytics
     private
 
     def publisher
-      self.class.publisher
-    end
-
-    def async_disabled
-      self.class.async_disabled
-    end
-
-    def flatten(x)
-      return x unless x.instance_of?(Array) || x.instance_of?(Hash)
-      return x.flatten.map { |y| flatten(y) }.flatten
+      Synapse
     end
 
     def validate_opts(opts)
@@ -56,7 +43,6 @@ module Analytics
       unless opts[:message].respond_to?(:merge)
         raise ArgumentError.new("Expected :message to be a Hash, got: #{opts}")
       end
-      raise ArgumentError.new("Serialize Date or Time before you publish!") if (flatten(opts[:message]).any?{ |x| x.instance_of?(Date) || x.instance_of?(Time)})
     end
   end
 end

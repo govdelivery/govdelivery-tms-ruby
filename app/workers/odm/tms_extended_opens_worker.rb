@@ -17,7 +17,7 @@ module Odm
     end
 
     def update_recipient(recipient, open_event)
-      opened_at = Time.at(open_event.at.to_gregorian_calendar.time_in_millis / 1000).to_s
+      opened_at = Time.at(open_event.at.to_gregorian_calendar.time_in_millis / 1000)
       recipient.opened!(open_event.event_ip, opened_at)
     end
   end

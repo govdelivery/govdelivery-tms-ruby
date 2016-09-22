@@ -6,7 +6,7 @@ fema_uri: "https://fema.gov.test/IPAWS_CAPService/IPAWS"
 dcm_uri: "http://evolution.local:3001"
 dcm_username: "test@sink.govdelivery.com"
 dcm_password: "test"
-analytics_enabled: true
-analytics_kafkas: ["localhost:5468"]
+analytics_enabled: false
+analytics_kafkas: ["192.168.50.3:9093"]
 redis_uri: "redis://localhost:6379/1"
 allowed_geckoboard_accounts: [10_000]
