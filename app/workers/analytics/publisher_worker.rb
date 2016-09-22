@@ -11,7 +11,13 @@ module Analytics
       channel = opts[:channel]
       message = opts[:message].merge('src' => 'xact')
       logger.info("#{self.class}: Publishing #{channel} #{message}")
-      publisher.publishJSON(channel, message)
+      ## JaketyJak compatibility mode enabled!
+      # http://dev-scm.office.gdi/analytics/jakety_jak/blob/master/lib/jakety_jak/publisher.rb#L15
+      stringified_message = {}
+      message.each do |key, value|
+        stringified_message[key.to_s] = value.to_s
+      end
+      publisher.publishJSON(channel, stringified_message)
     rescue Timeout::Error => e
       raise Sidekiq::Retries::Retry.new(e)
     end

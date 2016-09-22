@@ -55,9 +55,9 @@ describe Analytics::PublisherWorker do
       expect {subject.perform(channel: 'foo', message: :bar)}.to raise_error(ArgumentError)
     end
 
-    it 'should add src and publish' do
+    it 'should add src, stringify, and publish' do
       message   = {foo: 3}
-      expected  = {foo: 3, 'src' => 'xact'}
+      expected  = {'foo' => '3', 'src' => 'xact'}
       publisher = stub
       publisher.expects(:publishJSON).with('donkey', expected)
       subject.expects(:publisher).returns(publisher)
