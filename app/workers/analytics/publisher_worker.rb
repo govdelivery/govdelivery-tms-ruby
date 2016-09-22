@@ -5,6 +5,16 @@ module Analytics
     sidekiq_options retry: 0
     sidekiq_retry_in { 15 }
 
+    # Inject the publisher
+    # Disable async
+    class << self
+      attr_accessor :publisher, :async_disabled
+
+      def publisher
+        @publisher ||= Synapse
+      end
+    end
+
     def perform(opts)
       return unless Conf.analytics_enabled
       validate_opts(opts.symbolize_keys!)
@@ -19,6 +29,7 @@ module Analytics
     def self.perform_inline_or_async(opts)
       new.perform(opts)
     rescue StandardError => e
+      raise e if async_disabled
       Sidekiq.logger.warn("#{self}: Error while publishing Kafka event inline: #{e.inspect}. Retrying asynchronously...")
       perform_async(opts)
     end
@@ -26,7 +37,16 @@ module Analytics
     private
 
     def publisher
-      Synapse
+      self.class.publisher
+    end
+
+    def async_disabled
+      self.class.async_disabled
+    end
+
+    def flatten(x)
+      return x unless x.instance_of?(Array) || x.instance_of?(Hash)
+      return x.flatten.map { |y| flatten(y) }.flatten
     end
 
     def validate_opts(opts)
@@ -36,6 +56,7 @@ module Analytics
       unless opts[:message].respond_to?(:merge)
         raise ArgumentError.new("Expected :message to be a Hash, got: #{opts}")
       end
+      raise ArgumentError.new("Serialize Date or Time before you publish!") if (flatten(opts[:message]).any?{ |x| x.instance_of?(Date) || x.instance_of?(Time)})
     end
   end
 end

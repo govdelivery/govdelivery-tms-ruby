@@ -18,7 +18,7 @@ module Odm
     end
 
     def sent_at(delivery_event)
-      Time.at(delivery_event.at.to_gregorian_calendar.time.time / 1000)
+      Time.at(delivery_event.at.to_gregorian_calendar.time.time / 1000).to_s
     end
 
     def update_recipient(recipient, delivery_event)

@@ -29,6 +29,7 @@ describe Analytics::PublisherWorker do
         before do
           subject.any_instance.stubs(:perform).raises(StandardError, 'foo')
           subject.expects(:perform_async)
+          subject.stubs(:async_disabled).returns(false)
         end
 
         it 'performs async' do

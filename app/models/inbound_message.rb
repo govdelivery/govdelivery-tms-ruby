@@ -69,7 +69,7 @@ class InboundMessage < ActiveRecord::Base
         from_phone: from,
         to_phone:   to,
         body:       body,
-        created_at: created_at
+        created_at: created_at.to_s
       }
     )
   end

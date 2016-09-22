@@ -99,7 +99,7 @@ describe EmailRecipient do
 
       context 'and is sent' do
         before do
-          subject.sent!('ack', Time.now)
+          subject.sent!('ack', Time.now.to_s)
         end
         it 'should update the record' do
           subject.reload
@@ -110,12 +110,12 @@ describe EmailRecipient do
         end
         it 'should save clicks' do
           expect(subject.email_recipient_clicks.count).to eq(0)
-          subject.clicked!('http://foo.bar.com', Time.now)
+          subject.clicked!('http://foo.bar.com', Time.now.to_s)
           expect(subject.email_recipient_clicks.count).to eq(1)
         end
         it 'should save opens' do
           expect(subject.email_recipient_opens.count).to eq(0)
-          subject.opened!('1.1.1.1', Time.now) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
+          subject.opened!('1.1.1.1', Time.now.to_s) # IMPOSSIBLE!!  NO WAY!! OH   MY   GOD
           expect(subject.email_recipient_opens.count).to eq(1)
         end
 
@@ -201,7 +201,7 @@ describe EmailRecipient do
       end
 
       it 'should publish sent transitions' do
-        the_time = Time.now
+        the_time = Time.now.to_s
         expected = {
           channel: 'email_channel',
           message: has_entries(v: '1',
@@ -225,7 +225,7 @@ describe EmailRecipient do
         end
 
         it 'publishes click events' do
-          the_time = Time.now
+          the_time = Time.now.to_s
           expected = {
             channel: 'email_channel',
             message: has_entries(v: '1',
@@ -258,7 +258,7 @@ describe EmailRecipient do
         end
 
         it "publishes open events" do
-          the_time = Time.now
+          the_time = Time.now.to_s
           expected = {
             channel: 'email_channel',
             message: has_entries(v: '1',
