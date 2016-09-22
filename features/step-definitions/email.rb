@@ -1,3 +1,8 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+World(Helpy)
+
 #########################################
 # Given
 #########################################
@@ -32,7 +37,7 @@ Given(/^A Gmail recipient/) do
 end
 
 Given(/^I am using a non-admin TMS client$/) do
-  @client = TmsClientManager.from_configatron(@conf_xact.token)
+  @client = TmsClientManager.non_admin_client
 end
 
 #########################################
