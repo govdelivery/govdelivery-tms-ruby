@@ -9,8 +9,8 @@ end
 
 def twilio_live_credentials
   {
-    sid: 'AC189315456a80a4d1d4f82f4a732ad77e',
-    token: '88e3775ad71e487c7c90b848a55a5c88'
+    sid: 'ACa26eb1ef3dc06c86333e4e9833af4c6b',
+    token: '1f52e2578c65b9069ee3610d15ff87d7'
   }
 end
 
