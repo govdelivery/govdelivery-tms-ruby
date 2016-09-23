@@ -1,8 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'v0.4.5'
-gem 'govdelivery-health_check', git: 'http://dev-scm.office.gdi/development/govdelivery-health_check.git'
-
 gem 'dcm_client'
 gem 'aasm'
 gem 'activerecord-oracle_enhanced-adapter', "~>1.6.7"
@@ -44,6 +41,9 @@ gem 'valid_email'
 gem 'validate_url'
 
 gem 'attr_encrypted', '=1.4.0'
+
+gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'v0.4.5' #this needs to come after oracle_enhanced
+gem 'govdelivery-health_check', git: 'http://dev-scm.office.gdi/development/govdelivery-health_check.git'
 
 platforms :ruby do
   gem 'ruby-oci8'
