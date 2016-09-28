@@ -1,5 +1,4 @@
 module TmsClientManager
-
   def from_configatron(token)
     client_factory(token, configatron.xact.url)
   end
@@ -32,7 +31,6 @@ module TmsClientManager
   def account_code
     configatron.tms.account_code
   end
-
 
   def topic_code
     configatron.tms.topic_code

@@ -39,12 +39,12 @@ Then(/^Twilio should have an active call$/) do
 
   # Not using Proctor because this condition doesn't last long
   # We want to check for a ringing call consistently and often
-  while calls.empty? && times < 20 do
-    times += 1
+  (1..20).each do |i|
     calls = @client.account.calls.list(start_time: Date.today,
                                        status:     'ringing',
                                        from:       configatron.voice.send_number_formatted)
-    GovDelivery::Proctor.getStandardLogger.info("Still waiting for call to be ringing after #{times} tries")
+    break unless calls.empty?
+    GovDelivery::Proctor.getStandardLogger.info("Still waiting for call to be ringing after #{i} tries")
     sleep 3
   end
   @call = calls.first.uri
@@ -55,8 +55,6 @@ Then(/^Twilio should complete the call$/) do
   conn = faraday("https://api.twilio.com/#{@call}")
   conn.headers['Content-Type'] = 'application/json'
   conn.basic_auth(configatron.test_support.twilio.account.sid, configatron.test_support.twilio.account.token)
-  is_completed = false
-  times = 0
 
   GovDelivery::Proctor.accelerating_check(80.seconds, 'should have completed call') do
     JSON.parse(conn.get.body)['status'] == 'completed'
