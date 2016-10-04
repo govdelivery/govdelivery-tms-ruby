@@ -14,7 +14,7 @@ class MessageType < ActiveRecord::Base
             presence:   true,
             format: {with: /\A[a-zA-Z0-9_]*\z/, message: "only letters, numbers and underscores are allowed"},
             length:     {maximum: 255},
-            uniqueness: {scope: :account, case_sesitive: false}
+            uniqueness: {scope: :account, case_sensitive: false}
   validates :label, presence: true, length: {maximum: 255}
 
   validate :code_not_changed
