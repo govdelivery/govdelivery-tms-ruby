@@ -42,6 +42,13 @@ describe MessageType do
         create(:message_type, account: subject.account)
       end.to raise_error(ActiveRecord::RecordInvalid)
     end
+    it 'should throw an error in same account even if the case is different' do
+      dupe = build(:message_type, account: subject.account)
+      dupe.code.upcase!
+      expect do
+        dupe.save!
+      end.to raise_error(ActiveRecord::RecordInvalid)
+    end
     it 'should not throw an error in different account' do
       expect do
         create(:message_type)
