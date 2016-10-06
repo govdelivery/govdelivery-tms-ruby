@@ -17,45 +17,63 @@ raise 'twilio_number not set' unless twilio_number = Conf.twilio_number
 raise 'twilio_test_sid not set' unless twilio_test_username = Conf.twilio_test_sid
 raise 'twilio_test_token not set' unless twilio_test_password = Conf.twilio_test_token
 
-kahlo_loopback_sender = SmsVendor.find_or_initialize_by(name: 'Kahlo Loopback Sender').update_attributes!(
-  worker:     'KahloMessageWorker',
-  username:   'n/a',
-  password:   'n/a',
-  from: '+15553665397')
+kahlo_attributes = {
+    name: 'Kahlo Loopback Sender',
+    worker:     'KahloMessageWorker',
+    username:   'n/a',
+    password:   'n/a',
+    from: '+15553665397'
+}
+kahlo_loopback_sender= SmsVendor.where(kahlo_attributes).first_or_initialize
 
-twilio_sms_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Sender').update_attributes!(
-  worker:   'TwilioMessageWorker',
-  username: twilio_username,
-  password: twilio_password,
-  from:     twilio_number)
+sms_attributes = {
+    name:   'Twilio SMS Sender',
+    worker:   'TwilioMessageWorker',
+    username: twilio_username,
+    password: twilio_password,
+    from:     twilio_number }
+twilio_sms_sender = SmsVendor.where(sms_attributes).first_or_initialize
 
-twilio_sms_test_sender = SmsVendor.find_or_initialize_by(name: 'Twilio Test SMS Sender').update_attributes!(
-  worker:   'TwilioMessageWorker',
-  username: twilio_test_username,
-  password: twilio_test_password,
-  from:     '+15005550006')
+sms_test_attributes = {
+    name: 'Twilio Test SMS Sender',
+    worker:   'TwilioMessageWorker',
+    username: twilio_test_username,
+    password: twilio_test_password,
+    from:     '+15005550006'}
+twilio_sms_test_sender = SmsVendor.where(sms_test_attributes).first_or_initialize
 
-twilio_voice_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Voice Sender').update_attributes!(
-  worker:   'TwilioVoiceWorker',
-  username: twilio_username,
-  password: twilio_password)
-#  from:     twilio_number)
+voice_attributes = {
+    name: 'Twilio Voice Sender',
+    worker:   'TwilioVoiceWorker',
+    username: twilio_username,
+    password: twilio_password
+}
+twilio_voice_sender = VoiceVendor.where(voice_attributes).first_or_initialize
 
-twilio_voice_test_sender = VoiceVendor.find_or_initialize_by(name: 'Twilio Test Voice Sender').update_attributes!(
-  worker:   'TwilioVoiceWorker',
-  username: twilio_test_username,
-  password: twilio_test_password)
-#  from:     '+15005550006')
+voice_test_attributes = {
+    name: 'Twilio Test Voice Sender',
+    worker:   'TwilioVoiceWorker',
+    username: twilio_test_username,
+    password: twilio_test_password
+}
+twilio_voice_test_sender = VoiceVendor.where(voice_test_attributes).first_or_initialize
 
-sms_loopback = SmsVendor.find_or_initialize_by(name: 'Loopback SMS Sender').update_attributes!(
-  worker:   'LoopbackSmsWorker',
-  username: 'sms_loopback_username',
-  password: 'dont care',
-  from:     '+15551112222')
-voice_loopback = VoiceVendor.find_or_initialize_by(name: 'Loopback Voice Sender').update_attributes!(
-  worker:   'LoopbackVoiceWorker',
-  username: 'voice_loopback_username',
-  password: 'dont care')
+sms_loopback_attributes = {
+    name: 'Loopback SMS Sender',
+    worker:   'LoopbackSmsWorker',
+    username: 'sms_loopback_username',
+    password: 'dont care',
+    from:     '+15551112222'
+}
+sms_loopback = SmsVendor.where(sms_loopback_attributes).first_or_initialize
+
+voice_loopback_attributes = {
+    name: 'Loopback Voice Sender',
+    worker:   'LoopbackVoiceWorker',
+    username: 'voice_loopback_username',
+    password: 'dont care'
+}
+voice_loopback = VoiceVendor.where(voice_loopback_attributes).first_or_initialize
 
 odm_sender = EmailVendor.find_or_initialize_by(name: 'TMS Extended Sender').update_attributes!(
   worker: Odm::TMS_EXTENDED_WORKER)
