@@ -10,6 +10,7 @@ gem 'devise'
 gem 'enumify'
 gem 'faraday'
 gem 'faraday_middleware'
+gem 'jruby-openssl', "=0.9.17"
 gem 'kaminari'
 gem 'log4r'
 gem 'newrelic_rpm'
