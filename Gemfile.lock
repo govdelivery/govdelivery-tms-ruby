@@ -163,7 +163,7 @@ GEM
       activesupport (>= 4.1.0)
     govdelivery-crypt (0.2.1)
       activesupport
-    govdelivery-kahlo (0.2.1)
+    govdelivery-kahlo (0.3.0)
       global_phone
       govdelivery-synapse (>= 0.8.0)
     govdelivery-links (0.1.7)
@@ -498,7 +498,7 @@ DEPENDENCIES
   govdelivery-crypt!
   govdelivery-dbtasks!
   govdelivery-health_check!
-  govdelivery-kahlo (~> 0.2.0)!
+  govdelivery-kahlo (~> 0.3.0)!
   govdelivery-links!
   govdelivery-proctor!
   govdelivery-synapse!

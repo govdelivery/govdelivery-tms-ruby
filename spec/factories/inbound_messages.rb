@@ -7,6 +7,7 @@ FactoryGirl.define do
     to {'5555555555'}
     body {'something anything'}
     command_status :no_action
+    vendor_sid nil
 
     factory :inbound_stop_request do
     end

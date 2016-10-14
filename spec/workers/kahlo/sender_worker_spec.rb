@@ -11,7 +11,11 @@ describe Kahlo::SenderWorker do
     let(:client) { stub('GovDelivery::Kahlo::Client') }
 
     before do
-      subject.client = client
+      subject.class.client = client
+    end
+
+    after do
+      subject.class.client = nil
     end
 
     context 'a very happy send' do

@@ -2,15 +2,11 @@ module InboundSmsParser
   module_function
 
   def parse(sms_body, vendor)
-    san_string = sanitize_string(sms_body)
+    san_string = Keyword.sanitize_string(sms_body)
     account_id = find_account_id(san_string.split.first, vendor)
     prefix, rest = extract_prefix(san_string, vendor)
     keyword_service, message = extract_keyword(rest, vendor, account_id)
     ParsedSms.new [prefix, keyword_service, message, account_id]
-  end
-
-  def sanitize_string(s)
-    Keyword.sanitize_string(s)
   end
 
   # if we can idenfity an account by prefix, use that

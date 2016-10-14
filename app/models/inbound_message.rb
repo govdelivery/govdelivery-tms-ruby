@@ -9,6 +9,7 @@ class InboundMessage < ActiveRecord::Base
   validates :body, presence: true
   validates :from, presence: true
   validates :vendor, presence: true
+  validates :vendor_sid, uniqueness: {allow_nil: true}
   alias_attribute :from, :caller_phone # 'caller_phone' is the database column, as 'from' is a reserved word in Oracle (who knew?)
   alias_attribute :to, :vendor_phone
 
@@ -52,6 +53,10 @@ class InboundMessage < ActiveRecord::Base
   def ignore!
     self.command_status = :ignored
     self.save! unless self.new_record?
+  end
+
+  def callback_id
+    "#{self.class.name.underscore}-#{self.to_param}"
   end
 
   protected

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914205830) do
+ActiveRecord::Schema.define(version: 20161013211347) do
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name",                                  null: false
@@ -187,9 +187,11 @@ ActiveRecord::Schema.define(version: 20160914205830) do
     t.string   "keyword_response"
     t.string   "command_status",   limit: 15
     t.integer  "account_id",       limit: nil
+    t.string   "vendor_sid"
   end
 
   add_index "inbound_messages", ["account_id"], name: "i_inbound_messages_account_id", tablespace: "tsms_indx01"
+  add_index "inbound_messages", ["vendor_sid"], name: "i_inbound_messages_vendor_sid", unique: true, tablespace: "tsms_indx01"
 
   create_table "incoming_voice_messages", force: :cascade do |t|
     t.integer  "from_number_id", limit: nil

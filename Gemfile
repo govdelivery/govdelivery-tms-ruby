@@ -110,7 +110,7 @@ source 'http://prod-rubygems1-ep.tops.gdi/' do
   gem 'brick'
   gem 'config_spartan', '~>1.0.0'
   gem 'govdelivery-crypt', require: 'govdelivery/crypt'
-  gem 'govdelivery-kahlo', '~>0.2.0'
+  gem 'govdelivery-kahlo', '~>0.3.0'
   gem 'govdelivery-links'
   gem 'govdelivery-synapse', require: 'synapse'
 end

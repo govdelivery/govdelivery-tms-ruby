@@ -9,6 +9,17 @@ class ForwardStopsToDcm
   include Workers::Base
   sidekiq_options retry: 25, queue: :webhook
 
+  def self.verify_and_forward!(body, to, from, sid)
+    ForwardStopsToDcm.forward_async!(
+      {
+        'To'         => to,
+        'From'       => from,
+        'MessageSid' => sid,
+        'SmsSid'     => sid
+      }
+    ) if ForwardStopsToDcm.should_forward?(body, to)
+  end
+
   def self.forward_async!(opts)
     perform_async(opts) if should_forward?(opts['Body'], opts['To'])
   end
@@ -38,7 +49,7 @@ class ForwardStopsToDcm
   def perform(opts)
     params_to_forward = %w(To From AccountSid MessageSid SmsSid)
     # Always post with "stop" so DCM will delete the subscriber.
-    connection.post(Rails.configuration.dcm[:api_root] + '/api/twilio_requests', opts.select { |k, _v| params_to_forward.include?(k)}.merge('Body' => 'stop'))
+    connection.post(Rails.configuration.dcm[:api_root] + '/api/twilio_requests', opts.select { |k, _v| params_to_forward.include?(k) }.merge('Body' => 'stop'))
   end
 
   private
