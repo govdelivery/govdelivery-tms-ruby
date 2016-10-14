@@ -26,6 +26,8 @@ module Kahlo
           to:          handler.from,
           body:        Service::SmsBody.annotated(handler.response_text)
         })
+    rescue ActiveRecord::RecordNotFound
+      logger.info("couldn't find vendor for #{sms_params['to']}")
     end
   end
 end

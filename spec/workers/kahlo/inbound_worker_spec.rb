@@ -20,6 +20,12 @@ describe Kahlo::InboundWorker do
     subject.perform({to: '468311', from: '+15551112345', body: 'yo', id: 'AC12345667'}.stringify_keys)
   end
 
+  it 'should not blow up on messages that i guess are not for us to handle' do
+    handler.expects(:handle).raises(ActiveRecord::RecordNotFound)
+    client.expects(:deliver_message).never
+    expect { subject.perform({to: '468311', from: '+15551112345', body: 'yo', id: 'AC12345667'}.stringify_keys) }.to_not raise_error
+  end
+
   it 'should not deliver a message without response' do
     handler.expects(:handle).returns(false)
     client.expects(:deliver_message).never
