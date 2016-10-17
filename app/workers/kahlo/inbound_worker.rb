@@ -14,7 +14,7 @@ module Kahlo
     attr_writer :handler
 
     def handler
-      @handler ||= InboundMessageHandler.new
+      @handler ||= InboundMessageHandler.new(SmsVendor.kahlo)
     end
 
     def perform(sms_params)

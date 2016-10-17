@@ -14,6 +14,17 @@ describe Kahlo::InboundWorker do
     subject.handler      = nil
   end
 
+  context 'the default handler' do
+    before do
+      create(:sms_vendor, worker: 'MbloxMessageWorker')
+      @kahlo_vendor  = create(:sms_vendor, worker: 'KahloMessageWorker')
+      subject.handler=nil
+    end
+    it 'should only search Kahlo vendors' do
+      expect(subject.handler.vendor_scope.all.to_a).to eq [@kahlo_vendor]
+    end
+  end
+
   it 'should deliver a message that merits a response' do
     handler.expects(:handle).returns(true)
     client.expects(:deliver_message).with(callback_id: 'abcd1234', to: '+15551112345', from: '468311', body: Service::SmsBody.annotated('echo'))
