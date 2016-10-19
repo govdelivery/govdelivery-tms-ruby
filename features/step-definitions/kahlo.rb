@@ -13,16 +13,18 @@ end
 When(/^"(.*)" sends an SMS "(.*)" and a timestamp to Kahlo loopback$/) do |sender, body|
   @to    = '+15553665397'
   @from  = sender
-  @body  = body + Time.now.to_i.to_s
-  payload= {to:   @to,
+  @body  = "#{body} #{Time.now.to_i.to_s}"
+  payload= {id:   Kernel.srand.to_i,
+            to:   @to,
             from: sender,
-            body: body}
+            body: @body}
 
   puts "Mocking inbound text ''#{payload}'' to #{configatron.kahlo.url}".yellow
-  faraday(configatron.kahlo.url).post do |req|
-    req.url '/inbound/loopback'
+  resp = faraday(configatron.kahlo.url).post do |req|
+    req.url '/incoming/loopback'
     req.body = payload
   end
+  raise "Error mocking text, received HTTP #{resp.status}: #{resp.body}" if resp.status > 299
 end
 
 Then(/^The status is updated within (.*) seconds$/) do |timeout|
@@ -49,7 +51,7 @@ Then(/^The vendor receives the message and responds with default text$/) do
         m.to == @to &&
           m.from == @from &&
           m.body == @body &&
-          m.response_text == expected_response
+          m.keyword_response == expected_response
       end
     end
   end

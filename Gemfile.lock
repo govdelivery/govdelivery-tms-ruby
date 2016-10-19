@@ -171,7 +171,7 @@ GEM
       addressable (~> 2.3.0)
       rack
     govdelivery-proctor (1.2.1)
-    govdelivery-synapse (0.8.3)
+    govdelivery-synapse (0.10.0)
       concurrent-ruby (>= 1.0.2)
       rjack-logback (~> 1.8.1)
       rjack-slf4j (~> 1.7.19)

@@ -125,7 +125,7 @@ if (File.exists?(env_config = File.join(File.dirname(__FILE__), 'config', "#{env
 end
 
 configatron.xact.url = xact_url
-configatron.kahlo.url = "https://#{env_prefix}sms.govdelivery.com"
+configatron.kahlo.url = environment == :development ? 'http://localhost:9292' : "https://#{env_prefix}sms.govdelivery.com"
 
 twilio_live_numbers = {
   development: '+16514336311',
