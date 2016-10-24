@@ -163,9 +163,9 @@ GEM
       activesupport (>= 4.1.0)
     govdelivery-crypt (0.2.1)
       activesupport
-    govdelivery-kahlo (0.3.0)
+    govdelivery-kahlo (0.3.1)
       global_phone
-      govdelivery-synapse (>= 0.8.0)
+      govdelivery-synapse (~> 0.10.0)
     govdelivery-links (0.1.7)
       activesupport
       addressable (~> 2.3.0)
