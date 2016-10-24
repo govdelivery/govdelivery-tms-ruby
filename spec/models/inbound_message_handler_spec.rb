@@ -16,17 +16,7 @@ describe InboundMessageHandler do
   context 'without a prefix' do
     it "responds to 'STOP' with vendor stop text" do
       SmsVendor.any_instance.expects(:stop!).with(kind_of(CommandParameters))
-      expect(subject.handle(sid, to, from, 'STOP')).to be true
-      expect(subject.vendor).to eq vendor
-      expect(subject.to).to be from
-      expect(subject.from).to eq vendor.from_phone
-      expect(subject.response_text).to eq Service::Keyword::DEFAULT_STOP_TEXT
-    end
-
-    it "responds to 'STOP' with vendor stop text and enqueues a ForwardStopsToDcm" do
-      ForwardStopsToDcm.stubs(:should_forward?).returns(true)
-      SmsVendor.any_instance.expects(:stop!).with(kind_of(CommandParameters))
-      ForwardStopsToDcm.expects(:forward_async!)
+      ForwardStopsToDcm.expects(:verify_and_forward!)
       expect(subject.handle(sid, to, from, 'STOP')).to be true
       expect(subject.vendor).to eq vendor
       expect(subject.to).to be from

@@ -33,7 +33,7 @@ class InboundMessageHandler
     @command_parameters.merge!(sms_tokens: message.split, inbound_message_id: @inbound_message.id)
     @response_text = keyword_service.respond!(@command_parameters)
 
-    ForwardStopsToDcm.verify_and_forward!(@command_parameters.sms_body, @command_parameters.to, @command_parameters.from, sid)
+    ForwardStopsToDcm.verify_and_forward!(@command_parameters.sms_body, @command_parameters.to, @command_parameters.from, sid, vendor.username)
 
     if @inbound_message.ignored?
       Rails.logger.info "Ignoring InboundMessage #{@inbound_message.id}"
