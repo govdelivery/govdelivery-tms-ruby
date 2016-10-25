@@ -5,9 +5,14 @@ module Sidekiq
       Analytics::ProcessBounce.perform_async(message)
     end
 
-    KAHLO_LISTENER = GovDelivery::Kahlo::Client.new.handle_status_callbacks do |sms|
+    KAHLO_STATUS_LISTENER = GovDelivery::Kahlo::Client.new.handle_status_callbacks do |callback|
+      Sidekiq.logger.info { "#{self.class} received #{callback}" }
+      Kahlo::StatusWorker.perform_async(callback)
+    end
+
+    KAHLO_INBOUND_LISTENER = GovDelivery::Kahlo::Client.new.handle_inbound_messages do |sms|
       Sidekiq.logger.info { "#{self.class} received #{sms}" }
-      Kahlo::StatusWorker.perform_async(sms)
+      Kahlo::InboundWorker.perform_async(sms)
     end
   end
 end

@@ -10,6 +10,7 @@ namespace :e2e do
       password: 'n/a',
       from:     '+15553665397')
 
-    create_test_account('Kahlo Loopback End To End', {sms_vendor_name: sms_vendor_name})
+    account = create_test_account('Kahlo Loopback End To End', {sms_vendor_name: sms_vendor_name})
+    account.default_keyword.update_attributes!(response_text: 'defaultalicious')
   end
 end
