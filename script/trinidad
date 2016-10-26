@@ -2,6 +2,7 @@
 
 # IPAWS needs to be loaded before trinidad otherwise CXF will raise this dreaded error:
 # com.sun.xml.ws.client.sei.SEIStub cannot be cast to org.apache.cxf.frontend.ClientProxy
+require 'synapse'
 require 'lock_jar'
 LockJar.load
 

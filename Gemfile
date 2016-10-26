@@ -1,5 +1,19 @@
 source 'https://rubygems.org'
 
+source 'http://prod-rubygems1-ep.tops.gdi/' do
+  group :test do
+    gem 'govdelivery-proctor'
+    gem 'cuke_sniffer', '0.0.8.ruleConfig5'
+  end
+
+  gem 'brick'
+  gem 'config_spartan', '~>1.0.0'
+  gem 'govdelivery-crypt', require: 'govdelivery/crypt'
+  gem 'govdelivery-kahlo', '~>0.3.0'
+  gem 'govdelivery-links'
+  gem 'govdelivery-synapse', require: 'synapse'
+end
+
 gem 'dcm_client'
 gem 'aasm'
 gem 'activerecord-oracle_enhanced-adapter', "~>1.6.7"
@@ -27,7 +41,6 @@ gem 'redis-rails'
 gem 'redis-store'
 gem 'request_exception_handler'
 gem 'responders'
-gem 'rjack-slf4j'
 gem 'send_nsca'
 gem 'sidekiq'
 gem 'sidekiq-pro', source: 'https://9954a10b:3891f6a5@gems.contribsys.com/'
@@ -99,18 +112,4 @@ group :test do
   gem 'fakeweb'
   gem 'mocha', require: false
   gem 'shoulda-matchers', '<3'
-end
-
-source 'http://prod-rubygems1-ep.tops.gdi/' do
-  group :test do
-    gem 'govdelivery-proctor'
-    gem 'cuke_sniffer', '0.0.8.ruleConfig5'
-  end
-
-  gem 'brick'
-  gem 'config_spartan', '~>1.0.0'
-  gem 'govdelivery-crypt', require: 'govdelivery/crypt'
-  gem 'govdelivery-kahlo', '~>0.3.0'
-  gem 'govdelivery-links'
-  gem 'govdelivery-synapse', require: 'synapse'
 end
