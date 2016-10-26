@@ -19,16 +19,16 @@ describe InboundMessageHandler do
       ForwardStopsToDcm.expects(:verify_and_forward!)
       expect(subject.handle(sid, to, from, 'STOP')).to be true
       expect(subject.vendor).to eq vendor
-      expect(subject.to).to be from
-      expect(subject.from).to eq vendor.from_phone
+      expect(subject.outbound_recipient).to be from
+      expect(subject.inbound_recipient).to eq vendor.from_phone
       expect(subject.response_text).to eq Service::Keyword::DEFAULT_STOP_TEXT
     end
 
     it "responds to 'HELP' with vendor help text" do
       expect(subject.handle(sid, to, from, 'HELP')).to be true
       expect(subject.vendor).to eq vendor
-      expect(subject.to).to be from
-      expect(subject.from).to eq vendor.from_phone
+      expect(subject.outbound_recipient).to be from
+      expect(subject.inbound_recipient).to eq vendor.from_phone
       expect(subject.response_text).to eq Service::Keyword::DEFAULT_HELP_TEXT
     end
 
@@ -40,8 +40,8 @@ describe InboundMessageHandler do
 
       expect(subject.handle(sid, to, from, 'GIBBERISH')).to be true
       expect(subject.vendor).to eq vendor
-      expect(subject.to).to be from
-      expect(subject.from).to eq vendor.from_phone
+      expect(subject.outbound_recipient).to be from
+      expect(subject.inbound_recipient).to eq vendor.from_phone
       expect(subject.response_text).to eq 'Aye! Ye got me booty!'
     end
 
@@ -67,8 +67,8 @@ describe InboundMessageHandler do
       it 'does not respond' do
         expect(subject.handle(sid, to, from, 'pirate plunder kind of blue by miles davis')).to be true
         expect(subject.vendor).to eq vendor
-        expect(subject.to).to be from
-        expect(subject.from).to eq vendor.from_phone
+        expect(subject.outbound_recipient).to be from
+        expect(subject.inbound_recipient).to eq vendor.from_phone
         expect(subject.response_text).to be nil
       end
 

@@ -44,12 +44,12 @@ class InboundMessageHandler
   end
 
   # from number for response
-  def from
+  def inbound_recipient
     vendor.from
   end
 
   # who to send response to
-  def to
+  def outbound_recipient
     @command_parameters.from
   end
 
