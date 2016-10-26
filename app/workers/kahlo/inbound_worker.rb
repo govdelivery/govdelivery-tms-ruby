@@ -22,8 +22,8 @@ module Kahlo
       self.class.client.deliver_message(
         {
           callback_id: handler.callback_id,
-          from:        handler.to,
-          to:          handler.from,
+          from:        handler.inbound_recipient,
+          to:          handler.outbound_recipient,
           body:        Service::SmsBody.annotated(handler.response_text)
         })
     rescue ActiveRecord::RecordNotFound

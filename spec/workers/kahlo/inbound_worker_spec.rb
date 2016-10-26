@@ -3,7 +3,7 @@ require File.expand_path('../../../../app/workers/base', __FILE__)
 
 describe Kahlo::InboundWorker do
   let(:client) { stub('client') }
-  let(:handler) { stub('handler', callback_id: 'abcd1234', from: '+15551112345', to: '468311', response_text: 'echo') }
+  let(:handler) { stub('handler', callback_id: 'abcd1234', outbound_recipient: '+15551112345', inbound_recipient: '468311', response_text: 'echo') }
 
   before do
     subject.class.client = client
