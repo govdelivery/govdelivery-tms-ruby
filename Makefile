@@ -2,6 +2,8 @@
 app_name?=xact
 ## The GitLab Group
 app_group?=development
+rpm_name ?= gd-$(app_name)
+specfile ?= $(rpm_name).spec
 
 revision?=$(shell git rev-parse HEAD)
 commit_time?=$(shell git show -s --format=%ci $$(git rev-parse HEAD) | awk -F'[- :]' '{print $$1 $$2 $$3 "." $$4 $$5}')
@@ -11,6 +13,24 @@ archive_name?=$(app_name)-$(archive_version)
 # Extra Directories created by the build step that are not in Git but need to be in the rpm
 extra_dirs=""
 
+tag ?= $(shell git rev-parse --short HEAD)
+build_tag ?= centos6-internal-xact
+git_url = git+ssh://git@dev-scm.office.gdi/development/$(app_name).git?\#$(tag)
+ENV ?= poc
+
+.DEFAULT_GOAL	:= help
+help:
+	@echo "Usage: make <option>"
+	@echo " Supported options are:"
+	@echo " sources         - Build $(app_name) tarball $(tarball) as Koji would"
+	@echo " test            - Show name and versions that'll be generated"
+	@echo " local-rpm       - Build a local-rpm locally"
+	@echo " scratch-rpm     - Build scratch rpm on koji (set ENV variable)"
+	@echo " rpm             - Build rpm on koji (set ENV variable)"
+	@echo " clean           - Clean up build root"
+
+# Build the source tarball
+.PHONY: sources
 
 sources: bundle configure
 	echo $(revision) > .revision
@@ -69,3 +89,31 @@ test:
 	echo $(app_group)
 	echo $(archive_version)
 	echo $(archive_name)
+
+.PHONY: local-rpm
+local-rpm: sources
+	@echo "Cleaning old buildroots and building the RPM locally"
+	-rm -rf $(HOME)/rpmbuild/BUILDROOT/$(rpm_name)*
+	-rm -rf $(HOME)/rpmbuild/BUILD/$(rpm_name)*
+	cp *.tar.gz $(HOME)/rpmbuild/SOURCES/
+	rpmbuild --nodeps -ba $(specfile)
+
+.PHONY: git-refresh
+git-refresh:
+	@echo "Refreshing directory with checked-out versions of files containing credentials"
+	git checkout $(specfile)
+
+.PHONY: clean
+clean: git-refresh
+	@echo "Cleaning ${archive_name}"
+	-@git checkout $(specfile)
+	-@rm -rvf build
+	-@rm -rvf ~/rpmbuild/SOURCES/$(rpm_name)-*.tar.gz
+
+.PHONY: scratch-rpm rpm
+scratch-rpm:
+	@echo "Submitting job to koji in $(ENV) to build a scratch RPM."
+	ssh -qt $(ENV)-koji-service1.ep.gdi sudo -u kojiadmin -i koji build $(build_tag) "$(git_url)" --scratch
+rpm:
+	@echo "Submitting job to koji in $(ENV) to build an RPM."
+	ssh -qt $(ENV)-koji-service1.ep.gdi sudo -u kojiadmin -i koji build $(build_tag) "$(git_url)"
