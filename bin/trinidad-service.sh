@@ -124,6 +124,7 @@ start () {
     if [[ $RETVAL -ne 0 ]]; then
         echo "${app_name} failed to start"
     else
+        app-availability-wait
 	f5-node-enable
     fi;
 
@@ -206,6 +207,30 @@ tcp-conn-wait () { ## Wait for connections to App to end
     done
     echo "done";
 }
+
+app-availability-wait () { ## Wait for application to start responding
+    [[ -z "${APP_PORT}" ]] && return 0
+    i=30
+
+    local PATH="/usr/lib64/nagios/plugins:$PATH"
+    check_cmd='check_http -t 5 -H evomonitor.govdelivery.com -p 8080 -u /load_balancer  -I localhost -s "XACT Donkey Cookies"'
+
+    printf "availability_test: ${check_cmd}"
+    printf "\nWaiting $i rounds for ${app_name} to start responding: "
+
+    until eval ${check_cmd} > /dev/null; do
+	printf "$i "
+	((i--))
+	if [[ $i -lt 1 ]]; then
+          echo "ERROR: Application did not start!!"
+	  return 1
+        fi
+	sleep 2
+    done
+    echo "done";
+}
+
+
 export CRUBY_PATH=/usr/bin
 export RELEASE_SCRIPT_PATH=/var/repo/scripts/release
 
@@ -265,6 +290,9 @@ case "$1" in
         ;;
   tcp-conn-wait)
         tcp-conn-wait
+        ;;
+  app-availability-wait)
+        app-availability-wait
         ;;
   restart)
         restart
