@@ -27,7 +27,7 @@ describe Kahlo::InboundWorker do
 
   it 'should deliver a message that merits a response' do
     handler.expects(:handle).returns(true)
-    client.expects(:deliver_message).with(callback_id: 'abcd1234', to: '+15551112345', from: '468311', body: Service::SmsBody.annotated('echo'))
+    client.expects(:deliver_message).with(callback_id: 'abcd1234', to: '+15551112345', from: '468311', body: Service::SmsBody.annotated('echo'), message_type: 'urgent')
     subject.perform({to: '468311', from: '+15551112345', body: 'yo', id: 'AC12345667'}.stringify_keys)
   end
 

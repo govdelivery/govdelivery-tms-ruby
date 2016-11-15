@@ -142,6 +142,7 @@ module Xact
     # DCM is "twilio_requests_timeout."  Here it is named differently,
     # as this is not a vendor-specific behavior.
     config.auto_response_threshold = 0.5
+    config.sms_response_message_type = Conf.sms_response_message_type
 
     # Default log level is DEBUG
     config.logger = Rails.logger = ActiveRecord::Base.logger = Log4r::Logger['default'].tap do |logger|
