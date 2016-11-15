@@ -22,6 +22,8 @@ JMX_ARGS="-J-Dcom.sun.management.jmxremote=true -J-Dcom.sun.management.jmxremote
 # JMX_ARGS="${JMX_ARGS} -J-Djava.rmi.server.hostname=poc-xact1"
 JAVA_ARGS="-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled -J-XX:MaxPermSize=256m"
 
+check_cmd='check_http -t 5 -H evomonitor.govdelivery.com -p "${APP_PORT}" -u /load_balancer  -I localhost -s "XACT Donkey Cookies"'
+
 # Source Application settings
 test -f /etc/sysconfig/trinidad.sh && source /etc/sysconfig/trinidad.sh
 
@@ -213,9 +215,8 @@ app-availability-wait () { ## Wait for application to start responding
     i=30
 
     local PATH="/usr/lib64/nagios/plugins:$PATH"
-    check_cmd='check_http -t 5 -H evomonitor.govdelivery.com -p 8080 -u /load_balancer  -I localhost -s "XACT Donkey Cookies"'
 
-    printf "availability_test: ${check_cmd}"
+    #printf "availability_test: ${check_cmd}"
     printf "\nWaiting $i rounds for ${app_name} to start responding: "
 
     until eval ${check_cmd} > /dev/null; do
@@ -305,7 +306,7 @@ case "$1" in
   *)
         echo $"Core Usage:          $0 {start|stop|restart|reload|status}"
         echo $"F5 Management Usage: $0 f5-node-{status|enable|disable}"
-        echo $"Additional Options:  $0 {f5-pool-status|tcp-conn-wait}"
+        echo $"Additional Options:  $0 {f5-pool-status|tcp-conn-wait|app-availability-wait}"
         exit 1
 esac
 
