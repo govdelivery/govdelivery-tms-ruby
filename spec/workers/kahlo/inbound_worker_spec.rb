@@ -17,11 +17,11 @@ describe Kahlo::InboundWorker do
   context 'the default handler' do
     before do
       create(:sms_vendor, worker: 'MbloxMessageWorker')
-      @kahlo_vendor  = create(:sms_vendor, worker: 'KahloMessageWorker')
+      @kahlo_vendor  = create(:sms_vendor, worker: 'MadeUpMessageWorker')
       subject.handler=nil
     end
-    it 'should only search Kahlo vendors' do
-      expect(subject.handler.vendor_scope.all.to_a).to eq [@kahlo_vendor]
+    it 'should find the right vendor' do
+      expect(subject.handler.vendor_scope.all.find_by_from_phone(@kahlo_vendor.from_phone)).to eq(@kahlo_vendor)
     end
   end
 
