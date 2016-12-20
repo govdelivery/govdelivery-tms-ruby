@@ -20,8 +20,6 @@ class SmsVendor < ActiveRecord::Base
 
   validate :normalize_from_phone
 
-  scope :kahlo, -> { where(worker: 'KahloMessageWorker') }
-
   def create_inbound_message!(options)
     inbound_messages.create!(options)
   end
