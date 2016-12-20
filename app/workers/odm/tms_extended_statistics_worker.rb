@@ -1,7 +1,9 @@
 module Odm
   class TmsExtendedStatisticsWorker < Odm::TmsExtendedWorker
     attr_accessor :service
-    sidekiq_options unique: true, retry: false, unique_job_expiration: 240 * 60 # 4 hours
+    sidekiq_options retry:               false,
+                    unique:              :until_executed,
+                    run_lock_expiration: 12 * 60 * 60 # 12 hours
 
     def perform(*args)
       super do

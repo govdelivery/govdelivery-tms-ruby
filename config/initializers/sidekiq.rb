@@ -57,6 +57,3 @@ Sidekiq.configure_client do |config|
   config.redis = default.merge(Xact::Application.config.sidekiq[:client])
 end
 
-SidekiqUniqueJobs.config.unique_args_enabled = true
-SidekiqUniqueJobs.config.unique_storage_method = :old
-

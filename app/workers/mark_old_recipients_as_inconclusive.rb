@@ -2,7 +2,10 @@ require 'base'
 
 class MarkOldRecipientsAsInconclusive
   include Workers::Base
-  sidekiq_options queue: :low, unique: true, retry: false, unique_job_expiration: (60 * 60) * 24 # 1 day, let's be conservative
+  sidekiq_options queue: :low,
+                  unique: :until_executed,
+                  run_lock_expiration: (60 * 60) * 24, # 1 day, let's be conservative
+                  retry: false
 
   def perform(*_args)
     [SmsRecipient, VoiceRecipient, EmailRecipient].each do |relation|

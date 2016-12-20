@@ -3,7 +3,9 @@ require 'base'
 module Messages
   class CheckMessagesForCompletion
     include Workers::Base
-    sidekiq_options queue: :low, retry: false, unique: true
+    sidekiq_options queue: :low, retry: false,
+                    unique: :until_executed,
+                    run_lock_expiration: 20 * 60 # 20 minutes
 
     def perform(*_args)
       batch             = Sidekiq::Batch.new

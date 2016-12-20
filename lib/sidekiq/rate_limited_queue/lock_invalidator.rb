@@ -2,7 +2,7 @@ module Sidekiq
   class RateLimitedQueue
     class LockInvalidator
       include Sidekiq::Worker
-      sidekiq_options retry: false, unique: true
+      sidekiq_options retry: false, unique: :until_executed
 
       def perform
         reset_queues = Sidekiq::RateLimitedQueue.throttled_queues.select do |queue_name|
