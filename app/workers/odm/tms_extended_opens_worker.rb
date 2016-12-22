@@ -1,6 +1,8 @@
 module Odm
   class TmsExtendedOpensWorker < Odm::TmsExtendedWorker
-    sidekiq_options unique: true, retry: false
+    sidekiq_options retry:               false,
+                    unique:              :until_executed,
+                    run_lock_expiration: 12 * 60 * 60 # 12 hours
 
     def perform(*args)
       super do

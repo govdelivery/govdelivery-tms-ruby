@@ -5,7 +5,7 @@ module Geckoboard
     include GeckoboardHelpers
     include Workers::Base
     sidekiq_options retry:  false,
-                    unique: true
+                    unique: :until_executed
 
     def perform(account_id, basename)
       messages = EmailMessage.where(account_id: account_id)

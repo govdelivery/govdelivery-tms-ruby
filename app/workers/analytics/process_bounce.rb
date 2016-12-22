@@ -2,7 +2,6 @@ require 'app/workers/base'
 module Analytics
   class ProcessBounce
     include ::Workers::Base
-    sidekiq_options queue: :stats
 
     def perform(message)
       recipient = EmailRecipient.from_x_tms_recipent(message['recipient'])

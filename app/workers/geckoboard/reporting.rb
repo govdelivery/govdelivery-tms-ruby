@@ -6,7 +6,7 @@ module Geckoboard
     include GeckoboardHelpers
     include Workers::Base
     sidekiq_options retry: false,
-                    unique: true
+                    unique: :until_executed
 
     # 10060, '"CREATED_AT"'
     def perform(account_id, basename, column)

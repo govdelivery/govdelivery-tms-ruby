@@ -1,6 +1,8 @@
 class NscaStatusWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :sender, unique: true, retry: false, unique_job_expiration: 1.hour
+  sidekiq_options queue: :sender,
+                  unique: :while_executing,
+                  retry: false
 
   def perform(*args)
     env  = Rails.configuration.datacenter_env
