@@ -22,7 +22,7 @@ module Message
       end
 
       event :responding do
-        transitions from: :new, to: :sending, guard: :has_recipients?, after: :on_sending
+        transitions from: :new, to: :queued, guard: :has_recipients?
       end
 
       event :complete do

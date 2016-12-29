@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CommandWorkers::ForwardWorker do
-  let(:account) {create(:account_with_sms)}
+  let(:account) { create(:account_with_sms, sms_vendor: create(:sms_vendor, worker: 'KahloMessageWorker')) }
   let(:command) do
     keyword = account.keywords.create(name: 'worker')
     create(:forward_command,
@@ -35,8 +35,8 @@ describe CommandWorkers::ForwardWorker do
 
   it 'creates one Twilio::SenderWorker job if command.process_response returns a message' do
     Service::ForwardService.any_instance.expects(:send).returns(http_response)
-    Twilio::SenderWorker.expects(:perform_async).once
-    sms_message = build(:sms_message).tap do |m|
+    account.sms_vendor.worker.constantize.expects(:perform_async).once
+    sms_message = build(:sms_message, account: account).tap do |m|
       m.expects(:responding!)
       m.expects(:first_recipient_id).returns(1)
     end

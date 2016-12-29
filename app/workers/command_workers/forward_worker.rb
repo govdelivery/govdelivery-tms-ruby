@@ -15,21 +15,19 @@ module CommandWorkers
     include CommandWorkers::Base
 
     sidekiq_options retry: 3, queue: :webhook
-    sidekiq_retry_in {10}
+    sidekiq_retry_in { 10 }
 
     attr_writer :sms_service
 
     def perform(opts)
-      callback_url = nil
       message = super do
         self.http_response = send_request(options, command.params)
-        callback_url = options.callback_url
       end
 
       if message
         recipient_id = message.first_recipient_id
         logger.info("ForwardWorker: responding to #{recipient_id} with #{message.attributes.inspect}")
-        send_response(message, recipient_id, callback_url)
+        send_response(message)
       end
     rescue Faraday::ClientError => e
       ActiveRecord::Base.transaction do
@@ -43,15 +41,13 @@ module CommandWorkers
       end
       raise
     rescue => e
+      logger.warn(e)
       raise Sidekiq::Retries::Fail.new(e)
     end
 
-    def send_response(message, recipient_id, callback_url)
+    def send_response(message)
       message.responding!
-      Twilio::SenderWorker.perform_async(message_class: message.class.name,
-                                         callback_url:  callback_url,
-                                         message_id:    message.id,
-                                         recipient_id:  recipient_id)
+      message.worker.perform_async(message_id: message.id)
     end
 
     def http_service
