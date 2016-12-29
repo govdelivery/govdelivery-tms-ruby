@@ -65,7 +65,7 @@ describe InboundMessageHandler do
         @keyword = @account.keywords.last
       end
       it 'does not respond' do
-        expect(subject.handle(sid, to, from, 'pirate plunder kind of blue by miles davis')).to be true
+        expect(subject.handle(sid, to, from, 'pirate plunder kind of blue by miles davis')).to be false
         expect(subject.vendor).to eq vendor
         expect(subject.outbound_recipient).to be from
         expect(subject.inbound_recipient).to eq vendor.from_phone
@@ -91,7 +91,7 @@ describe InboundMessageHandler do
           expect(subject.response_text).to eql(Service::Keyword::DEFAULT_HELP_TEXT)
         end
         it "responds to 'pirate nothin' with nothing" do
-          expect(subject.handle(sid, to, from, 'pirate nothin')).to be true
+          expect(subject.handle(sid, to, from, 'pirate nothin')).to be false
           expect(subject.response_text).to be_nil
         end
       end

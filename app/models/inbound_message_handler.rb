@@ -35,11 +35,13 @@ class InboundMessageHandler
 
     ForwardStopsToDcm.verify_and_forward!(@command_parameters.sms_body, @command_parameters.to, @command_parameters.from, sid, vendor.username)
 
-    if @inbound_message.ignored?
+    if @inbound_message.ignored?  # throttling, blacklist, etc.
       Rails.logger.info "Ignoring InboundMessage #{@inbound_message.id}"
       false
+    elsif self.response_text.nil? # no inline response (keyword commands might respond asynchronously)
+      false
     else
-      true
+      true # self.response_text has something and we should respond
     end
   end
 
