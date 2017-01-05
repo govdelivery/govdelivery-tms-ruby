@@ -153,10 +153,11 @@ module Xact
       logger.instance_variable_set :@formatter, logger.outputters.first.formatter
     end
 
-    host                       = GovDelivery::Host.new
-    config.datacenter_location = host.datacenter
-    config.datacenter_env      = host.env
-    config.nsca_password       = Conf.nsca_password
+    host                                = GovDelivery::Host.new
+    config.datacenter_location          = host.datacenter
+    config.datacenter_env               = host.env
+    config.nsca_password                = Conf.nsca_password
+    config.non_prod_message_annotations = Conf.non_prod_message_annotations
 
     config.custom_report_account_id = ENV['XACT_CUSTOM_REPORT_ACCOUNT_ID']
 
