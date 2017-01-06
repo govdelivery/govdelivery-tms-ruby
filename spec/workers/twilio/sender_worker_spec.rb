@@ -96,8 +96,8 @@ describe Twilio::SenderWorker do
         twilio_calls.expects(:create).returns(OpenStruct.new(sid: 'abc123', status: 'completed'))
         Twilio::REST::Client.expects(:new).with(message.vendor.username, message.vendor.password).returns(OpenStruct.new(account: OpenStruct.new(calls: twilio_calls)))
         ex = ActiveRecord::ConnectionTimeoutError.new('this could be anything')
-        subject.class.expects(:complete_recipient!).raises(ex)
-        subject.class.expects(:delay).returns(mock('DelayedClass', complete_recipient!: 'jid'))
+        Service::TwilioResponseMapper.expects(:recipient_callback).raises(ex)
+        message.recipients.first.class.expects(:delay).returns(mock('DelayedClass', transition: 'yup'))
         expect do
           subject.perform(
             message_id: message.id,

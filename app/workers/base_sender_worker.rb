@@ -14,9 +14,6 @@ class BaseSenderWorker
       recipient.failed!(nil, nil, error_message)
     end
 
-    def sending!(recipient, ack)
-      recipient.sending!(ack)
-    end
   end
 
   def perform(options={})
@@ -40,9 +37,9 @@ class BaseSenderWorker
 
   def mark_sending!(batch_id)
     begin
-      self.class.sending!(recipient, batch_id)
+      recipient.sending!(batch_id)
     rescue ActiveRecord::ConnectionTimeoutError => e
-      self.class.delay(retry: 10).sending!(recipient, batch_id)
+      recipient.class.delay(retry: 10).transition(recipient.id, :sending!, batch_id)
       raise Sidekiq::Retries::Fail.new(e)
     end
 

@@ -63,17 +63,12 @@ module Odm
         # Here again we are performing database access, which is why we need to trap 
         # the timeout error.
         begin
-          self.class.mark_sending(message, ack)
+          message.sending!(ack)
         rescue ActiveRecord::ConnectionTimeoutError
-          self.class.delay(retry: 10).mark_sending(message.id, ack)
+          message.class.delay(retry: 10).mark_sending(message.id, ack)
         end
         logger.debug("Sent EmailMessage #{message.to_param} (account #{account.name}, admin #{message.user_id}) to ODM")
       end
-    end
-
-    def self.mark_sending(message_or_id, ack)
-      message_or_id = EmailMessage.find(message_or_id) unless message_or_id.is_a?(EmailMessage)
-      message_or_id.sending!(ack)
     end
 
     ##

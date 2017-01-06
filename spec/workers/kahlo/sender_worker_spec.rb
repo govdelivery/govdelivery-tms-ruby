@@ -34,8 +34,8 @@ describe Kahlo::SenderWorker do
         client.expects(:deliver_message).with(recipient.to_kahlo.merge(body: "[test] #{'A'*153}"))
 
         ex = ActiveRecord::ConnectionTimeoutError.new('this could be anything')
-        subject.class.expects(:sending!).raises(ex)
-        subject.class.expects(:delay).returns(mock('DelayedClass', sending!: 'jid'))
+        message.recipients.first.class.any_instance.expects(:sending!).raises(ex)
+        message.recipients.first.class.expects(:delay).returns(mock('DelayedClass', transition: 'yup'))
         expect do
           subject.perform(
             message_id:   message.id,

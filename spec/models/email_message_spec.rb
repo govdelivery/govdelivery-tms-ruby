@@ -344,6 +344,14 @@ describe EmailMessage do
         before do
           email.recipients.create!(email: 'bill@busheyworld.ie')
         end
+
+        it 'should work with mark_sending' do
+          expect(email.ready!).to be true
+          expect(email.recipients.first.sending?).to be false
+          EmailMessage.mark_sending(email.id, 'dummy_ack')
+          expect(email.recipients.first.sending?).to be true
+        end
+
         it 'should send and set ack' do
           expect(email.ready!).to be true
           expect(email.sending!(nil, 'dummy_id')).to be true

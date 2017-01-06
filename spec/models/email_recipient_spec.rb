@@ -81,6 +81,12 @@ describe EmailRecipient do
       end
     end
 
+    it 'should have a delayable transition class method' do
+      # for sidekiq in case there are connection timeouts
+      EmailRecipient.transition(subject.id, :sending!, 'ack')
+      expect(subject.reload.sending?).to be true
+    end
+
     context 'that is sending' do
       before do
         subject.sending!('ack')

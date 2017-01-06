@@ -80,6 +80,12 @@ module Recipient
     validates :error_message, length: {maximum: 512}
   end
 
+  class_methods do
+    def transition(recipient_id, transition_method, ack)
+      find(recipient_id).send(transition_method, ack)
+    end
+  end
+
   def truncate_values
     self.error_message = error_message[0..511] if error_message && error_message_changed? && error_message.to_s.length > 512
   end

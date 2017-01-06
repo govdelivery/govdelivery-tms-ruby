@@ -169,8 +169,8 @@ if defined?(JRUBY_VERSION)
         Odm::TmsExtendedSenderWorker::TMSExtended_Service.expects(:new).returns(odm_service)
         odm_v2.expects(:send_message).returns('ack1234')
 
-        worker.class.expects(:mark_sending).raises(ActiveRecord::ConnectionTimeoutError.new('oopz'))
-        worker.class.expects(:delay).returns(mock('DelayedClass', mark_sending: 'jid'))
+        EmailMessage.any_instance.expects(:sending!).raises(ActiveRecord::ConnectionTimeoutError.new('oopz'))
+        EmailMessage.expects(:delay).returns(mock('DelayedClass', mark_sending: 'jid'))
 
         worker.perform(params)
       end
