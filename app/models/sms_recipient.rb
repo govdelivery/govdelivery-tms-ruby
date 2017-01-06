@@ -39,6 +39,7 @@ class SmsRecipient < ActiveRecord::Base
   def to_kahlo
     {
       callback_id: to_param,
+      message_type: Rails.configuration.sms_default_message_type,
       from:        vendor.from,
       to:          phone,
       body:        Service::SmsBody.annotated(message.body)

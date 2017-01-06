@@ -14,7 +14,9 @@ module Kahlo
     private
 
     def send_batch!
-      self.class.client.deliver_message(recipient.to_kahlo)
+      params = recipient.to_kahlo
+      params.merge!(message_type: @options[:message_type]) if @options[:message_type]
+      self.class.client.deliver_message(params)
       "kahlo" # no need for real acks with kahlo
     end
 
