@@ -1,12 +1,12 @@
 module Odm
   class TmsExtendedClicksWorker < Odm::TmsExtendedWorker
-    sidekiq_options retry: false,
-                    unique: :until_executed,
+    sidekiq_options retry:               0,
+                    unique:              :until_executed,
                     run_lock_expiration: 12 * 60 * 60 # 12 hours
 
     def perform(*args)
       super do
-        EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor)}
+        EmailVendor.tms_extended.find_each { |vendor| process_vendor(vendor) }
       end
     end
 
