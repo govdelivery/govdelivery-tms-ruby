@@ -22,7 +22,11 @@ class BaseMessageWorker
   end
 
   def message
-    @message ||= retryable_connection { SmsMessage.find(message_id) }
+    @message ||= retryable_connection { SmsMessage.includes(:account).find(message_id) }
+  end
+
+  def account
+    @account ||= message.account
   end
 
   def sendable_recipient_ids

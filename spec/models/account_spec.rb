@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe Account do
-  let(:email_vendor) {create(:email_vendor)}
-  let(:sms_vendor) {create(:sms_vendor)}
-  let(:voice_vendor) {create(:voice_vendor)}
+  let(:email_vendor) { create(:email_vendor) }
+  let(:sms_vendor) { create(:sms_vendor) }
+  let(:voice_vendor) { create(:voice_vendor) }
 
-  it {is_expected.to belong_to(:ipaws_vendor)}
+  it { is_expected.to belong_to(:ipaws_vendor) }
 
   context 'from_email_allowed?' do
     subject do
@@ -33,6 +33,15 @@ describe Account do
       Account.new(name: 'name', sms_vendor: sms_vendor, dcm_account_codes: ['ACCOUNT_CODE'])
     end
 
+    it 'should use default sms message type as a default' do
+      expect(subject.sms_message_type).to eq Rails.configuration.sms_default_message_type
+    end
+
+    it 'should use a custom sms message type if specified' do
+      subject.sms_message_type='donkeysms'
+      expect(subject.sms_message_type).to eq 'donkeysms'
+    end
+
     it 'should not require a prefix' do
       expect(subject.sms_prefixes).to be_empty
     end
@@ -44,7 +53,7 @@ describe Account do
     end
 
     context 'with an existing account with a prefix' do
-      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
+      let(:other_account) { create(:account, sms_vendor: sms_vendor) }
       before do
         other_account.sms_prefixes.create!(prefix: 'ELSE')
         subject.sms_vendor.reload
@@ -56,7 +65,7 @@ describe Account do
     end
 
     context 'with an existing account without a prefix' do
-      let(:other_account) {create(:account, sms_vendor: sms_vendor)}
+      let(:other_account) { create(:account, sms_vendor: sms_vendor) }
       before do
         other_account
         subject.sms_vendor.reload

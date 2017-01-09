@@ -96,6 +96,9 @@ USAGE
       opts.on('-s', '--stop_text [STOP_TEXT]', 'Optional, defaults to sms vendor stop text') do |p|
         @options[:stop_text] = p
       end
+      opts.on('-m', '--message_type [MESSAGE_TYPE]', 'Optional Kahlo SMS message type. Sends are all marked transactional by default, See Kahlo docs for other message types.') do |p|
+        @options[:sms_message_type] = p
+      end
       opts.on('-S', '--start_text [START_TEXT]', 'Optional, defaults to sms vendor start text') do |p|
         @options[:start_text] = p
       end
@@ -121,6 +124,7 @@ USAGE
   def create_account(options)
     a = Account.new
     a.name = @options[:account_name]
+    a.sms_message_type = @options[:sms_message_type]
     a.voice_vendor_id = @options[:account_voice_vendor]
     a.sms_vendor_id = @options[:account_sms_vendor]
     a.email_vendor_id = @options[:account_email_vendor]

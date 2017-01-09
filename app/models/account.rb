@@ -143,6 +143,10 @@ class Account < ActiveRecord::Base
     super
   end
 
+  def sms_message_type
+    self[:sms_message_type] || Rails.configuration.sms_default_message_type
+  end
+
   protected
 
   def create_base_keywords!
