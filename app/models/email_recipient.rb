@@ -73,17 +73,22 @@ class EmailRecipient < ActiveRecord::Base
       erc.email_message = message
       erc.email = email
       erc.save!
-      Analytics::PublisherWorker.perform_inline_or_async(channel: 'email_channel', message: {uri: "clicked",
-                                                                                   v: '1',
-                                                                                   account_sid: message.account.sid,
-                                                                                   account_id: message.account.id,
-                                                                                   message_id: message.id,
-                                                                                   recipient_id: id,
-                                                                                   recipient_email: email,
-                                                                                   message_type_label: message.try(:message_type).try(:label),
-                                                                                   message_type_code: message.try(:message_type).try(:code),
-                                                                                   clicked_at: date,
-                                                                                   url: url})
+
+      payload = {
+        uri: "clicked",
+        v: '1',
+        account_sid: message.account.sid,
+        account_id: message.account.id,
+        message_id: message.id,
+        recipient_id: id,
+        recipient_email: email,
+        clicked_at: date,
+        url: url
+      }
+
+      message_type_attributes payload
+
+      Analytics::PublisherWorker.perform_inline_or_async(channel: 'email_channel', message: payload)
     end
   end
 
@@ -95,32 +100,40 @@ class EmailRecipient < ActiveRecord::Base
       ero.email_message = message
       ero.email = email
       ero.save!
-      Analytics::PublisherWorker.perform_inline_or_async(channel: 'email_channel', message: {uri: 'opened',
-                                                                                   v: '1',
-                                                                                   account_sid: message.account.sid,
-                                                                                   account_id: message.account.id,
-                                                                                   message_id: message.id,
-                                                                                   recipient_id: id,
-                                                                                   recipient_email: email,
-                                                                                   message_type_label: message.try(:message_type).try(:label),
-                                                                                   message_type_code: message.try(:message_type).try(:code),
-                                                                                   opened_at: date})
 
+      payload = {
+        uri: 'opened',
+        v: '1',
+        account_sid: message.account.sid,
+        account_id: message.account.id,
+        message_id: message.id,
+        recipient_id: id,
+        recipient_email: email,
+        opened_at: date
+      }
+
+      message_type_attributes payload
+
+      Analytics::PublisherWorker.perform_inline_or_async(channel: 'email_channel', message: payload)
     end
   end
 
   def sent!(ack, date_sent=nil, _=nil)
     super.tap do
-      Analytics::PublisherWorker.perform_inline_or_async(channel: 'email_channel', message: {uri: 'sent',
-                                                                                   v: '1',
-                                                                                   account_sid: message.account.sid,
-                                                                                   account_id: message.account.id,
-                                                                                   message_id: message.id,
-                                                                                   recipient_id: id,
-                                                                                   recipient_email: email,
-                                                                                   message_type_label: message.try(:message_type).try(:label),
-                                                                                   message_type_code: message.try(:message_type).try(:code),
-                                                                                   sent_at: date_sent})
+      payload = {
+        uri: 'sent',
+        v: '1',
+        account_sid: message.account.sid,
+        account_id: message.account.id,
+        message_id: message.id,
+        recipient_id: id,
+        recipient_email: email,
+        sent_at: date_sent
+      }
+
+      message_type_attributes payload
+
+      Analytics::PublisherWorker.perform_inline_or_async(channel: 'email_channel', message: payload)
     end
   end
 
@@ -146,5 +159,19 @@ class EmailRecipient < ActiveRecord::Base
 
   def x_tms_recipient
     GovDelivery::Crypt::XTmsRecipient.encrypt(email, id)
+  end
+
+  private
+
+  # if these exist, create keys
+  # otherwise, do not create keys
+  def message_type_attributes(payload)
+    return unless message.try(:message_type)
+
+    mtl = message.message_type.try(:label)
+    payload[:message_type_label] = mtl if mtl
+
+    mtc = message.message_type.try(:code)
+    payload[:message_type_code] = mtc if mtc
   end
 end

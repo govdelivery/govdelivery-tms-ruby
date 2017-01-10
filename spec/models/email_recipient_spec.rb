@@ -225,6 +225,26 @@ describe EmailRecipient do
         subject.sent!('ack', the_time)
       end
 
+      it 'should publish sent transitions without message_type_* when message_type nil' do
+        the_time = Time.now
+        subject.message.message_type = nil
+        expected = {
+          channel: 'email_channel',
+          message: {
+            v: '1',
+            recipient_id: subject.id,
+            message_id: subject.message.id,
+            account_sid: subject.message.account.sid,
+            uri: 'sent',
+            recipient_email: subject.email,
+            account_id: subject.message.account.id,
+            sent_at: the_time
+          }
+        }
+        Analytics::PublisherWorker.expects(:perform_inline_or_async).with(expected)
+        subject.sent!('ack', the_time)
+      end
+
       context 'after receiving the message' do
         before do
           subject.sent!('ack', nil)
@@ -247,6 +267,27 @@ describe EmailRecipient do
                                  clicked_at: the_time)
           }
           Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
+          subject.clicked!('http://www.google.com', the_time)
+        end
+
+        it 'publishes click events without message_type_* when message_type nil' do
+          the_time = Time.now
+          subject.message.message_type = nil
+          expected = {
+            channel: 'email_channel',
+            message: {
+              v: '1',
+              recipient_id: subject.id,
+              message_id: subject.message.id,
+              account_sid: subject.message.account.sid,
+              uri: 'clicked',
+              url: 'http://www.google.com',
+              recipient_email: subject.email,
+              account_id: subject.message.account.id,
+              clicked_at: the_time
+            }
+          }
+          Analytics::PublisherWorker.expects(:perform_inline_or_async).with(expected)
           subject.clicked!('http://www.google.com', the_time)
         end
 
@@ -279,6 +320,26 @@ describe EmailRecipient do
                                  opened_at: the_time)
           }
           Analytics::PublisherWorker.expects(:perform_inline_or_async).with(has_entries(expected))
+          subject.opened!('127.0.0.1', the_time)
+        end
+
+        it "publishes open events without message_type_* when message_type nil" do
+          the_time = Time.now
+          subject.message.message_type = nil
+          expected = {
+            channel: 'email_channel',
+            message: {
+              v: '1',
+              recipient_id: subject.id,
+              message_id: subject.message.id,
+              account_sid: subject.message.account.sid,
+              uri: 'opened',
+              recipient_email: subject.email,
+              account_id: subject.message.account.id,
+              opened_at: the_time
+            }
+          }
+          Analytics::PublisherWorker.expects(:perform_inline_or_async).with(expected)
           subject.opened!('127.0.0.1', the_time)
         end
 
@@ -322,6 +383,63 @@ describe EmailRecipient do
       messages[1].recipients.update_all(status: 'new')
       result = EmailRecipient.timeout_expired.all
       expect(result).to be_empty
+    end
+  end
+
+  context '#message_type_attributes' do
+    let(:payload) do
+      {
+        v: '1',
+        recipient_id: subject.id,
+        message_id: subject.message.id,
+        account_sid: subject.message.account.sid,
+        uri: 'sent',
+        recipient_email: subject.email,
+        account_id: subject.message.account.id,
+        sent_at: Time.now
+      }
+    end
+
+    it 'adds message_type_label and message_type_code to payload when not nil' do
+      expected = (payload.clone).tap do |e|
+        e[:message_type_label] = subject.message.message_type.label
+        e[:message_type_code] = subject.message.message_type.code
+      end
+
+      subject.send(:message_type_attributes, payload)
+
+      expect(payload).to eq(expected)
+    end
+
+    it 'does not add message_type_label or message_type_code to payload when message_type nil' do
+      subject.message.message_type = nil
+      expected = payload.clone
+
+      subject.send(:message_type_attributes, payload)
+
+      expect(payload).to eq(expected)
+    end
+
+    it 'does not add message_type_label when nil' do
+      subject.message.message_type.label = nil
+      expected = (payload.clone).tap do |e|
+        e[:message_type_code] = subject.message.message_type.code
+      end
+
+      subject.send(:message_type_attributes, payload)
+
+      expect(payload).to eq(expected)
+    end
+
+    it 'does not add message_type_code when nil' do
+      subject.message.message_type.code = nil
+      expected = (payload.clone).tap do |e|
+        e[:message_type_label] = subject.message.message_type.label
+      end
+
+      subject.send(:message_type_attributes, payload)
+
+      expect(payload).to eq(expected)
     end
   end
 end
