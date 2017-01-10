@@ -153,6 +153,7 @@ describe SmsRecipient, 'blacklist scopes' do
     expect(hash[:callback_id]).to eq recipient.to_param
     expect(hash[:body]).to eq Service::SmsBody.annotated(sms_message.body)
     expect(hash[:to]).to eq recipient.phone
+    expect(hash[:message_type]).to eq Rails.configuration.sms_default_message_type
     expect(hash[:from]).to eq recipient.vendor.from
   end
 

@@ -30,6 +30,7 @@ mblox_api_key: 09047bedd24a450b9a037e34b59029df
 mblox_service_account: govdeliverytest
 allowed_geckoboard_accounts: [10_060]
 sms_response_message_type: 'urgent'
+sms_default_message_type: 'transactional'
 non_prod_message_annotations: true
 
 #fallback for new relic conf name

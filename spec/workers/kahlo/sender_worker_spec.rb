@@ -18,15 +18,24 @@ describe Kahlo::SenderWorker do
       subject.class.client = nil
     end
 
-    context 'a very happy send' do
-      it 'should work' do
-        client.expects(:deliver_message).with(recipient.to_kahlo.merge(body: "[test] #{'A'*153}"))
-        expect do
-          subject.perform(
-            message_id:   message.id,
-            recipient_id: message.recipients.first.id)
-        end.to change { message.recipients.where(ack: 'kahlo').count }.by 1
-      end
+    it 'should send a message to kahlo' do
+      client.expects(:deliver_message).with(recipient.to_kahlo.merge(body: "[test] #{'A'*153}"))
+      expect do
+        subject.perform(
+          message_id:   message.id,
+          recipient_id: message.recipients.first.id)
+      end.to change { message.recipients.where(ack: 'kahlo').count }.by 1
+    end
+
+    it 'should send an urgent message to kahlo' do
+      client.expects(:deliver_message).with(recipient.to_kahlo.merge(message_type: 'urgent'))
+      expect do
+        subject.perform(
+          message_id:   message.id,
+          recipient_id: message.recipients.first.id,
+          message_type: 'urgent'
+        )
+      end.to change { message.recipients.where(ack: 'kahlo').count }.by 1
     end
 
     context 'a send that succeeds but then fails to update the recipient' do

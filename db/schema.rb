@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161013211347) do
+ActiveRecord::Schema.define(version: 20170106224913) do
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name",                                  null: false
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20161013211347) do
     t.string   "sid",                      limit: 32,   null: false
     t.string   "link_encoder",             limit: 30
     t.string   "link_tracking_parameters"
+    t.string   "sms_message_type",         limit: 20
   end
 
   create_table "authentication_tokens", force: :cascade do |t|
