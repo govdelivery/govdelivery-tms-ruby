@@ -10,6 +10,12 @@ describe SmsRecipient do
 
   it { is_expected.to validate_presence_of :phone } # validates_presence_of :phone
 
+  it 'should have a delayable transition class method' do
+    # for sidekiq in case there are connection timeouts
+    SmsRecipient.transition(subject.id, :sending!, 'ack')
+    expect(subject.reload.sending?).to be true
+  end
+
   describe 'when phone is not a number' do
     before do
       subject.phone = 'invalid'

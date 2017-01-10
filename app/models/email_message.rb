@@ -35,6 +35,10 @@ class EmailMessage < ActiveRecord::Base
   # This scope is designed to come purely from an index (and avoid hitting the table altogether)
   scope :indexed, -> { select('id, user_id, created_at, status, subject, email_template_id') }
 
+  def self.mark_sending(message_id, ack)
+    self.find(message_id).sending!(ack)
+  end
+
   def on_sending(ack=nil)
     self.ack ||= ack
     # ODM vendor sends batch with all recips in message, mark all as sending

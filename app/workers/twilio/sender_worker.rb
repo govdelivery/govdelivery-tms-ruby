@@ -44,16 +44,12 @@ module Twilio
 
       logger.info {"Response from Twilio was #{response.inspect}"}
       begin
-        self.class.complete_recipient!(recipient, response.status, response.sid)
+        transition = Service::TwilioResponseMapper.recipient_callback(response.status)
+        recipient.send(transition, response.sid, nil, nil)
       rescue ActiveRecord::ConnectionTimeoutError => e
-        self.class.delay(retry: 10).complete_recipient!(recipient, response.status, response.sid)
+        recipient.class.delay(retry: 10).transition(recipient.id, transition, response.sid)
         raise e
       end
-    end
-
-    def self.complete_recipient!(recipient, status, sid)
-      transition = Service::TwilioResponseMapper.recipient_callback(status)
-      recipient.send(transition, sid, nil, nil)
     end
 
     def complete_recipient_with_error!(options, error_message)
