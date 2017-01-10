@@ -68,4 +68,4 @@ USAGE
   end
 end
 
-CreateServiceUser.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME
+CreateServiceUser.new.run_from_options(ARGV) if __FILE__.include?($PROGRAM_NAME)

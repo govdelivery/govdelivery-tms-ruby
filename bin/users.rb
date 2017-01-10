@@ -89,4 +89,4 @@ USAGE
   end
 end
 
-CreateUser.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME
+CreateUser.new.run_from_options(ARGV) if __FILE__.include?($PROGRAM_NAME)

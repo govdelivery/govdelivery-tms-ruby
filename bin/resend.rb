@@ -101,7 +101,7 @@ class Resend
   end
 end
 
-if __FILE__ == $PROGRAM_NAME
+if __FILE__.include?($PROGRAM_NAME)
   file = File.open(ARGV.first, 'r')
   require File.expand_path('../../config/environment', __FILE__)
   resend = Resend.new
