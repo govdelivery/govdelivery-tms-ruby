@@ -235,4 +235,4 @@ USAGE
   end
 end
 
-CreateAccount.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME
+CreateAccount.new.run_from_options(ARGV) if __FILE__.include?($PROGRAM_NAME)

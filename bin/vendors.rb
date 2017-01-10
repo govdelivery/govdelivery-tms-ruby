@@ -190,4 +190,4 @@ USAGE
   end
 end
 
-CreateVendor.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME
+CreateVendor.new.run_from_options(ARGV) if __FILE__.include?($PROGRAM_NAME)

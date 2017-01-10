@@ -124,4 +124,4 @@ Options:
   end
 end
 
-FromAddressManager.new(ARGV) if __FILE__ == $PROGRAM_NAME
+FromAddressManager.new(ARGV) if __FILE__.include?($PROGRAM_NAME)

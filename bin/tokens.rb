@@ -112,4 +112,4 @@ USAGE
   end
 end
 
-Tokens.new.run_from_options(ARGV) if __FILE__ == $PROGRAM_NAME
+Tokens.new.run_from_options(ARGV) if __FILE__.include?($PROGRAM_NAME)
