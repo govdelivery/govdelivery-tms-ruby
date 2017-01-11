@@ -1,0 +1,28 @@
+# Helpers:
+## Note: Top-level .keys are ignored by GitLab
+.ruby_job: &ruby_job
+  cache:
+    key: bundler
+    paths:
+      - .bundle/
+  before_script:
+    - rbenv install -s # > /dev/null
+    - (bundle -v || gem install bundler) # > /dev/null
+    - bundle install --local --quiet --path .bundle # --without=oracle ?
+
+
+# Jobs:
+brakeman:
+  <<: *ruby_job
+  script:
+    - bundle exec brakeman
+
+bundler_audit:
+  <<: *ruby_job
+  script:
+    - bundle exec bundle-audit check --update --verbose
+
+rubocop:
+  <<: *ruby_job
+  script:
+    - bundle exec rubocop -R -fs
