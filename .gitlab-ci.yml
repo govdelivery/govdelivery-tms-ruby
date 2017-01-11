@@ -10,7 +10,6 @@
     - (bundle -v || gem install bundler) # > /dev/null
     - bundle install --local --quiet --path .bundle # --without=oracle ?
 
-
 # Jobs:
 brakeman:
   <<: *ruby_job
