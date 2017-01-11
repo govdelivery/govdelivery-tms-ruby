@@ -11,6 +11,9 @@
 # Ignore the default SQLite database.
 /db/*.sqlite3
 
+# Ignore project .version (this will be created during deploy)
+/.version
+
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /log/jakety-jak.log*
