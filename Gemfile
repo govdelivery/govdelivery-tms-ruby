@@ -68,6 +68,11 @@ platforms :jruby do
   gem 'trinidad', require: nil
 end
 
+group :development do
+  gem 'alphabetize'
+  gem 'rails-erd'
+end
+
 group :development, :test do
   gem 'awesome_print'
   gem 'brakeman-min'
@@ -88,20 +93,13 @@ group :development, :test do
   gem 'rspec-its', '~> 1.2.0'
   gem 'rspec-rails', '~> 3.1.0'
   gem 'yaml_db'
-end
-
-group :development do
-  gem 'alphabetize'
-  gem 'rails-erd'
-end
-
-group :development, :test do
   gem 'rubocop'
   gem 'rubocop-checkstyle_formatter', require: false
   gem 'pry'
   gem 'pry-rails'
   gem 'pry-remote'
   gem 'pry-nav'
+  gem 'bundler-audit'
 end
 
 group :test do

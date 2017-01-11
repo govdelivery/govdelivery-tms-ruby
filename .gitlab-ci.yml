@@ -14,7 +14,10 @@
 brakeman:
   <<: *ruby_job
   script:
-    - bundle exec brakeman
+    - bundle exec brakeman -A -o brakeman.html
+  artifacts:
+    paths:
+      - brakeman.html
 
 bundler_audit:
   <<: *ruby_job
