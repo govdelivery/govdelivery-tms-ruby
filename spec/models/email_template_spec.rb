@@ -35,6 +35,9 @@ describe EmailTemplate do
     subject.body = 'Hello {{name }'
     expect(subject).not_to be_valid
     expect(subject.errors.messages).to include(body: ['cannot include invalid Liquid markup'])
+
+    subject.body = 'Hello {{name }}'
+    expect(subject).to be_valid
   end
 
   it 'should validate that user belongs to account' do
