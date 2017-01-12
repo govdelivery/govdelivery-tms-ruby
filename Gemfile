@@ -25,6 +25,7 @@ gem 'faraday'
 gem 'faraday_middleware'
 gem 'jruby-openssl', "=0.9.17"
 gem 'kaminari'
+gem 'liquid', '<4.0'
 gem 'log4r'
 gem 'newrelic_rpm'
 gem 'phony'
