@@ -27,7 +27,7 @@ module Helpy
   end
 
   def post_message(opts={})
-    next if dev_not_live?
+    return if dev_not_live?
     opts[:body] ||= %|This is a test for end to end email delivery. <a href="#{@expected_link}">With a link</a>|
     opts[:from_name] = @from_name unless @from_name.blank?
     opts[:subject] = @expected_subject

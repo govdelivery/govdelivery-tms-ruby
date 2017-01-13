@@ -9,7 +9,9 @@ source 'http://prod-rubygems1-ep.tops.gdi/' do
   gem 'brick'
   gem 'config_spartan', '~>1.0.0'
   gem 'govdelivery-crypt', require: 'govdelivery/crypt'
-  gem 'govdelivery-kahlo'
+  platforms :jruby do
+    gem 'govdelivery-kahlo'
+  end
   gem 'govdelivery-links'
 end
 
@@ -23,7 +25,6 @@ gem 'devise'
 gem 'enumify'
 gem 'faraday'
 gem 'faraday_middleware'
-gem 'jruby-openssl', "=0.9.17"
 gem 'kaminari'
 gem 'log4r'
 gem 'newrelic_rpm'
@@ -66,6 +67,7 @@ end
 platforms :jruby do
   gem 'lock_jar', '>= 0.8.0'
   gem 'trinidad', require: nil
+  gem 'jruby-openssl', "=0.9.17"
 end
 
 group :development, :test do
