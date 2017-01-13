@@ -212,6 +212,7 @@ GEM
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
+    liquid (3.0.6)
     listen (2.7.9)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
@@ -511,6 +512,7 @@ DEPENDENCIES
   json
   json_spec
   kaminari
+  liquid (< 4.0)
   lock_jar (>= 0.8.0)
   log4r
   mechanize

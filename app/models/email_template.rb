@@ -19,6 +19,7 @@ class EmailTemplate < ActiveRecord::Base
   validates :account, presence: true
   validate :user_and_address_belong_to_account
   validate :valid_macros
+  validate :liquid_markup_valid
   validates :open_tracking_enabled, :click_tracking_enabled, inclusion: {in: [true, false]}
   validates :uuid,
             length: {maximum: 128},
@@ -40,6 +41,14 @@ class EmailTemplate < ActiveRecord::Base
 
   def valid_macros
     errors.add(:macros, 'must be a hash or null') unless try(:macros).nil? || macros.is_a?(Hash)
+  end
+
+  def liquid_markup_valid
+    begin
+      template = Liquid::Template.parse(body, :error_mode => :warn)
+    rescue Liquid::SyntaxError => error
+      self.errors.add(:body, 'cannot include invalid Liquid markup')
+    end
   end
 
   def set_uuid

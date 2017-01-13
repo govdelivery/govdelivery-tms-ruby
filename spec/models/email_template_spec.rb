@@ -30,6 +30,16 @@ describe EmailTemplate do
     expect(subject.errors.messages).to include(macros: ['must be a hash or null'])
   end
 
+  it "should validate liquid templates" do
+    expect(subject).to be_valid
+    subject.body = 'Hello {{name }'
+    expect(subject).not_to be_valid
+    expect(subject.errors.messages).to include(body: ['cannot include invalid Liquid markup'])
+
+    subject.body = 'Hello {{name }}'
+    expect(subject).to be_valid
+  end
+
   it 'should validate that user belongs to account' do
     expect(subject).to be_valid
     other_user   = other_account.users.create(email: 'test2@evotest.govdelivery.com', password: 'test_password', uuid: 'testTemplate1')
