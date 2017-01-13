@@ -73,7 +73,7 @@ Then(/^I go to Gmail to check for message delivery$/) do
   passed = false
 
   begin
-    GovDelivery::Proctor.backoff_check(10.minutes, "find message #{@expected_subject}") do
+    GovDelivery::Proctor.steady_check(3.minutes, "find message #{@expected_subject}", 20) do
       # get message
       body, reply_to, errors_to, from_name = get_emails(@expected_subject)
       unless body.nil?
