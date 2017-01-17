@@ -38,20 +38,20 @@ Then(/^The status is updated within (.*) seconds$/) do |timeout|
 
   GovDelivery::Proctor.backoff_check(timeout.to_i.seconds / 2, 'recipient status update') do
     puts "message status: #{@recipient.get.status}".yellow
-    %w{sending sent}.include?(@recipient.status)
+    raise "Unexpected status #{@recipient.status}" unless %w{new sending sent}.include?(@recipient.status)
+    @recipient.status == 'sent'
   end
-  @recipient.status == 'sent'
 end
 
 Then(/^The vendor receives the message and responds with default text$/) do
-  expected_response = @client.keywords.get.collection.detect{|k| k.name == 'default'}.response_text
+  expected_response = @client.keywords.get.collection.detect { |k| k.name == 'default'}.response_text
   GovDelivery::Proctor.backoff_check(30, 'all recipient events') do
     begin
       @messages = @client.inbound_sms_messages.get.collection.detect do |m|
         m.to == @to &&
-        m.from == @from &&
-        m.body == @body &&
-        m.keyword_response == expected_response
+          m.from == @from &&
+          m.body == @body &&
+          m.keyword_response == expected_response
       end
     end
   end
