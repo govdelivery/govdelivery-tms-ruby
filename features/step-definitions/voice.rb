@@ -35,17 +35,12 @@ end
 Then(/^Twilio should have an active call$/) do
   @client = TwilioClientManager.default_client
   calls = []
-  times = 0
 
-  # Not using Proctor because this condition doesn't last long
-  # We want to check for a ringing call consistently and often
-  (1..20).each do |i|
+  GovDelivery::Proctor.steady_check(2.minutes, "looking for ringing call from #{configatron.voice.send_number_formatted}", 20) do
     calls = @client.account.calls.list(start_time: Date.today,
                                        status:     'ringing',
                                        from:       configatron.voice.send_number_formatted)
-    break unless calls.empty?
-    GovDelivery::Proctor.getStandardLogger.info("Still waiting for call to be ringing after #{i} tries")
-    sleep 3
+    !calls.empty?
   end
   @call = calls.first.uri
 end
