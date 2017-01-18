@@ -6,9 +6,9 @@
     paths:
       - .bundle/
   before_script:
-    - rbenv install -s # > /dev/null
-    - (bundle -v || gem install bundler) # > /dev/null
-    - bundle install --local --path .bundle # --without=oracle ? --quiet ?
+    - rbenv install -s > /dev/null
+    - (bundle -v || gem install bundler) > /dev/null
+    - bundle install --local --path .bundle --quiet
 
 # Jobs:
 brakeman:
@@ -27,4 +27,4 @@ bundler_audit:
 rubocop:
   <<: *ruby_job
   script:
-    - bundle exec rubocop -R -fs
+    - bundle exec rubocop --format simple --rails app features spec config bin
