@@ -59,7 +59,7 @@ Examples:
 
 
   Create a new From Address
-    #{__FILE__}  -a 10000 -f ben@thesubstars.com -b bounce@thesubstars.com -n "Ben O" -r replies@thesubstars.com -d
+    #{__FILE__}  -a 10000 -f ben@thesubstars.com -e errors@thesubstars.com -n "Ben O" -r replies@thesubstars.com -d
 
 Options:
       USAGE
@@ -77,11 +77,11 @@ Options:
         @options[:from_address] ||= {}
         @options[:from_address][:from_email] = p
       end
-      opts.on('-b', '--bounce BOUNCEEMAIL', 'Specifies a bounce address to create') do |p|
+      opts.on('-e', '--errors-to ERRORSTO', 'Specifies an errors-to address to create (errors_to and bounce_email are aliases)') do |p|
         @options[:from_address] ||= {}
         @options[:from_address][:bounce_email] = p
       end
-      opts.on('-p', '--reply-to REPLYTOEMAIL', 'Specifies a Reply-To address to create') do |p|
+      opts.on('-r', '--reply-to REPLYTOEMAIL', 'Specifies a Reply-To address to create (reply_to and reply_to_email are aliases)') do |p|
         @options[:from_address] ||= {}
         @options[:from_address][:reply_to_email] = p
       end
