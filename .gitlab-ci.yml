@@ -8,7 +8,7 @@
   before_script:
     - rbenv install -s # > /dev/null
     - (bundle -v || gem install bundler) # > /dev/null
-    - bundle install --local --quiet --path .bundle # --without=oracle ?
+    - bundle install --local --path .bundle # --without=oracle ? --quiet ?
 
 # Jobs:
 brakeman:
