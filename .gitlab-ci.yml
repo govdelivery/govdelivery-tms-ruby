@@ -1,0 +1,31 @@
+# Helpers:
+## Note: Top-level .keys are ignored by GitLab
+.ruby_job: &ruby_job
+  cache:
+    key: bundler
+    paths:
+      - .bundle/
+  before_script:
+    - rbenv install -s > /dev/null
+    - (bundle -v || gem install bundler) > /dev/null
+    - bundle install --local --path .bundle --quiet
+
+# Jobs:
+brakeman:
+  <<: *ruby_job
+  script:
+    - bundle exec brakeman -A -o brakeman.html
+  artifacts:
+    paths:
+      - brakeman.html
+
+bundler_audit:
+  <<: *ruby_job
+  script:
+    - echo 'Ignoring CVE-2015-8314 as we do not use "Remember me" cookies with XACT...'
+    - bundle exec bundle-audit check --update --verbose --ignore CVE-2015-8314
+
+rubocop:
+  <<: *ruby_job
+  script:
+    - bundle exec rubocop --format simple --rails app features spec config bin
