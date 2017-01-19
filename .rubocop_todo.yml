@@ -354,3 +354,7 @@ Style/UnneededCapitalW:
 # Configuration parameters: WordRegex.
 Style/WordArray:
   MinSize: 3
+
+# Offense count: 1
+Rails/FindBy:
+  Enabled: false
