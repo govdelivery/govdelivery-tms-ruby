@@ -52,7 +52,7 @@ accounts:
           id: '11520'
         token: 'ofwhSbrMMgseDkhzAVbzUU9bCHf2PMyf'
         email_address: 'mblox_testing_stage@evotest.govdelivery.com'
-  email_endtoend: configatron.accounts.email_endtoend
+  email_endtoend:
     xact:
       account:
         id: '10940'
@@ -76,9 +76,10 @@ accounts:
       email_address: 'stage-sms_2way_stop-test@govdelivery.com'
   sms_keyword_commands_subscribe:
     xact:
-      account.id: '10941'
-      account.dcm_account_id: 'CUKEAUTO_STAGE'
-      account.dcm_topic_codes: ['CUKEAUTO_STAGE_SMS']
+      account:
+        id: '10941'
+        dcm_account_id: 'CUKEAUTO_STAGE'
+        dcm_topic_codes: ['CUKEAUTO_STAGE_SMS']
       token: '8wtMppgKXQxYAiqgpzF16qAWTp4oEKzZ'
       email_address: 'stage-sms_2way_subscribe-test@govdelivery.com'
 tms:
