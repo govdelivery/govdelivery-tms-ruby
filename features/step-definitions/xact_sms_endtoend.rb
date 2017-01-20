@@ -76,7 +76,7 @@ end
 # MBLOX ==========================
 
 Given(/^I POST a new SMS message to MBLOX$/) do
-  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.mblox.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.mblox.phone.number)
@@ -88,7 +88,7 @@ end
 Then(/^I should receive either a canceled message or a success$/) do
   GovDelivery::Proctor.backoff_check(5.minutes, 'checking for completed recipient status') do
     counts = @message.get.response.body["recipient_counts"]
-    counts && (counts["sent"] == 1 || (evironment != :mbloxproduction && (counts["canceled"] == 1 || counts["failed"] == 1)))
+    counts && (counts["sent"] == 1 || (environment != :production && (counts["canceled"] == 1 || counts["failed"] == 1)))
   end
 end
 

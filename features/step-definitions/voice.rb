@@ -33,7 +33,7 @@ end
 #####################################################
 
 Then(/^Twilio should have an active call$/) do
-  @client = TwilioClientManager.default_client
+  @client = TwilioClientManager.voice_client
   calls = []
 
   GovDelivery::Proctor.steady_check(2.minutes, "looking for ringing call from #{configatron.voice.send_number_formatted}", 20) do
@@ -49,7 +49,7 @@ Then(/^Twilio should complete the call$/) do
   # call to twilio callsid json
   conn = faraday("https://api.twilio.com/#{@call}")
   conn.headers['Content-Type'] = 'application/json'
-  conn.basic_auth(configatron.test_support.twilio.account.sid, configatron.test_support.twilio.account.token)
+  conn.basic_auth(configatron.voice.twilio.account.sid, configatron.voice.twilio.account.token)
 
   GovDelivery::Proctor.accelerating_check(80.seconds, 'should have completed call') do
     JSON.parse(conn.get.body)['status'] == 'completed'

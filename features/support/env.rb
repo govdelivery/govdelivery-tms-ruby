@@ -43,11 +43,7 @@ def environment
     :qc,
     :integration,
     :stage,
-    :prod,
-    :mbloxqc,
-    :mbloxintegration,
-    :mbloxstage,
-    :mbloxproduction
+    :prod
   ]
   env = ENV.key?('XACT_ENV') ? ENV['XACT_ENV'].to_sym : :development
   raise "Unsupported XACT Environment: #{env}" unless environments.include?(env)
@@ -102,10 +98,6 @@ def xact_url
     :integration => "https://int-tms.govdelivery.com",
     :stage => "https://stage-tms.govdelivery.com",
     :prod => "https://tms.govdelivery.com",
-    :mbloxqc => "https://qc-tms.govdelivery.com",
-    :mbloxintegration => "https://int-tms.govdelivery.com",
-    :mbloxstage => "https://stage-tms.govdelivery.com",
-    :mbloxproduction => "https://tms.govdelivery.com"
   }
 
   if(lsite = site)
@@ -160,4 +152,3 @@ def dev_not_live?
 
   !configatron.xact.key?('token')
 end
-

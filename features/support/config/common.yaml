@@ -71,7 +71,23 @@ accounts:
         port:  993
         password: 'govdel01!'
         enable_ssl: true
-  #webhooks:
+  webhooks:
+    magic:
+      email:
+        sending: 'sending@sink.govdelivery.com'
+        sent: 'sent@sink.govdelivery.com'
+        failed: 'failed@sink.govdelivery.com'
+        blacklisted: 'blacklisted@sink.govdelivery.com'
+        inconclusive: 'inconclusive@sink.govdelivery.com'
+        canceled: 'canceled@sink.govdelivery.com'
+      phone:
+        sending: '15005550001'
+        inconclusive: '15005550002'
+        canceled: '15005550003'
+        failed: '15005550004'
+        blacklisted: '15005550005'
+        sent: '15005550006'
+
 
 gmail:
   address: 'xactqctest1@gmail.com'
