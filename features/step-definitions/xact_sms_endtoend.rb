@@ -87,21 +87,8 @@ end
 
 Then(/^I should receive either a canceled message or a success$/) do
   GovDelivery::Proctor.backoff_check(5.minutes, 'checking for completed recipient status') do
-    case ENV['XACT_ENV']
-    when 'mbloxqc', 'mbloxintegration', 'mbloxstage'
-      response_body = @message.get.response.body
-      log.info "got body: #{response_body}"
-      # The status seems to go to sent first, and then failed or cancelled.
-      response_body["recipient_counts"] &&
-        (response_body["recipient_counts"]["canceled"] == 1 ||
-          response_body["recipient_counts"]["failed"] == 1 ||
-          response_body["recipient_counts"]["sent"] == 1
-        )
-    when 'mbloxproduction'
-      response_body = @message.get.response.body
-      log.info "got body: #{response_body}"
-      response_body["recipient_counts"] && response_body["recipient_counts"]["sent"] == 1
-    end
+    counts = @message.get.response.body["recipient_counts"]
+    counts && (counts["sent"] == 1 || (evironment != :mbloxproduction && (counts["canceled"] == 1 || counts["failed"] == 1)))
   end
 end
 
