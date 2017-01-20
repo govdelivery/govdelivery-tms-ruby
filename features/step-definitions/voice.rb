@@ -33,7 +33,7 @@ end
 #####################################################
 
 Then(/^Twilio should have an active call$/) do
-  @client = TwilioClientManager.default_client
+  @client = TwilioClientManager.voice_client
   calls = []
 
   GovDelivery::Proctor.steady_check(2.minutes, "looking for ringing call from #{configatron.voice.send_number_formatted}", 20) do
