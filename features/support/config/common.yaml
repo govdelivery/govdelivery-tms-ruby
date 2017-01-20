@@ -8,8 +8,8 @@ test_support:
       number: '+16122546317'
   twilio:
     phone:
-      number: '+15183004174'
-      sid: 'PN53d0531f78bf8061549b953c6619b753'
+      number: '+19138719228'
+      sid: 'PN737ad7753ece587e2f2f72dd7ba5e459'
     account:
       sid: 'ACa26eb1ef3dc06c86333e4e9833af4c6b'
       token: '1f52e2578c65b9069ee3610d15ff87d7'

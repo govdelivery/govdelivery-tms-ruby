@@ -56,7 +56,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
   payloads        = []
 
   begin
-    GovDelivery::Proctor.backoff_check(10.minutes, 'for the test user to receive the message I sent') do
+    GovDelivery::Proctor.steady_check(10.minutes, 'for the test user to receive the message I sent', 20) do
       payloads = @capi.get(@event_uri)
       payloads['payloads'].any? do |payload_info|
         payload_info['body'] == @expected_message
