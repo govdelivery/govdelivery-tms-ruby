@@ -76,7 +76,7 @@ end
 # MBLOX ==========================
 
 Given(/^I POST a new SMS message to MBLOX$/) do
-  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
+  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.mblox.xact.token)
   @expected_message = message_body_identifier
   message           = client.sms_messages.build(body: @expected_message)
   message.recipients.build(phone: configatron.test_support.mblox.phone.number)
