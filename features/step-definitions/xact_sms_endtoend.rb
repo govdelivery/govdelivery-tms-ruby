@@ -91,9 +91,11 @@ Then(/^I should receive either a canceled message or a success$/) do
     when 'mbloxqc', 'mbloxintegration', 'mbloxstage'
       response_body = @message.get.response.body
       log.info "got body: #{response_body}"
+      # The status seems to go to sent first, and then failed or cancelled.
       response_body["recipient_counts"] &&
         (response_body["recipient_counts"]["canceled"] == 1 ||
-          response_body["recipient_counts"]["failed"] == 1
+          response_body["recipient_counts"]["failed"] == 1 ||
+          response_body["recipient_counts"]["sent"] == 1
         )
     when 'mbloxproduction'
       response_body = @message.get.response.body
