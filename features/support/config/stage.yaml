@@ -5,3 +5,102 @@ sms_vendors:
       id: 11820
       token: VsVqAxhTHuvd3ybtoUd5yVbUAvfax9nZ
 
+voice:
+  send_number: '+16123459610'
+  send_number_formatted: '(612) 345-9610'
+
+test_support:
+  twilio:
+    account:
+      sid: 'ACcc41a7e742457806f26d91a1ea19de9f'
+      token: '331b3a44b5067a3c02013a6cfaa18b1c'
+
+encoded_link_prefix: 'http://stage-links.govdelivery.com:80/track'
+
+evolution:
+  account:
+    email_address: 'autocukestage_sa@evotest.govdelivery.com'
+    password: 'govdel01!'
+  api_url: 'https://stage-api.govdelivery.com/api/account/CUKEAUTO_STAGE/subscribers/'
+
+accounts:
+  sms_keyword_commands_forward_worker:
+    xact:
+      account_id: '10980'
+      token: '7rgp8b3atMtbBV4q2fYCkYfkavdq5asz'
+      email_address: 'stage-sms_2way_cdc-test@govdelivery.com'
+  sms_keyword_commands_static:
+    xact:
+      account_id: '11040'
+      token: '1ToqN9B129KNkaBp8Fy3XJiuDvncnEhp'
+      email_address: 'stage-sms_2way_static-test@govdelivery.com'
+  webhooks:
+    xact:
+      account:
+        id: '11020'
+      token: 'XX298RJyjk5pnLRRDyxaBArz6ocBcCEo'
+      email_address: 'stage-webhooks-test@govdelivery.com'
+  sms_endtoend:
+    xact:
+      account:
+        id: '10942'
+      token: 'zyyyNEf4tTUWqqeYPzQMqkaden8CLnpy'
+      email_address: 'stage-sms_end_to_end-test@govdelivery.com'
+    mblox:
+      xact:
+        account:
+          id: '11520'
+        token: 'ofwhSbrMMgseDkhzAVbzUU9bCHf2PMyf'
+        email_address: 'mblox_testing_stage@evotest.govdelivery.com'
+  email_endtoend: configatron.accounts.email_endtoend
+    xact:
+      account:
+        id: '10940'
+      token: 'aNYMWXsgqeppQyqGFKPqWLenEFBqAWZ5'
+      email_address: 'stage-email_end_to_end-test@govdelivery.com'
+      from_address_two: 'stage-email_end_to_end-test2@govdelivery.com'
+      reply_to_address: 'stageemail_end_to_end-reply@govdelivery.com'
+      reply_to_address_two: 'stageemail_end_to_end-reply2@govdelivery.com'
+      bounce_address: 'stage-email_end_to_end-errors@govdelivery.com'
+      bounce_address_two: 'stage-email_end_to_end-errors2@govdelivery.com'
+    gmail:
+      imap:
+        user_name: 'canari4dd+3@gmail.com'
+  sms_keyword_commands_stop:
+    xact:
+      account_id: '10943'
+      account:
+        dcm_account_id: ['CUKEAUTO_STAGE']
+        dcm_topic_codes: ['CUKEAUTO_STAGE_SMS']
+      token: 'szk9haJyp9t1unyV4o6qpnxxhwSs3s3z'
+      email_address: 'stage-sms_2way_stop-test@govdelivery.com'
+  sms_keyword_commands_subscribe:
+    xact:
+      account.id: '10941'
+      account.dcm_account_id: 'CUKEAUTO_STAGE'
+      account.dcm_topic_codes: ['CUKEAUTO_STAGE_SMS']
+      token: '8wtMppgKXQxYAiqgpzF16qAWTp4oEKzZ'
+      email_address: 'stage-sms_2way_subscribe-test@govdelivery.com'
+tms:
+  account_code: 'CUKEAUTO_STAGE'
+  topic_code: 'CUKEAUTO_STAGE_SMS'
+  from_email: 'cukestage@govdelivery.com'
+  url: 'https://stage-tms.govdelivery.com/accounts'
+  api_root: 'https://stage-tms.govdelivery.com'
+  admin:
+    token: 'Ub7r7CzbzkkSEmF9iVjYSGi98VLgq3qD'
+    id: 10440
+    email: 'cukestage@govdelivery.com'
+  account:
+    id: 10360
+    errors_to: 'cukestage-errors@govdelivery.com'
+  non_admin:
+    token: 'pzYSpUsoFXx6GKX7jzoQbstsMDyb9f6X'
+    id: 11320
+    email: 'cuke-user-stage@evotest.govdelivery.com'
+    account_id: 10360
+  sms:
+    token: 'pt8EuddxvVSnEcSZojYx8TaiDFMCpiz2'
+    id: 11180
+    email: 'sms_testing@evotest.govdelivery.com'
+    account_id: 11060

@@ -5,3 +5,105 @@ sms_vendors:
       id: 10482
       token: mNcobJUyiyEzAyNUxTnoKYVYxjqggRUZ
 
+
+test_support:
+  twilio:
+    account:
+      sid: 'AC189315456a80a4d1d4f82f4a732ad77e'
+      token: '88e3775ad71e487c7c90b848a55a5c88'
+
+voice:
+  send_number: '+16515043056'
+  send_number_formatted: '(651) 504-3056'
+
+encoded_link_prefix: 'http://int-links.govdelivery.com:80'
+
+evolution:
+  account:
+    email_address: 'autocukeint_sa@evotest.govdelivery.com'
+    password: 'govdel01!'
+  api_url: 'https://int-api.govdelivery.com/api/account/CUKEAUTO_INT/subscribers/'
+
+accounts:
+  sms_keyword_commands_forward_worker:
+    xact:
+      account_id: '10280'
+      token: 'suRTbcBqpJ7WiSq6hso5AXUe8rFQA53G'
+      email_address: 'integration-sms_2way_cdc-test@govdelivery.com'
+  sms_keyword_commands_static: configatron.accounts.sms_keyword_commands_static
+    xact:
+      account_id: '10221'
+      token: 'QFKWugoA5x4VaVxZBwqgpfwXivAy18z9'
+      email_address: 'integration-sms_2way_static-test@govdelivery.com'
+  webhooks:
+    xact:
+      account:
+        id: '10220'
+      token: 'pnJRwcsTU59dHiNKFvRC5qZnHTq5F1nU'
+      email_address: 'integration-webhooks-test@govdelivery.com'
+  sms_endtoend:
+    xact:
+      account:
+        id: '10245'
+      token: 'e2pyzcxuEajwEmzQZxgEAQ6yxR5cMDur'
+      email_address: 'integration-sms_end_to_end-test@govdelivery.com'
+    mblox:
+      xact:
+        account:
+          id: '10380'
+        token: 'pveBXxeHhggFKHiVfSNbFEXBKxpbZznD'
+        email_address: 'mblox_testing@evotest.govdelivery.com'
+  email_endtoend:
+    xact:
+      account:
+        id: '10243'
+      token: 'NqSCMTYEewtqNNbMNG7pbs6hZPYy3RyM'
+      email_address: 'integration-email_end_to_end-test@govdelivery.com'
+      from_address_two: 'integration-email_end_to_end-test2@govdelivery.com'
+      reply_to_address: 'integrationemail_end_to_end-reply@govdelivery.com'
+      reply_to_address_two: 'integrationemail_end_to_end-reply2@govdelivery.com'
+      bounce_address: 'integration-email_end_to_end-errors@govdelivery.com'
+      bounce_address_two: 'integration-email_end_to_end-errors2@govdelivery.com'
+    gmail:
+      imap:
+        user_name: 'canari4dd+2@gmail.com'
+  sms_keyword_commands_stop:
+    xact:
+      account_id: '10244'
+      account:
+        dcm_account_id: ['CUKEAUTO_INT']
+        dcm_topic_codes: ['CUKEAUTO_INT_SMS']
+      token: 'UpsxeBZ744xxqyAgZR8yZPZukeciycxr'
+      email_address: 'integration-sms_2way_stop-test@govdelivery.com'
+  sms_keyword_commands_subscribe:
+    xact:
+      account:
+        id: '10244'
+        dcm_account_id: 'CUKEAUTO_INT'
+        dcm_topic_codes: ['CUKEAUTO_INT_SMS']
+      token: 'NqLbTzzWvsCXWNSzJz8yQvJwC8GrGofw'
+      email_address: 'integration-sms_2way_subscribe-test@govdelivery.com'
+tms:
+  account_code: 'CUKEAUTO_INT'
+  topic_code: 'CUKEAUTO_INT_SMS'
+  from_email: 'cukeautoint@govdelivery.com'
+  url: 'https://int-tms.govdelivery.com/accounts'
+  api_root: 'https://int-tms.govdelivery.com'
+  admin:
+    token: 'weppMSnAKp33yi3zuuHdSpN6T2q17yzL'
+    id: 10060
+    email: 'cukeautoint@govdelivery.com'
+  account:
+    id: 10060
+    errors_to: 'cukeautoint-errors@govdelivery.com'
+  non_admin:
+    token: 'qJ71WByLHx53Z296Lpkxs9LcCVU6x2gh'
+    id: 10320
+    email: 'cuke-user-int@evotest.govdelivery.com'
+    account_id: 10060
+  sms:
+    token: 'hycb4FaXB745xxHYEifQNPdXpgrqUtr3'
+    id: 10280
+    email: 'sms_receiver@evotest.govdelivery.com'
+    account_id: 10300
+    from_phone: "+6122556225"
