@@ -88,7 +88,7 @@ end
 Then(/^I should receive either a canceled message or a success$/) do
   GovDelivery::Proctor.backoff_check(5.minutes, 'checking for completed recipient status') do
     counts = @message.get.response.body["recipient_counts"]
-    counts && (counts["sent"] == 1 || (evironment != :mbloxproduction && (counts["canceled"] == 1 || counts["failed"] == 1)))
+    counts && (counts["sent"] == 1 || (environment != :mbloxproduction && (counts["canceled"] == 1 || counts["failed"] == 1)))
   end
 end
 

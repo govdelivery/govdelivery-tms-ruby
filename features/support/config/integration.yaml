@@ -6,15 +6,13 @@ sms_vendors:
       token: mNcobJUyiyEzAyNUxTnoKYVYxjqggRUZ
 
 
-test_support:
-  twilio:
-    account:
-      sid: 'AC189315456a80a4d1d4f82f4a732ad77e'
-      token: '88e3775ad71e487c7c90b848a55a5c88'
-
 voice:
   send_number: '+16515043056'
   send_number_formatted: '(651) 504-3056'
+  twilio:
+    account:
+      sid: 'AC189315456a80a4d1d4f82f4a732ad77e' # this is the voice one?
+      token: '88e3775ad71e487c7c90b848a55a5c88' # this is the voice one?
 
 encoded_link_prefix: 'http://int-links.govdelivery.com:80'
 
@@ -30,7 +28,7 @@ accounts:
       account_id: '10280'
       token: 'suRTbcBqpJ7WiSq6hso5AXUe8rFQA53G'
       email_address: 'integration-sms_2way_cdc-test@govdelivery.com'
-  sms_keyword_commands_static: configatron.accounts.sms_keyword_commands_static
+  sms_keyword_commands_static:
     xact:
       account_id: '10221'
       token: 'QFKWugoA5x4VaVxZBwqgpfwXivAy18z9'

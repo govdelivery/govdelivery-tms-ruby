@@ -8,8 +8,6 @@ sms_vendors:
 voice:
   send_number: '+16123459610'
   send_number_formatted: '(612) 345-9610'
-
-test_support:
   twilio:
     account:
       sid: 'ACcc41a7e742457806f26d91a1ea19de9f'
