@@ -108,3 +108,7 @@ voice:
   recipient:
     number: '+16124679346'
     secondary_number: '+16123145807'
+  twilio:
+    account:
+      sid: 'ACa26eb1ef3dc06c86333e4e9833af4c6b'
+      token: '1f52e2578c65b9069ee3610d15ff87d7'
