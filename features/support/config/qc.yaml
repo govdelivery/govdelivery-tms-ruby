@@ -23,12 +23,12 @@ accounts:
       account_id: '10562'
       token: 'hSAmtjBYz8GsRhzf6Y1fsMSy6VT7YuT5'
       email_address: 'qc-sms_2way_cdc-test@govdelivery.com'
-    sms_keyword_commands_static:
-      xact:
-        account:
-          id: '10521'
-        token: 'LpJjoSXCreAXUQrjrCpL6fGePWrCrsMP'
-        email_address: 'qc-sms_2way_static-test@govdelivery.com'
+  sms_keyword_commands_static:
+    xact:
+      account:
+        id: '10521'
+      token: 'LpJjoSXCreAXUQrjrCpL6fGePWrCrsMP'
+      email_address: 'qc-sms_2way_static-test@govdelivery.com'
   webhooks:
     xact:
       account:
