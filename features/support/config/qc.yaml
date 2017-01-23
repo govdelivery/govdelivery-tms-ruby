@@ -30,10 +30,11 @@ accounts:
         token: 'LpJjoSXCreAXUQrjrCpL6fGePWrCrsMP'
         email_address: 'qc-sms_2way_static-test@govdelivery.com'
   webhooks:
-    account:
-      id: '10520'
-    token: 'i38CvrkGeDypJnijfGz9zd1EUZkzctYg'
-    email_address: 'qc-webhooks-test@govdelivery.com'
+    xact:
+      account:
+        id: '10520'
+      token: 'i38CvrkGeDypJnijfGz9zd1EUZkzctYg'
+      email_address: 'qc-webhooks-test@govdelivery.com'
   sms_endtoend:
     xact:
       account:
