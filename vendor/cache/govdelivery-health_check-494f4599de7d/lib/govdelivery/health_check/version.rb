@@ -1,6 +1,5 @@
 module GovDelivery
   module HealthCheck
-    class Warning < StandardError
-    end
+    VERSION = "0.3.1"
   end
 end

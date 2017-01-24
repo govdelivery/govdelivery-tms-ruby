@@ -11,9 +11,11 @@ GIT
 
 GIT
   remote: http://dev-scm.office.gdi/development/govdelivery-health_check.git
-  revision: 422fb6c742eb5c3137e02e61944979e15906f8c5
+  revision: 494f4599de7d97bef3b9ac5af2183ae185daa8ff
+  ref: v0.3.1
   specs:
-    govdelivery-health_check (0.1.0)
+    govdelivery-health_check (0.3.1)
+      rack (~> 1.6)
 
 GEM
   remote: https://rubygems.org/
