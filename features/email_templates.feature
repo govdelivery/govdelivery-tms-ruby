@@ -1,4 +1,4 @@
-@full-regression @email @template
+@template
 Feature: Interacting with TMS email templates
 
   Background:

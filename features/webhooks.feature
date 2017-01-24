@@ -1,4 +1,4 @@
-@full-regression @webhooks @Test-Support-App
+@webhooks @Test-Support-App
 Feature: XACT Webhooks functionality
 
   Scenario Outline: Invoke the webhook of every recipient event type on voice messages

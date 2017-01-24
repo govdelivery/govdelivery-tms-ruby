@@ -1,4 +1,4 @@
-@full-regression @QC-1976
+@QC-1976
 Feature: Sending SMS messages
 
   @QC-2241

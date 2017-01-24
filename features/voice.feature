@@ -1,4 +1,4 @@
-@full-regression @QC-2237 @voice
+@QC-2237
 Feature: Voice messages
 
   Scenario: TMS create a single voice message to multiple recipients

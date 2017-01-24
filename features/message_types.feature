@@ -1,4 +1,3 @@
-@message_types
 Feature: Interacting with TMS Message Types API.
 
   Background:
