@@ -1,3 +1,5 @@
+require 'gmail'
+
 module Helpy
   def initialize_variables
     Capybara.default_wait_time = 600
@@ -42,13 +44,13 @@ module Helpy
     log.ap response.body
   end
 
-  def get_emails(expected_subject)
-    log.info "Checking Gmail IMAP for subject \"#{expected_subject}\""
-    emails = Mail.find(what: :last, count: 1000, order: :dsc)
-    log.info "Found #{emails.size} emails"
-    log.info "subjects:\n\t#{emails.map(&:subject).join("\n\t")}" if emails.any?
+  # gets from GMail's All Mail folder
+  def get_emails_all(subject)
+    l = "Checking Gmail IMAP for subject \"#{subject}\""
 
-    if (mail = emails.detect { |mail| mail.subject == expected_subject})
+    gmail = Gmail.connect(@conf_gmail.imap.user_name, @conf_gmail.imap.password)
+    emails = gmail.mailbox('All').find(subject: subject)
+    if (mail = emails.detect { |mail| mail.subject == subject })
       [mail.html_part.body.decoded,
        mail.header.fields.detect { |field| field.name == 'Reply-To'}.value,
        mail.header.fields.detect { |field| field.name == 'Errors-To'}.value,
@@ -56,10 +58,8 @@ module Helpy
     else
       nil
     end
-
   rescue => e
-    log.error "Error interacting with Gmail IMAP: #{e.message}"
-    log.error e.backtrace
+    log.error "Error interacting with Gmail IMAP: #{e.message}\n#{e.backtrace}"
   end
 
   def clean_inbox
