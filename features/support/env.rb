@@ -21,10 +21,6 @@ require 'rubygems'
 require 'uri'
 require 'twilio-ruby'
 
-
-OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-
-
 Capybara.default_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
   options = {
