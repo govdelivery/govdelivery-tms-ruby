@@ -74,6 +74,7 @@ module Helpy
 
   def test_link(link_url, expected, expected_prefix)
     Mechanize.new do |agent|
+      agent.agent.http.reuse_ssl_sessions = false
       agent.user_agent_alias = 'Mac Safari'
       agent.redirect_ok      = true
     end.get(link_url) do |page| # retrieve link_url from agent
