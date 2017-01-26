@@ -34,7 +34,7 @@ class IMAPCleaner
     imap = Net::IMAP.new(server, port, use_ssl)
     imap.login(username, password)
     imap.select('INBOX')
-    imap.search(['ALL']).map do |message_id|
+    imap.search(["BEFORE #{2.days.ago.strftime("%e-%b-%Y")}"]).map do |message_id|
       imap.fetch(message_id, 'ENVELOPE')[0].attr['ENVELOPE']
       imap.store(message_id, '+FLAGS', [:Deleted])
     end
