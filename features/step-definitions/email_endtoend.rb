@@ -73,9 +73,9 @@ Then(/^I go to Gmail to check for message delivery$/) do
   passed = false
 
   begin
-    GovDelivery::Proctor.steady_check(3.minutes, "find message #{@expected_subject}", 20) do
+    GovDelivery::Proctor.steady_check(3.minutes, "find message #{@expected_subject}") do
       # get message
-      body, reply_to, errors_to, from_name = get_emails(@expected_subject)
+      body, reply_to, errors_to, from_name = get_emails_all(@expected_subject)
       unless body.nil?
         # validate from address information
         raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && (reply_to != @expected_reply_to)

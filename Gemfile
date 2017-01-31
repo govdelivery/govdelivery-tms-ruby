@@ -82,6 +82,7 @@ group :development, :test do
   gem 'colored'
   gem 'cucumber'
   gem 'factory_girl_rails'
+  gem 'gmail'
   gem 'guard-rspec'
   gem 'highline' # for brakeman
   gem 'httpi', '2.1.0'
