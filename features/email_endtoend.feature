@@ -1,6 +1,6 @@
 Feature: XACT API PROD STAGE INT Email end to end tests.
 
-  @QC-2239 @Dev-Safety @patching
+  @QC-2239 @Dev-Safety @patching @smoke
   Scenario: End to End email test for all environments.
     Given A non-admin user
     When I POST a new EMAIL message to TMS

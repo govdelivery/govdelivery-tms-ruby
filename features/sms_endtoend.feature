@@ -1,3 +1,4 @@
+@smoke
 Feature: XACT SMS end to end tests.
 
   @XACT-390 @twilio @Test-Support-App
