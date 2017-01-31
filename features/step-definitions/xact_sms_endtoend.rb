@@ -63,7 +63,7 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
       end
     end
   rescue
-    msg = "Message I sent: '#{condition}'\n"
+    msg = "Message I sent: #{@expected_message}\n"
     msg += "Message URL: #{configatron.xact.url + @message.href}\n"
     msg += "Test user callback URL: #{@sms_receiver_full_uri}\n"
     msg += "Payloads the test user received: #{JSON.pretty_generate(payloads)}"
