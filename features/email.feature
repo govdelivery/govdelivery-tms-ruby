@@ -54,7 +54,6 @@ Feature: Tests around sending emails
     And I send the email
     Then the response should have no errors
 
-  @message_types
   Scenario: New EMAIL message with message_type_code in the message
     Given I create an email
     When I set the message_type_code to 'test_message_code'
