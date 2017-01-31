@@ -15,7 +15,11 @@ module Analytics
       # http://dev-scm.office.gdi/analytics/jakety_jak/blob/master/lib/jakety_jak/publisher.rb#L15
       stringified_message = {}
       message.each do |key, value|
-        stringified_message[key.to_s] = value.to_s
+        stringified_message[key.to_s] = if value.is_a? Time
+          value.to_s
+        else
+          value
+        end
       end
       publisher.publishJSON(channel, stringified_message)
     rescue Timeout::Error => e

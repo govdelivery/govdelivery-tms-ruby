@@ -56,8 +56,9 @@ describe Analytics::PublisherWorker do
     end
 
     it 'should add src, stringify, and publish' do
-      message   = {foo: 3}
-      expected  = {'foo' => '3', 'src' => 'xact'}
+      updated_at = Time.now
+      message   = {foo: 3, updated_at: updated_at }
+      expected  = {'foo' => 3, 'src' => 'xact', 'updated_at' => updated_at.to_s }
       publisher = stub
       publisher.expects(:publishJSON).with('donkey', expected)
       subject.expects(:publisher).returns(publisher)
