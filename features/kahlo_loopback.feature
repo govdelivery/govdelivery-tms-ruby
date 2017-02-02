@@ -1,4 +1,4 @@
-@full-regression @sms @kahlo
+@kahlo
 Feature: XACT Kahlo loopback tests.
 
   @webhooks
@@ -12,4 +12,3 @@ Feature: XACT Kahlo loopback tests.
     Given A kahlo vendor account
     When "+16125554321" sends an SMS "mos def" and a timestamp to Kahlo loopback
     Then The vendor receives the message and responds with default text
-

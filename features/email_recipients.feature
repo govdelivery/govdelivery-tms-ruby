@@ -1,4 +1,4 @@
-@full-regression @email @QC-2239
+@QC-2239
 Feature: Validate interaction with recipeints
 
   Scenario: TMS admin verify that from addresses can be listed and read

@@ -1,4 +1,4 @@
-@end-to-end @twilio @voice
+@twilio
 Feature: XACT Voice end to end test.
 
   Scenario: Create a voice message and send it

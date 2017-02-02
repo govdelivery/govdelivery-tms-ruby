@@ -1,4 +1,3 @@
-@full-regression @sms
 Feature: As a user, if I set up a keyword with a command, that command works.
 
   @2waysubscribe @keyword
