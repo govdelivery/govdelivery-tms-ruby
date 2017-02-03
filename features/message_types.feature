@@ -30,13 +30,6 @@ Feature: Interacting with TMS Message Types API.
     And I list message types
     Then the listing should not include a message type with code prefix 'delete_message_type_testing'
 
-  Scenario: Delete a message type after adding it to a template
-    Given an email template exists with a message_type_code 'delete_template_message_type'
-    When I delete the message type with code prefix 'delete_template_message_type'
-    And I get the email template
-    Then the response should not contain a message_type_code
-    And the response should not contain a link to the message type
-
   Scenario: Delete a message type after adding it to a message
     Given an email message exists with a message_type_code 'delete_template_message_type'
     Then that message type cannot be deleted
