@@ -66,7 +66,3 @@ end
 Then(/^the listing should not include a message type with code prefix '(.*)'$/) do |prefix|
   expect(@message_type_list.collection.select { |mt| mt.code && mt.code.start_with?(prefix) }).to be_empty
 end
-
-Then(/^the message type should have an error$/) do
-  raise "message type did not have errors".red if @message_type.errors.try(:empty?)
-end
