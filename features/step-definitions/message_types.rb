@@ -82,5 +82,5 @@ def get_all_codes(page)
     page = page.next.get
   end
 
-  return all_codes
+  all_codes
 end
