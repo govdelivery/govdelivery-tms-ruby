@@ -50,7 +50,9 @@ When(/^I list message types$/) do
 end
 
 Then(/^the listing should include a message type with code '(.*)'$/) do |code|
-  expect(@message_type_list.collection.select { |mt| mt.code && mt.code == code }).to_not be_empty
+  all_codes = get_all_codes(@message_type_list)
+
+  expect(all_codes).to include(code)
 end
 
 Then(/^that message type cannot be deleted$/) do
@@ -64,5 +66,21 @@ When(/^I delete the message type with code prefix '(.*)'$/) do |prefix|
 end
 
 Then(/^the listing should not include a message type with code prefix '(.*)'$/) do |prefix|
-  expect(@message_type_list.collection.select { |mt| mt.code && mt.code.start_with?(prefix) }).to be_empty
+  all_codes = get_all_codes(@message_type_list)
+
+  expect(all_codes.select { |code| code.start_with?(prefix) } ).to be_empty
+end
+
+def get_all_codes(page)
+  all_codes = []
+
+  loop do
+    page.collection.each do |mt|
+      all_codes << mt.code
+    end
+    break if !page.respond_to?(:next)
+    page = page.next.get
+  end
+
+  return all_codes
 end
