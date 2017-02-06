@@ -103,6 +103,7 @@ group :development, :test do
   gem 'pry-remote'
   gem 'pry-nav'
   gem 'bundler-audit'
+  gem 'parallel_tests', '~>2.9.0'
 end
 
 group :test do

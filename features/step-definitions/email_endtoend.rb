@@ -18,9 +18,6 @@ end
 
 Given(/An admin user/) do
   initialize_variables
-  unless (@conf_xact.token = ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'])
-    raise "ENV['XACT_EMAILENDTOEND_ADMIN_TOKEN'] is not set"
-  end
 end
 
 When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
