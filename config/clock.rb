@@ -39,19 +39,4 @@ module Clockwork
   ['**:00', '**:30'].each do |time|
     every(1.hour, 'Messages::CheckMessagesForCompletion', at: time)
   end
-
-  begin
-    raise 'Rails.configuration.custom_report_account_id not set' unless Rails.configuration.custom_report_account_id
-    ten_after_top_of_hour = (0..23).map { |hh| "#{hh}:10" }
-
-    every(1.day, 'GeckboardTwelveHourSubjectSends', at: ten_after_top_of_hour) {Geckoboard::PeriodicReporting.perform_async('TwelveHourSubjectSends', '12h_subject_sends') }
-    every(1.day, 'GeckboardOneDaySends', at: ten_after_top_of_hour) {Geckoboard::PeriodicReporting.perform_async('OneDaySends', '24h_sends') }
-    every(5.minutes, 'GeckboardThirtyMinuteSends') {Geckoboard::PeriodicReporting.perform_async('ThirtyMinuteSends', '30m_sends') }
-    every(5.minutes, 'GeckboardThirtyMinuteSubjectSends') {Geckoboard::PeriodicReporting.perform_async('ThirtyMinuteSubjectSends', '30m_subject_sends') }
-    every(1.day, 'GeckboardReporting', at: ten_after_top_of_hour) {Geckoboard::PeriodicReporting.perform_async('Reporting', 'reporting', 'CREATED_AT') }
-    every(1.day, 'GeckboardClicksReporting', at: ten_after_top_of_hour) {Geckoboard::PeriodicReporting.perform_async('EventsReporting', 'clicks_reporting', 'clicks') }
-    every(1.day, 'GeckboardOpensReporting', at: ten_after_top_of_hour) {Geckoboard::PeriodicReporting.perform_async('EventsReporting', 'opens_reporting', 'opens') }
-  rescue => e
-    Rails.logger.warn("Not scheduling custom reporting jobs: #{e}")
-  end
 end
