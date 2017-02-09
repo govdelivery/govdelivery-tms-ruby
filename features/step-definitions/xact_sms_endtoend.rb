@@ -71,27 +71,6 @@ Then(/^I should be able to identify my unique message is among all SMS messages$
   end
 end
 
-# MBLOX start=====================
-# MBLOX ==========================
-# MBLOX ==========================
-
-Given(/^I POST a new SMS message to MBLOX$/) do
-  client            = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.mblox.xact.token)
-  @expected_message = message_body_identifier
-  message           = client.sms_messages.build(body: @expected_message)
-  message.recipients.build(phone: configatron.test_support.mblox.phone.number)
-  log.info configatron.test_support.mblox.phone.number
-  message.post!
-  @message = message
-end
-
-Then(/^I should receive either a canceled message or a success$/) do
-  GovDelivery::Proctor.backoff_check(5.minutes, 'checking for completed recipient status') do
-    counts = @message.get.response.body["recipient_counts"]
-    counts && (counts["sent"] == 1 || (environment != :production && (counts["canceled"] == 1 || counts["failed"] == 1)))
-  end
-end
-
 Given(/^I create a new sms template with "(.*)" uuid$/) do |uuid|
   @template = TmsClientManager.non_admin_client.sms_templates.build(body: message_body_identifier, uuid: uuid)
   @template.post!

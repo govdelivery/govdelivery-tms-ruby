@@ -45,12 +45,6 @@ accounts:
         id: '10245'
       token: 'e2pyzcxuEajwEmzQZxgEAQ6yxR5cMDur'
       email_address: 'integration-sms_end_to_end-test@govdelivery.com'
-    mblox:
-      xact:
-        account:
-          id: '10380'
-        token: 'pveBXxeHhggFKHiVfSNbFEXBKxpbZznD'
-        email_address: 'mblox_testing@evotest.govdelivery.com'
   email_endtoend:
     xact:
       account:
