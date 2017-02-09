@@ -15,8 +15,3 @@ Feature: XACT SMS end to end tests.
     When I POST a new blank SMS message to TMS
     And I wait for a response from twilio
     Then I should be able to identify my unique message is among all SMS messages
-
-  @mblox
-  Scenario: End to End sms test for mblox for all environments.
-    When I POST a new SMS message to MBLOX
-    Then I should receive either a canceled message or a success

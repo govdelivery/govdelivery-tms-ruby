@@ -3,9 +3,6 @@ sample_subscriber_number: '+16122236629'
 test_support:
   twilio_xact_test_number: '+17014842689'
   twilio_xact_test_number_2: '+17014842689'
-  mblox:
-    phone:
-      number: '+16122546317'
   twilio:
     phone:
       number: '+19138719228'

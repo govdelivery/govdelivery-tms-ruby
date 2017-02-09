@@ -44,12 +44,6 @@ accounts:
         id: '10942'
       token: 'zyyyNEf4tTUWqqeYPzQMqkaden8CLnpy'
       email_address: 'stage-sms_end_to_end-test@govdelivery.com'
-    mblox:
-      xact:
-        account:
-          id: '11520'
-        token: 'ofwhSbrMMgseDkhzAVbzUU9bCHf2PMyf'
-        email_address: 'mblox_testing_stage@evotest.govdelivery.com'
   email_endtoend:
     xact:
       account:

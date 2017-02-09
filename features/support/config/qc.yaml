@@ -41,12 +41,6 @@ accounts:
         id: '10524'
       token: 'YbYQcoszgtoyVwVRHzf8J5nq4GxDff9J'
       email_address: 'qc-sms_end_to_end-test@govdelivery.com'
-    mblox:
-      xact:
-        account:
-          id: '10740'
-        token: 'Us5n21TWaEPmGnPKKpXSzhpfJcmGoqNB'
-        email_address: 'mblox_testing@evotest.govdelivery.com'
   email_endtoend:
     dc3:
       xact:
