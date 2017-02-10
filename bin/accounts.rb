@@ -84,7 +84,7 @@ USAGE
       opts.on('-z', '--errors_to [ERRORSTO]', 'The default errors-to email address for this account.  Defaults to the default from address if not supplied.') do |p|
         @options[:account_errors_to] = p
       end
-       opts.on('-y', '--from-name FROMNAME', 'Specifies a From Name to create for your default from address') do |p|
+      opts.on('-y', '--from-name FROMNAME', 'Specifies a From Name to create for your default from address') do |p|
         @options[:from_name] = p
       end
       opts.on('-L', '--link_tracking_parameters [TRACKINGPARAMS]', 'Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.') do |p|
