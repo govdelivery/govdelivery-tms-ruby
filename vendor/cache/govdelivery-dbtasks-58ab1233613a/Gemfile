@@ -1,9 +1,0 @@
-source 'https://rubygems.org'
-
-# Specify your gem's dependencies in govdelivery-dbtasks.gemspec
-gemspec
-
-gem "appraisal"
-platform :ruby do
-  gem 'ruby-oci8'
-end

@@ -1,15 +1,4 @@
 GIT
-  remote: http://dev-scm.office.gdi/development/govdelivery-dbtasks.git
-  revision: 58ab1233613aaf1f3f960440a3984a298966969a
-  ref: v0.4.5
-  specs:
-    govdelivery-dbtasks (0.4.4)
-      activerecord (~> 4.0)
-      activerecord-oracle_enhanced-adapter
-      activesupport (~> 4.0)
-      ruby-plsql
-
-GIT
   remote: http://dev-scm.office.gdi/development/govdelivery-health_check.git
   revision: 494f4599de7d97bef3b9ac5af2183ae185daa8ff
   ref: v0.3.1
@@ -173,6 +162,11 @@ GEM
       oauth (>= 0.3.6)
     govdelivery-crypt (0.2.1)
       activesupport
+    govdelivery-dbtasks (0.4.8)
+      activerecord (~> 4.0)
+      activerecord-oracle_enhanced-adapter
+      activesupport (~> 4.0)
+      ruby-plsql
     govdelivery-kahlo (0.11.0)
       global_phone
       govdelivery-synapse (~> 0.11.0)
@@ -511,7 +505,7 @@ DEPENDENCIES
   faraday_middleware
   gmail
   govdelivery-crypt!
-  govdelivery-dbtasks!
+  govdelivery-dbtasks (= 0.4.8)
   govdelivery-health_check!
   govdelivery-kahlo!
   govdelivery-links!

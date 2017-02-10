@@ -57,7 +57,7 @@ gem 'validate_url'
 
 gem 'attr_encrypted', '=1.4.0'
 
-gem 'govdelivery-dbtasks', git: 'http://dev-scm.office.gdi/development/govdelivery-dbtasks.git', ref: 'v0.4.5' #this needs to come after oracle_enhanced
+gem 'govdelivery-dbtasks', '=0.4.8' #this needs to come after oracle_enhanced
 gem 'govdelivery-health_check', git: 'http://dev-scm.office.gdi/development/govdelivery-health_check.git', ref: 'v0.3.1'
 
 platforms :ruby do
