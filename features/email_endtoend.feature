@@ -18,12 +18,6 @@ Feature: XACT API PROD STAGE INT Email end to end tests.
     When I POST a new EMAIL message to TMS with long macro replacements
     Then I go to Gmail to check for message delivery
 
-  @XACT-698 @pending
-  Scenario: admin sends using random from address
-    Given An admin user
-    When I POST a new EMAIL message to TMS using a random from address
-    Then I go to Gmail to check for message delivery
-
   @XACT-758
   Scenario: End to End email using from address with from name overriding from name
     Given A non-admin user

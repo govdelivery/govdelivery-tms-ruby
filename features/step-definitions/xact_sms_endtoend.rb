@@ -35,18 +35,6 @@ Given(/^I POST a new SMS message to TMS$/) do
   @message = message
 end
 
-Given(/^I POST a new blank SMS message to TMS$/) do
-  next if dev_not_live?
-
-  client = TmsClientManager.from_configatron(configatron.accounts.sms_endtoend.xact.token)
-  @expected_message = message_body_identifier
-  message           = client.sms_messages.build
-  message.recipients.build(phone: configatron.test_support.twilio.phone.number)
-  log.info configatron.test_support.twilio.phone.number
-  message.post!
-  @message = message
-end
-
 When(/^I wait for a response from twilio$/) do
   next if dev_not_live?
 end

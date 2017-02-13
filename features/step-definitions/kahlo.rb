@@ -19,7 +19,7 @@ When(/^"(.*)" sends an SMS "(.*)" and a timestamp to Kahlo loopback$/) do |sende
              from: sender,
              body: @body}
 
-  puts "Mocking inbound text ''#{payload}'' to #{configatron.kahlo.url}".yellow
+  log.info "Mocking inbound text ''#{payload}'' to #{configatron.kahlo.url}"
   resp = faraday(configatron.kahlo.url).post do |req|
     req.url '/incoming/loopback'
     req.body = payload
@@ -37,7 +37,7 @@ Then(/^The status is updated within (.*) seconds$/) do |timeout|
   end
 
   GovDelivery::Proctor.backoff_check(timeout.to_i.seconds / 2, 'recipient status update') do
-    puts "message status: #{@recipient.get.status}".yellow
+    log.info "message status: #{@recipient.get.status}"
     raise "Unexpected status #{@recipient.status}" unless %w{new sending sent}.include?(@recipient.status)
     @recipient.status == 'sent'
   end

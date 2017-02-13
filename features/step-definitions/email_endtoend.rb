@@ -16,10 +16,6 @@ Given(/A non-admin user/) do
   initialize_variables
 end
 
-Given(/An admin user/) do
-  initialize_variables
-end
-
 When(/^I POST a new EMAIL message to TMS using a non-default from address$/) do
   @expected_reply_to = @conf_xact.reply_to_address_two
   @expected_errors_to = @conf_xact.bounce_address_two
@@ -45,12 +41,6 @@ When(/^I POST a new EMAIL message to TMS with a from_address with '(.*)' as the 
   @expected_from_name = nil_from_name ? "#{from_address.from_email}" : "#{from_address.from_name} <#{from_address.from_email}>"
 
   post_message from_email: from_address.from_email
-end
-
-When(/^I POST a new EMAIL message to TMS using a random from address$/) do
-  @expected_reply_to = "product-noexist@evotest.govdelivery.com"
-  @expected_errors_to = "product-noexist@evotest.govdelivery.com"
-  post_message from_email: "product-noexist@evotest.govdelivery.com"
 end
 
 When(/^I POST a new EMAIL message to TMS with long macro replacements$/) do

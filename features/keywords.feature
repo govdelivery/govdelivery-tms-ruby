@@ -26,7 +26,7 @@ Feature: Interacting with TMS keywords
     When I create a new unsubscribe keyword and command
     Then I should be able to delete the unsubscribe keyword
 
-  @QC-2452 @keyword
+  @QC-2452
   Scenario: TMS creating and deleting Subscribe commands for a Keyword when the account is invalid.
     When I create a keyword and command with an invalid account code
     Then I should receive the error "Dcm account code is not a valid code" in the "params" payload
