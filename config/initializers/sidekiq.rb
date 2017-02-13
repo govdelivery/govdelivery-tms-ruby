@@ -26,8 +26,10 @@ Sidekiq.configure_server do |config|
   config.reliable_fetch!
 
   config.redis                 = default.merge(Xact::Application.config.sidekiq[:server])
-  config.options[:concurrency] = 30
-  config.options[:queues]      = %w(sender recipient default webhook stats low)
+  # Here are some reasonable defaults for concurrency and queue assignments, but for added flexibility
+  # these can also be defined in puppet-private
+  config.options[:concurrency] = Conf.try(:sidekiq_concurrency) || 30
+  config.options[:queues]      = Conf.try(:sidekiq_queues) || %w(sender recipient default webhook stats low)
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
   end
