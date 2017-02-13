@@ -78,17 +78,20 @@ USAGE
       opts.on('-f', '--from_address [FROMADDRESS]', 'The default from address for this account; required if there is an email vendor.') do |p|
         @options[:account_from_address] = p
       end
-      opts.on('-o', '--from_number [FROMNUMBER]', 'The default from number for this account; required if there is a voice vendor.') do |p|
-        @options[:account_from_number] = p
-      end
       opts.on('-r', '--reply_to [REPLYTO]', 'The default reply-to email address for this account.  Defaults to the default from address if not supplied.') do |p|
         @options[:account_reply_to] = p
       end
       opts.on('-z', '--errors_to [ERRORSTO]', 'The default errors-to email address for this account.  Defaults to the default from address if not supplied.') do |p|
         @options[:account_errors_to] = p
       end
+      opts.on('-y', '--from-name FROMNAME', 'Specifies a From Name to create for your default from address') do |p|
+        @options[:from_name] = p
+      end
       opts.on('-L', '--link_tracking_parameters [TRACKINGPARAMS]', 'Link tracking parameters that will be appended to links emailed via the account.  Defaults to nothing if not supplied.') do |p|
         @options[:account_link_tracking_parameters] = p
+      end
+      opts.on('-o', '--from_number [FROMNUMBER]', 'The default from number for this account; required if there is a voice vendor.') do |p|
+        @options[:account_from_number] = p
       end
       opts.on('-p', '--help_text [HELP_TEXT]', 'Optional, defaults to sms vendor help text') do |p|
         @options[:help_text] = p
@@ -134,9 +137,12 @@ USAGE
     a.sms_prefixes.build(prefix: @options[:sms_prefix]) if @options[:sms_prefix]
 
     if @options[:account_from_address]
+      @options[:account_reply_to] ||= @options[:account_from_address]
+      @options[:account_errors_to] ||= @options[:account_from_address]      
       a.from_addresses.build(from_email: @options[:account_from_address],
                              reply_to: @options[:account_reply_to],
                              errors_to: @options[:account_errors_to],
+                             from_name: @options[:from_name],
                              is_default: true)
     end
 

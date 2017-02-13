@@ -4,11 +4,11 @@ require 'csv'
 
 class FromAddressManager
   def list(from_addresses)
-    fields = [:id, :created_at, :from_email, :bounce_email, :errors_to, :reply_to, :reply_to_email, :is_default]
-    out fields.map { |f| f.to_s.ljust(25)}.join("\t")
+    fields = [:id, :created_at, :from_email, :bounce_email, :reply_to_email, :from_name, :is_default]
+    out fields.map { |f| f.to_s.ljust(25)}.join("\t\t")
     out '=' * 220
     from_addresses.map do |fa|
-      out fields.map { |f| fa.send(f).to_s.ljust(30)}.join("\t")
+      out fields.map { |f| fa.send(f).to_s.ljust(30)}.join("\t\t")
     end
     out '=' * 220
   end
@@ -51,15 +51,15 @@ Usage:
 
 Examples:
 
-  List All From Addresses
+  List all From Addresses for an account
     #{__FILE__} -l -a 10040
 
-  Delete All From Addresses
+  Delete all From Addresses for an account
     #{__FILE__} -D -a 10040
 
 
   Create a new From Address
-    #{__FILE__}  -a 10000 -f ben@thesubstars.com -b bounce@thesubstars.com -e errors@thesubstars.com -p "Ben O" -r replies@thesubstars.com -t
+    #{__FILE__}  -a 10000 -f ben@thesubstars.com -e errors@thesubstars.com -n "Ben O" -p replies@thesubstars.com -d
 
 Options:
       USAGE
@@ -77,15 +77,19 @@ Options:
         @options[:from_address] ||= {}
         @options[:from_address][:from_email] = p
       end
-      opts.on('-e', '--errors-to ERRORSTO', 'Specifies an errors-to address to create') do |p|
+      opts.on('-e', '--errors-to ERRORSTO', 'Specifies an errors-to address to create (errors_to and bounce_email are aliases)') do |p|
         @options[:from_address] ||= {}
-        @options[:from_address][:errors_to] = p
+        @options[:from_address][:bounce_email] = p
       end
-      opts.on('-p', '--reply-to REPLYTONAME', 'Specifies a Reply-To name to create') do |p|
+      opts.on('-p', '--reply-to REPLYTOEMAIL', 'Specifies a Reply-To address to create (reply_to and reply_to_email are aliases)') do |p|
         @options[:from_address] ||= {}
-        @options[:from_address][:reply_to] = p
+        @options[:from_address][:reply_to_email] = p
       end
-      opts.on('-t', '--default', 'Specifies a Reply-To address to create') do |_p|
+      opts.on('-n', '--from-name FROMNAME', 'Specifies a From Name to create') do |p|
+        @options[:from_address] ||= {}
+        @options[:from_address][:from_name] = p
+      end
+      opts.on('-d', '--default', 'Sets this from address as the account default') do |_p|
         @options[:from_address] ||= {}
         @options[:from_address][:is_default] = true
       end
