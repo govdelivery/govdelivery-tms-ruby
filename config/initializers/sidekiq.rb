@@ -21,15 +21,21 @@ class Sidekiq::Middleware::Server::LogAllTheThings
   end
 end
 
+if Socket.gethostname.match(/bg[12]/) # concurrency and queue config based on RUN-4796
+  concurrency = 10
+  queues = %w(webhook default stats low)
+else # bg3,bg4 in lower envs, bg3-6 in prod.
+  concurrency = 20
+  queues = %w(sender recipient)
+end
+
 Sidekiq.configure_server do |config|
 
   config.reliable_fetch!
 
   config.redis                 = default.merge(Xact::Application.config.sidekiq[:server])
-  # Here are some reasonable defaults for concurrency and queue assignments, but for added flexibility
-  # these can also be defined in puppet-private
-  config.options[:concurrency] = Conf.try(:sidekiq_concurrency) || 30
-  config.options[:queues]      = Conf.try(:sidekiq_queues) || %w(sender recipient default webhook stats low)
+  config.options[:concurrency] = concurrency
+  config.options[:queues]      = queues
   config.server_middleware do |chain|
     chain.add Sidekiq::Middleware::Server::LogAllTheThings, Rails.logger
   end
