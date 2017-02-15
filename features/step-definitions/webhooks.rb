@@ -5,7 +5,6 @@
 
 Given(/^a random event_type/) do
   @event_type = %w(
-    event_type
     sending
     sent
     failed
