@@ -3,10 +3,23 @@
 # Given
 #####################################################
 
-Given(/^a callback url exists for (.*)$/) do |event_type|
-  @event_callback_uri = @capi.create_callback_uri(:recipient_status, event_type)
+Given(/^a random event_type/) do
+  @event_type = %w(
+    event_type
+    sending
+    sent
+    failed
+    blacklisted
+    inconclusive
+    canceled
+  ).sample
+end
+
+
+Given(/^a callback url exists for the event_type$/) do
+  @event_callback_uri = @capi.create_callback_uri(:recipient_status, @event_type)
   @client = TmsClientManager.from_configatron(configatron.accounts.webhooks.xact.token)
-  webhook = @client.webhooks.build(url: @capi.callback_domain + @event_callback_uri, event_type: event_type)
+  webhook = @client.webhooks.build(url: @capi.callback_domain + @event_callback_uri, event_type: @event_type)
   webhook.post!
   @webhooks << webhook
 end
@@ -15,22 +28,22 @@ end
 # When
 #####################################################
 
-When(/^I send a voice message to magic address for event (.*)$/) do |event|
-  phone = configatron.accounts.webhooks.magic.phone[event]
+When(/^I send a voice message to magic address for the event_type$/) do
+  phone = configatron.accounts.webhooks.magic.phone[@event_type]
   @message = @client.voice_messages.build(play_url: 'http://www.webhooks-testing.com')
   @message.recipients.build(phone: phone)
   @message.post!
 end
 
-When(/^I send an sms message to magic address for event (.*)$/) do |event|
-  phone = configatron.accounts.webhooks.magic.phone[event]
+When(/^I send an sms message to magic address for the event_type$/) do
+  phone = configatron.accounts.webhooks.magic.phone[@event_type]
   @message = @client.sms_messages.build(body: 'Webhooks Testing')
   @message.recipients.build(phone: phone)
   @message.post!
 end
 
-When(/^I send an email message to magic address for event (.*)$/) do |event|
-  email = configatron.accounts.webhooks.magic.email[event]
+When(/^I send an email message to magic address for the event_type$/) do
+  email = configatron.accounts.webhooks.magic.email[@event_type]
   @message = @client.email_messages.build(body: 'Webhooks Testing', subject: "webhook test #{environment} - #{Time.now}")
   @message.recipients.build(email: email)
   @message.post!
@@ -46,11 +59,11 @@ When(/^I wait for the message recipients to be built$/) do
   end
 end
 
-When(/^I wait for the recipient to have an event status of (.*)/) do |status_type|
+When(/^I wait for the recipient to have an event status of the event_type/) do
   @recipient = @message.recipients.collection.first
   GovDelivery::Proctor.backoff_check(1.minute, 'arrive at expected status') do
     @recipient.get
-    status_type == @recipient.attributes[:status]
+    @event_type == @recipient.attributes[:status]
   end
 end
 
