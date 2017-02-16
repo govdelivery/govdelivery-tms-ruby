@@ -60,17 +60,6 @@ Then(/^that message type cannot be deleted$/) do
   raise "message type did not have errors".red if @message_type.errors.try(:empty?)
 end
 
-When(/^I delete the message type with code prefix '(.*)'$/) do |prefix|
-  @message_type.delete
-  raise "message type was not deleted".red unless @message_type.response.status == 204
-end
-
-Then(/^the listing should not include a message type with code prefix '(.*)'$/) do |prefix|
-  all_codes = get_all_codes(@message_type_list)
-
-  expect(all_codes.select { |code| code.start_with?(prefix) } ).to be_empty
-end
-
 def get_all_codes(page)
   all_codes = []
 

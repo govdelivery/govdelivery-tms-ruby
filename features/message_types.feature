@@ -24,12 +24,6 @@ Feature: Interacting with TMS Message Types API.
     When I list message types
     Then the listing should include a message type with code 'listing_message_type_testing'
 
-  Scenario: Delete a message type
-    Given a message type exists with code prefix 'delete_message_type_testing'
-    When I delete the message type with code prefix 'delete_message_type_testing'
-    And I list message types
-    Then the listing should not include a message type with code prefix 'delete_message_type_testing'
-
   Scenario: Delete a message type after adding it to a message
     Given an email message exists with a message_type_code 'delete_template_message_type'
     Then that message type cannot be deleted
