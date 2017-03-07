@@ -62,12 +62,14 @@ Then(/^I go to Gmail to check for message delivery$/) do
   begin
     GovDelivery::Proctor.steady_check(3.minutes, "find message #{@expected_subject}") do
       # get message
-      body, reply_to, errors_to, from_name = get_emails_all(@expected_subject)
-      unless body.nil?
+      message = get_emails_all(@expected_subject)
+      unless message.nil? || !message.is_a?(Array)
+        body, reply_to, errors_to, from_name = message
+
         # validate from address information
-        raise "Expected Reply-To of #{@expected_reply_to} but got #{reply_to}" if @expected_reply_to && (reply_to != @expected_reply_to)
-        raise "Expected Errors-To of #{@expected_errors_to} but got #{errors_to}" if @expected_errors_to && (errors_to != @expected_errors_to)
-        raise "Expected From of #{@expected_from_name} but got #{from_name}" if @expected_from_name && (from_name != @expected_from_name)
+        expect(@expected_reply_to).to eq(reply_to) if @expected_reply_to
+        expect(@expected_errors_to).to eq(errors_to) if @expected_errors_to
+        expect(@expected_from_name).to eq(from_name) if @expected_from_name
 
         # validate link is present
         if @expected_link &&
