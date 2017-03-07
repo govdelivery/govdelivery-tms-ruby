@@ -63,7 +63,7 @@ Then(/^I go to Gmail to check for message delivery$/) do
     GovDelivery::Proctor.steady_check(3.minutes, "find message #{@expected_subject}") do
       # get message
       message = get_emails_all(@expected_subject)
-      unless message.nil? || !message.kind_of?(Array)
+      unless message.nil? || !message.is_a?(Array)
         body, reply_to, errors_to, from_name = message
 
         # validate from address information
