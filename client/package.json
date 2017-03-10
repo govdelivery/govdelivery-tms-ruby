@@ -6,6 +6,9 @@
   "repository": "git@dev-scm.office.gdi:development/xact.git",
   "author": "Team Pigeon <pigeon@govdelivery.com>",
   "dependencies": {
+    "react": "^15.4.2"
+  },
+  "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.23.1",
     "babel-loader": "^6.4.0",
@@ -13,10 +16,7 @@
     "babel-preset-react": "^6.23.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
-    "react": "^15.4.2",
-    "sinon": "^1.17.7"
-  },
-  "devDependencies": {
+    "sinon": "^1.17.7",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.4.1"
   },
