@@ -450,6 +450,7 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.5-java)
     tilt (2.0.1)
+    timecop (0.8.1)
     timers (4.1.2)
       hitimes
     trinidad (1.4.6)
@@ -567,6 +568,7 @@ DEPENDENCIES
   sinatra
   slim
   strip_attributes
+  timecop
   trinidad
   twilio-ruby
   valid_email

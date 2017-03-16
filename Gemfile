@@ -107,12 +107,13 @@ group :development, :test do
 end
 
 group :test do
-  gem 'govdelivery-tms', '~>0.10.0'
-  gem 'govdelivery-tms-internal', '~>0.0.2'
   gem 'configatron'
   gem 'fakeredis', require: 'fakeredis/rspec'
   gem 'fakeweb'
+  gem 'govdelivery-proctor', '>=1.3.1'
+  gem 'govdelivery-tms', '~>0.10.0'
+  gem 'govdelivery-tms-internal', '~>0.0.2'
   gem 'mocha', require: false
   gem 'shoulda-matchers', '<3'
-  gem 'govdelivery-proctor', '>=1.3.1'
+  gem 'timecop'
 end

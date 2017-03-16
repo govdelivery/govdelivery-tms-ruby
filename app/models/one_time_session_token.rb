@@ -9,9 +9,14 @@ class OneTimeSessionToken < ActiveRecord::Base
   before_validation :generate_value, on: :create
 
   def self.user_for(token_value)
-    one_time_token = OneTimeSessionToken.find_by_value(token_value)
-    one_time_token.destroy
-    one_time_token.user
+    retval = nil
+
+    if one_time_token = OneTimeSessionToken.find_by_value(token_value)
+      one_time_token.destroy
+      retval = one_time_token.user unless one_time_token.created_at < 15.minutes.ago
+    end
+
+    retval
   end
 
   private

@@ -21,8 +21,22 @@ describe OneTimeSessionToken do
     specify {expect(subject.valid?).to eq(false)}
   end
 
-  it 'should find user by token and destroy token' do
-    expect(OneTimeSessionToken.user_for(subject.value)).to eq(subject.user)
-    expect{OneTimeSessionToken.find(subject.id)}.to raise_error(ActiveRecord::RecordNotFound)
+  context 'user_for' do
+    it 'should find user by token and destroy token' do
+      expect(OneTimeSessionToken.user_for(subject.value)).to eq(subject.user)
+      expect{OneTimeSessionToken.find(subject.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'should not find a user for a saved token that is more than 15 minutes old and should destroy token' do
+      expect(subject.persisted?).to eq(true)
+      Timecop.freeze(DateTime.now + 16.minutes) do
+        expect(OneTimeSessionToken.user_for(subject.value)).to be_nil
+        expect{OneTimeSessionToken.find(subject.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    it 'should not find a user for a token that is not in the db' do
+      expect(OneTimeSessionToken.user_for(subject.value.succ)).to be_nil
+    end
   end
 end
