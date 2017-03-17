@@ -11,9 +11,10 @@ describe OneTimeSessionToken do
   end
 
   it 'should not change token value for multiple validations' do
-    old_value = subject.value
-    new_value = subject.value
-    expect(old_value).to eq(new_value)
+    subject.valid?
+    original_value = subject.value
+    subject.valid?
+    expect(original_value).to eq(subject.value)
   end
 
   context 'when user_id is empty' do
