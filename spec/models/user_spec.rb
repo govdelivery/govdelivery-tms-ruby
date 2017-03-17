@@ -26,6 +26,16 @@ describe User do
     specify {expect(subject.valid?).to eq(false)}
   end
 
+  context 'one_time_use_token' do
+    specify { expect(subject.one_time_session_token).to be_a(OneTimeSessionToken)}
+
+    it 'Creates a new OneTimeSessionToken on each call, destroying old tokens' do
+      a_token = subject.one_time_session_token
+      expect(subject.one_time_session_token.value).not_to eq(a_token.value) 
+      expect{OneTimeSessionToken.find(a_token.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
   it 'should find users by token' do
     expect(User.with_token(user.authentication_tokens.first.token)).to eq(user)
   end
