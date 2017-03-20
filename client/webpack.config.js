@@ -1,3 +1,5 @@
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 var path = require('path');
 var webpack = require('webpack');
 
@@ -14,15 +16,27 @@ module.exports = {
       extensions: ['.js', '.jsx']
     },
     module: {
-      loaders: [
+      rules: [
         {
             test: /\.jsx?$/,
-            loaders: ['babel-loader']
+            use: {
+              loader: 'babel-loader'
+            },
+        },
+        {
+          test: /\.scss$/,
+          use: ExtractTextPlugin.extract({
+            fallback: "style-loader",
+            use: "css-loader!sass-loader"
+          })
         }
       ]
     },
     stats: {
         colors: true
     },
+    plugins: [
+      new ExtractTextPlugin("main.css"),
+    ],
     devtool: 'source-map'
 };
