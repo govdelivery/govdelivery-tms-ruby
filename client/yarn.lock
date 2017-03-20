@@ -3187,6 +3187,10 @@ sha.js@^2.3.6:
   dependencies:
     inherits "^2.0.1"
 
+"shamrock@git+ssh://git@dev-scm.office.gdi:development/shamrock.git#13.0.0":
+  version "13.0.0"
+  resolved "git+ssh://git@dev-scm.office.gdi/development/shamrock.git#a72e5498eeb044714892cdcd51d38883e5163df0"
+
 signal-exit@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
