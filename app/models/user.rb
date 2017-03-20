@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   has_many :account_voice_messages, through: :account, source: VoiceMessage.table_name
   has_many :email_templates
   has_many :sms_templates
-  has_one :one_time_session_token
+  has_one :one_time_session_token, dependent: :delete
 
   scope :for_token, ->(token) {joins(:authentication_tokens).where('authentication_tokens.token' => token)}
 
@@ -43,7 +43,8 @@ class User < ActiveRecord::Base
   end
 
   def one_time_session_token
-    @one_time_session_token.destroy if @one_time_session_token
+    # Using delete instead of destroy because destroy will attempt to validate with user_id = nil, which throws a validation error
+    @one_time_session_token.delete if @one_time_session_token
     create_one_time_session_token
   end
 
