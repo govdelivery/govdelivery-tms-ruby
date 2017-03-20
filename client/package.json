@@ -38,8 +38,9 @@
   },
   "scripts": {
     "babel": "babel app/main.js -o public/main.public.js",
+    "build": "webpack -p",
+    "mocha": "mocha --compilers js:babel-register --recursive test",
     "server": "webpack-dev-server",
-    "webpack": "webpack",
-    "build": "webpack -p"
+    "webpack": "webpack"
   }
 }
