@@ -2,7 +2,7 @@
 class OneTimeSessionAuthenticationApi < Devise::Strategies::Authenticatable
   def valid?
     # double check that request.url is what we really need here
-    !request.headers['X-AUTH-TOKEN'] && request.url
+    !request.headers['X-AUTH-TOKEN'] && request.url.include?('session')
   end
 
   def authenticate!
