@@ -9,4 +9,4 @@ class OneTimeSessionAuthenticationApi < Devise::Strategies::Authenticatable
     u.nil ? fail! : success!(u)
   end
 end
-Warden::Strategies.add(:one_time_session_auth_api, Devise::Strategies::OneTimeSessionAuthenticationApi)
+Warden::Strategies.add(:one_time_session_auth_api, OneTimeSessionAuthenticationApi)

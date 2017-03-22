@@ -229,8 +229,8 @@ Devise.setup do |config|
   # change the failure app, you can configure them inside the config.warden block.
   #
   config.warden do |manager|
-    manager.default_strategies.unshift :http_auth_api
-    manager.default_strategies(:scope => :user).unshift :one_time_session_auth_api
+    manager.default_strategies(scope: :user).unshift :http_auth_api
+    manager.default_strategies(scope: :user).unshift :one_time_session_auth_api
     manager.failure_app = CustomFailure
   end
 
