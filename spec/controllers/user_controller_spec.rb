@@ -2,8 +2,9 @@ require 'rails_helper'
 
 describe UserController do
   describe 'login' do
-    let(:one_time_token) {create(:one_time_session_token)}
-    let(:auth_token) {one_time_token.user.authentication_tokens.first.token}
+    render_views
+    let(:user) {create(:user)}
+    let(:auth_token) {user.authentication_tokens.first.token}
 
     context 'correct api token' do
       before do
@@ -12,8 +13,10 @@ describe UserController do
 
       it 'should return the one time url with the one time token' do
         get :login
+        one_time_token = OneTimeSessionToken.find_by_user_id(user.id).value
         expect(response.response_code).to eq(200)
-        expect(JSON.parse(response.body)).to include '/session/new?token=' + one_time_token.value
+        expect(JSON.parse(response.body)['_links']['self']).to eq 'user/login'
+        expect(JSON.parse(response.body)['_links']['session']).to eq '/session/new?token=' + one_time_token
       end
     end
 

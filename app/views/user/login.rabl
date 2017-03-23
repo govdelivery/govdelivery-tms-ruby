@@ -1,5 +1,5 @@
-object @login
-attributes :url
-node(:_links) do |k|
-  {:self => 'user/login'}
+object false
+
+node(:_links) do
+  {:self => 'user/login', :session => @login[:url]}
 end
