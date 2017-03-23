@@ -23,6 +23,7 @@ Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
 I18n.enforce_available_locales = true
 
 require File.join(File.expand_path('../../lib', __FILE__), 'xact_middleware', 'conditional_query_cache')
+require File.join(File.expand_path('../../lib', __FILE__), 'devise', 'one_time_session_authentication_api')
 
 module Xact
   class Application < Rails::Application
