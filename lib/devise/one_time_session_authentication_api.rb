@@ -1,7 +1,7 @@
 # An authenticator for users that handles one time session tokens
 class OneTimeSessionAuthenticationApi < Devise::Strategies::Authenticatable
   def valid?
-    !request.headers['X-AUTH-TOKEN'] && request.path == 'session'
+    !request.headers['X-AUTH-TOKEN'] && request.path == 'session/new'
   end
 
   def authenticate!
