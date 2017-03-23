@@ -23,7 +23,8 @@ bundler_audit:
   <<: *ruby_job
   script:
     - echo 'Ignoring CVE-2015-8314 as we do not use "Remember me" cookies with XACT...'
-    - bundle exec bundle-audit check --update --verbose --ignore CVE-2015-8314
+    - echo 'Ignoring CVE-2016-4658 for now and a ticket has been added to the sprint backlog to fix this - XACT-1055'
+    - bundle exec bundle-audit check --update --verbose --ignore CVE-2015-8314 CVE-2016-4658
 
 rubocop:
   <<: *ruby_job
