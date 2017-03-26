@@ -17,6 +17,7 @@ end
 gem 'dcm_client'
 gem 'aasm'
 gem 'activerecord-oracle_enhanced-adapter', "~>1.6.7"
+gem 'activerecord-session_store'
 gem 'addressable'
 gem 'celluloid'
 gem 'clockwork'

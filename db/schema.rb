@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170316214118) do
+ActiveRecord::Schema.define(version: 20170324183018) do
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name",                                  null: false
@@ -235,6 +235,16 @@ ActiveRecord::Schema.define(version: 20170316214118) do
   end
 
   add_index "one_time_session_tokens", ["value"], name: "i_one_tim_ses_tok_val", unique: true, tablespace: "gd_enc_xact_indx01"
+
+  create_table "sessions", force: :cascade do |t|
+    t.string   "session_id", null: false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, tablespace: "gd_enc_xact_indx01"
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", tablespace: "gd_enc_xact_indx01"
 
   create_table "sms_messages", force: :cascade do |t|
     t.string   "body"

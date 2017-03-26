@@ -42,6 +42,10 @@ GEM
       activesupport (= 4.2.7.1)
       arel (~> 6.0)
     activerecord-oracle_enhanced-adapter (1.6.7)
+    activerecord-session_store (0.1.2)
+      actionpack (>= 4.0.0, < 5)
+      activerecord (>= 4.0.0, < 5)
+      railties (>= 4.0.0, < 5)
     activesupport (4.2.7.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
@@ -485,6 +489,7 @@ PLATFORMS
 DEPENDENCIES
   aasm
   activerecord-oracle_enhanced-adapter (~> 1.6.7)
+  activerecord-session_store
   addressable
   alphabetize
   attr_encrypted (= 1.4.0)
