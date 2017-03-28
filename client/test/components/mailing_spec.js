@@ -14,4 +14,4 @@ describe('Mailing', function(){
     expect(wrapper).to.have.className('mailing')
     expect(wrapper.find('h1')).to.have.text('Hello, world!')
   })
-});
+})

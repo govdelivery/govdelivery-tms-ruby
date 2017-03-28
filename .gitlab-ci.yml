@@ -49,3 +49,8 @@ mocha:
   script:
     - yarn run mocha
 
+scripts_lint:
+  <<: *javascript_job
+  script:
+    - yarn run lint:scripts
+

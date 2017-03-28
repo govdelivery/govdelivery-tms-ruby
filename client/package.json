@@ -10,7 +10,7 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "redux": "^3.6.0",
-    "shamrock": "git+http://git:@dev-scm.office.gdi/development/shamrock.git#v16.1.2"
+    "shamrock": "git+http://git:@dev-scm.office.gdi/development/shamrock.git#v13.0.0"
   },
   "devDependencies": {
     "babel": "^6.23.0",
@@ -25,6 +25,8 @@
     "cheerio": "^0.22.0",
     "css-loader": "^0.27.3",
     "enzyme": "^2.7.1",
+    "eslint": "^3.18.0",
+    "eslint-plugin-react": "^6.10.3",
     "extract-text-webpack-plugin": "^2.1.0",
     "mocha": "^3.2.0",
     "node-sass": "^4.5.0",
@@ -39,6 +41,7 @@
   "scripts": {
     "babel": "babel app/main.js -o public/main.public.js",
     "build": "webpack -p",
+    "lint:scripts": "eslint src/scripts test/scripts test",
     "mocha": "mocha --compilers js:babel-register --recursive test",
     "server": "webpack-dev-server",
     "webpack": "webpack"
