@@ -2181,6 +2181,10 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
+flatpickr@2.4.4:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-2.4.4.tgz#7cfcd7918dd5e5d60e5ba32c0423d45db2fde794"
+
 flatten@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
@@ -4462,9 +4466,11 @@ shallow-clone@^0.1.2:
     lazy-cache "^0.2.3"
     mixin-object "^2.0.1"
 
-"shamrock@git+http://git:@dev-scm.office.gdi/development/shamrock.git#v13.0.0":
-  version "13.0.0"
-  resolved "git+http://git:@dev-scm.office.gdi/development/shamrock.git#a72e5498eeb044714892cdcd51d38883e5163df0"
+"shamrock@git+http://git:@dev-scm.office.gdi/development/shamrock.git#v16.1.2":
+  version "16.1.2"
+  resolved "git+http://git:@dev-scm.office.gdi/development/shamrock.git#68646332866d3113cd7c72e82cdee5b01610fae1"
+  dependencies:
+    flatpickr "2.4.4"
 
 shelljs@^0.7.5:
   version "0.7.7"
