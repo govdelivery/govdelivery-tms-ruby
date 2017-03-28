@@ -10,6 +10,19 @@
     - (bundle -v || gem install bundler) > /dev/null
     - bundle install --local --path .bundle --quiet
 
+.javascript_job: &javascript_job
+  cache:
+    key: "$CI_BUILD_REF_NAME"
+    untracked: true
+    paths:
+      - client/node_modules/
+  before_script:
+    - cd client
+    - nvm use
+    - npm install npm
+    - npm install --global yarn
+    - yarn install
+
 # Jobs:
 brakeman:
   <<: *ruby_job
@@ -30,3 +43,9 @@ rubocop:
   <<: *ruby_job
   script:
     - bundle exec rubocop --format simple --rails app features spec config bin
+
+mocha:
+  <<: *javascript_job
+  script:
+    - yarn run mocha
+
