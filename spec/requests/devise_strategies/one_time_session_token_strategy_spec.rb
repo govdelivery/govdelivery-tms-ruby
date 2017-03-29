@@ -1,5 +1,5 @@
 require 'rails_helper'
-require_relative '../../../lib/devise/one_time_session_authentication_api.rb'
+require_relative '../../../lib/devise/session_strategy.rb'
 
 describe 'One Time Session Authentication', :type => :request do
 
@@ -15,7 +15,7 @@ describe 'One Time Session Authentication', :type => :request do
         # this post should initiate a session and sets a cookie
         post "/session/new?token=#{one_time_session_token.value}"
 
-        expect(response.status).to be(201)
+        expect(response.status).to be(200)
         expect(response.header).to include('Set-Cookie')
 
         # authenticated session
@@ -26,18 +26,26 @@ describe 'One Time Session Authentication', :type => :request do
     end
 
     context 'will not allow use of invalid tokens' do
-      let(:one_time_session_token_two){ create(:one_time_session_token) }
+      let(:one_time_session_token){ create(:one_time_session_token) }
 
-      #TODO
-      # it 'does not allow the use of deleted tokens' do
-      #   # destroy existing session
-      #   delete '/session/destroy'
-      #
-      #   # a second post with the same token is denied
-      #   post "/session/new?token=#{one_time_session_token.value}"
-      #
-      #   expect(response.status).to be(401)
-      # end
+      it 'does not allow the use of deleted tokens' do
+        post "/session/new?token=#{one_time_session_token.value}"
+        # destroy existing session
+        delete '/session/destroy'
+
+        # redirecting after session/destroy
+        expect(response.status).to be(302)
+
+        # cannot reach application root successfully after session/destroy
+        get '/'
+
+        expect(response.status).to be(401)
+
+        # a second post with the same token is denied since the token is invalid
+        post "/session/new?token=#{one_time_session_token.value}"
+
+        expect(response.status).to be(401)
+      end
 
       it 'does not authenticated posts with an invalid token' do
         # not authenticated
