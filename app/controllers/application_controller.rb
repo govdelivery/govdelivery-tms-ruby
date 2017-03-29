@@ -61,10 +61,6 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def after_sign_in_path_for(resource)
-    redirect_to '/'
-  end
-
   ##
   # Pull the X-AUTH-TOKEN header out of the request and put
   # it in the params hash.
