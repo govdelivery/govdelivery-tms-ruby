@@ -24,11 +24,9 @@ class SessionsController < Devise::SessionsController
 
   protected
 
-  def sign_in_resource(resource_or_scope, resource=nil)
-    scope = Devise::Mapping.find_scope!(resource_or_scope)
-    resource ||= resource_or_scope
-    sign_in(scope, resource) unless warden.user(scope) == resource
-    return render :json => {:success => true}
+  def sign_in_resource(resource_name, resource=nil)
+    sign_in(resource) unless warden.user(resource_name) == current_user
+    redirect_to root_path
   end
 
   def sign_out_resource(resource_name)
