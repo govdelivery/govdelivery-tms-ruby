@@ -5,13 +5,13 @@ class SessionsController < Devise::SessionsController
 
   def create
     resource = warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")
-    sign_in_and_redirect(resource_name, resource)
+    sign_in_resource(resource_name, resource)
   end
 
   # DELETE /resource/sign_out
   def destroy
     if current_user
-      sign_out_and_redirect(resource_name)
+      sign_out_resource(resource_name)
       redirect_to root_path
     else
       return render :json => {:success => false}
@@ -24,14 +24,14 @@ class SessionsController < Devise::SessionsController
 
   protected
 
-  def sign_in_and_redirect(resource_or_scope, resource=nil)
+  def sign_in_resource(resource_or_scope, resource=nil)
     scope = Devise::Mapping.find_scope!(resource_or_scope)
     resource ||= resource_or_scope
     sign_in(scope, resource) unless warden.user(scope) == resource
     return render :json => {:success => true}
   end
 
-  def sign_out_and_redirect(resource_name)
+  def sign_out_resource(resource_name)
     sign_out(warden.user(resource_name))
   end
 
