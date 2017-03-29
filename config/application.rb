@@ -87,9 +87,11 @@ module Xact
     # Rack::SSL has to come before ActionDispatch::Cookies!
     config.middleware.use Rack::SSL, exclude: ->(env) {!Rack::Request.new(env).ssl?}
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore
+    config.middleware.use ActionDispatch::Session::ActiveRecordStore
     config.no_db_regex = /^\/(twilio_status_callbacks|mblox)/
     config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::ConditionalQueryCache
+
+    ActiveRecord::SessionStore::Session.attr_accessible :data, :session_id
 
     redis_opts = {url: Conf.redis_uri}
 
@@ -154,6 +156,8 @@ module Xact
       logger.class.send :attr_reader, :formatter
       logger.instance_variable_set :@formatter, logger.outputters.first.formatter
     end
+    # needed for using the activerecord-session_store gem, which we use to store sessions in our one time session token authentication. See https://github.com/rails/activerecord-session_store
+    Log4r::Logger.send :include, ActiveRecord::SessionStore::Extension::LoggerSilencer
 
     host                                = GovDelivery::Host.new
     config.datacenter_location          = host.datacenter
@@ -165,4 +169,6 @@ module Xact
 
     config.shared_phone_numbers = Conf.shared_phone_numbers
   end
+
+  # ActiveRecord::SessionStore::Session.primary_key = 'session_id'
 end

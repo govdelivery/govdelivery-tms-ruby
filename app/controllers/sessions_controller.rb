@@ -36,4 +36,5 @@ class SessionsController < Devise::SessionsController
   def json_request?
     request.format.json?
   end
+
 end

@@ -24,6 +24,9 @@ class ApplicationController < ActionController::API
   # 1. try to log in using a provided auth_token. If the auth token is invalid
   #    the service will return a 401.
   # 2. if no auth token is given, try to log in with basic auth.
+  # 3. if post to /session/new with a valid token query param
+  #    (ie: /session/new?token=1234abcd), session will be established and stored
+  #    via activerecord-session_store in a session table
   #
   # NOTE:
   # authenticate must follow set_default_format to avoid java.lang.NullPointerException
