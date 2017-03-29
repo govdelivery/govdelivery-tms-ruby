@@ -1,5 +1,5 @@
 class SessionsController < Devise::SessionsController
-  skip_before_filter :verify_authenticity_token, if: :json_request?
+  skip_before_action :verify_authenticity_token, if: :json_request?
   skip_before_action :verify_signed_out_user, only: :destroy
   prepend_before_action :allow_params_authentication!, only: :create
 
@@ -19,7 +19,7 @@ class SessionsController < Devise::SessionsController
   end
 
   def failure
-    return render :json => {:success => false, :errors => ["Login failed."]}
+    render :json => {:success => false, :errors => ["Login failed."]}
   end
 
   protected
