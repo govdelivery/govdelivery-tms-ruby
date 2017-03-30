@@ -15,7 +15,7 @@ class SessionsController < Devise::SessionsController
       sign_out_resource(resource_name)
       redirect_to root_path
     else
-      render :json => {:success => false}
+      render :json => {:success => false, :errors => ["Logout failed."]}
     end
   end
 
