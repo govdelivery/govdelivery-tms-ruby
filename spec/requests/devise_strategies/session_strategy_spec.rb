@@ -15,7 +15,7 @@ describe 'One Time Session Authentication', :type => :request do
         # this post should initiate a session and sets a cookie
         post "/session/new?token=#{one_time_session_token.value}"
 
-        expect(response.status).to be(200)
+        expect(response.status).to be(302)
         expect(response.header).to include('Set-Cookie')
 
         # authenticated session

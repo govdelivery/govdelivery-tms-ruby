@@ -156,8 +156,6 @@ module Xact
       logger.class.send :attr_reader, :formatter
       logger.instance_variable_set :@formatter, logger.outputters.first.formatter
     end
-    # needed for using the activerecord-session_store gem, which we use to store sessions in our one time session token authentication. See https://github.com/rails/activerecord-session_store
-    Log4r::Logger.send :include, ActiveRecord::SessionStore::Extension::LoggerSilencer
 
     host                                = GovDelivery::Host.new
     config.datacenter_location          = host.datacenter

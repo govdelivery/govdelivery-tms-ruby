@@ -237,8 +237,8 @@ ActiveRecord::Schema.define(version: 20170324183018) do
   add_index "one_time_session_tokens", ["value"], name: "i_one_tim_ses_tok_val", unique: true, tablespace: "gd_enc_xact_indx01"
 
   create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", null: false
-    t.text     "data"
+    t.string   "data",       limit: 4000
+    t.string   "session_id",              null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

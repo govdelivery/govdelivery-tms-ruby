@@ -6,6 +6,7 @@ class SessionsController < Devise::SessionsController
   def create
     resource = warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")
     sign_in_resource(resource_name, resource)
+    redirect_to root_path
   end
 
   # DELETE /resource/sign_out
@@ -14,7 +15,7 @@ class SessionsController < Devise::SessionsController
       sign_out_resource(resource_name)
       redirect_to root_path
     else
-      return render :json => {:success => false}
+      render :json => {:success => false}
     end
   end
 
@@ -26,7 +27,6 @@ class SessionsController < Devise::SessionsController
 
   def sign_in_resource(resource_name, resource=nil)
     sign_in(resource) unless warden.user(resource_name) == current_user
-    redirect_to root_path
   end
 
   def sign_out_resource(resource_name)
