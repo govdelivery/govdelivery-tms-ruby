@@ -167,6 +167,4 @@ module Xact
 
     config.shared_phone_numbers = Conf.shared_phone_numbers
   end
-
-  # ActiveRecord::SessionStore::Session.primary_key = 'session_id'
 end
