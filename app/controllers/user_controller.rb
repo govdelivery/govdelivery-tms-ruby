@@ -3,8 +3,7 @@ class UserController < ApplicationController
 
   def login
     @login = {}
-    one_time_token = current_user.one_time_session_token.value
-    @login[:url] = "/session/new?token=#{one_time_token}"
+    @login[:url] = user_session_path(token: current_user.one_time_session_token.value)
     respond_with(@login)
   end
 end
