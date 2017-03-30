@@ -104,6 +104,7 @@ group :development, :test do
   gem 'pry-nav'
   gem 'bundler-audit'
   gem 'parallel_tests', '~>2.9.0'
+  gem 'rb-readline'
 end
 
 group :test do
