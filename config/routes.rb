@@ -28,6 +28,10 @@ Xact::Application.routes.draw do
     end
   end
 
+  scope 'user' do
+    get 'login', to: 'user#login'
+  end
+
   resources(:from_addresses, only: [:index, :show]) do
     pageable
   end
