@@ -1,5 +1,4 @@
 class SessionsController < Devise::SessionsController
-  skip_before_action :verify_authenticity_token, if: :json_request?
   skip_before_action :verify_signed_out_user, only: :destroy
   prepend_before_action :allow_params_authentication!, only: :create
 
@@ -32,9 +31,4 @@ class SessionsController < Devise::SessionsController
   def sign_out_resource(resource_name)
     sign_out(warden.user(resource_name))
   end
-
-  def json_request?
-    request.format.json?
-  end
-
 end

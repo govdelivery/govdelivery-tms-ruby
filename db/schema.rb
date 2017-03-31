@@ -244,7 +244,6 @@ ActiveRecord::Schema.define(version: 20170324183018) do
   end
 
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, tablespace: "gd_enc_xact_indx01"
-  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", tablespace: "gd_enc_xact_indx01"
 
   create_table "sms_messages", force: :cascade do |t|
     t.string   "body"
