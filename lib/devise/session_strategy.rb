@@ -6,7 +6,7 @@ class SessionStrategy < Devise::Strategies::Authenticatable
 
   def authenticate!
     u = OneTimeSessionToken.user_for(params[:token])
-    u.nil? ? fail! : success!(u)
+    u.nil? ? fail : success!(u)
   end
 end
 Warden::Strategies.add(:session_strategy, SessionStrategy)
