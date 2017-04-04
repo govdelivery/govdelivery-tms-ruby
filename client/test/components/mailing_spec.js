@@ -11,7 +11,6 @@ describe('Mailing', function(){
 
   it('should initialize Mailing with default props', function() {
     const wrapper = shallow(<Mailing/>)
-    expect(wrapper).to.have.className('mailing')
-    expect(wrapper.find('h1')).to.have.text('Hello, world!')
+    expect(wrapper.find('h3')).to.have.text('No emails yet')
   })
 })

@@ -1,7 +1,13 @@
 import { FETCH_MAILINGS } from '../actions'
 
 const initialState = {
-  mailings: []
+  mailings: [
+    {
+      key: 15557230,
+      from_email: "notices@healthcare.gov",
+      subject: "Welcome! Please verify your email for your HealthCare.gov account."
+    }
+  ]
 }
 
 function mailingsApp(state = initialState, action){
