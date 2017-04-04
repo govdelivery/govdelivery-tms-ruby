@@ -4,7 +4,9 @@ import LastMailing from '../containers/last_mailing'
 class App extends React.Component{
   render(){
     return (
-      <LastMailing />
+      <div className="main">
+        <LastMailing />
+      </div>
     )
   }
 }
