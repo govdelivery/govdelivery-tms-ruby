@@ -14,7 +14,9 @@ export function fetchMailings(){
  const request = axios({
     method: 'get',
     url: `${ROOT_URL}/messages/email/`,
-    headers: ["X-AUTH-TOKEN:R2MMoeRmgnxGgUFsxPWmzScFPwEqYxmR"]
+    headers: {
+      "X-AUTH-TOKEN": "myVW42n76o5zPqvKvxQaVnGdU9vpAsm3"
+    }
   });
 
   return {
@@ -41,7 +43,9 @@ export function fetchMailing(id){
  const request = axios({
     method: 'get',
     url: `${ROOT_URL}/messages/email/${id}`,
-    headers: ["X-AUTH-TOKEN:R2MMoeRmgnxGgUFsxPWmzScFPwEqYxmR"]
+    headers: {
+      "X-AUTH-TOKEN": "myVW42n76o5zPqvKvxQaVnGdU9vpAsm3"
+    }
   });
 
   return {

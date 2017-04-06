@@ -9,6 +9,7 @@ import { fetchMailings } from './store/actions'
 require('./styles/main.scss')
 
 let store = createStore(mailingsApp);
+store.dispatch(fetchMailings());
 
 ReactDom.render(
   <Provider store={store}>
