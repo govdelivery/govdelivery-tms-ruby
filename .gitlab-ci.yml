@@ -47,7 +47,7 @@ rubocop:
 mocha:
   <<: *javascript_job
   script:
-    - yarn run mocha
+    - yarn test
 
 scripts_lint:
   <<: *javascript_job

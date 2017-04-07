@@ -44,6 +44,7 @@
     "build": "webpack -p",
     "lint:scripts": "eslint src/scripts test/scripts test",
     "mocha": "mocha --compilers js:babel-register --recursive test",
+    "test": "mocha --compilers js:babel-register --recursive test",
     "server": "webpack-dev-server --output-public-path=/public/ --hot",
     "webpack": "webpack"
   }

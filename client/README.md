@@ -9,9 +9,9 @@ A React application that sits on top of the TMS UI and allows all manner of nice
 2. Install dependencies: `yarn install`
 
 ## Running a server locally
-You can use the webpack dev server: `npm run server`
+You can use the webpack dev server: `yarn server`
 
 ## Running tests 
-We use mocha: `npm run mocha`
+We use mocha: `yarn test`
 
 
