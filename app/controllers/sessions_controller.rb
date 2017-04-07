@@ -3,7 +3,7 @@ class SessionsController < Devise::SessionsController
   prepend_before_action :allow_params_authentication!, only: :create
 
   def create
-    resource = warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")
+    resource = warden.authenticate!(:scope => resource_name)
     sign_in_resource(resource_name, resource)
     redirect_to root_path
   end
@@ -16,10 +16,6 @@ class SessionsController < Devise::SessionsController
     else
       render :json => {:success => false, :errors => ["Logout failed."]}
     end
-  end
-
-  def failure
-    render :json => {:success => false, :errors => ["Login failed."]}
   end
 
   protected
