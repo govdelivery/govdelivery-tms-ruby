@@ -77,6 +77,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'airborne'
   gem 'awesome_print'
   gem 'brakeman-min'
   gem 'capybara'
