@@ -87,7 +87,7 @@ module Xact
     # Rack::SSL has to come before ActionDispatch::Cookies!
     config.middleware.use Rack::SSL, exclude: ->(env) {!Rack::Request.new(env).ssl?}
 
-    # expires_after only sets expiration on the client side. expires_at (in the session table), sets expiration on the server side.
+    # expires_after only sets expiration on the client side. 
     config.session_store :active_record_store, key: '_xact_session', :secure => !['test', 'development'].include?(Rails.env), :expire_after => 2.hours
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::ActiveRecordStore, config.session_options
