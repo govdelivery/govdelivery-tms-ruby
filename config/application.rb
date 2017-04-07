@@ -86,12 +86,14 @@ module Xact
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
     # Rack::SSL has to come before ActionDispatch::Cookies!
     config.middleware.use Rack::SSL, exclude: ->(env) {!Rack::Request.new(env).ssl?}
+
+    # expires_after only sets expiration on the client side. expires_at (in the session table), sets expiration on the server side.
+    config.session_store :active_record_store, key: '_xact_session', :secure => !['test', 'development'].include?(Rails.env), :expire_after => 2.hours
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::ActiveRecordStore
+    config.middleware.use ActionDispatch::Session::ActiveRecordStore, config.session_options
+
     config.no_db_regex = /^\/(twilio_status_callbacks|mblox)/
     config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::ConditionalQueryCache
-
-    ActiveRecord::SessionStore::Session.attr_accessible :data, :session_id
 
     redis_opts = {url: Conf.redis_uri}
 
