@@ -239,6 +239,7 @@ ActiveRecord::Schema.define(version: 20170324183018) do
   create_table "sessions", force: :cascade do |t|
     t.string   "data",       limit: 4000
     t.string   "session_id",              null: false
+    t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
