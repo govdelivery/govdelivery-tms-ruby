@@ -5,12 +5,24 @@ A Ruby on Rails application that sends SMS, email, and voice messages and report
 Prerequisites
 =============
 
-1. install ant (e.g.: brew install ant)
-2. instantclient-sqlplus ( download from oracle )
-3. `export TNS_ADMIN=/Library/Oracle/instantclient` (or wherever)
-4. oracledev project vagrant vm
-5. bundle install
-6. lockjar lock #installs Maven deps
+1. java 7 (e.g. `brew cask install java7`)
+2. [java unlimited strength](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
+2. ant 1.9 (e.g.: `brew install ant@1.9` # ant 1.10 requires java 8)
+3. oracle instantclient 11 basic ([download from oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-on-osx.md#install-oracle-instant-client-packages))
+4. set local oracle environment variables (see [Connecting Ruby to Oracle](https://confluence.govdelivery.com/display/ENG/Connecting+Ruby+to+Oracle))
+```
+    export ORACLE_HOME=/Library/Oracle/instantclient/11.2.0.3.0 # or wherever yours is
+    export TNS_ADMIN=$ORACLE_HOME
+    export PATH=$ORACLE_HOME:$PATH
+```
+5. [oracledev project](http://dev-scm.office.gdi/development/oracledev) vagrant vm
+
+Setup
+=============
+1. `git clone git@dev-scm.office.gdi:development/xact.git`
+2. `gem install bundler`
+3. `bundle install`
+4. `lockjar lock # installs Maven dependencies`
 
 Building the database
 =============
