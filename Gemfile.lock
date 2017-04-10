@@ -42,6 +42,10 @@ GEM
       activesupport (= 4.2.7.1)
       arel (~> 6.0)
     activerecord-oracle_enhanced-adapter (1.6.7)
+    activerecord-session_store (0.1.2)
+      actionpack (>= 4.0.0, < 5)
+      activerecord (>= 4.0.0, < 5)
+      railties (>= 4.0.0, < 5)
     activesupport (4.2.7.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
@@ -49,6 +53,12 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.3.8)
+    airborne (0.2.9)
+      activesupport
+      rack
+      rack-test (~> 0.6, >= 0.6.2)
+      rest-client (>= 1.7.3, < 3.0)
+      rspec (~> 3.1)
     alphabetize (0.1.2)
     arel (6.0.3)
     ast (2.0.0)
@@ -254,6 +264,7 @@ GEM
       httpclient
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
+    netrc (0.11.0)
     newrelic_rpm (3.14.2.312)
     nokogiri (1.6.8.1-java)
     ntlm-http (0.1.1)
@@ -359,6 +370,10 @@ GEM
       actionpack (>= 2.1)
     responders (2.1.1)
       railties (>= 4.2.0, < 5.1)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     rjack-logback (1.8.1-java)
       rjack-slf4j (~> 1.7.16)
     rjack-slf4j (1.7.19.0-java)
@@ -485,7 +500,9 @@ PLATFORMS
 DEPENDENCIES
   aasm
   activerecord-oracle_enhanced-adapter (~> 1.6.7)
+  activerecord-session_store
   addressable
+  airborne
   alphabetize
   attr_encrypted (= 1.4.0)
   awesome_print

@@ -8,7 +8,7 @@ Xact::Application.routes.draw do
     mount Sidekiq::Web, at: '/sidekiq'
   end
 
-  devise_for :users, skip: :all
+  devise_for :users, path: 'session', only: :session, controllers: {sessions: "sessions"}, path_names: { sign_in: 'new', sign_out: 'destroy' }, defaults: { format: :json }
 
   root to: 'services#index'
 

@@ -23,6 +23,7 @@ Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
 I18n.enforce_available_locales = true
 
 require File.join(File.expand_path('../../lib', __FILE__), 'xact_middleware', 'conditional_query_cache')
+require File.join(File.expand_path('../../lib', __FILE__), 'devise', 'session_strategy')
 
 module Xact
   class Application < Rails::Application
@@ -85,8 +86,12 @@ module Xact
     # Bring in a couple of middlewares excluded by rails-api but needed for warden/devise
     # Rack::SSL has to come before ActionDispatch::Cookies!
     config.middleware.use Rack::SSL, exclude: ->(env) {!Rack::Request.new(env).ssl?}
+
+    # expires_after only sets expiration on the client side. 
+    config.session_store :active_record_store, key: '_xact_session', :secure => !['test', 'development'].include?(Rails.env), :expire_after => 2.hours
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore
+    config.middleware.use ActionDispatch::Session::ActiveRecordStore, config.session_options
+
     config.no_db_regex = /^\/(twilio_status_callbacks|mblox)/
     config.middleware.swap ActiveRecord::QueryCache, ::XactMiddleware::ConditionalQueryCache
 

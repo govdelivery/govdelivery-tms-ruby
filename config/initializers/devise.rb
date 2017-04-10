@@ -63,7 +63,7 @@ Devise.setup do |config|
   # It can be set to an array that will enable params authentication only for the
   # given strategies, for example, `config.params_authenticatable = [:database]` will
   # enable it only for database (email + password) authentication.
-  config.params_authenticatable    = false
+  config.params_authenticatable    = [:session_strategy]
 
   # Tell if authentication through HTTP Basic Auth is enabled. False by default.
   # It can be set to an array that will enable http authentication only for the
@@ -229,7 +229,7 @@ Devise.setup do |config|
   # change the failure app, you can configure them inside the config.warden block.
   #
   config.warden do |manager|
-    manager.default_strategies.unshift :http_auth_api
+    manager.default_strategies(scope: :user).unshift :session_strategy
     manager.failure_app = CustomFailure
   end
 
