@@ -1,4 +1,4 @@
-@smoke @XACT-390 @twilio @Test-Support-App
+@smoke @XACT-390 @twilio @Test-Support-App @smoke
 Feature: XACT SMS end to end tests.
   Scenario: End to End sms test for all environments.
     Given I have a user who can receive SMS messages

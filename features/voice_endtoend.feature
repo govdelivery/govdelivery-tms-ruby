@@ -1,4 +1,4 @@
-@twilio
+@twilio @smoke
 Feature: XACT Voice end to end test.
 
   Scenario: Create a voice message and send it
