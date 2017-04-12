@@ -42,7 +42,7 @@
   "scripts": {
     "babel": "babel app/main.js -o public/main.public.js",
     "build": "webpack -p",
-    "lint:scripts": "eslint src/scripts test/scripts test",
+    "lint": "eslint app test",
     "mocha": "mocha --compilers js:babel-register --recursive test",
     "test": "mocha --compilers js:babel-register --recursive test",
     "server": "webpack-dev-server --output-public-path=/public/ --hot",

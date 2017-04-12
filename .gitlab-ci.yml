@@ -19,8 +19,7 @@
   before_script:
     - cd client
     - nvm use
-    - npm install npm
-    - npm install --global yarn
+    - (yarn --version || npm install --global yarn)
     - yarn install
 
 # Jobs:
@@ -49,8 +48,8 @@ mocha:
   script:
     - yarn test
 
-scripts_lint:
+eslint:
   <<: *javascript_job
   script:
-    - yarn run lint:scripts
+    - yarn lint
 

@@ -5,10 +5,10 @@ import App from './components/app'
 import { createStore } from 'redux'
 import mailingsApp from './store/reducers/mailings'
 import { fetchMailings } from './store/actions'
+import { store, unsubscribe } from './store/store'
 
 require('./styles/main.scss')
 
-let store = createStore(mailingsApp);
 store.dispatch(fetchMailings());
 
 ReactDom.render(

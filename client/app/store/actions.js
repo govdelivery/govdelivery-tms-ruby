@@ -44,7 +44,7 @@ export function fetchMailing(id){
     method: 'get',
     url: `${ROOT_URL}/messages/email/${id}`,
     headers: {
-      "X-AUTH-TOKEN": "myVW42n76o5zPqvKvxQaVnGdU9vpAsm3"
+      "X-AUTH-TOKEN": "MU7yPSDMTU9Lv7ppY6zSJH1gyY5rwHUi"
     }
   });
 
