@@ -2,8 +2,10 @@ XACT
 ====
 A Ruby on Rails application that sends SMS, email, and voice messages and reports on delivery statistics. Part of the GovDelivery TMS suite.
 
-Prerequisites
-=============
+Installation
+=====
+
+### Prerequisites
 
 1. java 7 (e.g. `brew cask install java7`)
 2. [java unlimited strength](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
@@ -17,36 +19,67 @@ Prerequisites
 ```
 5. [oracledev project](http://dev-scm.office.gdi/development/oracledev) vagrant vm
 
-Setup
-=============
+### Setup
 1. `git clone git@dev-scm.office.gdi:development/xact.git`
 2. `gem install bundler`
 3. `bundle install`
 4. `lockjar lock # installs Maven dependencies`
 
-Building the database
-=============
+### Building the database
 
 1. cp config/database.example.yml config/database.yml
 2. cp config/config.local.example.yml config/config.local.yml
 3. rake db:setup # which runs db:seed, too
 4. rake db:test:prepare
 
-Creating a tag
-==============
+Running the application
+=====
+To run the application locally, spin up a rails server:
+
+    $ bundle exec rails s
+
+Testing the application
+=========================
+### Unit tests
+Unit tests are implemented with rspec. They're run daily in a [Jenkins build](http://qc-buildbox-master.ep.gdi:8080/job/xact/).
+
+To run them locally:
+
+    $ bundle exec rspec
+
+### Integration tests
+Integration tests are implemented with cucumber. This will likely change in the future.
+
+To run them locally: 
+
+    $ XACT_ENV=[qc|integration|stage|production] bundle exec cucumber
+
+### Smoke tests
+Smoke tests are used to test minimal application functionality. They are integration tests denoted with `@smoke`.
+
+There's one parent smoke build per environment in Jenkins:
+  * [qc](http://qc-buildbox-master.ep.gdi:8080/job/xact_smoke_overall_qc/)
+  * [integration](http://qc-buildbox-master.ep.gdi:8080/job/xact_smoke_overall_int/)
+  * [stage](http://qc-buildbox-master.ep.gdi:8080/job/xact_smoke_overall_stage/)
+  * production - there doesn't seem to be an xact jenkins build setup for prod yet
+
+To run them locally:
+
+    $ XACT_ENV=[qc|integration|stage|production] bundle exec cucumber -t @smoke
+
+Deploying the application
+=====
+
+### Creating a tag
 
     git tag -a 1.4.0 -m 'creating another release'
     git push origin 1.4.0
 
-Deploying
-=========
+### Kicking off the deploy
 There is a webhook connecting Gitlab to Jenkins
-see: http://qc-buildbox-master.ep.gdi:8080/job/XACT/job/xact_build_head_rpm/
+see: http://qc-buildbox-master.ep.gdi:8080/job/XACT_deploys/job/xact_build_head_rpm/
 
-
-Packaging
-=========
-
+### Packaging
 Ideally, you'll never think about this, but here's the basic flow:
 
   * You commit, push, and merge to master
@@ -72,24 +105,10 @@ If you want to build an RPM on koji (e.g. on a branch build, etc.), there's a sc
 SHA=XXXXXXXX SCRATCH=yeah ENV=qc rpm/koji-submit.sh
 ```
 
+Monitoring the application
+=====
 
-IPAWS Setup
-===============
-
-(see ipaws notes below)
-
-    ./bin/vendors.rb -t IPAWSVendor -c 120082 -u "IPAWSOPEN_120082" -p "w0rk#8980" -r "2670soa#wRn" -j path/to/IPAWSOPEN_120082.jks
-    # => Created IPAWS::Vendor id: 10000
-    ./bin/accounts.rb -n "IPAWS Test Account" --ipaws_vendor 10000
-    # => Created Account id: 10000
-    ./bin/users.rb -a 10000 -e "insure@evotest.govdelivery.com" -p "fysucrestondoko" -s 0
-    # => Created User id: 10000
-    ./bin/tokens.rb --user 10000 --list
-    # => Tokens:
-    # => pzpL6p1m16yGqDXc6sBjaazPa1sTxVGq
-
-Monitoring Setup
-=================
+### Setting up monitoring
 For environments from qc to production, a "Monitoring" account should
 be created that can send emails, text, and voice. This is similar to a
 test account, but exists for the sole purpose of monitoring the
@@ -112,11 +131,12 @@ If on a mac, you will need to install p7zip to unzip this file and retreive the 
     brew install p7zip
     7za x filename.zip
 
+Using the application
+====
 
-Two-Way SMS
-===========
+## Two-Way SMS
 
-## Special Keywords
+#### Special Keywords
 
 -   must be edited in the console
 -   are created automatically
@@ -126,29 +146,29 @@ Two-Way SMS
 
 Here, GOV311 is used but any short code of a shared vendor will work
 
-### Vendors
+#### Vendors
 
 -   vendors can have their custom responses modified via help_text, stop_text, and start_text
 -   vendors will call their associated account's stop and start commands when texted 'stop' or 'start'
 -   non-shared vendors will delegate all special keywords to their single account
 
-### Accounts with prefixes (examples)
+#### Accounts with prefixes (examples)
 
-#### 'default'
+##### 'default'
 
 -   text "[prefix] gibberish" to GOV311
 -   responds with help text by default or vendor help_text if set
 -   update default_keyword.response_text to change
 -   account's default keyword commands will be executed
 
-#### 'help'
+##### 'help'
 
 -   text "[prefix] help" or "[prefix] info" to GOV311
 -   responds with help text by default or vendor help_text if set
 -   update help_keyword.response_text to change
 -   account's help keyword commands will be executed
 
-#### 'stop'
+##### 'stop'
 
 -   text any of stop,stopall,unsubscribe,cancel,end,quit with a prefix to GOV311
 -   responds with stop text by default or vendor stop_text if set
@@ -156,7 +176,7 @@ Here, GOV311 is used but any short code of a shared vendor will work
 -   update stop_keyword.response_text to change
 -   account's stop keyword commands will be executed
 
-#### 'start'
+##### 'start'
 
 -   text "start" or "yes" with prefix to GOV311
 -   responds with start text by default or vendor start_text if set
@@ -164,13 +184,13 @@ Here, GOV311 is used but any short code of a shared vendor will work
 -   update start_keyword.response_text to change
 -   account's start keyword commands will be executed
 
-## Custom Keywords
+#### Custom Keywords
 
-### With Plain Response - no command
+##### With Plain Response - no command
 
     account.keywords.create(name: 'hot', response_text: 'tomale')
 
-### With Forward Command
+##### With Forward Command
 
 the response from the 3rd party site will be relayed to the phone through twilio
 
@@ -198,7 +218,7 @@ if more than 500 characters, or status code above 299 are returned the action wi
     # be sure to remove the response text because the forward command will respond
     account.default_keyword.update_attribute :response_text, nil
 
-### With DCM Subscribe Command
+##### With DCM Subscribe Command
 
 Creates a subscription in DCM
 
@@ -214,7 +234,7 @@ a wireless subscription will be created if no argument is given
     account.create_command('subscribe',
                            command_type: 'dcm_subscribe', params: {dcm_account_code: 'uvw', dcm_topic_codes: ['def']} )
 
-### With DCM Unsubscribe Command
+##### With DCM Unsubscribe Command
 
 it makes sense to put this command on keyword: "stop"
 but it can be put on other custom keywords
@@ -230,8 +250,7 @@ it will delete the subscription from the DCM account
                             command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
 
 
-Adding a Command Type
-=====================
+#### Adding a Command Type
 
 To add a command type create a class that responds to `process\_response` and calls super within it such as:
 
@@ -250,16 +269,25 @@ Create a worker in `app/workers/` by appending "Worker" to the name of the class
 The worker should use the CommandParameters that are serialized in the database on command.params combined with parameters from
 the twilio request controller
 
-Generating a TMS Extended jar
-=============================
+#### Generating a TMS Extended jar
+
 ```
 rake odm:jar
 ```
 will generate lib/tms_extended.jar from config/TMSExtended.wsdl
 
+Other notes
+=======
 
-Running Integration Tests
-=========================
-Specify different environments as needed
+## IPAWS Setup
+IPAWS is an emergency alerting system used for amber alerts.
 
-    XACT_ENV=qc bundle exec cucumber --verbose features/xact_endtoend.feature
+    ./bin/vendors.rb -t IPAWSVendor -c 120082 -u "IPAWSOPEN_120082" -p "w0rk#8980" -r "2670soa#wRn" -j path/to/IPAWSOPEN_120082.jks
+    # => Created IPAWS::Vendor id: 10000
+    ./bin/accounts.rb -n "IPAWS Test Account" --ipaws_vendor 10000
+    # => Created Account id: 10000
+    ./bin/users.rb -a 10000 -e "insure@evotest.govdelivery.com" -p "fysucrestondoko" -s 0
+    # => Created User id: 10000
+    ./bin/tokens.rb --user 10000 --list
+    # => Tokens:
+    # => pzpL6p1m16yGqDXc6sBjaazPa1sTxVGq
