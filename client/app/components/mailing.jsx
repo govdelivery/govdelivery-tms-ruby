@@ -9,11 +9,10 @@ class Mailing extends React.Component{
     }else{
       return (
         <div className='emails'>
-          { this.props.mailings.map(function(email){ 
+          { this.props.mailings.map((email) => { 
             return (
-              <div className="email">
-                <h4> Subject: </h4>
-                <h3> { email.subject } </h3>
+              <div className="email" key="{ email.id }">
+                <h4> Subject: { email.subject } </h4>
               </div>
             )
           })}

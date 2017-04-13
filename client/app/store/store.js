@@ -1,18 +1,22 @@
-import { createStore } from 'redux'
-import mailingsApp from './reducers/mailings'
-import { fetchMailings } from './actions'
+import mailingsApp from '../reducers/mailings'
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
 
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 let store = createStore(
   mailingsApp,
-   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+  composeEnhancers(
+    applyMiddleware(thunk)
+  )
+)
 
-// Every time the state changes, log it
-// Note that subscribe() returns a function for unregistering the listener
+/* eslint-disable no-console */
 let unsubscribe = store.subscribe(() =>
   console.log(store.getState())
 )
+/* eslint-enable */
 
 export {
   store,

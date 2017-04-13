@@ -1,21 +1,18 @@
-import { FETCH_MAILINGS } from '../actions'
+import * as types from '../actions/action_types'
 
 const initialState = {
-  mailings: [
-  ]
+  mailings: []
 }
 
 function mailingsApp(state = initialState, action){
   switch(action.type){
-    case FETCH_MAILINGS:
+    case types.FETCH_MAILINGS_SUCCESS:
       return Object.assign({}, state, {
         mailings: action.payload
       })
     default:
-      return state;
+      return state
   }
-
-  return state;
 }
 
-export default mailingsApp;
+export default mailingsApp
