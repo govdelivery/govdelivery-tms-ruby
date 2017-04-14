@@ -6,7 +6,8 @@ import * as fetch from './actions/fetches'
 import { store } from './store/store'
 
 store.dispatch(fetch.mailings())
-store.dispatch(fetch.fromAddresses())
+
+require('../styles/main.scss')
 
 ReactDom.render(
   <Provider store={store}>
