@@ -6,7 +6,7 @@ const initialState = {
 
 function mailingsApp(state = initialState, action){
   switch(action.type){
-    case types.FETCH_MAILINGS_SUCCESS:
+    case types.MAILINGS.SUCCESS:
       return Object.assign({}, state, {
         mailings: action.payload
       })

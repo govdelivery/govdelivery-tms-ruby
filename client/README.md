@@ -16,5 +16,3 @@ You can use the webpack dev server: `yarn server`
 
 ## Running tests 
 We use mocha: `yarn test`
-
-

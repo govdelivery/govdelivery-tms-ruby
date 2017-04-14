@@ -1,9 +1,9 @@
 import axios from 'axios'
 const ROOT_URL = location.href.indexOf('localhost') > 0 ? 'http://localhost:3000' : '/'
 
-export function fetch(route, type, success, failure){
+export function fetch(route, type){
   return function(dispatch) {
-    dispatch({type: type})
+    dispatch({type: type.FETCH})
     return axios({
       timeout: 20000,
       method: 'get',
@@ -14,13 +14,13 @@ export function fetch(route, type, success, failure){
     })
     .then((response) => {
       dispatch({
-        type: success,
+        type: type.SUCCESS,
         payload: response.data
       })
     })
     .catch((error) => {
       dispatch({
-        type: failure,
+        type: type.FAILURE,
         payload: error
       })
     })
