@@ -3,7 +3,7 @@ import Mailing from '../components/mailing'
 
 const mapStateToProps = (state) => {
   return {
-    mailings: state.mailings
+    mailings: state.mailings.list
   }
 }
 

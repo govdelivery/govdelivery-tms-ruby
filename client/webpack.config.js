@@ -38,5 +38,11 @@ module.exports = {
     plugins: [
       new ExtractTextPlugin("main.css"),
     ],
-    devtool: 'source-map'
+    devtool: 'source-map',
+    devServer: {
+      port: 8080,
+      historyApiFallback: {
+        index: 'index.html'
+      }
+    }
 };

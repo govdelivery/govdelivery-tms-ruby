@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { key } from '../../api_key'
 const ROOT_URL = location.href.indexOf('localhost') > 0 ? 'http://localhost:3000' : '/'
 
 export function fetch(route, type){
@@ -9,7 +10,7 @@ export function fetch(route, type){
       method: 'get',
       url: `${ROOT_URL}${route}`,
       headers: {
-        'X-AUTH-TOKEN': 'MU7yPSDMTU9Lv7ppY6zSJH1gyY5rwHUi'
+        'X-AUTH-TOKEN': key
       }
     })
     .then((response) => {

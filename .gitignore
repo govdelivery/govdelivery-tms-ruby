@@ -45,3 +45,4 @@ sniffer_result.xml
 
 #all the node modules
 client/node_modules
+client/api_key.js
