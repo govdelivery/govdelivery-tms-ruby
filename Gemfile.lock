@@ -303,6 +303,7 @@ GEM
     rabl (0.11.7)
       activesupport (>= 2.3.14)
     rack (1.6.5)
+    rack-cors (0.4.1)
     rack-protection (1.5.3)
       rack
     rack-ssl (1.4.1)
@@ -559,6 +560,7 @@ DEPENDENCIES
   pry-rails
   pry-remote
   rabl
+  rack-cors
   rack-ssl
   rails (~> 4.2.6)
   rails-api
