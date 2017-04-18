@@ -15,9 +15,9 @@ A React application that sits on top of the TMS UI and allows all manner of nice
 
 ## Running a server locally
 
-_Temporary Hack_: copy `api_key.example.js` -> `api_key.js` and update it with your own TMS key from `rake helpers:api_key`
+_Temporary Hack_: copy `api_key.example.js` -> `api_key.js` and update it with your own TMS key from `rake helper:api_key`
 
 You can use the webpack dev server: `yarn server`
 
-## Running tests 
+## Running tests
 We use mocha: `yarn test`
