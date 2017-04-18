@@ -5,8 +5,13 @@ A React application that sits on top of the TMS UI and allows all manner of nice
 
 # Setup
 
-1. Install node, npm, and yarn
-2. Install dependencies: `yarn install`
+1. Install node and npm: Use nodenv (on a mac, that's `brew install nodenv; nodenv init`)
+2. Install yarn: `brew install yarn`
+3. Install dependencies: `yarn install`
+
+## Optional
+- Install the [React Chrome Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
+- Install the [Redux Chrome Developer Tools](https://github.com/zalmoxisus/redux-devtools-extension)
 
 ## Running a server locally
 
