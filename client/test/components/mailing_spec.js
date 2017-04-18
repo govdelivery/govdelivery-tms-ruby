@@ -16,8 +16,8 @@ describe('Mailing', () => {
   it('should build page with mailing', function() {
     const wrapper = shallow(<Mailing
                               mailings={[{subject: 'An email that is great',
-                                          id: 12}
-                                        ]}/>)
+                                id: 12}
+                              ]}/>)
     expect(wrapper.find('h4')).to.have.text('Subject: An email that is great')
     // custom HTML elements appear to be a real PITA -- currently not rendering in Mailing
     // expect(wrapper.find('.email')).to.have.attr('key', 12)
