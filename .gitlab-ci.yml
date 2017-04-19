@@ -21,6 +21,7 @@
     - nvm use
     - (yarn --version || npm install --global yarn)
     - yarn install
+    - cp api_key.example.js api_key.js
 
 # Jobs:
 brakeman:
