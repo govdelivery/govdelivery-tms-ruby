@@ -53,6 +53,7 @@
     "mocha": "mocha --compilers js:babel-register --recursive test",
     "test": "mocha --compilers js:babel-register --recursive test",
     "server": "webpack-dev-server --output-public-path=/public/ --hot",
+    "testlint": "npm run test; npm run lint",
     "webpack": "webpack"
   }
 }
