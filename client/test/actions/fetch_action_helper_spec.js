@@ -20,7 +20,7 @@ describe('fetch_action_helper', () => {
   it('should handle successful get', function() {
     const store = mockStore({ })
 
-    nock('http://localhost:3000/')
+    nock('http://granicustest.com')
       .get('/dummy_endpoint')
       .reply(200, { body: { stuff: 'hi' }})
 
@@ -35,7 +35,7 @@ describe('fetch_action_helper', () => {
   it('should handle unsuccessful get', function() {
     const store = mockStore({ })
 
-    nock('http://localhost:3000/')
+    nock('http://granicustest.com')
       .get('/dummy_endpoint')
       .replyWithError( {'message':'Unauthorized','status_code':'401'})
 
