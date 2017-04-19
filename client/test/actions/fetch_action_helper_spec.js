@@ -41,8 +41,6 @@ describe('fetch_action_helper', () => {
 
     return store.dispatch(actions.fetch('/dummy_endpoint', types.MAILINGS))
       .then(() => {
-
-        console.log(store.getActions()[1])
         expect(store.getActions()[0]['type']).toEqual(types.MAILINGS.FETCH)
         expect(store.getActions()[1]['type']).toEqual(types.MAILINGS.FAILURE)
         expect(store.getActions()[1]['payload']['message']).toEqual('Unauthorized')
