@@ -1,6 +1,7 @@
 # Set this before connecting to the database
 ENV['NLS_LANG'] = 'american_america.AL32UTF8'
 $CLASSPATH << File.expand_path('../../config', __FILE__) # Rails.root.join('config/').to_s
+$LOAD_PATH << '.'
 
 require File.expand_path('../boot', __FILE__)
 

@@ -96,8 +96,8 @@ group :development, :test do
   gem 'nokogiri'
   gem 'poltergeist'
   gem 'rspec-collection_matchers'
-  gem 'rspec-its', '~> 1.2.0'
-  gem 'rspec-rails', '~> 3.1.0'
+  gem 'rspec-its'
+  gem 'rspec-rails'
   gem 'yaml_db'
   gem 'rubocop'
   gem 'rubocop-checkstyle_formatter', require: false
