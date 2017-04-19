@@ -2,13 +2,13 @@ import axios from 'axios'
 import { key } from '../../api_key'
 
 function getHref() {
-  if (typeof location != 'undefined' && location.href.indexOf('localhost') > 0){
-    return 'http://localhost:3000';
-  } else if (typeof location == 'undefined') {
+  if (typeof location !== 'undefined' && location.href.indexOf('localhost') > 0){
+    return 'http://localhost:3000'
+  } else if (typeof location === 'undefined') {
     return 'http://granicustest.com'
   }
 
-  return '/';
+  return '/'
 }
 
 const ROOT_URL = getHref()
