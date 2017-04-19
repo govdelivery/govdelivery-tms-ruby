@@ -17,26 +17,36 @@ describe('fetch_action_helper', () => {
     nock.cleanAll()
   })
 
-  // it('should handle successful get', function() {
-  //   const store = mockStore({ })
-
-  //   return store.dispatch(actions.fetch('dummy_endpoint', types.MAILINGS))
-  //     .then(() => { // return of async actions
-  //       expect(store.getActions()).toEqual('')
-  //     })
-  // })
-
-  it('should handle unsuccessful get', function() {
-    // nock('http://example.com/')
-    //   .get('/todos')
-    //   .reply(200, { body: { todos: ['do something'] }})
-
+  it('should handle successful get', function() {
     const store = mockStore({ })
 
-    return store.dispatch(actions.fetch('dummy_endpoint', types.MAILINGS))
-      .then(() => { // return of async actions
+    nock('http://localhost:3000/')
+      .get('/dummy_endpoint')
+      .reply(200, { body: { stuff: 'hi' }})
+
+    return store.dispatch(actions.fetch('/dummy_endpoint', types.MAILINGS))
+      .then(() => {
+        expect(store.getActions()[0]['type']).toEqual(types.MAILINGS.FETCH)
+        expect(store.getActions()[1]['type']).toEqual(types.MAILINGS.SUCCESS)
+        expect(store.getActions()[1]['payload']).toEqual({ body: { stuff: 'hi' }})
+      })
+  })
+
+  it('should handle unsuccessful get', function() {
+    const store = mockStore({ })
+
+    nock('http://localhost:3000/')
+      .get('/dummy_endpoint')
+      .replyWithError( {'message':'Unauthorized','status_code':'401'})
+
+    return store.dispatch(actions.fetch('/dummy_endpoint', types.MAILINGS))
+      .then(() => {
+
+        console.log(store.getActions()[1])
         expect(store.getActions()[0]['type']).toEqual(types.MAILINGS.FETCH)
         expect(store.getActions()[1]['type']).toEqual(types.MAILINGS.FAILURE)
+        expect(store.getActions()[1]['payload']['message']).toEqual('Unauthorized')
+        expect(store.getActions()[1]['payload']['status_code']).toEqual('401')
       })
   })
 })
