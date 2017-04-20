@@ -13,7 +13,7 @@ class Settings extends React.Component{
               Get help with our API
             </h3>
             <p id='getting_started'>
-              View the <a id='getting_started_link' href="www.google.com">getting started guide</a> or <a id='api_docs_link' href="http://developer.govdelivery.com/api/tms/">visit our developer docs</a>
+              <a id='api_docs_link' href="http://developer.govdelivery.com/api/tms/">Visit our developer docs</a>
             </p>
           </div>
         </div>
