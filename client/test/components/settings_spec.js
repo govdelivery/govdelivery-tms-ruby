@@ -21,6 +21,7 @@ describe('Setting', () => {
   })
 
   it('should render an endpoint url based on current environment', function() {
-    // todo
+    const wrapper = shallow(<Setting/>)
+    expect(wrapper.find('p#endpoint_url')).to.have.text('http://granicustest.com')
   })
 })

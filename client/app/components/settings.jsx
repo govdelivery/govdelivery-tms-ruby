@@ -1,5 +1,6 @@
 // modules/settings.js
 import React from 'react'
+import { getHref } from '../actions/fetch_action_helper'
 
 class Settings extends React.Component{
   render() {
@@ -22,8 +23,8 @@ class Settings extends React.Component{
               Endpoint URL
             </h3>
 
-            <p>
-              tms.govdelivery.com
+            <p id='endpoint_url'>
+              { getHref() }
             </p>
           </div>
         </div>

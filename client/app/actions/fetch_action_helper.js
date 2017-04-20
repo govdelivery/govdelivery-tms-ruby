@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { key } from '../../api_key'
 
-function getHref() {
+export function getHref() {
   if (typeof location !== 'undefined' && location.href.indexOf('localhost') > 0){
     return 'http://localhost:3000'
   } else if (typeof location === 'undefined') {
@@ -11,7 +11,7 @@ function getHref() {
   return '/'
 }
 
-const ROOT_URL = getHref()
+export const ROOT_URL = getHref()
 
 export function fetch(route, type){
   return function(dispatch) {
