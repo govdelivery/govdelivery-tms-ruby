@@ -5,11 +5,10 @@ $asset-path-root: '/node_modules/shamrock/src/';
 .sr-card-api-callout {
   @extend .sr-card;
   background-color: rgba($brand-green, .3);
-  padding-left: 10px;
-  padding-bottom: 10px;
   margin: 30px;
 }
 
 .icon-life-preserver-api-callout {
   @extend .icon-life-bouy;
+  float: left;
 }

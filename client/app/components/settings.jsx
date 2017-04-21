@@ -7,12 +7,10 @@ class Settings extends React.Component{
     return (
       <div>
         <div className="sr-card-api-callout sr-align-left">
-          <i className="icon-life-preserver-api-callout large"></i>
-          <div>
-            <h3 id='get_help'>
-              Get help with our API
-            </h3>
-           <p id='getting_started'>
+          <div className="sr-card-content">
+            <i className="icon-life-preserver-api-callout large"></i>
+            <h3>Get help with our API</h3>
+            <p id='getting_started'>
               <a id='api_docs_link' href="http://developer.govdelivery.com/api/tms/">Visit our developer docs</a>
             </p>
           </div>
