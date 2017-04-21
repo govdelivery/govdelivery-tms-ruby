@@ -11,7 +11,7 @@ export function getHref() {
   return '/'
 }
 
-export const ROOT_URL = getHref()
+const ROOT_URL = getHref()
 
 export function fetch(route, type){
   return function(dispatch) {
