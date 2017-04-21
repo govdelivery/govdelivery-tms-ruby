@@ -8,7 +8,7 @@ class Settings extends React.Component{
       <div>
         <div className="sr-card-api-callout sr-align-left">
           <div className="sr-card-content">
-            <i className="icon-life-preserver-api-callout large"></i>
+            <i className="icon-life-bouy-api-callout large"></i>
             <h3>Get help with our API</h3>
             <p id='getting_started'>
               <a id='api_docs_link' href="http://developer.govdelivery.com/api/tms/">Visit our developer docs</a>

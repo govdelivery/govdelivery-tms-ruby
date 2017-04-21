@@ -11,7 +11,7 @@ describe('Setting', () => {
   it('should initialize Settings', function() {
     const wrapper = shallow(<Setting/>)
     expect(wrapper.find('div.sr-card-api-callout > div > h3')).to.have.text('Get help with our API')
-    expect(wrapper.find('div.sr-card-api-callout > div > i')).to.have.className('icon-life-preserver-api-callout')
+    expect(wrapper.find('div.sr-card-api-callout > div > i')).to.have.className('icon-life-bouy-api-callout')
     expect(wrapper.find('div.sr-card-api-callout > div > p > a#api_docs_link')).to.have.text('Visit our developer docs')
     expect(wrapper.find('div.sr-card-api-callout > div > p > a#api_docs_link')).to.have.attr('href')
 
