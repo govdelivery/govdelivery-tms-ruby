@@ -12,7 +12,9 @@ describe('Setting', () => {
     const wrapper = shallow(<Setting/>)
     expect(wrapper.find('div.sr-card-api-callout > div > h3')).to.have.text('Get help with our API')
     expect(wrapper.find('div.sr-card-api-callout > div > i')).to.have.className('icon-life-bouy-api-callout')
-    expect(wrapper.find('div.sr-card-api-callout > div > p > a#api_docs_link')).to.have.text('Visit our developer docs')
+    expect(wrapper.find('div.sr-card-api-callout > div > p > a#getting_started_link')).to.have.text('getting started guide')
+    expect(wrapper.find('div.sr-card-api-callout > div > p > a#getting_started_link')).to.have.attr('href')
+    expect(wrapper.find('div.sr-card-api-callout > div > p > a#api_docs_link')).to.have.text('visit our developer docs')
     expect(wrapper.find('div.sr-card-api-callout > div > p > a#api_docs_link')).to.have.attr('href')
 
     expect(wrapper.find('div.sr-card > div > h3')).to.have.text('Endpoint URL')

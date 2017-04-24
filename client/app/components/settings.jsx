@@ -11,7 +11,7 @@ class Settings extends React.Component{
             <i className="icon-life-bouy-api-callout large"></i>
             <h3>Get help with our API</h3>
             <p id='getting_started'>
-              <a id='api_docs_link' href="http://developer.govdelivery.com/api/tms/">Visit our developer docs</a>
+              View the <a id='getting_started_link' href="https://developer.govdelivery.com/api/tms/overview/Setup/">getting started guide</a> or <a id='api_docs_link' href="http://developer.govdelivery.com/api/tms/">visit our developer docs</a>
             </p>
           </div>
         </div>
