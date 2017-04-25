@@ -1,3 +1,28 @@
 $asset-path-root: '/node_modules/shamrock/src/';
 
 @import '../node_modules/shamrock/src/styles/shamrock';
+
+.sr-card-api-callout {
+  @extend .sr-card;
+  background-color: rgba($brand-green, .3);
+  margin: 1em 0;
+  .sr-card-content h3 {
+    font-weight: 100;
+    font-family: $default-font;
+  }
+}
+
+.icon-life-bouy-api-callout {
+  @extend .icon-life-bouy;
+  float: left;
+  padding-right: 10px;
+  line-height: 20px;
+}
+
+//already exists in evo, take out later when we have the UI added
+.main-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1100px;
+    padding: 0 40px;
+}
