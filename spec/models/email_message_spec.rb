@@ -106,7 +106,6 @@ describe EmailMessage do
     build(:email_message,
           user:           user,
           account:        account,
-          body:           'longggg body with <a href="http://stuff.com/index.html">some</a> great <a href="https://donkeys.com/store/">links</a>',
           body:           body_with_links,
           email_template: email_template_sans_link_params)
   end

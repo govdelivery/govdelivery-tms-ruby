@@ -1,11 +1,11 @@
-odm_uri: 'fake'
-odm_username: 'fake'
-odm_password: 'fake'
+odm_uri: http://localhost:65080
+odm_username: gd3
+odm_password: 'R0WG38piNv5NRK0DT8mq04fU'
 fema_uri: 'fake'
 dcm_uri: 'fake'
 dcm_username:
 dcm_password:
-redis_uri: 'localhost'
+redis_uri: 'redis://localhost:6379/1'
 twilio_sid: 'fake'
 twilio_token: 'fake'
 twilio_number: 'fake'
