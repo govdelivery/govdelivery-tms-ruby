@@ -1,7 +1,0 @@
----
-default:
-  interval: 1
-  limit: 5
-sender_sadklfjhasdlkfjhasldkj:
-  interval: 180
-  limit: 100

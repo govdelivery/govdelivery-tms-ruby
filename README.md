@@ -1,293 +1,383 @@
-XACT
-====
-A Ruby on Rails application that sends SMS, email, and voice messages and reports on delivery statistics. Part of the GovDelivery TMS suite.
+[![Build Status](https://travis-ci.org/govdelivery/govdelivery-tms-ruby.svg?branch=master)](https://travis-ci.org/govdelivery/govdelivery-tms-ruby)
+
+TMS Client
+===========
+This is a reference Ruby client to interact with the GovDelivery TMS REST API.
 
 Installation
-=====
+------------
+### Using Bundler
 
-### Prerequisites
-
-1. java 7 (e.g. `brew cask install java7`)
-2. [java unlimited strength](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
-2. ant 1.9 (e.g.: `brew install ant@1.9` # ant 1.10 requires java 8)
-3. oracle instantclient 11 basic ([download from oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-on-osx.md#install-oracle-instant-client-packages))
-4. set local oracle environment variables (see [Connecting Ruby to Oracle](https://confluence.govdelivery.com/display/ENG/Connecting+Ruby+to+Oracle))
-```
-    export ORACLE_HOME=/Library/Oracle/instantclient/11.2.0.3.0 # or wherever yours is
-    export TNS_ADMIN=$ORACLE_HOME
-    export PATH=$ORACLE_HOME:$PATH
-```
-5. [oracledev project](http://dev-scm.office.gdi/development/oracledev) vagrant vm
-
-### Setup
-1. `git clone git@dev-scm.office.gdi:development/xact.git`
-2. `gem install bundler`
-3. `bundle install`
-4. `lockjar lock # installs Maven dependencies`
-
-### Building the database
-
-1. cp config/database.example.yml config/database.yml
-2. cp config/config.local.example.yml config/config.local.yml
-3. rake db:setup # which runs db:seed, too
-4. rake db:test:prepare
-
-Running the application
-=====
-To run the application locally, spin up a rails server:
-
-    $ bundle exec rails s
-
-Testing the application
-=========================
-### Unit tests
-Unit tests are implemented with rspec. They're run daily in a [Jenkins build](http://qc-buildbox-master.ep.gdi:8080/job/xact/).
-
-To run them locally:
-
-    $ bundle exec rspec
-
-### Integration tests
-Integration tests are implemented with cucumber. This will likely change in the future.
-
-To run them locally: 
-
-    $ XACT_ENV=[qc|integration|stage|production] bundle exec cucumber
-
-### Smoke tests
-Smoke tests are used to test minimal application functionality. They are integration tests denoted with `@smoke`.
-
-There's one parent smoke build per environment in Jenkins:
-  * [qc](http://qc-buildbox-master.ep.gdi:8080/job/xact_smoke_overall_qc/)
-  * [integration](http://qc-buildbox-master.ep.gdi:8080/job/xact_smoke_overall_int/)
-  * [stage](http://qc-buildbox-master.ep.gdi:8080/job/xact_smoke_overall_stage/)
-  * production - there doesn't seem to be an xact jenkins build setup for prod yet
-
-To run them locally:
-
-    $ XACT_ENV=[qc|integration|stage|production] bundle exec cucumber -t @smoke
-
-Deploying the application
-=====
-
-### Creating a tag
-
-    git tag -a 1.4.0 -m 'creating another release'
-    git push origin 1.4.0
-
-### Kicking off the deploy
-There is a webhook connecting Gitlab to Jenkins
-see: http://qc-buildbox-master.ep.gdi:8080/job/XACT_deploys/job/xact_build_head_rpm/
-
-### Packaging
-Ideally, you'll never think about this, but here's the basic flow:
-
-  * You commit, push, and merge to master
-  * => A gd-xact package for QC is built containg the current repo state.
-       Versioned by the # of commits since the last tagged version
-       e.x. gd-xact-1.22.0.55
-
-  * You tag a build for proper release
-  * => A gd-xact package for INT is built containing the repo state as tagged
-       It is automatically versioned by your tag.
-       e.x. gd-xact-1.23.0      
-
-If you need to inspect or modify the packaging process, it is controlled by
-
-* `Makefile`
-* `gd-xact.spec.in`
-
-`gd-xact.spec` is required for koji, and is filled out by the `Makefile` using
-the spec.in file as a template.
-
-If you want to build an RPM on koji (e.g. on a branch build, etc.), there's a script for that:
-```
-SHA=XXXXXXXX SCRATCH=yeah ENV=qc rpm/koji-submit.sh
+```ruby
+gem 'govdelivery-tms'
 ```
 
-Monitoring the application
-=====
+### Standalone
 
-### Setting up monitoring
-For environments from qc to production, a "Monitoring" account should
-be created that can send emails, text, and voice. This is similar to a
-test account, but exists for the sole purpose of monitoring the
-platform.
-
-    # Create the account
-        ./bin/accounts.rb -n "GovDelivery Monitoring Account" --email_vendor=10000 --sms_vendor=10001 --voice_vendor=10001 --sms_prefix='MONITOR'
-
-    # Create user and token
-    ./bin/users.rb -a ACCOUNTID -e 'nagios@govdelivery.com' -s 0 -p 'SOMEpasSWORD'
-
-    # List token
-    ./bin/tokens.rb -u USERID --list
+```
+$ gem install govdelivery-tms
+```
 
 
-ipaws notes:
-The zip file we receive will be password encrypted by a windows program called pkzip.
-If on a mac, you will need to install p7zip to unzip this file and retreive the .jks file.
+Connecting
+----------
+Loading an instance of `GovDelivery::TMS::Client` will automatically connect to the API to query the available resources for your account.
 
-    brew install p7zip
-    7za x filename.zip
+```ruby
+# default api root endpoint is https://tms.govdelivery.com
+client = GovDelivery::TMS::Client.new('auth_token', :api_root => 'https://stage-tms.govdelivery.com')
+```
 
-Using the application
-====
+Messages
+--------
 
-## Two-Way SMS
+### Loading messages
+Sms and Email messages can be retrieved with the `get` collection method.  Messages are paged in groups of 50.  To retrieve another page, used the `next` method.  This method will not be defined if another page is not available.
 
-#### Special Keywords
+```ruby
+client.sms_messages.get        # get the first page of sms messages
+client.sms_messages.next.get   # get the next page of sms messages
+```
 
--   must be edited in the console
--   are created automatically
--   response text can be changed
--   commands can be added to all keywords including the special ones
--   there is no AccountStart keyword
 
-Here, GOV311 is used but any short code of a shared vendor will work
+### Sending an SMS Message
 
-#### Vendors
+```ruby
+message = client.sms_messages.build(:body=>'Test Message!')
+message.recipients.build(:phone=>'5551112222')
+message.recipients.build(:phone=>'5551112223')
+message.recipients.build # invalid - no phone
+message.post             # true
+message.recipients.collection.detect{|r| r.errors } # {"phone"=>["is not a number"]}
+# save succeeded, but we have one bad recipient
+message.href             # "/messages/sms/87"
+message.get              # <GovDelivery::TMS::SmsMessage href=/messages/sms/87 attributes={...}>
+```
 
--   vendors can have their custom responses modified via help_text, stop_text, and start_text
--   vendors will call their associated account's stop and start commands when texted 'stop' or 'start'
--   non-shared vendors will delegate all special keywords to their single account
+### Retrieving Inbound SMS Messages
+```ruby
+client.inbound_sms_messages.get                             # <GovDelivery::TMS::InboundSmsMessages href=/inbound/sms attributes={...}>
+inbound_sms = client.inbound_sms_messages.collection.first  # <GovDelivery::TMS::InboundSmsMessage href=/inbound/sms/10041 attributes={...}>
+inbound_sms.to                                              # "+15559999999"
+inbound_sms.from                                            # "+15005550006"
+inbound_sms.attributes                                      # {:from=>"+15005550006", :to=>"+15559999999", :body=>"test", :command_status=>"success", :keyword_response=>"kwidjebo", :created_at=>"2014-11-05T17:15:01Z"}
 
-#### Accounts with prefixes (examples)
+```
 
-##### 'default'
+### Sending an Email Message
 
--   text "[prefix] gibberish" to GOV311
--   responds with help text by default or vendor help_text if set
--   update default_keyword.response_text to change
--   account's default keyword commands will be executed
+```ruby
+message = client.email_messages.build(:body=>'<p><a href="http://example.com">Visit here</a></p>',
+                                      :subject => 'Hey')
+message.recipients.build(:email=>'example1@example.com')
+message.recipients.build(:email=>'')
+message.post             # true
+message.recipients.collection.detect{|r| r.errors } # {"email"=>["can't be blank"]}
+# save succeeded, but we have one bad recipient
+message.href             # "/messages/email/87"
+message.get              # <GovDelivery::TMS::EmailMessage href=/messages/email/88 attributes={...}>
+```
 
-##### 'help'
+#### Sending an Email with Macros
 
--   text "[prefix] help" or "[prefix] info" to GOV311
--   responds with help text by default or vendor help_text if set
--   update help_keyword.response_text to change
--   account's help keyword commands will be executed
+```ruby
+message = client.email_messages.build(:subject=>'Hello!',
+                                      :body=>'<p>Hi <span style="color:red;">[[name]]</span>!</p>',
+                                      :macros=>{"name"=>"there"})
+message.recipients.build(:email=>'jim@example.com', :macros=>{"name"=>"Jim"})
+message.recipients.build(:email=>'amy@example.com', :macros=>{"name"=>"Amy"})
+message.recipients.build(:email=>'bill@example.com')
+message.post
+```
 
-##### 'stop'
+#### From Addresses
 
--   text any of stop,stopall,unsubscribe,cancel,end,quit with a prefix to GOV311
--   responds with stop text by default or vendor stop_text if set
--   phone number will be added to account's blacklist (stop requests table)
--   update stop_keyword.response_text to change
--   account's stop keyword commands will be executed
+From Addresses are read only resources that define which email addresses you
+can send an email from and have replies and bounces sent to. From Addresses
+also have an associated default display name. If you wish to send a message
+from an address that is not your account's default, you will need to specify a
+From Address on your Message.
 
-##### 'start'
+To add or edit From Addresses, you will need to contact your CSC.
 
--   text "start" or "yes" with prefix to GOV311
--   responds with start text by default or vendor start_text if set
--   phone number will be removed from account's blacklist (stop requests table)
--   update start_keyword.response_text to change
--   account's start keyword commands will be executed
+```ruby
+# Fetch the from_addresses on your account
+client.from_addresses.get
 
-#### Custom Keywords
+# Get the first from address on your account
+from_address = client.from_addresses.collection.first
 
-##### With Plain Response - no command
+# Lets see what the emails and display name are
+puts from_address.from_email
+puts from_address.reply_to_email
+puts from_address.bound_email
+puts from_address.from_name
 
-    account.keywords.create(name: 'hot', response_text: 'tomale')
+# Is this from address the account's default?
+puts from_address.is_default
 
-##### With Forward Command
+# New messages default to using the default from_address of your account
+message = client.email_messages.build(:body=>'<p><a href="http://example.com">Visit here</a></p>',
+                                      :subject => 'Hey')
 
-the response from the 3rd party site will be relayed to the phone through twilio
+# Specifiy a different from_address using the links hash
+message.links[:from_address] = from_address.id
 
-the expected content type can be set, but text/plain is the default
+# If you want, you can override the form_name on a message
+message.from_name = 'Better Name'
+message.post
+```
 
-if more than 500 characters, or status code above 299 are returned the action will fail
 
-    account.create_command('hot', command_type: 'forward', params: {url: 'tomale.com', http_method: 'get'})
-    # remember to be sure to remove the repsonse_text
-    account.keywords('hot').update_attribute :response_text, nil
+### Creating an Email Template
 
-    # forward everything:
-    forward_params = {
-      url: 'tomale.com',
-      http_method: 'get',
-      from_param_name: 'user',    # the name of the phone number parameter - default 'from'
-      sms_body_param_name: 'req', # lets say the text body is "12th" - default 'sms_body'
+```ruby
+template = client.email_templates.build(uuid: 'a-new-template',
+                                        subject: 'A templated subject',
+                                        body: 'Hi [[name]], this body is from a template.',
+                                        macros: {"name"=>"person"})
+template.post
+```
+
+### Updating an Email Template
+
+*Note: `uuid` cannot be updated.*
+
+```ruby
+template = client.email_templates.build(:href => 'template/email/a-new-template')
+template.get
+template.body = 'Hi [[name]], this body is from a new template.'
+template.put
+```
+
+### Sending an Email using a Template
+
+Assuming you created `template` above:
+
+```ruby
+message = client.email_messages.build
+message.links[:email_template] = template.uuid
+message.recipients.build(:email=>'jim@example.com', :macros=>{"name"=>"Jim"})
+message.recipients.build(:email=>'amy@example.com', :macros=>{"name"=>"Amy"})
+message.recipients.build(:email=>'bill@example.com')
+message.post
+```
+
+### Creating an SMS Template
+
+```ruby
+template = client.sms_templates.build(uuid: 'a_new-template',
+                                      body: 'Hi, [[name]] this is a tempalte.')
+template.post
+```
+
+### Updating an SMS Template
+
+*Note: `uuid` cannot be updated.*
+
+```ruby
+template = client.sms_templates.build(href: 'template/sms/a_new-template')
+template.get
+template.body = 'Hi, [[name]] this is a new tempalte.'
+template.put
+```
+
+### Sending an SMS Message using a Template
+
+Assuming you've created `template` above:
+
+```ruby
+message = client.email_messages.build
+message.links[:sms_template] = template.uuid
+message.recipients.build(:phone=>'5551112222')
+message.recipients.build(:phone=>'5551112223')
+message.post
+```
+
+
+Webhooks
+-------
+### POST to a URL when a recipient is blacklisted (i.e. to remove from your list)
+
+
+```ruby
+webhook = client.webhooks.build(:url=>'http://your.url', :event_type=>'blacklisted')
+webhook.post # true
+```
+
+POSTs will include in the body the following attributes:
+
+  attribute   |  description
+------------- | -------------
+message_type  | 'sms' or 'email'
+status:       |  message state
+recipient_url |  recipient URL
+messsage_url  |  message URL
+error_message |  (failures only)
+completed_at  |  (sent or failed recipients only)
+
+
+Metrics
+-------
+### Viewing recipients that clicked on a link in an email
+
+```ruby
+email_message.get
+email_message.clicked.get
+email_message.clicked.collection # => [<#EmailRecipient>,...]
+```
+
+### Viewing recipients that opened an email
+
+```ruby
+email_message.get
+email_message.opened.get
+email_message.opened.collection # => [<#EmailRecipient>,...]
+```
+
+### Viewing a list of statistics for a recipient
+
+```ruby
+email_recipient.clicks.get.collection #=> [<#EmailRecipientClick>,...]
+
+email_recipient.opens.get.collection #=> [<#EmailRecipientOpen>,...]
+```
+
+Configuring 2-way SMS
+---------------------
+
+### Listing Command Types
+Command Types are the available commands that can be used to respond to an incoming SMS message.
+
+```ruby
+command_types = client.command_types.get
+command_types.collection.each do |at|
+  puts at.name          # "forward"
+  puts at.string_fields # ["url", ...]
+  puts at.array_fields  # ["foo", ...]
+end
+```
+
+### Managing Keywords
+Keywords are chunks of text that are used to match an incoming SMS message.
+
+```ruby
+# CRUD
+keyword = client.keywords.build(:name => "BUSRIDE", :response_text => "Visit example.com/rides for more info")
+keyword.post                # true
+keyword.name                # 'busride'
+keyword.name = "TRAINRIDE"
+keyword.put                 # true
+keyword.name                # 'trainride'
+keyword.delete              # true
+
+# list
+keywords = client.keywords.get
+keywords.collection.each do |k|
+  puts k.name, k.response_text
+end
+```
+
+### Managing Commands
+Commands have a command type and one or more keywords.  The example below configures the system to respond to an incoming SMS message containing the string "RIDE" (or "ride") by forwarding an http POST to `http://example.com/new_url`.  The POST body variables are documented in GovDelivery's [TMS REST API documentation](https://govdelivery.atlassian.net/wiki/display/PM/TMS+Customer+API+Documentation#TMSCustomerAPIDocumentation-Configuring2-waySMS "GovDelivery TMS REST API").
+
+```ruby
+# CRUD
+keyword = client.keywords.build(:name => "RIDE")
+keyword.post
+command = keyword.commands.build(
+            :name => "Forward to somewhere else",
+            :params => {:url => "http://example.com", :http_method => "get"},
+            :command_type => :forward)
+command.post
+command.params = {:url => "http://example.com/new_url", :http_method => "post"}
+command.put
+command.delete
+
+# list
+commands = keyword.commands.get
+commands.collection.each do |c|
+  puts c.inspect
+end
+```
+
+### Viewing Command Actions
+Each time a given command is executed, a command action is created.
+
+**Note** The actions relationship does not exist on commands that have 0 command actions. Because of this, an attempt to access the command_actions attribute of a
+command that has 0 command actions will result in a NoMethodError.
+
+```ruby
+# Using the command from above
+begin
+  command.get
+  command_actions = command.command_actions
+  command_actions.get
+  command_action = command_actions.collection.first
+  command_action.inbound_sms_message		# InboundSmsMessage object that initiated this command execution
+  command_action.response_body			# String returned by the forwarded to URL
+  command_action.status				# HTTP Status returned by the forwarded to URL
+  command_action.content_type			# Content-Type header returned by the forwarded to URL
+rescue NoMethodError => e
+  # No command actions to view
+end
+```
+
+Logging
+-------
+
+Any instance of a [Logger](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/logger/rdoc/Logger.html "Ruby Logger")-like class can be passed in to the client; incoming and outgoing request information will then be logged to that instance.
+
+The example below configures `GovDelivery::TMS::Client` to log to `STDOUT`:
+
+```ruby
+logger = Logger.new(STDOUT)
+client = GovDelivery::TMS::Client.new('auth_token', :logger => logger)
+```
+
+ActionMailer integration
+------------------------
+
+You can use TMS from the mail gem or ActionMailer as a delivery method.
+
+Gemfile
+```ruby
+gem 'govdelivery-tms', :require=>'govdelivery/tms/mail/delivery_method'
+```
+
+config/environment.rb
+```ruby
+config.action_mailer.delivery_method = :govdelivery_tms
+config.action_mailer.govdelivery_tms_settings = {
+    :auth_token=>'auth_token',
+    :api_root=>'https://tms.govdelivery.com'
     }
-    # these params will result in a request of: http://tomale.com?user="5555555555"&req="12th"
-    # and only a 200ish response of type 'text/html' (and less than 500 chars) will be sent to the user number
-
-    # to foward everything use the default keyword, it will catch anything that doesn't match existing keywords
-    account.create_command('default', command_type: 'forward', params: forward_params)
-
-    # be sure to remove the response text because the forward command will respond
-    account.default_keyword.update_attribute :response_text, nil
-
-##### With DCM Subscribe Command
-
-Creates a subscription in DCM
-
-an email subscription will be created if an email address is given as an
-argument:  "subscribe me@there.com"
-
-a wireless subscription will be created if no argument is given
-
-    # must be dcm_account_code SINGULAR!
-    account.create_command('subscribe',
-                           command_type: 'dcm_subscribe', params: {dcm_account_code: 'xyz', dcm_topic_codes: ['abc']} )
-    # if the account has multiple dcm_account_codes create another command to subscribe to both at once
-    account.create_command('subscribe',
-                           command_type: 'dcm_subscribe', params: {dcm_account_code: 'uvw', dcm_topic_codes: ['def']} )
-
-##### With DCM Unsubscribe Command
-
-it makes sense to put this command on keyword: "stop"
-but it can be put on other custom keywords
-
-it must be created manually for every account
-
-it will delete the subscription from the DCM account
-
-    # must be dcm_account_codes PLURAL!
-    account.create_command!('stop',
-                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
-    account.create_command!('désabonner',
-                            command_type: 'dcm_unsubscribe', params: {dcm_account_codes: ['xyz','uvw'] } )
-
-
-#### Adding a Command Type
-
-To add a command type create a class that responds to `process\_response` and calls super within it such as:
-
-    def process_response(account, params, http_response)
-      cr = super
-      build_message(account, params.from, cr.response_body) if cr.plaintext_body?
-    end
-
-Add the class to the directory `app/models/command\_type`, and registor the class in the `app/models/command\_type/base.rb` with:
-
-    CommandType[:new_command]
-
-
-Create a worker in `app/workers/` by appending "Worker" to the name of the class of the new command_type suchas `NewCommandWorker`
-
-The worker should use the CommandParameters that are serialized in the database on command.params combined with parameters from
-the twilio request controller
-
-#### Generating a TMS Extended jar
-
 ```
-rake odm:jar
+
+
+Generating Documentation
+------------------------
+This project uses [yard](https://github.com/lsegal/yard) to generate documentation.  To generate API documentation yourself, use the following series of commands from the project root:
+
+```ruby
+# install development gems
+bundle install
+# generate documentation
+rake yard
 ```
-will generate lib/tms_extended.jar from config/TMSExtended.wsdl
+The generated documentation will be placed in the `doc` folder.
 
-Other notes
-=======
 
-## IPAWS Setup
-IPAWS is an emergency alerting system used for amber alerts.
+Running Tests
+-------------
+```ruby
+appraisal install
+# optionally specify an activesupport version to test against (3/4), e.g.
+# appraisal 4 rake          ## for ruby 2.1.2
+appraisal rake
+```
 
-    ./bin/vendors.rb -t IPAWSVendor -c 120082 -u "IPAWSOPEN_120082" -p "w0rk#8980" -r "2670soa#wRn" -j path/to/IPAWSOPEN_120082.jks
-    # => Created IPAWS::Vendor id: 10000
-    ./bin/accounts.rb -n "IPAWS Test Account" --ipaws_vendor 10000
-    # => Created Account id: 10000
-    ./bin/users.rb -a 10000 -e "insure@evotest.govdelivery.com" -p "fysucrestondoko" -s 0
-    # => Created User id: 10000
-    ./bin/tokens.rb --user 10000 --list
-    # => Tokens:
-    # => pzpL6p1m16yGqDXc6sBjaazPa1sTxVGq
+
+Compatibility
+-------------
+This project is tested and compatible with MRI 1.9.3, JRuby 1.7.12, and MRI 2.1.2.

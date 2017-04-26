@@ -1,7 +1,0 @@
-PATH="/opt/jruby/current/bin:$PATH"
-
-app_path="/opt/xact/current"
-pid_file="/var/run/trinidad/trinidad.pid"
-environment="yourenvironment"
-user="xact"
-
