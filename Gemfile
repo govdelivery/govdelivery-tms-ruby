@@ -3,7 +3,7 @@ gemspec
 
 group :development, :test do
   gem 'appraisal'
-  gem 'rspec', '~> 3.2.0'
+  gem 'rspec'
   gem 'rspec-its'
   gem 'rake'
   gem 'redcarpet', platform: :ruby
