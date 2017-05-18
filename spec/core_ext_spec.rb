@@ -7,7 +7,10 @@ describe GovDelivery::TMS::CoreExt do
   end
 
   describe '#camelize' do
-    it 'should return camilized string' do
+    it 'should return camilized string not using inflector acronyms' do
+      ActiveSupport::Inflector.inflections(:en) do |inflect|
+        inflect.acronym 'SMS'
+      end
       expect(subject.camelize('sms_message')).to eq 'SmsMessage'
     end
   end
