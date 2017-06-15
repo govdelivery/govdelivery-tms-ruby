@@ -52,6 +52,11 @@ describe GovDelivery::TMS::Client do
       allow(@raw_connection).to receive(:get).and_return(double('response', status: 202, body: { 'message' => 'hi' }))
       expect { @client.get('/blargh') }.to raise_error(GovDelivery::TMS::Request::InProgress)
     end
+    it 'should handle all other responses' do
+      response = double('response', status: 200, body: { 'message' => 'hi' })
+      allow(@raw_connection).to receive(:get).with('/blargh', {params: 'foobar'}).and_return(response)
+      expect(@client.get('/blargh', {params: 'foobar'})).to eq(response)
+    end
 
     context 'creating a new client without output' do
       subject { GovDelivery::TMS::Client.new('auth_token', api_root: 'null_url', logger: false) }

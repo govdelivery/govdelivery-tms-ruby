@@ -25,7 +25,7 @@ describe GovDelivery::TMS::EmailTemplate do
         }
       ]
 
-      expect(@templates.client).to receive('get').with('/templates/email').and_return(double('response', status: 200, body: response, headers: {}))
+      expect(@templates.client).to receive('get').with('/templates/email', {}).and_return(double('response', status: 200, body: response, headers: {}))
       @templates.get
       expect(@templates.collection.length).to eq(1)
     end

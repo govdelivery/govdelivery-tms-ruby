@@ -21,7 +21,7 @@ describe GovDelivery::TMS::FromAddress do
         '_links'          => { 'self' => '/from_addresses/1' }
       }]
 
-      expect(@fromaddresses.client).to receive('get').with('/from_addresses').and_return(double('/from_addresses', status: 200, body: response, headers: {}))
+      expect(@fromaddresses.client).to receive('get').with('/from_addresses',{}).and_return(double('/from_addresses', status: 200, body: response, headers: {}))
       addresses = @fromaddresses.get
       expect(addresses.collection.length).to eq(1)
       expect(addresses.collection.first.class).to eq(GovDelivery::TMS::FromAddress)

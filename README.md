@@ -39,6 +39,27 @@ client.sms_messages.get        # get the first page of sms messages
 client.sms_messages.next.get   # get the next page of sms messages
 ```
 
+#### Optional parameters
+When loading messages, the following parameters can be passed with requests to change the sort order and number of results returned:
+
+**page_size**: Must be an integer between 1 and 100
+
+```ruby
+client.sms_messages.get({page_size: 2})                            # get the first two sms messages
+```
+
+**sort_by**: Field by which to sort results. Default: created_at.
+
+```ruby
+client.sms_messages.get({sort_by: 'created_at'})                  # get the first page of sms messages, sorted by created_at
+```
+
+**sort_order**: Order by which to sort results. Must be ASC or DESC. Default: DESC.
+
+```ruby
+client.sms_messages.get({sort_order: 'ASC'})                      # get the first page of sms messages, sorted by created_at DESC
+client.sms_messages.get({sort_by: 'body', sort_order: 'ASC'})     # get the first page of sms messages, sorted by body ASC
+```
 
 ### Sending an SMS Message
 

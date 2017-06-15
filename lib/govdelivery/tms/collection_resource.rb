@@ -16,8 +16,8 @@ module GovDelivery::TMS::CollectionResource
       end
     end
 
-    def get
-      response = client.get(href)
+    def get(params = {})
+      response = client.get(href, params)
       initialize_collection_from_items(response.body)
       # setup page links from header
       links = LinkHeader.parse(response.headers['link']).to_a.collect do |a|
