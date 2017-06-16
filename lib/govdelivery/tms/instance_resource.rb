@@ -130,9 +130,9 @@ module GovDelivery::TMS::InstanceResource
 
     attr_reader :attributes
 
-    def get
+    def get(params={})
       fail GovDelivery::TMS::Errors::InvalidGet if self.new_record?
-      process_response(client.get(href), :get) && self
+      process_response(client.get(href, params), :get) && self
     end
     alias_method :get!, :get
 

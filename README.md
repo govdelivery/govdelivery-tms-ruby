@@ -240,6 +240,7 @@ completed_at  |  (sent or failed recipients only)
 
 Metrics
 -------
+
 ### Viewing recipients that clicked on a link in an email
 
 ```ruby
@@ -262,6 +263,31 @@ email_message.opened.collection # => [<#EmailRecipient>,...]
 email_recipient.clicks.get.collection #=> [<#EmailRecipientClick>,...]
 
 email_recipient.opens.get.collection #=> [<#EmailRecipientOpen>,...]
+```
+
+Reports
+-------
+
+### Message recipient counts
+Recipient counts are aggregated across all messages and grouped by message status.
+
+`start` and `end` are required datetime parameters, and must be in ISO 8601 format, without colons (YYYY-MM-DDTHHMMSSZ).
+
+All results are based on utc time.
+
+#### Email
+
+```ruby
+reports_messages_email_statistics.get?start=20170601T104515Z&end=20170630T183000Z     # get email recipient counts for messages sent between 6/1/17 and 6/30/17
+reports_messages_email_statistics.recipients
+reports_messages_email_statistics.recipients[:sent]
+```
+
+#### SMS
+```ruby
+reports_messages_sms_statistics.get?start=20170601T104515Z&end=20170630T183000Z       # get sms recipient counts for messages sent between 6/1/17 and 6/30/17
+reports_messages_sms_statistics.recipients
+reports_messages_sms_statistics.recipients[:sent]
 ```
 
 Configuring 2-way SMS

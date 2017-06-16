@@ -39,7 +39,7 @@ describe GovDelivery::TMS::Keyword do
     end
     it 'should GET cleanly' do
       response = { name: 'FOO', response_text: 'hello' }
-      expect(@keyword.client).to receive('get').with(@keyword.href).and_return(double('response', status: 200, body: response))
+      expect(@keyword.client).to receive('get').with(@keyword.href, {}).and_return(double('response', status: 200, body: response))
       @keyword.get
       expect(@keyword.name).to eq('FOO')
       expect(@keyword.response_text).to eq('hello')

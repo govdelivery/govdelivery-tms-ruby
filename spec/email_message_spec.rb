@@ -91,7 +91,7 @@ describe GovDelivery::TMS::EmailMessage do
                                      'message_type' => '/message_type/abc',
                                      'email_template' => '/templates/email/new-template' }
                   }
-      expect(@message.client).to receive('get').with(@message.href).and_return(double('response', status: 200, body: response))
+      expect(@message.client).to receive('get').with(@message.href, {}).and_return(double('response', status: 200, body: response))
       @message.get
       expect(@message.body).to eq('processed')
       expect(@message.subject).to eq('hey')
