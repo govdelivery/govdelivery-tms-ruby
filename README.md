@@ -271,20 +271,20 @@ Reports
 ### Message recipient counts
 Recipient counts are aggregated across all messages and grouped by message status.
 
-`start` and `end` are required datetime parameters, and must be in ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).
+`start` and `end` are required datetime parameters. They must be truncated to the hour and be in ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).
 
-All results are based on utc time.
+End dates are exclusive and all results are based on utc time.
 
 #### Email
 
 ```ruby
-stats = client.reports_messages_email_statistics.get({start: '2017-06-01T10:45:15Z', end: '2017:06:30T18:30:00Z'})     # get email recipient counts for messages sent between 6/1/17 and 6/30/17
+stats = client.reports_messages_email_statistics.get({start: '2017-06-01T10:00:00Z', end: '2017:06:30T18:00:00Z'})     # get email recipient counts for messages sent between 6/1/17 and 6/30/17
 stats.recipients
 ```
 
 #### SMS
 ```ruby
-stats = client.reports_messages_sms_statistics.get({start: '2017-06-01T10:45:15Z', end: '2017:06:30T18:30:00Z'})      # get sms recipient counts for messages sent between 6/1/17 and 6/30/17
+stats = client.reports_messages_sms_statistics.get({start: '2017-06-01T10:00:00Z', end: '2017:06:30T18:00:00Z'})      # get sms recipient counts for messages sent between 6/1/17 and 6/30/17
 stats.recipients
 ```
 
