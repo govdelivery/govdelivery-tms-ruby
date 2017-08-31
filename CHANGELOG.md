@@ -4,6 +4,10 @@ suggested by [How to use a CHANGELOG](http://keepachangelog.com/).
 
 This project *does not* adhere to [Semantic Versioning](http://semver.org/).
 
+## [0.10.1]
+### Added
+- Replaced ActiveSupport::Inflector.camelize with custom version that does not use acronyms.
+
 ## [0.10.0]
 ### Added
 - `from_name` attribute on FromAddress resource, mirroring changes to the TMS API

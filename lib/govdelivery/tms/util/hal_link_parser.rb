@@ -38,7 +38,7 @@ module GovDelivery::TMS::Util
     end
 
     def relation_class(rel)
-      ::GovDelivery::TMS.const_get(classify(rel)).tap do |klass|
+      ::GovDelivery::TMS.const_get(camelize(rel)).tap do |klass|
         return nil unless klass.name =~ /GovDelivery::TMS/
       end
     rescue NameError
