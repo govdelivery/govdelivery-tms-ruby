@@ -11,7 +11,8 @@ describe GovDelivery::TMS::ReportsMessagesEmailStatistics do
 
     it 'gets OK with params' do
       params = {start: Time.now.beginning_of_hour - 7.days, end: Time.now.beginning_of_hour}
-      stats = {"recipients": {"new": 5, "sending": 3, "inconclusive": 2, "blacklisted": 1, "canceled": 7, "sent": 80, "failed": 2} }
+      stats = {:recipients => {:new => 5, :sending => 3, :inconclusive => 2, :blacklisted => 1, :canceled => 7, :sent => 80, :failed => 2} }
+
 
       expect(@statistics.client).to receive('get').with(href, params).and_return(double('response', status: 200, body: stats))
       @statistics.get(params)
