@@ -404,22 +404,37 @@ Generating Documentation
 ------------------------
 This project uses [yard](https://github.com/lsegal/yard) to generate documentation.  To generate API documentation yourself, use the following series of commands from the project root:
 
-```ruby
+```
 # install development gems
 bundle install
 # generate documentation
-rake yard
+bundle exec rake yard
 ```
 The generated documentation will be placed in the `doc` folder.
 
 
 Running Tests
 -------------
-```ruby
-appraisal install
-# optionally specify an activesupport version to test against (3/4), e.g.
-# appraisal 4 rake          ## for ruby 2.1.2
-appraisal rake
+This project relies upon the appraisal gem to support running tests with different ActiveSupport versions.
+
+### default ActiveSupport
+```
+bundle exec appraisal install
+bundle exec appraisal rake
+```
+
+### ActiveSupport 3
+```
+bundle update
+bundle install --gemfile gemfiles/3.gemfile
+bundle exec appraisal 3 rake
+```
+
+### ActiveSupport 4
+```
+bundle update
+bundle install --gemfile gemfiles/4.gemfile
+bundle exec appraisal 4 rake
 ```
 
 
