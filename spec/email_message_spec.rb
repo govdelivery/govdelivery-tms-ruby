@@ -86,9 +86,12 @@ describe GovDelivery::TMS::EmailMessage do
                    'reply_to'   => 'replyto@evotest.govdelivery.com',
                    'recipients' => [{ email: 'billy@evotest.govdelivery.com' }],
                    'created_at' => 'time',
-                   '_links'     => { 'self' => '/messages/email/1', 'email_template' => '/templates/email/1' }
+                   'message_type_code' => 'salutations',
+                   '_links'     => { 'self' => '/messages/email/new-template',
+                                     'message_type' => '/message_type/abc',
+                                     'email_template' => '/templates/email/new-template' }
                   }
-      expect(@message.client).to receive('get').with(@message.href).and_return(double('response', status: 200, body: response))
+      expect(@message.client).to receive('get').with(@message.href, {}).and_return(double('response', status: 200, body: response))
       @message.get
       expect(@message.body).to eq('processed')
       expect(@message.subject).to eq('hey')
@@ -96,7 +99,9 @@ describe GovDelivery::TMS::EmailMessage do
       expect(@message.reply_to).to eq('replyto@evotest.govdelivery.com')
       expect(@message.errors_to).to eq('errors@evotest.govdelivery.com')
       expect(@message.created_at).to eq('time')
+      expect(@message.message_type_code).to eq('salutations')
       expect(@message.email_template).to be_a(GovDelivery::TMS::EmailTemplate)
+      expect(@message.message_type).to be_a(GovDelivery::TMS::MessageType)
     end
   end
 end

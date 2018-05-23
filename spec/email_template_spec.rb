@@ -13,6 +13,7 @@ describe GovDelivery::TMS::EmailTemplate do
       response = [
         {
           'id'                         => '1',
+          'uuid'                       => 'new-template',
           'body'                       => 'Template 1',
           'subject'                    => 'This is the template 1 subject',
           'link_tracking_parameters'   => 'test=ok&hello=world',
@@ -20,11 +21,11 @@ describe GovDelivery::TMS::EmailTemplate do
           'open_tracking_enabled'      => true,
           'click_tracking_enabled'     => true,
           'created_at'                 => 'sometime',
-          '_links'                     => { 'self' => '/templates/email/1', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
+          '_links'                     => { 'self' => '/templates/email/new-template', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
         }
       ]
 
-      expect(@templates.client).to receive('get').with('/templates/email').and_return(double('response', status: 200, body: response, headers: {}))
+      expect(@templates.client).to receive('get').with('/templates/email', {}).and_return(double('response', status: 200, body: response, headers: {}))
       @templates.get
       expect(@templates.collection.length).to eq(1)
     end
@@ -35,7 +36,8 @@ describe GovDelivery::TMS::EmailTemplate do
       double('client')
     end
     before do
-      @template = GovDelivery::TMS::EmailTemplate.new(client, '/templates/email',         body:                       'Template 1',
+      @template = GovDelivery::TMS::EmailTemplate.new(client, '/templates/email',         uuid:                       'new-template',
+                                                                                          body:                       'Template 1',
                                                                                           subject:                    'This is the template 1 subject',
                                                                                           link_tracking_parameters:   'test=ok&hello=world',
                                                                                           macros:                     { 'MACRO1' => '1' },
@@ -70,26 +72,34 @@ describe GovDelivery::TMS::EmailTemplate do
     it 'should post successfully' do
       response = {
         'id'                         => '1',
+        'uuid'                       => 'new-template',
         'body'                       => 'Template 1',
         'subject'                    => 'This is the template 1 subject',
         'link_tracking_parameters'   => 'test=ok&hello=world',
         'macros'                     => { 'MACRO1' => '1' },
         'open_tracking_enabled'      => true,
         'click_tracking_enabled'     => true,
+        'message_type_code'          => 'salutations',
         'created_at'                 => 'sometime',
-        '_links'                     => { 'self' => '/templates/email/1', 'account' => '/accounts/1', 'from_address' => '/from_addresses/1' }
+        '_links'                     => { 'self' => '/templates/email/new-template',
+                                          'account' => '/accounts/1',
+                                          'message_type' => '/message_types/abc',
+                                          'from_address' => '/from_addresses/1' }
       }
       expect(@template.client).to receive('post').with(@template).and_return(double('response', status: 201, body: response))
       @template.post
       expect(@template.id).to eq('1')
+      expect(@template.uuid).to eq('new-template')
       expect(@template.body).to eq('Template 1')
       expect(@template.subject).to eq('This is the template 1 subject')
       expect(@template.link_tracking_parameters).to eq('test=ok&hello=world')
       expect(@template.macros).to eq('MACRO1' => '1')
       expect(@template.open_tracking_enabled).to eq(true)
       expect(@template.click_tracking_enabled).to eq(true)
+      expect(@template.message_type_code).to eql('salutations')
       expect(@template.created_at).to eq('sometime')
       expect(@template.from_address).to be_a(GovDelivery::TMS::FromAddress)
+      expect(@template.message_type).to be_a(GovDelivery::TMS::MessageType)
     end
   end
 

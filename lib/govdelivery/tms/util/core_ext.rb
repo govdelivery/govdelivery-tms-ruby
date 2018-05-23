@@ -5,8 +5,10 @@ module GovDelivery::TMS::CoreExt
     ActiveSupport::Inflector.demodulize(path)
   end
 
-  def classify(str)
-    ActiveSupport::Inflector.camelize(str)
+  def camelize(str)
+    # Do not use ActiveSupport::Inflector.camelize because it uses global
+    # ActiveSupport::Inflector.acronum data.
+    str.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
   end
 
   def singularize(str)

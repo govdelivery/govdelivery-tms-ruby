@@ -52,7 +52,7 @@ describe GovDelivery::TMS::SmsMessage do
     end
     it 'should GET cleanly' do
       response = { body: 'processed', recipients: [{ phone: '22345678' }], created_at: 'time' }
-      expect(@message.client).to receive('get').with(@message.href).and_return(double('response', status: 200, body: response))
+      expect(@message.client).to receive('get').with(@message.href, {}).and_return(double('response', status: 200, body: response))
       @message.get
       expect(@message.body).to eq('processed')
       expect(@message.created_at).to eq('time')

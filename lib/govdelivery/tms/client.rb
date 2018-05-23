@@ -39,8 +39,8 @@ class GovDelivery::TMS::Client
     parse_links(services['_links'])
   end
 
-  def get(href)
-    response = raw_connection.get(href)
+  def get(href, params = {})
+    response = raw_connection.get(href, params)
     case response.status
     when 500..599
       fail GovDelivery::TMS::Request::Error.new(response.status)

@@ -3,7 +3,7 @@ module GovDelivery::TMS #:nodoc:
     include InstanceResource
 
     # @!parse attr_accessor :body
-    writeable_attributes :body
+    writeable_attributes :body, :uuid
 
     # @!parse attr_reader :id, :created_at
     readonly_attributes :id, :created_at

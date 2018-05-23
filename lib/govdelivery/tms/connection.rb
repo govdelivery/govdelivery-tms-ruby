@@ -1,8 +1,8 @@
 class GovDelivery::TMS::Connection
   attr_accessor :auth_token, :api_root, :connection, :logger
 
-  def get(href)
-    resp = connection.get("#{href}.json")
+  def get(href, params = {})
+    resp = connection.get("#{href}.json", params)
     if resp.status != 200
       fail RecordNotFound.new("Could not find resource at #{href} (status #{resp.status})")
     else
