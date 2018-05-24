@@ -1,5 +1,5 @@
 module GovDelivery
   module TMS #:nodoc:
-    VERSION = '0.10.2'.freeze
+    VERSION = File.read(File.join(__dir__, "../../../.version")).freeze
   end
 end
