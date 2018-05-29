@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
     README.md
     Rakefile
     govdelivery-tms.gemspec
+    .version
   ) + Dir['lib/**/*']
 
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
