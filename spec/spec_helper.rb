@@ -1,4 +1,8 @@
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
+
+require 'simplecov'
+SimpleCov.start { add_filter "/spec/" }
+
 require 'govdelivery-tms'
 
 class GovDelivery::TMS::Horse
