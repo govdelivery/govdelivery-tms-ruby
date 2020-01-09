@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/govdelivery/govdelivery-tms-ruby.svg?branch=master)](https://travis-ci.org/govdelivery/govdelivery-tms-ruby)
+[![Build Status](https://travis-ci.org/granicus/govdelivery-tms-ruby.svg?branch=master)](https://travis-ci.org/granicus/govdelivery-tms-ruby)
 
 TMS Client
 ===========
