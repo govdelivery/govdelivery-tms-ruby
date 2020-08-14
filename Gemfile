@@ -1,8 +1,9 @@
 source 'https://rubygems.org'
 gemspec
 
+gem "activesupport", "~>6.0"
+
 group :development, :test do
-  gem 'appraisal'
   gem 'rspec'
   gem 'rspec-its'
   gem 'rake'

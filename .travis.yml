@@ -1,12 +1,10 @@
 language: ruby
 cache: bundler
 rvm:
-  - jruby-19mode
-  - 2.1.6
-  - 2.2.3
+  - 2.5.0
+  - 2.7.1
 gemfile:
-  - gemfiles/3.gemfile
-  - gemfiles/4.gemfile
+  - gemfile
 script: "bundle exec rake spec"
 notifications:
   webhooks: https://gd-radiator.ngrok.com/hubot/travis?room=devlab@conference.im.office.gdi
