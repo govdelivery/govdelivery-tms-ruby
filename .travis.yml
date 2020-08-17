@@ -7,7 +7,3 @@ rvm:
 gemfile:
   - gemfile
 script: "bundle exec rake spec"
-notifications:
-  webhooks: https://gd-radiator.ngrok.com/hubot/travis?room=devlab@conference.im.office.gdi
-  on_success: change
-  on_failure: always

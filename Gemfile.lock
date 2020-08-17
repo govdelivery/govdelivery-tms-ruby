@@ -9,7 +9,7 @@ PATH
   remote: .
   specs:
     govdelivery-tms (3.0.0)
-      activesupport
+      activesupport (>= 5.2.4.3, < 6.0.0)
       faraday
       faraday_middleware
       mime-types
@@ -79,7 +79,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport (>= 5.2.4.3, < 6.0.0)
   govdelivery-tms!
   mail
   rake

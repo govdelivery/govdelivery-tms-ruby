@@ -422,4 +422,4 @@ bundle exec rake
 
 Compatibility
 -------------
-This project is tested and compatible with Ruby >=2.5.0.
+This project is tested and compatible with Ruby >=2.5.8, and <= 2.7.1.
