@@ -12,9 +12,9 @@ Gem::Specification.new do |s|
   s.summary     = 'A ruby client to interact with the GovDelivery TMS REST API.'
   s.description = "A reference implementation, written in Ruby,
                      to interact with GovDelivery's TMS API. The client is
-                     compatible with Ruby 1.9 and 2.0. "
+                     compatible with Ruby >=2.5.8, and <= 2.7.1"
 
-  s.add_runtime_dependency 'activesupport'
+  s.add_runtime_dependency 'activesupport', '>=5.2.4.3', '<6.0.0'
   s.add_runtime_dependency 'faraday'
   s.add_runtime_dependency 'faraday_middleware'
   s.add_runtime_dependency 'mime-types'

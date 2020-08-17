@@ -415,29 +415,11 @@ The generated documentation will be placed in the `doc` folder.
 
 Running Tests
 -------------
-This project relies upon the appraisal gem to support running tests with different ActiveSupport versions.
-
-### default ActiveSupport
 ```
-bundle exec appraisal install
-bundle exec appraisal rake
+bundle install
+bundle exec rake
 ```
-
-### ActiveSupport 3
-```
-bundle update
-bundle install --gemfile gemfiles/3.gemfile
-bundle exec appraisal 3 rake
-```
-
-### ActiveSupport 4
-```
-bundle update
-bundle install --gemfile gemfiles/4.gemfile
-bundle exec appraisal 4 rake
-```
-
 
 Compatibility
 -------------
-This project is tested and compatible with MRI 1.9.3, JRuby 1.7.12, and MRI 2.1.2.
+This project is tested and compatible with Ruby >=2.5.8, and <= 2.7.1.
