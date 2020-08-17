@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-gem "activesupport", "~>6.0"
+gem "activesupport", ">=5.2.4.3", "<6.0.0"
 
 group :development, :test do
   gem 'rspec'
