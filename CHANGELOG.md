@@ -2,7 +2,12 @@
 All notable changes to this project will be documented in this file, as
 suggested by [How to use a CHANGELOG](http://keepachangelog.com/).
 
-This project *does not* adhere to [Semantic Versioning](http://semver.org/).
+As of version 3.0.0 this project adheres to [Semantic Versioning](http://semver.org/).
+
+##[3.0.0]
+### Changed
+- Upgrading to ActiveSupport 5.2.4.3
+- Gem now supports only Ruby versions >= 2.5.0 and <= 2.7.1
 
 ## [2.8.3]
 ### Changed
